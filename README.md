@@ -1,5 +1,6 @@
-## What is DVARE RULES [![Build Status](https://travis-ci.org/dvare/rules.svg?branch=master)](https://travis-ci.org/dvare/rules)
-DVARE Rules is rule engine built on dvare  
+## What is DVARE RULES [![Build Status](https://travis-ci.org/dvare/dvare.svg?branch=master)](https://travis-ci.org/dvare/dvare)
+
+DVARE is lightweight expression evaluator for Java, that allows evaluating Arithmetic and boolean Comparison expressions
 [https://dvare.github.io/](https://dvare.github.io/)
 
 ## Current version
@@ -19,12 +20,7 @@ DVARE Rules is rule engine built on dvare
             <groupId>com.dvare</groupId>
             <artifactId>dvare</artifactId>
             <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dvare</groupId>
-            <artifactId>rules-spring</artifactId>
-            <version>1.0</version>
-        </dependency>           
+        </dependency>         
 <dependencies>
 ```
 
