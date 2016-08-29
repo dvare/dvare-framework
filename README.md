@@ -1,7 +1,6 @@
-## What is DVARE RULES [![Build Status](https://travis-ci.org/dvare/dvare.svg?branch=master)](https://travis-ci.org/dvare/dvare)
-
-DVARE is lightweight expression evaluator for Java, that allows evaluating Arithmetic and boolean Comparison expressions
-[https://dvare.github.io/](https://dvare.github.io/)
+## What is DVARE FRAMEWORK [![Build Status](https://travis-ci.org/dvare/dvare.svg?branch=master)](https://travis-ci.org/dvare/dvare)
+DVARE is lightweight expression evaluator for Java, that allows evaluating Arithmetic and boolean Comparison expressions.
+[https://dvare.org/](https://dvare.org/)
 
 ## Current version
 
@@ -12,20 +11,20 @@ DVARE is lightweight expression evaluator for Java, that allows evaluating Arith
 ```xml
 <repository>
     <id>davre</id>
-    <url>https://raw.githubusercontent.com/dvare/release/dvare/</url>
+    <url>https://oss.sonatype.org/content/groups/staging/</url>
 </repository>
 
 <dependencies>
         <dependency>
             <groupId>com.dvare</groupId>
-            <artifactId>dvare</artifactId>
+            <artifactId>dvare-framework</artifactId>
             <version>1.0</version>
         </dependency>         
 <dependencies>
 ```
 
 ## License
-DVARE RULES is released under the [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT).
+DVARE is released under the [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT).
 
 ```
 The MIT License (MIT)
