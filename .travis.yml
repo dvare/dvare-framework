@@ -3,4 +3,4 @@ sudo: false
 jdk:
   - oraclejdk8
 after_success:
-  - mvn clean compile source:jar package install
+  - mvn clean source:jar javadoc:jar install

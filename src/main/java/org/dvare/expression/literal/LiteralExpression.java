@@ -1,33 +1,4 @@
-## What is DVARE FRAMEWORK [![Build Status](https://travis-ci.org/dvare/dvare.svg?branch=master)](https://travis-ci.org/dvare/dvare)
-DVARE is lightweight expression evaluator for Java, that allows evaluating Arithmetic and boolean Comparison expressions.
-[https://dvare.org/](https://dvare.org/)
-
-## Current version
-
-* The current  version is `1.0` 
-
- you need to add the following maven repository in your `pom.xml`:
-
-```xml
-<repository>
-    <id>davre</id>
-    <url>https://oss.sonatype.org/content/groups/staging/</url>
-</repository>
-
-<dependencies>
-        <dependency>
-            <groupId>com.dvare</groupId>
-            <artifactId>dvare-framework</artifactId>
-            <version>1.0</version>
-        </dependency>         
-<dependencies>
-```
-
-## License
-DVARE is released under the [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT).
-
-```
-The MIT License (MIT)
+/*The MIT License (MIT)
 
 Copyright (c) 2016 Muhammad Hammad
 
@@ -47,7 +18,50 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-```
+THE SOFTWARE.*/
 
 
+package org.dvare.expression.literal;
+
+import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.DataTypeExpression;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class LiteralExpression<T> extends Expression {
+
+
+    protected final Map<Class, String> legalOperations = new HashMap<Class, String>();
+    protected T value;
+    protected DataTypeExpression type;
+
+    LiteralExpression(T value, DataTypeExpression type) {
+        this.value = value;
+        this.type = type;
+    }
+
+    public T getValue() {
+        return this.value;
+    }
+
+    public DataTypeExpression getType() {
+        return this.type;
+    }
+
+    public List<?> legalOperations() {
+
+        return Arrays.asList(legalOperations.keySet().toArray());
+    }
+
+    public boolean isLegalOperations(Class operation) {
+        if (operation == null) {
+            return false;
+        }
+        return legalOperations.containsKey(operation);
+    }
+
+
+}
