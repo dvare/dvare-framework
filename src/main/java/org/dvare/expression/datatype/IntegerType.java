@@ -122,7 +122,9 @@ public class IntegerType extends DataTypeExpression {
         return false;
     }
 
+
     @TypeOperation(operations = {
+            org.dvare.expression.operation.aggregation.Sum.class,
             Add.class
     })
     public Integer sum(LiteralExpression left, LiteralExpression right) {
@@ -132,7 +134,7 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            Subtract.class
+            org.dvare.expression.operation.validation.Subtract.class
     })
     public Integer sub(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -141,7 +143,7 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            Multiply.class
+            org.dvare.expression.operation.validation.Multiply.class
     })
     public Integer mul(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -150,7 +152,7 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            Devide.class
+            org.dvare.expression.operation.validation.Devide.class
     })
     public Integer div(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -159,7 +161,7 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            Power.class
+            org.dvare.expression.operation.validation.Power.class
     })
     public Float pow(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -168,8 +170,8 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-
-            Min.class
+            org.dvare.expression.operation.aggregation.Min.class,
+            org.dvare.expression.operation.validation.Min.class
     })
     public Integer min(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -178,7 +180,8 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            Max.class
+            org.dvare.expression.operation.aggregation.Max.class,
+            org.dvare.expression.operation.validation.Max.class
     })
     public Integer max(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();

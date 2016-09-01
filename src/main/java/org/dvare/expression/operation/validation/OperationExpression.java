@@ -23,25 +23,20 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.validation;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.dvare.ast.Node;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class OperationExpression extends Operation {
+public abstract class OperationExpression extends ValidationOperation {
     static Logger logger = LoggerFactory.getLogger(OperationExpression.class);
 
     public OperationExpression(String symbol) {
@@ -56,107 +51,23 @@ public abstract class OperationExpression extends Operation {
         super(symbols);
     }
 
+    @Override
+    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+        Expression left = stack.pop();
+        int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
+        Expression right = stack.pop();
 
-    private DataType typeMapping(Class type) {
+        this.leftOperand = left;
+        this.rightOperand = right;
 
-        String simpleName = type.getSimpleName();
+        logger.debug("ValidationOperation Call Expression : {}", getClass().getSimpleName());
 
+        stack.push(this);
 
-        if (simpleName.equals("int")) {
-            return DataType.IntegerType;
-        }
-
-        simpleName = simpleName.substring(0, 1).toUpperCase() +
-                simpleName.substring(1).toLowerCase();
-        simpleName = simpleName + "Type";
-
-        DataType dataType = DataType.valueOf(simpleName);
-
-        return dataType;
+        return i;
     }
 
-
-    protected DataType findType(String name, Class type) {
-        DataType variableType = null;
-        if (name.contains(".")) {
-
-            String fields[] = name.split(".");
-
-            Iterator<String> iterator = Arrays.asList(fields).iterator();
-
-            Class childType = type;
-            while (iterator.hasNext()) {
-                String field = iterator.next();
-
-                if (iterator.hasNext()) {
-
-                    Field newType = FieldUtils.getDeclaredField(childType, field, true);
-                    childType = newType.getType();
-
-                } else {
-                    Field newType = FieldUtils.getDeclaredField(childType, field, true);
-                    if (newType != null) {
-                        variableType = typeMapping(newType.getType());
-                    }
-                }
-
-            }
-
-
-        } else {
-            String field = name;
-            Field newType = FieldUtils.getDeclaredField(type, field, true);
-            if (newType != null) {
-                variableType = typeMapping(newType.getType());
-
-            }
-        }
-        return variableType;
-    }
-
-
-    protected DataType findType(String name, TypeBinding typeBinding) {
-        DataType variableType = null;
-        if (name.contains(".")) {
-
-            String fields[] = name.split(".");
-
-            Iterator<String> iterator = Arrays.asList(fields).iterator();
-
-            TypeBinding childType = typeBinding;
-            while (iterator.hasNext()) {
-                String field = iterator.next();
-
-                if (iterator.hasNext()) {
-
-                    Object newType = childType.getDataType(field);
-                    if (newType instanceof TypeBinding) {
-                        childType = (TypeBinding) newType;
-                    }
-
-
-                } else {
-                    Object newType = childType.getDataType(field);
-                    if (newType instanceof DataType) {
-                        variableType = (DataType) newType;
-                    }
-                }
-
-            }
-
-
-        } else {
-            String field = name;
-            Object newType = typeBinding.getDataType(field);
-            if (newType instanceof DataType) {
-
-                variableType = (DataType) newType;
-            }
-        }
-        return variableType;
-    }
-
-
+    @Override
     public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
         Expression left = stack.pop();
         int i = findNextExpression(tokens, pos + 1, stack, typeBinding);
@@ -165,28 +76,35 @@ public abstract class OperationExpression extends Operation {
         this.leftOperand = left;
         this.rightOperand = right;
 
-        logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
+        logger.debug("ValidationOperation Call Expression : {}", getClass().getSimpleName());
 
         stack.push(this);
 
         return i;
     }
 
-
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-
         for (int i = pos; i < tokens.length; i++) {
-
-            Operation op = configurationRegistry.getValidationOperation(tokens[i]);
+            ValidationOperation op = configurationRegistry.getValidationOperation(tokens[i]);
             if (op != null) {
                 op = op.copy();
+                i = op.parse(tokens, i, stack, selfTypes, dataTypes);
+                return i;
+            }
+        }
+        return null;
+    }
 
-
-                // we found an operation
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+        for (int i = pos; i < tokens.length; i++) {
+            ValidationOperation op = configurationRegistry.getValidationOperation(tokens[i]);
+            if (op != null) {
+                op = op.copy();
                 i = op.parse(tokens, i, stack, typeBinding);
-
-
                 return i;
             }
         }
@@ -208,10 +126,10 @@ public abstract class OperationExpression extends Operation {
     private Node<String> ASTNusted(Expression expression) {
 
         Node root;
-        if (expression instanceof Operation) {
-            Operation operation = (Operation) expression;
+        if (expression instanceof ValidationOperation) {
+            ValidationOperation validationOperation = (ValidationOperation) expression;
 
-            root = operation.AST();
+            root = validationOperation.AST();
         } else if (expression instanceof VariableExpression<?>) {
             VariableExpression variableExpression = (VariableExpression) expression;
 

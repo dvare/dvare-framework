@@ -41,7 +41,7 @@ public class LeftPriority extends OperationExpression {
 
         for (int i = pos; i < tokens.length; i++) {
 
-            Operation op = configurationRegistry.getValidationOperation(tokens[i]);
+            ValidationOperation op = configurationRegistry.getValidationOperation(tokens[i]);
             if (op != null) {
                 op = op.copy();
                 // we found an operation

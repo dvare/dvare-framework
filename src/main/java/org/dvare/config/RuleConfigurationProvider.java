@@ -24,13 +24,13 @@ THE SOFTWARE.*/
 package org.dvare.config;
 
 
-import org.dvare.annotations.ClassFinder;
-import org.dvare.annotations.FunctionMethod;
-import org.dvare.annotations.FunctionService;
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.*;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
+import org.dvare.expression.operation.aggregation.AggregationOperation;
+import org.dvare.expression.operation.condition.ConditionOperation;
+import org.dvare.expression.operation.validation.ValidationOperation;
 import org.dvare.util.DataTypeMapping;
 
 import java.lang.annotation.Annotation;
@@ -104,15 +104,19 @@ public class RuleConfigurationProvider {
     }
 
     private void operationInit() {
-        List<Class<?>> classes = ClassFinder.findAnnotated(baseOperationPackage, org.dvare.annotations.Operation.class);
+        List<Class<?>> classes = ClassFinder.findAnnotated(baseOperationPackage, Operation.class);
         for (Class _class : classes) {
             try {
 
-                Annotation annotation = _class.getAnnotation(org.dvare.annotations.Operation.class);
-                if (annotation != null && annotation instanceof org.dvare.annotations.Operation) {
-                    org.dvare.annotations.Operation operation = (org.dvare.annotations.Operation) annotation;
+                Annotation annotation = _class.getAnnotation(Operation.class);
+                if (annotation != null && annotation instanceof Operation) {
+                    Operation operation = (Operation) annotation;
                     if (operation.type().equals(OperationType.VALIDATION)) {
-                        configurationRegistry.registerValidationOperation((org.dvare.expression.operation.validation.Operation) _class.newInstance());
+                        configurationRegistry.registerValidationOperation((ValidationOperation) _class.newInstance());
+                    } else if (operation.type().equals(OperationType.AGGREGATION)) {
+                        configurationRegistry.registerAggregationOperation((AggregationOperation) _class.newInstance());
+                    } else if (operation.type().equals(OperationType.CONDITION)) {
+                        configurationRegistry.registerConditionOperation((ConditionOperation) _class.newInstance());
                     }
                 }
 
@@ -126,5 +130,6 @@ public class RuleConfigurationProvider {
 
 
     }
+
 
 }

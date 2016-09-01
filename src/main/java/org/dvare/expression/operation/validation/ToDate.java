@@ -91,7 +91,7 @@ public class ToDate extends OperationExpression {
         for (int i = pos; i < tokens.length; i++) {
             String token = tokens[i];
 
-            Operation op = configurationRegistry.getValidationOperation(token);
+            ValidationOperation op = configurationRegistry.getValidationOperation(token);
             if (op != null) {
                 op = op.copy();
                 // we found an operation

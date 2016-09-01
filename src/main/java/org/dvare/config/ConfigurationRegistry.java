@@ -24,7 +24,9 @@ THE SOFTWARE.*/
 package org.dvare.config;
 
 import org.dvare.binding.function.FunctionBinding;
-import org.dvare.expression.operation.validation.Operation;
+import org.dvare.expression.operation.aggregation.AggregationOperation;
+import org.dvare.expression.operation.condition.ConditionOperation;
+import org.dvare.expression.operation.validation.ValidationOperation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +39,11 @@ public enum ConfigurationRegistry {
 
     private final Map<String, FunctionBinding> functions = new HashMap<String, FunctionBinding>();
 
-    private final Map<String, Operation> validationOperations = new HashMap<String, Operation>();
+    private final Map<String, ValidationOperation> validationOperations = new HashMap<String, ValidationOperation>();
+
+    private final Map<String, AggregationOperation> aggregationOperations = new HashMap<String, AggregationOperation>();
+
+    private final Map<String, ConditionOperation> conditionOperations = new HashMap<String, ConditionOperation>();
 
 
     public List<String> tokens() {
@@ -49,7 +55,7 @@ public enum ConfigurationRegistry {
     }
 
 
-    public void registerValidationOperation(Operation op) {
+    public void registerValidationOperation(ValidationOperation op) {
         for (String symbol : op.getSymbols()) {
             if (!validationOperations.containsKey(symbol))
                 validationOperations.put(symbol, op);
@@ -57,15 +63,38 @@ public enum ConfigurationRegistry {
     }
 
 
+    public void registerAggregationOperation(AggregationOperation op) {
+        for (String symbol : op.getSymbols()) {
+            if (!aggregationOperations.containsKey(symbol))
+                aggregationOperations.put(symbol, op);
+        }
+    }
+
+    public void registerConditionOperation(ConditionOperation op) {
+        for (String symbol : op.getSymbols()) {
+            if (!conditionOperations.containsKey(symbol))
+                conditionOperations.put(symbol, op);
+        }
+    }
+
     public void registerFunction(FunctionBinding binding) {
         if (!functions.containsKey(binding.getMethodName()))
             functions.put(binding.getMethodName(), binding);
     }
 
-    public Operation getValidationOperation(String symbol) {
+    public ValidationOperation getValidationOperation(String symbol) {
         return this.validationOperations.get(symbol);
     }
 
+    public AggregationOperation getAggregationOperation(String symbol) {
+        return this.aggregationOperations.get(symbol);
+
+    }
+
+    public ConditionOperation getConditionOperation(String symbol) {
+        return this.conditionOperations.get(symbol);
+
+    }
 
     public FunctionBinding getFunction(String name) {
         return this.functions.get(name);

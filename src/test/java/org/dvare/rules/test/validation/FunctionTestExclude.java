@@ -43,7 +43,7 @@ public class FunctionTestExclude extends TestCase {
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration configuration = new RuleConfiguration(new String[]{"com.dvare.rules.util"});
+        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.rules.util"});
 
         Expression expression = configuration.getParser().fromString("Variable1 = fun ( addFiveFunction , Variable2, Variable3 )", Function.class);
         RuleBinding rule = new RuleBinding(expression);
@@ -62,7 +62,7 @@ public class FunctionTestExclude extends TestCase {
   /*  @Test
     public void testApp2()  throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration configuration = new RuleConfiguration(new String[]{"com.dvare.rules.util"});
+        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.rules.util"});
 
         Expression expression = configuration.getParser().fromString("Variable1 in fun ( testFun2 , Variable2 )", Function.class);
         RuleBinding rule = new RuleBinding(expression);

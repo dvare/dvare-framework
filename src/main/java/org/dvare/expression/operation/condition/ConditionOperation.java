@@ -21,10 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.validation;
+package org.dvare.expression.operation.condition;
 
 
-import org.dvare.ast.Node;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -34,21 +33,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class Operation extends Expression {
+public abstract class ConditionOperation extends Expression {
 
     protected List<String> symbols = new ArrayList<>();
-    protected Expression leftOperand = null;
-    protected Expression rightOperand = null;
+    protected Expression condition = null;
+    protected Expression thenOperand = null;
+    protected Expression elseOperand = null;
 
-    public Operation(String symbol) {
+    public ConditionOperation(String symbol) {
         this.symbols.add(symbol);
     }
 
-    public Operation(List<String> symbols) {
+    public ConditionOperation(List<String> symbols) {
         this.symbols.addAll(symbols);
     }
 
-    public Operation(String... symbols) {
+    public ConditionOperation(String... symbols) {
         this.symbols.addAll(Arrays.asList(symbols));
     }
 
@@ -56,14 +56,16 @@ public abstract class Operation extends Expression {
         return this.symbols;
     }
 
-    public abstract Operation copy();
-
-    public abstract Node<String> AST();
+    public abstract ConditionOperation copy();
 
 
-    public abstract int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException;
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding vTypes, TypeBinding aTypes) throws ExpressionParseException {
+        return 0;
+    }
 
-    public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException;
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding vTypes, TypeBinding aTypes) throws ExpressionParseException {
+        return 0;
+    }
 
 
 }

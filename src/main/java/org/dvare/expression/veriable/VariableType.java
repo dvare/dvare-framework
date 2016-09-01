@@ -24,20 +24,16 @@ THE SOFTWARE.*/
 package org.dvare.expression.veriable;
 
 
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.dvare.binding.data.DataRow;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.parser.IllegalPropertyException;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.util.ValueFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 
 public class VariableType {
     static Logger logger = LoggerFactory.getLogger(VariableType.class);
@@ -105,13 +101,7 @@ public class VariableType {
 
 
     public static VariableExpression setVariableValue(VariableExpression variable, Object object) throws IllegalPropertyValueException {
-        Object value = null;
-        if (object instanceof DataRow) {
-            DataRow dataRow = (DataRow) object;
-            value = dataRow.getValue(variable.getName());
-        } else {
-            value = findValue(variable.getName(), object);
-        }
+        Object value = ValueFinder.findValue(variable.getName(), object);
 
 
         return setValue(variable, value);
@@ -217,47 +207,7 @@ public class VariableType {
     }
 
 
-    private static Object findValue(String name, Object object) throws IllegalPropertyValueException {
-        try {
-            Class type = object.getClass();
-            if (name.contains(".")) {
 
-                String fields[] = name.split(".");
-
-                Iterator<String> iterator = Arrays.asList(fields).iterator();
-
-                Class childType = type;
-                while (iterator.hasNext()) {
-                    String field = iterator.next();
-
-                    if (iterator.hasNext()) {
-
-                        Field newType = FieldUtils.getDeclaredField(childType, field, true);
-                        childType = newType.getType();
-
-                    } else {
-                        Field newType = FieldUtils.getDeclaredField(childType, field, true);
-                        if (newType != null) {
-
-                            return FieldUtils.readField(newType, object, true);
-                        }
-                    }
-
-                }
-
-
-            } else {
-                String field = name;
-                Field newType = FieldUtils.getDeclaredField(type, field, true);
-                if (newType != null) {
-                    return FieldUtils.readField(newType, object, true);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            throw new IllegalPropertyValueException("Variable value not found ");
-        }
-        return null;
-    }
 
 
 }

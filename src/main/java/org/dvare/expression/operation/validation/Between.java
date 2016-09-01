@@ -23,66 +23,80 @@ public class Between extends EqualityOperationExpression {
         return new Between();
     }
 
-
     @Override
-    public int parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+    public int parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
-
-
-            pos = parseOperands(tokens, pos, stack, typeBinding);
-
-            Expression left = this.leftOperand;
-            Expression right = this.rightOperand;
-
-            String message = null;
-
-            if (right instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) right;
-                if (!variableExpression.isList()) {
-                    message = String.format("Between Operation %s not possible on type %s near %s", this.getClass().getSimpleName(), variableExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
-
-                } else {
-                    if (variableExpression.getListSize() != 2) {
-                        message = String.format("Operation %s required 2 values", this.getClass().getSimpleName());
-                        logger.error(message);
-                        throw new IllegalOperationException(message);
-                    }
-                }
-            } else if (right instanceof LiteralExpression) {
-                LiteralExpression literalExpression = (LiteralExpression) right;
-                if (!(literalExpression instanceof ListLiteral)) {
-                    message = String.format("Between Operation %s not possible on type %s near %s", this.getClass().getSimpleName(), literalExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
-
-                } else {
-                    ListLiteral listLiteral = (ListLiteral) right;
-                    if (listLiteral.getSize() != 2) {
-                        message = String.format("Operation %s required 2 values", this.getClass().getSimpleName());
-                        logger.error(message);
-                        throw new IllegalOperationException(message);
-                    }
-                }
-            }
-
-            if (message != null) {
-                logger.error(message);
-                throw new IllegalOperationException(message);
-
-            }
-
-
-            if (dataType != null && !isLegalOperation(dataType.getDataType())) {
-
-                String message2 = String.format("Operation %s not possible on type %s near %s", this.getClass().getSimpleName(), left.getClass().getSimpleName(), ExpressionTokenizer.toString(tokens, pos + 2));
-                logger.error(message2);
-                throw new IllegalOperationException(message2);
-            }
-
-            logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
-
+            pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
+            testBetweenOperation(tokens, pos);
             stack.push(this);
             return pos;
         }
         throw new ExpressionParseException("Cannot assign literal to variable");
+    }
+
+    @Override
+    public int parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
+        if (pos - 1 >= 0 && tokens.length >= pos + 1) {
+            pos = parseOperands(tokens, pos, stack, selfTypes, null);
+            testBetweenOperation(tokens, pos);
+            stack.push(this);
+            return pos;
+        }
+        throw new ExpressionParseException("Cannot assign literal to variable");
+    }
+
+
+    private void testBetweenOperation(String[] tokens, int pos) throws ExpressionParseException {
+
+        Expression left = this.leftOperand;
+        Expression right = this.rightOperand;
+
+        String message = null;
+
+        if (right instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) right;
+            if (!variableExpression.isList()) {
+                message = String.format("Between ValidationOperation %s not possible on type %s near %s", this.getClass().getSimpleName(), variableExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
+
+            } else {
+                if (variableExpression.getListSize() != 2) {
+                    message = String.format("ValidationOperation %s required 2 values", this.getClass().getSimpleName());
+                    logger.error(message);
+                    throw new IllegalOperationException(message);
+                }
+            }
+        } else if (right instanceof LiteralExpression) {
+            LiteralExpression literalExpression = (LiteralExpression) right;
+            if (!(literalExpression instanceof ListLiteral)) {
+                message = String.format("List ValidationOperation %s not possible on type %s near %s", this.getClass().getSimpleName(), literalExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
+
+            } else {
+                ListLiteral listLiteral = (ListLiteral) right;
+                if (listLiteral.getSize() != 2) {
+                    message = String.format("ValidationOperation %s required 2 values", this.getClass().getSimpleName());
+                    logger.error(message);
+                    throw new IllegalOperationException(message);
+                }
+            }
+        }
+
+        if (message != null) {
+            logger.error(message);
+            throw new IllegalOperationException(message);
+
+        }
+
+
+        if (dataType != null && !isLegalOperation(dataType.getDataType())) {
+
+            String message2 = String.format("ValidationOperation %s not possible on type %s near %s", this.getClass().getSimpleName(), left.getClass().getSimpleName(), ExpressionTokenizer.toString(tokens, pos + 2));
+            logger.error(message2);
+            throw new IllegalOperationException(message2);
+        }
+
+        logger.debug("ValidationOperation Call Expression : {}", getClass().getSimpleName());
+
+
     }
 
 }

@@ -31,13 +31,14 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.operation.validation.Operation;
+import org.dvare.expression.operation.validation.ValidationOperation;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 public class ExpressionParser {
@@ -48,6 +49,34 @@ public class ExpressionParser {
 
     public ExpressionParser(RuleConfiguration ruleConfiguration) {
         configurationRegistry = ruleConfiguration.getConfigurationRegistry();
+    }
+
+    public static TypeBinding translate(Class types) {
+        TypeBinding typeBinding = new TypeBinding();
+
+        Field fields[] = FieldUtils.getAllFields(types);
+        for (Field field : fields) {
+            String type = field.getType().getSimpleName();
+            String name = field.getName();
+            DataType dataType = DataTypeMapping.getTypeMapping(type);
+            if (dataType != null) {
+                typeBinding.addTypes(name, dataType);
+            } else {
+                TypeBinding nustedType = translate(field.getType());
+                typeBinding.addTypes(name, nustedType);
+            }
+
+        }
+        return typeBinding;
+    }
+
+    public static TypeBinding translate(Map<String, String> types) {
+        TypeBinding typeBinding = new TypeBinding();
+        for (String name : types.keySet()) {
+            DataType dataType = DataType.valueOf(types.get(name));
+            typeBinding.addTypes(name, dataType);
+        }
+        return typeBinding;
     }
 
     public Expression fromString(String expr, HashMap<String, String> type) throws ExpressionParseException {
@@ -82,7 +111,7 @@ public class ExpressionParser {
 
             for (int i = 0; i < tokens.length - 1; i++) {
 
-                Operation op = configurationRegistry.getValidationOperation(tokens[i]);
+                ValidationOperation op = configurationRegistry.getValidationOperation(tokens[i]);
                 if (op != null) {
                     // create a new instance
                     op = op.copy();
@@ -95,8 +124,8 @@ public class ExpressionParser {
                 throw new ExpressionParseException("Unable to Parse Expression");
             }
             Expression expression = stack.pop();
-          /*  if (expression instanceof Operation) {
-                Operation operation = (Operation) expression;
+          /*  if (expression instanceof ValidationOperation) {
+                ValidationOperation operation = (ValidationOperation) expression;
               Node<String> root= operation.AST();
 
                 TreePrinter.printNode(root);
@@ -109,33 +138,5 @@ public class ExpressionParser {
         }
 
 
-    }
-
-    private TypeBinding translate(Class types) {
-        TypeBinding typeBinding = new TypeBinding();
-
-        Field fields[] = FieldUtils.getAllFields(types);
-        for (Field field : fields) {
-            String type = field.getType().getSimpleName();
-            String name = field.getName();
-            DataType dataType = DataTypeMapping.getTypeMapping(type);
-            if (dataType != null) {
-                typeBinding.addTypes(name, dataType);
-            } else {
-                TypeBinding nustedType = translate(field.getType());
-                typeBinding.addTypes(name, nustedType);
-            }
-
-        }
-        return typeBinding;
-    }
-
-    private TypeBinding translate(HashMap<String, String> types) {
-        TypeBinding typeBinding = new TypeBinding();
-        for (String name : types.keySet()) {
-            DataType dataType = DataType.valueOf(types.get(name));
-            typeBinding.addTypes(name, dataType);
-        }
-        return typeBinding;
     }
 }

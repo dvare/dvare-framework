@@ -21,32 +21,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.binding.data;
+package org.dvare.expression.operation.condition;
 
+import org.dvare.annotations.Operation;
+import org.dvare.annotations.OperationType;
+import org.dvare.exceptions.interpreter.InterpretException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class DataSet {
+@Operation(type = OperationType.CONDITION, symbols = {"ENDIF", "endif"})
+public class ENDIF extends ConditionOperation {
+    static Logger logger = LoggerFactory.getLogger(ENDIF.class);
 
-    private List<DataRow> rows = new ArrayList<>();
 
-    public DataSet() {
+    public ENDIF() {
+        super("ENDIF", "endif");
     }
 
-    public DataSet(List<DataRow> rows) {
-        this.rows = rows;
+    public ENDIF copy() {
+        return new ENDIF();
     }
 
-    public void addRow(DataRow row) {
-        this.rows.add(row);
+
+    @Override
+    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
+        Boolean result = (Boolean) condition.interpret(aggregation);
+        if (result) {
+            return thenOperand.interpret(aggregation, dataSet);
+        } else {
+            return elseOperand.interpret(aggregation, dataSet);
+        }
+
     }
 
-    public List<DataRow> getRows() {
-        return rows;
-    }
-
-    public void setRows(List<DataRow> rows) {
-        this.rows = rows;
-    }
 }

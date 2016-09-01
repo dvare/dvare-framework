@@ -26,17 +26,16 @@ package org.dvare.expression.datatype;
 
 import org.dvare.annotations.TypeOperation;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.aggregation.AggregationOperation;
 import org.dvare.expression.operation.validation.OperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -59,12 +58,48 @@ public abstract class DataTypeExpression extends Expression {
     }
 
 
+    public LiteralExpression evaluate(AggregationOperation operationExpression, Expression leftExpression, Expression rightExpression) throws InterpretException {
+
+        LiteralExpression left = toLiteralExpression(leftExpression);
+        LiteralExpression right = toLiteralExpression(rightExpression);
+
+
+        if (left instanceof NullLiteral) {
+            switch (right.getType().getDataType()) {
+
+                case FloatType: {
+                    left = LiteralType.getLiteralExpression(Float.valueOf(0f), right.getType());
+                    break;
+                }
+                case IntegerType: {
+                    left = LiteralType.getLiteralExpression(Integer.valueOf(0), right.getType());
+                    break;
+                }
+                case StringType: {
+                    left = LiteralType.getLiteralExpression("", right.getType());
+                    break;
+                }
+
+            }
+        }
+
+        String methodName = getMethodName(operationExpression.getClass());
+        LiteralExpression resultExpression = evaluate(methodName, left, right);
+        return resultExpression;
+    }
+
+
     public LiteralExpression evaluate(OperationExpression operationExpression, Expression leftExpression, Expression rightExpression) throws InterpretException {
 
         LiteralExpression left = toLiteralExpression(leftExpression);
         LiteralExpression right = toLiteralExpression(rightExpression);
 
         String methodName = getMethodName(operationExpression.getClass());
+        LiteralExpression resultExpression = evaluate(methodName, left, right);
+        return resultExpression;
+    }
+
+    private LiteralExpression evaluate(String methodName, Expression left, Expression right) throws InterpretException {
         try {
 
             Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
@@ -77,16 +112,11 @@ public abstract class DataTypeExpression extends Expression {
             return LiteralType.getLiteralExpression(result.toString(), type);
 
 
-        } catch (NoSuchMethodException m) {
+        } catch (Exception m) {
             throw new InterpretException(m);
-        } catch (IllegalAccessException m) {
-            throw new InterpretException(m);
-        } catch (InvocationTargetException m) {
-            throw new InterpretException(m);
-        } catch (IllegalValueException e) {
-            throw new InterpretException(e);
         }
     }
+
 
     public Boolean compare(OperationExpression operationExpression, Expression leftExpression, Expression rightExpression) throws InterpretException {
 
@@ -102,11 +132,7 @@ public abstract class DataTypeExpression extends Expression {
                 Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
                 return (Boolean) method.invoke(this, left, right);
 
-            } catch (NoSuchMethodException m) {
-                throw new InterpretException(m);
-            } catch (IllegalAccessException m) {
-                throw new InterpretException(m);
-            } catch (InvocationTargetException m) {
+            } catch (Exception m) {
                 throw new InterpretException(m);
             }
 

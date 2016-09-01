@@ -1,33 +1,4 @@
-## What is DVARE FRAMEWORK [![Build Status](https://travis-ci.org/dvare/dvare.svg?branch=master)](https://travis-ci.org/dvare/dvare)
-DVARE is lightweight expression evaluator for Java, that allows evaluating Arithmetic and boolean Comparison expressions.
-[https://dvare.org/](https://dvare.org/)
-
-## Current version
-
-* The current  version is `1.0` 
-
- you need to add the following maven repository in your `pom.xml`:
-
-```xml
-<repository>
-    <id>davre</id>
-    <url>https://oss.sonatype.org/content/groups/staging/</url>
-</repository>
-
-<dependencies>
-        <dependency>
-            <groupId>org.dvare</groupId>
-            <artifactId>dvare-framework</artifactId>
-            <version>1.0</version>
-        </dependency>         
-<dependencies>
-```
-
-## License
-DVARE is released under the [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT).
-
-```
-The MIT License (MIT)
+/*The MIT License (MIT)
 
 Copyright (c) 2016 Muhammad Hammad
 
@@ -47,7 +18,42 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-```
+THE SOFTWARE.*/
 
 
+package org.dvare.expression.operation.condition;
+
+import org.dvare.annotations.Operation;
+import org.dvare.annotations.OperationType;
+import org.dvare.exceptions.interpreter.InterpretException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+@Operation(type = OperationType.CONDITION, symbols = {"ENDTEST", "endtest"})
+public class ENDTEST extends ConditionOperation {
+    static Logger logger = LoggerFactory.getLogger(ENDTEST.class);
+
+
+    public ENDTEST() {
+        super("ENDTEST", "endtest");
+    }
+
+    public ENDTEST copy() {
+        return new ENDTEST();
+    }
+
+
+    @Override
+    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
+        Boolean result = (Boolean) condition.interpret(aggregation);
+        if (result) {
+            return thenOperand.interpret(aggregation, dataSet);
+        } else {
+            return elseOperand.interpret(aggregation, dataSet);
+        }
+
+    }
+
+}

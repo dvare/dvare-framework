@@ -25,7 +25,9 @@ package org.dvare.config;
 
 
 import org.dvare.binding.function.FunctionBinding;
+import org.dvare.evaluator.AggregationRuleEvaluator;
 import org.dvare.evaluator.RuleEvaluator;
+import org.dvare.parser.AggregationExpressionParser;
 import org.dvare.parser.ExpressionParser;
 
 public class RuleConfiguration {
@@ -34,6 +36,7 @@ public class RuleConfiguration {
     private String[] functionBasePackages;
     private ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
     private ExpressionParser expressionParser;
+    private AggregationExpressionParser aggregationExpressionParser;
 
     public RuleConfiguration() {
         this(null);
@@ -50,6 +53,10 @@ public class RuleConfiguration {
         return new RuleEvaluator();
     }
 
+    public AggregationRuleEvaluator getAggregationEvaluator() {
+        return new AggregationRuleEvaluator();
+    }
+
 
     public ExpressionParser getParser() {
         if (expressionParser == null) {
@@ -58,6 +65,12 @@ public class RuleConfiguration {
         return expressionParser;
     }
 
+    public AggregationExpressionParser getAggregationParser() {
+        if (aggregationExpressionParser == null) {
+            aggregationExpressionParser = new AggregationExpressionParser(this);
+        }
+        return aggregationExpressionParser;
+    }
 
     public ConfigurationRegistry getConfigurationRegistry() {
         return configurationRegistry;
