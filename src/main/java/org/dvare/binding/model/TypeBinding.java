@@ -24,6 +24,8 @@ THE SOFTWARE.*/
 package org.dvare.binding.model;
 
 
+import org.dvare.expression.datatype.DataType;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +43,9 @@ public class TypeBinding {
     }
 
     public Object getDataType(String name) {
+        if (types.get(name) instanceof String) {
+            return DataType.valueOf((String) types.get(name));
+        }
         return types.get(name);
     }
 

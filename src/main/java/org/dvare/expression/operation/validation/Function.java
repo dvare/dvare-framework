@@ -154,11 +154,61 @@ public class Function extends OperationExpression {
 
 
     @Override
-    public Object interpret(Object dataRow) throws InterpretException {
-        Object result = interpretFunction(dataRow, null);
+    public Object interpret(Object selfRow) throws InterpretException {
+        Object result = interpretFunction(selfRow, null);
         return result;
     }
 
+    @Override
+    public Object interpret(final Object selfRow, final Object dataRow) throws InterpretException {
+        Object result = interpretFunction(selfRow, dataRow);
+        return result;
+    }
+
+
+    @Override
+    public Object interpret(List<Object> dataSet) throws InterpretException {
+
+        FunctionExpression tabelExpression = (FunctionExpression) this.leftOperand;
+
+
+        Class<?> params[] = new Class[tabelExpression.getParameters().size()];
+        Object values[] = new Object[tabelExpression.getParameters().size()];
+
+        int counter = 0;
+        for (Expression expression : tabelExpression.getParameters()) {
+
+            if (expression instanceof VariableExpression) {
+
+                VariableExpression variableExpression = (VariableExpression) expression;
+
+                Class type = DataTypeMapping.getDataTypeMapping(variableExpression.getType().getDataType());
+
+                List<Object> listValues = new ArrayList<>();
+
+                for (Object dataRow : dataSet) {
+                    variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
+                    listValues.add(variableExpression.getValue());
+                }
+
+                //  params[counter] = DataTypeMapping.getDataTypeMappingArray(variableExpression.getType().getDataType());
+                params[counter] = Object[].class;
+                values[counter] = listValues.toArray();
+
+            } else if (expression instanceof LiteralExpression) {
+                LiteralExpression literal = (LiteralExpression) expression;
+                params[counter] = DataTypeMapping.getDataTypeMapping(literal.getType().getDataType());
+                values[counter] = literal.getValue();
+            }
+
+            counter++;
+        }
+
+
+        Object result = invokeFunction(tabelExpression, params, values);
+
+        return result;
+    }
 
     private Object interpretFunction(final Object selfRow, final Object dataRow) throws InterpretException {
         FunctionExpression tabelExpression = (FunctionExpression) this.leftOperand;

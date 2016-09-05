@@ -51,26 +51,26 @@ public class AggregationExpressionParser {
     }
 
 
-    public Expression fromString(String expr, Map<String, String> vtypes, Map<String, String> atypes) throws ExpressionParseException {
+    public Expression fromString(String expr, Map<String, String> atypes, Map<String, String> vtypes) throws ExpressionParseException {
         TypeBinding vTypeBinding = ExpressionParser.translate(vtypes);
         TypeBinding aTypeBinding = ExpressionParser.translate(atypes);
-        return fromString(expr, vTypeBinding, aTypeBinding);
+        return fromString(expr, aTypeBinding, vTypeBinding);
     }
 
-    public Expression fromString(String expr, Class type, Class type2) throws ExpressionParseException {
+    public Expression fromString(String expr, Class atype, Class vtype2) throws ExpressionParseException {
 
-        TypeBinding vtypes = ExpressionParser.translate(type);
-        TypeBinding atypes = ExpressionParser.translate(type2);
-        return fromString(expr, vtypes, atypes);
+        TypeBinding atypes = ExpressionParser.translate(atype);
+        TypeBinding vtypes = ExpressionParser.translate(vtype2);
+        return fromString(expr, atypes, vtypes);
     }
 
-    public Expression fromString(String expr, TypeBinding vtypes, TypeBinding atypes) throws ExpressionParseException {
+    public Expression fromString(String expr, TypeBinding atypes, TypeBinding vtypes) throws ExpressionParseException {
 
         if (expr != null && !expr.isEmpty()) {
             if ((expr.contains("if") || expr.contains("IF")) && (expr.contains("endif") || expr.contains("ENDIF"))) {
-                return fromStringCondtion(expr, vtypes, atypes);
+                return fromStringCondtion(expr, atypes, vtypes);
             } else {
-                return fromStringSimple(expr, vtypes, atypes);
+                return fromStringSimple(expr, atypes, vtypes);
             }
         } else {
             String message = String.format("Expression is null or Empty");
@@ -81,7 +81,7 @@ public class AggregationExpressionParser {
     }
 
 
-    public Expression fromStringSimple(String expr, TypeBinding vtypes, TypeBinding atypes) throws ExpressionParseException {
+    public Expression fromStringSimple(String expr, TypeBinding atypes, TypeBinding vtypes) throws ExpressionParseException {
         Stack<Expression> stack = new Stack<>();
 
         String[] tokens = ExpressionTokenizer.toToken(expr);
@@ -99,7 +99,7 @@ public class AggregationExpressionParser {
                 if (op != null) {
                     // create a new instance
                     op = op.copy();
-                    i = op.parse(tokens, i, stack, vtypes, atypes);
+                    i = op.parse(tokens, i, stack, atypes, vtypes);
                 }
             }
         }
@@ -111,7 +111,7 @@ public class AggregationExpressionParser {
 
     }
 
-    public Expression fromStringCondtion(String expr, TypeBinding vtypes, TypeBinding atypes) throws ExpressionParseException {
+    public Expression fromStringCondtion(String expr, TypeBinding atypes, TypeBinding vtypes) throws ExpressionParseException {
         if (expr != null && !expr.isEmpty()) {
             Stack<Expression> stack = new Stack<>();
 
@@ -122,7 +122,7 @@ public class AggregationExpressionParser {
                 ConditionOperation op = configurationRegistry.getConditionOperation(tokens[i]);
                 if (op != null) {
                     op = op.copy();
-                    i = op.parse(tokens, i, stack, vtypes, atypes);
+                    i = op.parse(tokens, i, stack, atypes, vtypes);
                 }
 
             }

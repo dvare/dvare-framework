@@ -30,6 +30,10 @@ import java.util.List;
 
 public abstract class Expression {
 
+    public Object interpret(List<Object> dataSet) throws InterpretException {
+        return false;
+    }
+
     public Object interpret(final Object object) throws InterpretException {
         return false;
     }
