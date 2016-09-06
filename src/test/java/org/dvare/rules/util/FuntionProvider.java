@@ -43,6 +43,23 @@ public class FuntionProvider {
         return veriable + 5;
     }
 
+
+    @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.StringType})
+    public Integer addRowsFunction(Object[] rows) {
+        logger.debug("inside addRowsFunction with rows : " + rows.length);
+
+        Integer result = 0;
+        for (Object row : rows) {
+
+            if (row instanceof Integer) {
+                result = result + (Integer) row;
+            }
+        }
+
+        return result;
+    }
+
+
     @FunctionMethod(returnType = DataType.IntegerType, list = true, parameters = {DataType.IntegerType})
     public List<Integer> testFun2(Integer veriable) {
         logger.debug("inside testFun2 with argument literal: " + veriable);

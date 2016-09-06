@@ -23,23 +23,32 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.aggregation;
 
+import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.FunctionExpression;
+import org.dvare.expression.NamedExpression;
+import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.Operation;
+import org.dvare.expression.operation.validation.LeftPriority;
+import org.dvare.expression.operation.validation.RightPriority;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
+import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Stack;
 
-public abstract class OperationExpression extends AggregationOperation {
+public abstract class OperationExpression extends Operation {
     static Logger logger = LoggerFactory.getLogger(OperationExpression.class);
 
     public OperationExpression(String symbol) {
@@ -53,6 +62,18 @@ public abstract class OperationExpression extends AggregationOperation {
     public OperationExpression(String... symbols) {
         super(symbols);
     }
+
+
+    @Override
+    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+        return 0;
+    }
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+        return 0;
+    }
+
 
     @Override
     public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
@@ -69,11 +90,82 @@ public abstract class OperationExpression extends AggregationOperation {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (int i = pos; i < tokens.length; i++) {
-            AggregationOperation op = configurationRegistry.getAggregationOperation(tokens[i]);
+            Operation op = configurationRegistry.getOperation(tokens[i]);
+            if (op != null) {
+                if (op instanceof LeftPriority) {
+
+                    i = parseArguments(tokens, pos + 1, stack, aTypeBinding, vTypeBinding);
+
+                    while (!stack.peek().getClass().equals(RightPriority.class)) {
+                        i = parseArguments(tokens, i, stack, aTypeBinding, vTypeBinding);
+                    }
+
+                    if (stack.peek().getClass().equals(RightPriority.class)) {
+                        stack.pop();
+                    }
+
+                    return i;
+                } else {
+                    op = op.copy();
+                    i = op.parse(tokens, i, stack, aTypeBinding, vTypeBinding);
+                    return i;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    private Integer parseArguments(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
+        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+
+        for (int i = pos; i < tokens.length; i++) {
+            String token = tokens[i];
+
+            org.dvare.expression.operation.Operation op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
-                i = op.parse(tokens, i, stack, aTypeBinding, vTypeBinding);
-                return i;
+                // we found an operation
+
+                if (op.getClass().equals(RightPriority.class)) {
+                    stack.push(op);
+                    return i;
+                }
+
+
+            } else if (configurationRegistry.getFunction(token) != null) {
+
+                FunctionBinding table = configurationRegistry.getFunction(token);
+                FunctionExpression tableExpression = new FunctionExpression(token, table);
+                stack.add(tableExpression);
+
+            } else if (token.matches("self\\..{1,}|data\\..{1,}")) {
+                String name = token.substring(2, token.length());
+                DataType type = null;
+                if (token.matches("self\\..{1,}+")) {
+
+
+                    type = TypeFinder.findType(name, aTypeBinding);
+                } else if (token.matches("data\\..{1,}")) {
+                    type = TypeFinder.findType(name, vTypeBinding);
+                }
+
+                if (type != null) {
+                    VariableExpression variableExpression = VariableType.getVariableType(name, type);
+                    stack.add(variableExpression);
+                } else {
+                    NamedExpression namedExpression = new NamedExpression(token);
+                    stack.add(namedExpression);
+                }
+            } else if (vTypeBinding.getTypes().containsKey(token)) {
+                DataType type = TypeFinder.findType(token, vTypeBinding);
+                VariableExpression variableExpression = VariableType.getVariableType(token, type);
+                stack.add(variableExpression);
+
+            } else if (!token.equals(",")) {
+                String type = LiteralDataType.computeType(token);
+                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, DataType.valueOf(type));
+                stack.add(literalExpression);
             }
         }
         return null;
@@ -94,8 +186,8 @@ public abstract class OperationExpression extends AggregationOperation {
 
             Expression right = this.rightOperand;
             LiteralExpression<?> literalExpression = null;
-            if (right instanceof AggregationOperation) {
-                AggregationOperation operation = (AggregationOperation) right;
+            if (right instanceof Operation) {
+                Operation operation = (Operation) right;
                 literalExpression = (LiteralExpression) operation.interpret(aggregation, dataSet);
             } else if (right instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) right;

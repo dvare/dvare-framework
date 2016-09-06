@@ -25,7 +25,7 @@ public class FunctionTestExclude extends TestCase {
     @Test
     public void testApp() throws ExpressionParseException, InterpretException, ClassNotFoundException {
 
-        RuleConfiguration factory = new RuleConfiguration(new String[]{"org.dvare.util"});
+        RuleConfiguration factory = new RuleConfiguration(new String[]{"org.dvare.rules.util"});
 
 
         Map<String, String> aggregationTypes = new HashMap<>();
@@ -34,10 +34,9 @@ public class FunctionTestExclude extends TestCase {
 
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
-        validationTypes.put("V2", "StringType");
 
 
-        Expression aggregate = factory.getAggregationParser().fromString("A0 = fun ( addFiveFunction , V1 , V2 )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getAggregationParser().fromString("A0 := fun ( addRowsFunction , V1  )", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
@@ -48,18 +47,21 @@ public class FunctionTestExclude extends TestCase {
         bindings.put("A0", "0");
 
         List<Object> dataSet = new ArrayList<>();
+
         Map<String, Object> d1 = new HashMap<>();
         d1.put("V1", "10");
-        d1.put("V2", "'value'");
         dataSet.add(new DataRow(d1));
 
+        Map<String, Object> d2 = new HashMap<>();
+        d2.put("V1", "20");
+        dataSet.add(new DataRow(d2));
 
         AggregationRuleEvaluator evaluator = factory.getAggregationEvaluator();
         Object resultModel = evaluator.evaluate(rules, new DataRow(bindings), dataSet);
 
         System.out.println(ValueFinder.findValue("A0", resultModel));
 
-        boolean result = ValueFinder.findValue("A0", resultModel).equals(15);
+        boolean result = ValueFinder.findValue("A0", resultModel).equals(30);
 
         assertTrue(result);
     }

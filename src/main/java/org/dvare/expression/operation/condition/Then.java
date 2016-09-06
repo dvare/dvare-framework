@@ -29,7 +29,6 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.operation.aggregation.AggregationOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +60,7 @@ public class Then extends ConditionOperation {
 
         for (int i = pos; i < tokens.length; i++) {
 
-            AggregationOperation aggregationOperation = configurationRegistry.getAggregationOperation(tokens[i]);
+            org.dvare.expression.operation.Operation aggregationOperation = configurationRegistry.getOperation(tokens[i]);
             if (aggregationOperation != null) {
                 aggregationOperation = aggregationOperation.copy();
                 i = aggregationOperation.parse(tokens, i, stack, aTypes, vTypes);

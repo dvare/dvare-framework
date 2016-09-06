@@ -30,7 +30,7 @@ public class MinTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getAggregationParser().fromString("A0 = min ( V1 )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getAggregationParser().fromString("A0 := minimum ( V1 )", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);

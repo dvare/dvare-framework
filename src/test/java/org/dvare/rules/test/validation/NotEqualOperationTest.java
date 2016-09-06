@@ -47,7 +47,7 @@ public class NotEqualOperationTest extends TestCase {
                 " And Variable2 != 2" +
                 " And Variable3 != 3.2" +
                 " And Variable4 != false" +
-                " And Variable5 <> toDate ( 12-05-2016 , dd-MM-yyyy )" +
+                " And Variable5 <> toDate( 12-05-2016 , dd-MM-yyyy )" +
                 " And Variable6 <> toDate ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss )" +
                 " And Variable7 != R'A1.*'";
 

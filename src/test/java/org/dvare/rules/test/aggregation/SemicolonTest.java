@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AndTest extends TestCase {
+public class SemicolonTest extends TestCase {
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
@@ -30,7 +30,7 @@ public class AndTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getAggregationParser().fromString("A0 = sum ( V1 ) And A1 = max ( V1 )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getAggregationParser().fromString("A0 := sum ( V1 ) ; A1 := maximum ( V1 )", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);

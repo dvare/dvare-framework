@@ -1,28 +1,17 @@
 package org.dvare.expression.operation.aggregation;
 
-import org.dvare.annotations.Operation;
-import org.dvare.annotations.OperationType;
 import org.dvare.binding.model.TypeBinding;
-import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.FunctionExpression;
-import org.dvare.expression.literal.ListLiteral;
-import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.veriable.VariableExpression;
-import org.dvare.expression.veriable.VariableType;
-import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
-@Operation(type = OperationType.AGGREGATION, symbols = {"FunctionService", "function", "fun"})
+//@Operation(type = OperationType.AGGREGATION, symbols = {"FunctionService", "function", "fun"})
 public class Function extends OperationExpression {
     static Logger logger = LoggerFactory.getLogger(Function.class);
 
@@ -71,14 +60,14 @@ public class Function extends OperationExpression {
             throw new ExpressionParseException(error);
         }
 
-        logger.debug("ValidationOperation Call Expression : {}", getClass().getSimpleName());
+        logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
 
         stack.push(this);
 
         return i;
     }
 
-    @Override
+    /*@Override
     public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
 
         FunctionExpression tabelExpression = (FunctionExpression) this.rightOperand;
@@ -127,7 +116,7 @@ public class Function extends OperationExpression {
         }
 
         return literalExpression;
-    }
+    }*/
 
 
 }

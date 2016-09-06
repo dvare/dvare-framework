@@ -30,7 +30,7 @@ public class ConditionTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getAggregationParser().fromString("IF data.V1 > 5 THEN A1 = sum (V1) ELSE A1 = max (V1) ENDIF", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getAggregationParser().fromString("IF data.V1 > 5 THEN A1 := sum (V1) ELSE A1 := maximum (V1) ENDIF", aggregationTypes, validationTypes);
 
         RuleBinding rule = new RuleBinding(aggregate);
         List<RuleBinding> rules = new ArrayList<>();
@@ -76,7 +76,7 @@ public class ConditionTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
-        Expression aggregate = factory.getAggregationParser().fromString("IF self.A0 <= 5 10 THEN A1 = sum (V1) ELSEIF self.A0 > 10 THEN A1 = max (V1) ENDIF", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getAggregationParser().fromString("IF self.A0 <= 5 10 THEN A1 := sum (V1) ELSEIF self.A0 > 10 THEN A1 := maximum (V1) ENDIF", aggregationTypes, validationTypes);
 
         RuleBinding rule = new RuleBinding(aggregate);
         List<RuleBinding> rules = new ArrayList<>();
@@ -122,7 +122,7 @@ public class ConditionTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
-        Expression aggregate = factory.getAggregationParser().fromString("IF self.A0 <= 5  THEN A1 = sum (V1) ELSEIF self.A0 > 10 THEN A1 = max (V1) ELSE A1 = min (V1) ENDIF", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getAggregationParser().fromString("IF self.A0 <= 5  THEN A1 := sum (V1) ELSEIF self.A0 > 10 THEN A1 := maximum (V1) ELSE A1 := minimum (V1) ENDIF", aggregationTypes, validationTypes);
 
         RuleBinding rule = new RuleBinding(aggregate);
         List<RuleBinding> rules = new ArrayList<>();

@@ -36,13 +36,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Operation(type = OperationType.AGGREGATION, symbols = {"Min", "min"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
+@Operation(type = OperationType.AGGREGATION, symbols = {"Minimum", "minimum"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Min extends OperationExpression {
     static Logger logger = LoggerFactory.getLogger(Min.class);
 
 
     public Min() {
-        super("Min", "min");
+        super("Minimum", "minimum");
     }
 
     public Min copy() {
@@ -72,7 +72,7 @@ public class Min extends OperationExpression {
                 }
 
                 default: {
-                    throw new IllegalOperationException("Min ValidationOperation Not Allowed");
+                    throw new IllegalOperationException("Min Operation Not Allowed");
                 }
 
             }

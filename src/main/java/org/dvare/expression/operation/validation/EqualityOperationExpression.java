@@ -12,6 +12,7 @@ import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.Operation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.parser.ExpressionTokenizer;
@@ -119,7 +120,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
 
         Expression right;
-        ValidationOperation op = ConfigurationRegistry.INSTANCE.getValidationOperation(rightString);
+        Operation op = ConfigurationRegistry.INSTANCE.getOperation(rightString);
         if (op != null) {
             op = op.copy();
             pos = op.parse(tokens, pos + 1, stack, selfTypes);
@@ -168,6 +169,26 @@ public abstract class EqualityOperationExpression extends OperationExpression {
         return pos;
     }
 
+    private void validate(Expression left, Expression right, String[] tokens, int pos) throws ExpressionParseException {
+        if (left instanceof VariableExpression && right instanceof VariableExpression) {
+            VariableExpression vL = (VariableExpression) left;
+            VariableExpression vR = (VariableExpression) right;
+
+            if (!vL.getType().getDataType().equals(vR.getType().getDataType())) {
+                String message = String.format("%s Operation  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), vL.getType().getDataType(), vR.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos));
+                logger.error(message);
+                throw new IllegalOperationException(message);
+            }
+
+        }
+
+        if (dataType != null && !isLegalOperation(dataType.getDataType())) {
+            String message = String.format("Operation %s not possible on type %s at %s", this.getClass().getSimpleName(), dataType.getDataType(), ExpressionTokenizer.toString(tokens, pos));
+            logger.error(message);
+            throw new IllegalOperationException(message);
+        }
+    }
+
     @Override
     public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
@@ -177,27 +198,9 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             Expression left = this.leftOperand;
             Expression right = this.rightOperand;
 
-            if (left instanceof VariableExpression && right instanceof VariableExpression) {
-                VariableExpression vL = (VariableExpression) left;
-                VariableExpression vR = (VariableExpression) right;
+            validate(left, right, tokens, pos);
 
-                if (!vL.getType().getDataType().equals(vR.getType().getDataType())) {
-                    String message = String.format("%s ValidationOperation  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), vL.getType().getDataType(), vR.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos));
-                    logger.error(message);
-                    throw new IllegalOperationException(message);
-                }
-
-            }
-
-
-            if (dataType != null && !isLegalOperation(dataType.getDataType())) {
-                String message = String.format("ValidationOperation %s not possible on type %s at %s", this.getClass().getSimpleName(), dataType.getDataType(), ExpressionTokenizer.toString(tokens, pos));
-                logger.error(message);
-                throw new IllegalOperationException(message);
-            }
-
-
-            logger.debug("ValidationOperation Call Expression : {}", getClass().getSimpleName());
+            logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
 
             stack.push(this);
             return pos;
@@ -213,27 +216,10 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             Expression left = this.leftOperand;
             Expression right = this.rightOperand;
 
-            if (left instanceof VariableExpression && right instanceof VariableExpression) {
-                VariableExpression vL = (VariableExpression) left;
-                VariableExpression vR = (VariableExpression) right;
-
-                if (!vL.getType().getDataType().equals(vR.getType().getDataType())) {
-                    String message = String.format("%s ValidationOperation  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), vL.getType().getDataType(), vR.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos));
-                    logger.error(message);
-                    throw new IllegalOperationException(message);
-                }
-
-            }
+            validate(left, right, tokens, pos);
 
 
-            if (dataType != null && !isLegalOperation(dataType.getDataType())) {
-                String message = String.format("ValidationOperation %s not possible on type %s at %s", this.getClass().getSimpleName(), dataType.getDataType(), ExpressionTokenizer.toString(tokens, pos));
-                logger.error(message);
-                throw new IllegalOperationException(message);
-            }
-
-
-            logger.debug("ValidationOperation Call Expression : {}", getClass().getSimpleName());
+            logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
 
             stack.push(this);
             return pos;
@@ -256,14 +242,14 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
         Expression leftExpression = null;
         Expression left = this.leftOperand;
-        if (left instanceof ValidationOperation) {
-            ValidationOperation validationOperation = (ValidationOperation) left;
+        if (left instanceof Operation) {
+            Operation operation = (Operation) left;
 
             LiteralExpression literalExpression = null;
             if (selfRow != null && dataRow != null) {
-                literalExpression = (LiteralExpression) validationOperation.interpret(selfRow, dataRow);
+                literalExpression = (LiteralExpression) operation.interpret(selfRow, dataRow);
             } else {
-                literalExpression = (LiteralExpression) validationOperation.interpret(selfRow);
+                literalExpression = (LiteralExpression) operation.interpret(selfRow);
             }
 
             if (literalExpression != null) {
@@ -300,12 +286,12 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
         Expression right = this.rightOperand;
         LiteralExpression<?> rightExpression = null;
-        if (right instanceof ValidationOperation) {
-            ValidationOperation validationOperation = (ValidationOperation) right;
+        if (right instanceof Operation) {
+            Operation operation = (Operation) right;
             if (selfRow != null && dataRow != null) {
-                rightExpression = (LiteralExpression) validationOperation.interpret(selfRow, dataRow);
+                rightExpression = (LiteralExpression) operation.interpret(selfRow, dataRow);
             } else {
-                rightExpression = (LiteralExpression) validationOperation.interpret(selfRow);
+                rightExpression = (LiteralExpression) operation.interpret(selfRow);
             }
         } else if (right instanceof LiteralExpression) {
             rightExpression = (LiteralExpression<?>) right;
@@ -344,17 +330,12 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     public Object interpret(Object dataRow) throws InterpretException {
         interpretOperand(dataRow, null);
 
-
         Expression leftExpression = leftValueOperand;
         LiteralExpression<?> rightExpression = rightValueOperand;
-
         if ((leftExpression != null && !(leftExpression instanceof NullLiteral)) && (rightExpression != null && !(rightExpression instanceof NullLiteral))) {
             return dataType.compare(this, leftExpression, rightExpression);
 
         }
-
-
         return false;
-
     }
 }

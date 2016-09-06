@@ -36,18 +36,19 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Operation(type = OperationType.AGGREGATION, symbols = {"Max", "max"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
+@Operation(type = OperationType.AGGREGATION, symbols = {"Maximum", "maximum"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Max extends OperationExpression {
     static Logger logger = LoggerFactory.getLogger(Max.class);
 
 
     public Max() {
-        super("Max", "max");
+        super("Maximum", "maximum");
     }
 
     public Max copy() {
         return new Max();
     }
+
 
     @Override
     public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
@@ -71,7 +72,7 @@ public class Max extends OperationExpression {
                 }
 
                 default: {
-                    throw new IllegalOperationException("Min ValidationOperation Not Allowed");
+                    throw new IllegalOperationException("Min Operation Not Allowed");
                 }
 
             }

@@ -1,6 +1,5 @@
 package org.dvare.expression.operation.validation;
 
-import org.dvare.annotations.Operation;
 import org.dvare.annotations.OperationType;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.TypeBinding;
@@ -14,6 +13,7 @@ import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.Operation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-@Operation(type = OperationType.VALIDATION, symbols = {"Combination", "combination", "comb"})
+@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Combination", "combination", "comb"})
 public class Combination extends OperationExpression {
     static Logger logger = LoggerFactory.getLogger(Combination.class);
 
@@ -92,7 +92,7 @@ public class Combination extends OperationExpression {
 
         this.leftOperand = expressions;
 
-        logger.debug("ValidationOperation Call Expression : {}", getClass().getSimpleName());
+        logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
 
     }
 
@@ -116,7 +116,7 @@ public class Combination extends OperationExpression {
         for (int i = pos; i < tokens.length; i++) {
             String token = tokens[i];
 
-            ValidationOperation op = configurationRegistry.getValidationOperation(token);
+            Operation op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
                 if (op.getClass().equals(RightPriority.class)) {

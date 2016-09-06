@@ -24,9 +24,8 @@ THE SOFTWARE.*/
 package org.dvare.config;
 
 import org.dvare.binding.function.FunctionBinding;
-import org.dvare.expression.operation.aggregation.AggregationOperation;
+import org.dvare.expression.operation.Operation;
 import org.dvare.expression.operation.condition.ConditionOperation;
-import org.dvare.expression.operation.validation.ValidationOperation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,36 +38,29 @@ public enum ConfigurationRegistry {
 
     private final Map<String, FunctionBinding> functions = new HashMap<String, FunctionBinding>();
 
-    private final Map<String, ValidationOperation> validationOperations = new HashMap<String, ValidationOperation>();
-
-    private final Map<String, AggregationOperation> aggregationOperations = new HashMap<String, AggregationOperation>();
+    private final Map<String, Operation> operations = new HashMap<String, Operation>();
 
     private final Map<String, ConditionOperation> conditionOperations = new HashMap<String, ConditionOperation>();
 
 
     public List<String> tokens() {
         List<String> tokens = new ArrayList<>();
-        for (String key : validationOperations.keySet()) {
+        for (String key : operations.keySet()) {
             tokens.add(key);
         }
         return tokens;
     }
 
 
-    public void registerValidationOperation(ValidationOperation op) {
+    public void registerOperation(Operation op) {
         for (String symbol : op.getSymbols()) {
-            if (!validationOperations.containsKey(symbol))
-                validationOperations.put(symbol, op);
+            if (!operations.containsKey(symbol))
+                operations.put(symbol, op);
         }
     }
 
 
-    public void registerAggregationOperation(AggregationOperation op) {
-        for (String symbol : op.getSymbols()) {
-            if (!aggregationOperations.containsKey(symbol))
-                aggregationOperations.put(symbol, op);
-        }
-    }
+
 
     public void registerConditionOperation(ConditionOperation op) {
         for (String symbol : op.getSymbols()) {
@@ -82,14 +74,10 @@ public enum ConfigurationRegistry {
             functions.put(binding.getMethodName(), binding);
     }
 
-    public ValidationOperation getValidationOperation(String symbol) {
-        return this.validationOperations.get(symbol);
+    public Operation getOperation(String symbol) {
+        return this.operations.get(symbol);
     }
 
-    public AggregationOperation getAggregationOperation(String symbol) {
-        return this.aggregationOperations.get(symbol);
-
-    }
 
     public ConditionOperation getConditionOperation(String symbol) {
         return this.conditionOperations.get(symbol);

@@ -31,7 +31,7 @@ import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.aggregation.AggregationOperation;
+import org.dvare.expression.operation.Operation;
 import org.dvare.expression.operation.validation.OperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 
@@ -58,7 +58,7 @@ public abstract class DataTypeExpression extends Expression {
     }
 
 
-    public LiteralExpression evaluate(AggregationOperation operationExpression, Expression leftExpression, Expression rightExpression) throws InterpretException {
+    public LiteralExpression evaluate(Operation operationExpression, Expression leftExpression, Expression rightExpression) throws InterpretException {
 
         LiteralExpression left = toLiteralExpression(leftExpression);
         LiteralExpression right = toLiteralExpression(rightExpression);
@@ -89,15 +89,7 @@ public abstract class DataTypeExpression extends Expression {
     }
 
 
-    public LiteralExpression evaluate(OperationExpression operationExpression, Expression leftExpression, Expression rightExpression) throws InterpretException {
 
-        LiteralExpression left = toLiteralExpression(leftExpression);
-        LiteralExpression right = toLiteralExpression(rightExpression);
-
-        String methodName = getMethodName(operationExpression.getClass());
-        LiteralExpression resultExpression = evaluate(methodName, left, right);
-        return resultExpression;
-    }
 
     private LiteralExpression evaluate(String methodName, Expression left, Expression right) throws InterpretException {
         try {

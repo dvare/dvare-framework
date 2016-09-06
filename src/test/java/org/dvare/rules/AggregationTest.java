@@ -16,8 +16,9 @@ import org.junit.runners.Suite;
         MeanTest.class,
         ModeTest.class,
         MedianTest.class,
-        AndTest.class,
-        ConditionTest.class})
+        SemicolonTest.class,
+        ConditionTest.class,
+        CountTest.class})
 public class AggregationTest {
 
 }

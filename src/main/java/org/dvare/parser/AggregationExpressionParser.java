@@ -29,7 +29,7 @@ import org.dvare.config.RuleConfiguration;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.operation.aggregation.AggregationOperation;
+import org.dvare.expression.operation.Operation;
 import org.dvare.expression.operation.condition.ConditionOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
@@ -95,7 +95,7 @@ public class AggregationExpressionParser {
 
             } else {
 
-                AggregationOperation op = configurationRegistry.getAggregationOperation(tokens[i]);
+                Operation op = configurationRegistry.getOperation(tokens[i]);
                 if (op != null) {
                     // create a new instance
                     op = op.copy();

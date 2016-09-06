@@ -21,16 +21,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-@Operation(type = OperationType.AGGREGATION, symbols = {"=", "assign"})
-public class Equals extends AssignOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Equals.class);
+@Operation(type = OperationType.AGGREGATION, symbols = {":=", "assign", "update"})
+public class Assign extends AssignOperationExpression {
+    static Logger logger = LoggerFactory.getLogger(Assign.class);
 
-    public Equals() {
-        super("=", "assign");
+    public Assign() {
+        super(":=", "assign", "update");
     }
 
-    public Equals copy() {
-        return new Equals();
+    public Assign copy() {
+        return new Assign();
     }
 
 
@@ -59,7 +59,7 @@ public class Equals extends AssignOperationExpression {
                 VariableExpression variableExpression = (VariableExpression) left;
 
                 if (variableExpression.getType() != null && !isLegalOperation(right, variableExpression.getType().getDataType())) {
-                    String message = String.format("Aggregation ValidationOperation %s not possible on type %s at %s", this.getClass().getSimpleName(), variableExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos));
+                    String message = String.format("Aggregation Operation %s not possible on type %s at %s", this.getClass().getSimpleName(), variableExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos));
                     logger.error(message);
                     throw new IllegalOperationException(message);
                 }
@@ -71,7 +71,7 @@ public class Equals extends AssignOperationExpression {
             }
 
 
-            logger.debug("Aggregation ValidationOperation Call Expression : {}", getClass().getSimpleName());
+            logger.debug("Aggregation Operation Call Expression : {}", getClass().getSimpleName());
 
             stack.push(this);
 
@@ -96,8 +96,8 @@ public class Equals extends AssignOperationExpression {
         LiteralExpression<?> literalExpression = null;
         Expression right = this.rightOperand;
 
-        if (right instanceof AggregationOperation) {
-            AggregationOperation operation = (AggregationOperation) right;
+        if (right instanceof org.dvare.expression.operation.Operation) {
+            org.dvare.expression.operation.Operation operation = (org.dvare.expression.operation.Operation) right;
             literalExpression = (LiteralExpression) operation.interpret(aggregation, dataSet);
         }
 

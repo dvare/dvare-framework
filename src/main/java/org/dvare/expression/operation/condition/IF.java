@@ -23,21 +23,20 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.condition;
 
-import org.dvare.annotations.Operation;
 import org.dvare.annotations.OperationType;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.operation.validation.ValidationOperation;
+import org.dvare.expression.operation.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Stack;
 
-@Operation(type = OperationType.CONDITION, symbols = {"IF", "if", "ELSEIF", "elseif"})
+@org.dvare.annotations.Operation(type = OperationType.CONDITION, symbols = {"IF", "if", "ELSEIF", "elseif"})
 public class IF extends ConditionOperation {
     static Logger logger = LoggerFactory.getLogger(IF.class);
 
@@ -63,15 +62,15 @@ public class IF extends ConditionOperation {
 
         for (int i = pos; i < tokens.length; i++) {
 
-            ValidationOperation validationOperation = configurationRegistry.getValidationOperation(tokens[i]);
-            if (validationOperation != null) {
-                validationOperation = validationOperation.copy();
+            Operation operation = configurationRegistry.getOperation(tokens[i]);
+            if (operation != null) {
+                operation = operation.copy();
 
                 if (condition != null) {
                     stack.push(condition);
                 }
 
-                i = validationOperation.parse(tokens, i, stack, selfTypes, dataTypes);
+                i = operation.parse(tokens, i, stack, selfTypes, dataTypes);
                 this.condition = stack.pop();
                 continue;
             }

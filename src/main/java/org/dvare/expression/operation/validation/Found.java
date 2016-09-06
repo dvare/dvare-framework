@@ -1,6 +1,5 @@
 package org.dvare.expression.operation.validation;
 
-import org.dvare.annotations.Operation;
 import org.dvare.annotations.OperationType;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -8,6 +7,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.operation.Operation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-@Operation(type = OperationType.VALIDATION, symbols = {"Found", "found"})
+@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Found", "found"})
 public class Found extends OperationExpression {
     protected List<Expression> leftOperand;
 
@@ -69,7 +69,7 @@ public class Found extends OperationExpression {
         for (int i = pos; i < tokens.length; i++) {
             String token = tokens[i];
 
-            ValidationOperation op = configurationRegistry.getValidationOperation(token);
+            Operation op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
                 if (op.getClass().equals(RightPriority.class)) {

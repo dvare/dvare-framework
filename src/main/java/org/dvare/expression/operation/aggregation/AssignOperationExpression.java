@@ -1,7 +1,6 @@
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.binding.model.TypeBinding;
-import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
@@ -15,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class AssignOperationExpression extends AggregationOperation {
+public abstract class AssignOperationExpression extends OperationExpression {
     static Logger logger = LoggerFactory.getLogger(AssignOperationExpression.class);
 
 
@@ -84,20 +83,7 @@ public abstract class AssignOperationExpression extends AggregationOperation {
         return pos;
     }
 
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
-        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
-        for (int i = pos; i < tokens.length; i++) {
-            AggregationOperation op = configurationRegistry.getAggregationOperation(tokens[i]);
-            if (op != null) {
-                op = op.copy();
-                i = op.parse(tokens, i, stack, aTypeBinding, vTypeBinding);
-                return i;
-            }
-        }
-        return null;
-    }
 
 
 }

@@ -31,7 +31,7 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.operation.validation.ValidationOperation;
+import org.dvare.expression.operation.Operation;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +111,7 @@ public class ExpressionParser {
 
             for (int i = 0; i < tokens.length - 1; i++) {
 
-                ValidationOperation op = configurationRegistry.getValidationOperation(tokens[i]);
+                Operation op = configurationRegistry.getOperation(tokens[i]);
                 if (op != null) {
                     // create a new instance
                     op = op.copy();
@@ -124,8 +124,8 @@ public class ExpressionParser {
                 throw new ExpressionParseException("Unable to Parse Expression");
             }
             Expression expression = stack.pop();
-          /*  if (expression instanceof ValidationOperation) {
-                ValidationOperation operation = (ValidationOperation) expression;
+          /*  if (expression instanceof Operation) {
+                Operation operation = (Operation) expression;
               Node<String> root= operation.AST();
 
                 TreePrinter.printNode(root);

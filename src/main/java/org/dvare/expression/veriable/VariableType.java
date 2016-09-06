@@ -39,6 +39,7 @@ public class VariableType {
     static Logger logger = LoggerFactory.getLogger(VariableType.class);
     static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     static SimpleDateFormat datTimeFormat = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
+    static SimpleDateFormat defaultFormate = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
 
 
     public static VariableExpression getVariableType(String name, String type) throws IllegalPropertyException {
@@ -167,9 +168,13 @@ public class VariableType {
                     try {
                         date = datTimeFormat.parse(newValue);
                     } catch (ParseException e) {
-                        String message = String.format("Unable to Parse literal %s to Date Time", newValue);
-                        logger.error(message);
-                        throw new IllegalPropertyValueException(message);
+                        try {
+                            date = defaultFormate.parse(newValue);
+                        } catch (ParseException ex) {
+                            String message = String.format("Unable to Parse literal %s to DateTime", newValue);
+                            logger.error(message);
+                            throw new IllegalPropertyValueException(message);
+                        }
                     }
                 }
 
@@ -187,9 +192,16 @@ public class VariableType {
                     try {
                         date = dateFormat.parse(newValue);
                     } catch (ParseException e) {
-                        String message = String.format("Unable to Parse literal %s to Date", newValue);
-                        logger.error(message);
-                        throw new IllegalPropertyValueException(message);
+
+
+                        try {
+                            date = defaultFormate.parse(newValue);
+                        } catch (ParseException ex) {
+                            String message = String.format("Unable to Parse literal %s to Date", newValue);
+                            logger.error(message);
+                            throw new IllegalPropertyValueException(message);
+                        }
+
 
                     }
                 }
@@ -205,9 +217,6 @@ public class VariableType {
 
         return variable;
     }
-
-
-
 
 
 }

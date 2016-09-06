@@ -21,20 +21,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.validation;
+package org.dvare.expression.operation;
 
 
 import org.dvare.ast.Node;
 import org.dvare.binding.model.TypeBinding;
+import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.veriable.VariableExpression;
+import org.dvare.util.ValueFinder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class ValidationOperation extends Expression {
+public abstract class Operation extends Expression {
 
     protected final String SELF = "self";
     protected final String DATA = "data";
@@ -47,15 +51,15 @@ public abstract class ValidationOperation extends Expression {
     protected String rightType;
 
 
-    public ValidationOperation(String symbol) {
+    public Operation(String symbol) {
         this.symbols.add(symbol);
     }
 
-    public ValidationOperation(List<String> symbols) {
+    public Operation(List<String> symbols) {
         this.symbols.addAll(symbols);
     }
 
-    public ValidationOperation(String... symbols) {
+    public Operation(String... symbols) {
         this.symbols.addAll(Arrays.asList(symbols));
     }
 
@@ -63,9 +67,7 @@ public abstract class ValidationOperation extends Expression {
         return this.symbols;
     }
 
-    public abstract ValidationOperation copy();
-
-    public abstract Node<String> AST();
+    public abstract Operation copy();
 
 
     public abstract int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException;
@@ -77,4 +79,45 @@ public abstract class ValidationOperation extends Expression {
 
     public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException;
 
+    protected Object getValue(Object object, String name) throws IllegalPropertyValueException {
+        return ValueFinder.findValue(name, object);
+    }
+
+    protected Object setValue(Object object, String name, Object value) throws IllegalPropertyValueException {
+        return ValueFinder.updateValue(object, name, value);
+    }
+
+
+    public Node<String> AST() {
+
+        Node<String> root = new Node<String>(this.getClass().getSimpleName());
+
+        root.left = ASTNusted(this.leftOperand);
+
+        root.right = ASTNusted(this.rightOperand);
+
+        return root;
+    }
+
+    private Node<String> ASTNusted(Expression expression) {
+
+        Node root;
+        if (expression instanceof Operation) {
+            Operation operation = (Operation) expression;
+
+            root = operation.AST();
+        } else if (expression instanceof VariableExpression<?>) {
+            VariableExpression variableExpression = (VariableExpression) expression;
+
+            root = new Node<String>(variableExpression.getName());
+        } else if (expression instanceof LiteralExpression) {
+            LiteralExpression literalExpression = (LiteralExpression) expression;
+            root = new Node<String>(literalExpression.getValue().toString());
+        } else {
+            root = new Node<String>("Value");
+        }
+
+
+        return root;
+    }
 }

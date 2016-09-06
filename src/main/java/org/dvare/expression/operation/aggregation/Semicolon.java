@@ -10,21 +10,21 @@ import org.dvare.expression.Expression;
 import java.util.List;
 import java.util.Stack;
 
-@Operation(type = OperationType.AGGREGATION, symbols = {"AND", "And", "and", "&&"})
-public class And extends AssignOperationExpression {
-    public And() {
-        super("AND", "And", "and", "&&");
+@Operation(type = OperationType.AGGREGATION, symbols = {";"})
+public class Semicolon extends AssignOperationExpression {
+    public Semicolon() {
+        super(";");
     }
 
-    public And copy() {
-        return new And();
+    public Semicolon copy() {
+        return new Semicolon();
     }
 
     @Override
     public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
         pos = parseOperands(tokens, pos + 1, stack, aTypeBinding, vTypeBinding);
 
-        logger.debug("Aggregation ValidationOperation Call Expression : {}", getClass().getSimpleName());
+        logger.debug("Aggregation Operation Call Expression : {}", getClass().getSimpleName());
 
         stack.push(this);
 

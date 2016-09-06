@@ -43,7 +43,7 @@ public class EqualOperationTest extends TestCase {
         RuleConfiguration factory = new RuleConfiguration();
 
         String exp = "Variable1 = Variable1" +
-                " And Variable1 = 'A'  And Variable2 = 2" +
+                " And Variable1 = 'A' And Variable2 = 2" +
                 " And Variable3 = 3.2" +
                 " And Variable4 = false" +
                 " And Variable5 = toDate ( 12-05-2016 , dd-MM-yyyy )" +

@@ -56,11 +56,11 @@ public class Between extends EqualityOperationExpression {
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) right;
             if (!variableExpression.isList()) {
-                message = String.format("Between ValidationOperation %s not possible on type %s near %s", this.getClass().getSimpleName(), variableExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
+                message = String.format("Between Operation %s not possible on type %s near %s", this.getClass().getSimpleName(), variableExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
 
             } else {
                 if (variableExpression.getListSize() != 2) {
-                    message = String.format("ValidationOperation %s required 2 values", this.getClass().getSimpleName());
+                    message = String.format("Operation %s required 2 values", this.getClass().getSimpleName());
                     logger.error(message);
                     throw new IllegalOperationException(message);
                 }
@@ -68,12 +68,12 @@ public class Between extends EqualityOperationExpression {
         } else if (right instanceof LiteralExpression) {
             LiteralExpression literalExpression = (LiteralExpression) right;
             if (!(literalExpression instanceof ListLiteral)) {
-                message = String.format("List ValidationOperation %s not possible on type %s near %s", this.getClass().getSimpleName(), literalExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
+                message = String.format("List Operation %s not possible on type %s near %s", this.getClass().getSimpleName(), literalExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
 
             } else {
                 ListLiteral listLiteral = (ListLiteral) right;
                 if (listLiteral.getSize() != 2) {
-                    message = String.format("ValidationOperation %s required 2 values", this.getClass().getSimpleName());
+                    message = String.format("Operation %s required 2 values", this.getClass().getSimpleName());
                     logger.error(message);
                     throw new IllegalOperationException(message);
                 }
@@ -89,12 +89,12 @@ public class Between extends EqualityOperationExpression {
 
         if (dataType != null && !isLegalOperation(dataType.getDataType())) {
 
-            String message2 = String.format("ValidationOperation %s not possible on type %s near %s", this.getClass().getSimpleName(), left.getClass().getSimpleName(), ExpressionTokenizer.toString(tokens, pos + 2));
+            String message2 = String.format("Operation %s not possible on type %s near %s", this.getClass().getSimpleName(), left.getClass().getSimpleName(), ExpressionTokenizer.toString(tokens, pos + 2));
             logger.error(message2);
             throw new IllegalOperationException(message2);
         }
 
-        logger.debug("ValidationOperation Call Expression : {}", getClass().getSimpleName());
+        logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
 
 
     }

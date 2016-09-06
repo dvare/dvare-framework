@@ -30,7 +30,7 @@ public class CountTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getAggregationParser().fromString("A0 = count()", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getAggregationParser().fromString("A0 := count()", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);

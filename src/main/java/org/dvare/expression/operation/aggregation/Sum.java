@@ -75,7 +75,7 @@ public class Sum extends OperationExpression {
                     break;
                 }
                 default: {
-                    throw new IllegalOperationException("Sum ValidationOperation Not Allowed");
+                    throw new IllegalOperationException("Sum Operation Not Allowed");
                 }
 
             }
