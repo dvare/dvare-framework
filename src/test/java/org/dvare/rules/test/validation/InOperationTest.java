@@ -67,7 +67,7 @@ public class InOperationTest extends TestCase {
         inOperation.setVariable7("A1B2");
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = evaluator.evaluate(rule, inOperation);
+        boolean result = (Boolean) evaluator.evaluate(rule, inOperation);
         assertTrue(result);
     }
 

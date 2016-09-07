@@ -67,7 +67,7 @@ public class NotEqualOperationTest extends TestCase {
         notEqualOperation.setVariable7("A2B2");
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = evaluator.evaluate(rule, notEqualOperation);
+        boolean result = (Boolean) evaluator.evaluate(rule, notEqualOperation);
         assertTrue(result);
     }
 

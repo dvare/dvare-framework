@@ -55,7 +55,7 @@ public class ArithmeticOperationTest extends TestCase {
         arithmeticOperation.setVariable2(20);
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = evaluator.evaluate(rule, arithmeticOperation);
+        boolean result = (Boolean) evaluator.evaluate(rule, arithmeticOperation);
         assertTrue(result);
     }
 
@@ -79,7 +79,7 @@ public class ArithmeticOperationTest extends TestCase {
         arithmeticOperation.setVariable4(20.0f);
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = evaluator.evaluate(rule, arithmeticOperation);
+        boolean result = (Boolean) evaluator.evaluate(rule, arithmeticOperation);
         assertTrue(result);
     }
 

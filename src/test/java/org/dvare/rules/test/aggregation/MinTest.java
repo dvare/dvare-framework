@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
-import org.dvare.evaluator.AggregationRuleEvaluator;
+import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -30,7 +30,7 @@ public class MinTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getAggregationParser().fromString("A0 := minimum ( V1 )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("A0 := minimum ( V1 )", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
@@ -56,7 +56,7 @@ public class MinTest extends TestCase {
         d3.put("V1", 40);
         dataSet.add(new DataRow(d3));
 
-        AggregationRuleEvaluator evaluator = factory.getAggregationEvaluator();
+        RuleEvaluator evaluator = factory.getEvaluator();
         Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(10);

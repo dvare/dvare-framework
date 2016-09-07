@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
-import org.dvare.evaluator.AggregationRuleEvaluator;
+import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -30,7 +30,7 @@ public class ConditionTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getAggregationParser().fromString("IF data.V1 > 5 THEN A1 := sum (V1) ELSE A1 := maximum (V1) ENDIF", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("IF data.V1 > 5 THEN A1 := sum (V1) ELSE A1 := maximum (V1) ENDIF", aggregationTypes, validationTypes);
 
         RuleBinding rule = new RuleBinding(aggregate);
         List<RuleBinding> rules = new ArrayList<>();
@@ -55,7 +55,7 @@ public class ConditionTest extends TestCase {
         d3.put("V1", 40);
         dataSet.add(new DataRow(d3));
 
-        AggregationRuleEvaluator evaluator = factory.getAggregationEvaluator();
+        RuleEvaluator evaluator = factory.getEvaluator();
         Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(70);
@@ -76,7 +76,7 @@ public class ConditionTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
-        Expression aggregate = factory.getAggregationParser().fromString("IF self.A0 <= 5 10 THEN A1 := sum (V1) ELSEIF self.A0 > 10 THEN A1 := maximum (V1) ENDIF", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("IF self.A0 <= 5 10 THEN A1 := sum (V1) ELSEIF self.A0 > 10 THEN A1 := maximum (V1) ENDIF", aggregationTypes, validationTypes);
 
         RuleBinding rule = new RuleBinding(aggregate);
         List<RuleBinding> rules = new ArrayList<>();
@@ -101,7 +101,7 @@ public class ConditionTest extends TestCase {
         d3.put("V1", 40);
         dataSet.add(new DataRow(d3));
 
-        AggregationRuleEvaluator evaluator = factory.getAggregationEvaluator();
+        RuleEvaluator evaluator = factory.getEvaluator();
         Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(40);
@@ -122,7 +122,7 @@ public class ConditionTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
-        Expression aggregate = factory.getAggregationParser().fromString("IF self.A0 <= 5  THEN A1 := sum (V1) ELSEIF self.A0 > 10 THEN A1 := maximum (V1) ELSE A1 := minimum (V1) ENDIF", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("IF self.A0 <= 5  THEN A1 := sum (V1) ELSEIF self.A0 > 10 THEN A1 := maximum (V1) ELSE A1 := minimum (V1) ENDIF", aggregationTypes, validationTypes);
 
         RuleBinding rule = new RuleBinding(aggregate);
         List<RuleBinding> rules = new ArrayList<>();
@@ -146,7 +146,7 @@ public class ConditionTest extends TestCase {
         d3.put("V1", 40);
         dataSet.add(new DataRow(d3));
 
-        AggregationRuleEvaluator evaluator = factory.getAggregationEvaluator();
+        RuleEvaluator evaluator = factory.getEvaluator();
         Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(10);

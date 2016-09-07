@@ -69,7 +69,6 @@ public class IF extends ConditionOperation {
                 if (condition != null) {
                     stack.push(condition);
                 }
-
                 i = operation.parse(tokens, i, stack, selfTypes, dataTypes);
                 this.condition = stack.pop();
                 continue;
@@ -79,7 +78,7 @@ public class IF extends ConditionOperation {
 
             if (conditionOperation != null) {
                 conditionOperation = conditionOperation.copy();
-                if (conditionOperation instanceof Then) {
+                if (conditionOperation instanceof THEN) {
                     i = conditionOperation.parse(tokens, i, stack, selfTypes, dataTypes);
                     this.thenOperand = stack.pop();
                     continue;

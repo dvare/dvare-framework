@@ -125,14 +125,12 @@ public abstract class OperationExpression extends Operation {
             org.dvare.expression.operation.Operation op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
-                // we found an operation
-
                 if (op.getClass().equals(RightPriority.class)) {
                     stack.push(op);
                     return i;
+                } else {
+                    i = op.parse(tokens, i, stack, aTypeBinding, vTypeBinding);
                 }
-
-
             } else if (configurationRegistry.getFunction(token) != null) {
 
                 FunctionBinding table = configurationRegistry.getFunction(token);
@@ -140,23 +138,27 @@ public abstract class OperationExpression extends Operation {
                 stack.add(tableExpression);
 
             } else if (token.matches("self\\..{1,}|data\\..{1,}")) {
-                String name = token.substring(2, token.length());
+
                 DataType type = null;
                 if (token.matches("self\\..{1,}+")) {
 
-
+                    String name = token.substring(5, token.length());
                     type = TypeFinder.findType(name, aTypeBinding);
                 } else if (token.matches("data\\..{1,}")) {
+                    String name = token.substring(5, token.length());
                     type = TypeFinder.findType(name, vTypeBinding);
                 }
 
                 if (type != null) {
+                    String name = token.substring(5, token.length());
                     VariableExpression variableExpression = VariableType.getVariableType(name, type);
                     stack.add(variableExpression);
                 } else {
                     NamedExpression namedExpression = new NamedExpression(token);
                     stack.add(namedExpression);
                 }
+
+
             } else if (vTypeBinding.getTypes().containsKey(token)) {
                 DataType type = TypeFinder.findType(token, vTypeBinding);
                 VariableExpression variableExpression = VariableType.getVariableType(token, type);

@@ -25,6 +25,31 @@ public class Value extends OperationExpression {
         return new Value();
     }
 
+
+    @Override
+    public Object interpret(Object aggregation, Object dataSet) throws InterpretException {
+        Expression right = this.rightOperand;
+        if (right instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) right;
+            Object value = getValue(dataSet, variableExpression.getName());
+            LiteralExpression literalExpression = LiteralType.getLiteralExpression(value, variableExpression.getType());
+            return literalExpression;
+        } else if (right instanceof LiteralExpression) {
+            LiteralExpression literalExpression = (LiteralExpression) right;
+            return literalExpression;
+        } else if (right instanceof org.dvare.expression.operation.Operation) {
+            org.dvare.expression.operation.Operation operation = (org.dvare.expression.operation.Operation) right;
+            Object result = operation.interpret(aggregation, dataSet);
+            if (result instanceof LiteralExpression) {
+                LiteralExpression literalExpression = (LiteralExpression) result;
+                return literalExpression;
+            }
+        }
+
+        return null;
+    }
+
+
     @Override
     public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
 
@@ -38,6 +63,13 @@ public class Value extends OperationExpression {
         } else if (right instanceof LiteralExpression) {
             LiteralExpression literalExpression = (LiteralExpression) right;
             return literalExpression;
+        } else if (right instanceof org.dvare.expression.operation.Operation && !dataSet.isEmpty()) {
+            org.dvare.expression.operation.Operation operation = (org.dvare.expression.operation.Operation) right;
+            Object result = operation.interpret(aggregation, dataSet);
+            if (result instanceof LiteralExpression) {
+                LiteralExpression literalExpression = (LiteralExpression) result;
+                return literalExpression;
+            }
         }
 
         return null;

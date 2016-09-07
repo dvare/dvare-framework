@@ -54,7 +54,7 @@ public class FunctionTestExclude extends TestCase {
         function.setVariable3("test 2nd argument");
 
         RuleEvaluator evaluator = configuration.getEvaluator();
-        boolean result = evaluator.evaluate(rule, function);
+        boolean result = (Boolean) evaluator.evaluate(rule, function);
         assertTrue(result);
     }
 

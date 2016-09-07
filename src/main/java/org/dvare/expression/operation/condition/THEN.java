@@ -35,16 +35,16 @@ import org.slf4j.LoggerFactory;
 import java.util.Stack;
 
 @Operation(type = OperationType.CONDITION, symbols = {"THEN", "then"})
-public class Then extends ConditionOperation {
-    static Logger logger = LoggerFactory.getLogger(Then.class);
+public class THEN extends ConditionOperation {
+    static Logger logger = LoggerFactory.getLogger(THEN.class);
 
 
-    public Then() {
+    public THEN() {
         super("THEN", "then");
     }
 
-    public Then copy() {
-        return new Then();
+    public THEN copy() {
+        return new THEN();
     }
 
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {

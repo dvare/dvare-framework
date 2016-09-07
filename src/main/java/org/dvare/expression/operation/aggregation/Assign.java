@@ -82,16 +82,22 @@ public class Assign extends AssignOperationExpression {
         throw new ExpressionParseException("Cannot assign literal to variable");
     }
 
-    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
-
+    private VariableExpression updateOprand(Object aggregation) throws InterpretException {
         VariableExpression variable = null;
         Expression left = this.leftOperand;
-        String veriableName = null;
+
         if (left instanceof VariableExpression) {
             variable = (VariableExpression) left;
             variable = VariableType.setVariableValue(variable, aggregation);
-            veriableName = variable.getName();
+
         }
+        return variable;
+    }
+
+    @Override
+    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
+        VariableExpression variable = updateOprand(aggregation);
+        String variableName = variable.getName();
 
         LiteralExpression<?> literalExpression = null;
         Expression right = this.rightOperand;
@@ -101,17 +107,46 @@ public class Assign extends AssignOperationExpression {
             literalExpression = (LiteralExpression) operation.interpret(aggregation, dataSet);
         }
 
+        DataType dataType = variable.getType().getDataType();
 
-        switch (variable.getType().getDataType()) {
+        aggregation = updateValue(aggregation, dataType, variableName, literalExpression);
+
+        return aggregation;
+    }
+
+    @Override
+    public Object interpret(Object aggregation, Object dataSet) throws InterpretException {
+
+        VariableExpression variable = updateOprand(aggregation);
+        String variableName = variable.getName();
+
+
+        Expression right = this.rightOperand;
+        LiteralExpression<?> literalExpression = null;
+        if (right instanceof org.dvare.expression.operation.Operation) {
+            org.dvare.expression.operation.Operation operation = (org.dvare.expression.operation.Operation) right;
+            literalExpression = (LiteralExpression) operation.interpret(aggregation, dataSet);
+        }
+
+
+        DataType dataType = variable.getType().getDataType();
+
+        aggregation = updateValue(aggregation, dataType, variableName, literalExpression);
+
+        return aggregation;
+    }
+
+    private Object updateValue(Object aggregation, DataType dataType, String variableName, LiteralExpression<?> literalExpression) throws InterpretException {
+        switch (dataType) {
             case IntegerType: {
                 if (literalExpression.getValue() instanceof Integer) {
 
 
-                    aggregation = setValue(aggregation, veriableName, literalExpression.getValue());
+                    aggregation = setValue(aggregation, variableName, literalExpression.getValue());
 
 
                 } else {
-                    aggregation = setValue(aggregation, veriableName, new Integer("" + literalExpression.getValue()));
+                    aggregation = setValue(aggregation, variableName, new Integer("" + literalExpression.getValue()));
 
 
                 }
@@ -121,21 +156,18 @@ public class Assign extends AssignOperationExpression {
             case FloatType: {
                 if (literalExpression.getValue() instanceof Float) {
 
-                    aggregation = setValue(aggregation, veriableName, literalExpression.getValue());
+                    aggregation = setValue(aggregation, variableName, literalExpression.getValue());
                 } else {
-                    aggregation = setValue(aggregation, veriableName, new Float("" + literalExpression.getValue()));
+                    aggregation = setValue(aggregation, variableName, new Float("" + literalExpression.getValue()));
                 }
                 break;
             }
 
             default: {
-                aggregation = setValue(aggregation, veriableName, literalExpression.getValue());
+                aggregation = setValue(aggregation, variableName, literalExpression.getValue());
             }
         }
-
-
         return aggregation;
     }
-
 
 }

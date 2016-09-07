@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
-import org.dvare.evaluator.AggregationRuleEvaluator;
+import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -29,7 +29,7 @@ public class ModeTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
-        Expression aggregate = factory.getAggregationParser().fromString("A0 := mode ( V1 )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("A0 := mode ( V1 )", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
@@ -58,7 +58,7 @@ public class ModeTest extends TestCase {
         d4.put("V1", 20);
         dataSet.add(new DataRow(d4));
 
-        AggregationRuleEvaluator evaluator = factory.getAggregationEvaluator();
+        RuleEvaluator evaluator = factory.getEvaluator();
         Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
 
 

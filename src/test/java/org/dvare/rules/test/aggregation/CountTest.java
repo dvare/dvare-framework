@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
-import org.dvare.evaluator.AggregationRuleEvaluator;
+import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -30,7 +30,7 @@ public class CountTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getAggregationParser().fromString("A0 := count()", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("A0 := count()", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
@@ -59,7 +59,7 @@ public class CountTest extends TestCase {
         d4.put("V1", 40);
         dataSet.add(new DataRow(d4));
 
-        AggregationRuleEvaluator evaluator = factory.getAggregationEvaluator();
+        RuleEvaluator evaluator = factory.getEvaluator();
         Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
 
 

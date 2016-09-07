@@ -67,7 +67,7 @@ public class EqualOperationTest extends TestCase {
 
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = evaluator.evaluate(rule, equalOperation);
+        boolean result = (Boolean) evaluator.evaluate(rule, equalOperation);
         assertTrue(result);
     }
 
