@@ -165,8 +165,12 @@ public class FloatType extends DataTypeExpression {
     })
     public Float pow(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();
-        Float rightValue = (Float) right.getValue();
-        return new Float(Math.pow(leftValue, rightValue));
+        if (right.getValue() instanceof Integer) {
+            return new Float(Math.pow(leftValue, (Integer) right.getValue()));
+        } else if (right.getValue() instanceof Float) {
+            return new Float(Math.pow(leftValue, (Float) right.getValue()));
+        }
+        return null;
     }
 
     @TypeOperation(operations = {
@@ -184,6 +188,7 @@ public class FloatType extends DataTypeExpression {
             org.dvare.expression.operation.validation.Max.class
     })
     public Float max(LiteralExpression left, LiteralExpression right) {
+
         Float leftValue = (Float) left.getValue();
         Float rightValue = (Float) right.getValue();
         return Float.max((leftValue), rightValue);

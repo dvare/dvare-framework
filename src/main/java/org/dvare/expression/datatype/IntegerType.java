@@ -163,10 +163,14 @@ public class IntegerType extends DataTypeExpression {
     @TypeOperation(operations = {
             org.dvare.expression.operation.validation.Power.class
     })
-    public Float pow(LiteralExpression left, LiteralExpression right) {
+    public Integer pow(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
-        Integer rightValue = (Integer) right.getValue();
-        return new Float(Math.pow(leftValue, rightValue));
+        if (right.getValue() instanceof Integer) {
+            return (int) Math.pow(leftValue, (Integer) right.getValue());
+        } else if (right.getValue() instanceof Float) {
+            return (int) Math.pow(leftValue, (Float) right.getValue());
+        }
+        return null;
     }
 
     @TypeOperation(operations = {

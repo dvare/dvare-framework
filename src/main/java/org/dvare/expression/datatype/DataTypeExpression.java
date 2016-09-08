@@ -63,6 +63,10 @@ public abstract class DataTypeExpression extends Expression {
         LiteralExpression left = toLiteralExpression(leftExpression);
         LiteralExpression right = toLiteralExpression(rightExpression);
 
+        if (left instanceof NullLiteral && right instanceof NullLiteral) {
+            return new NullLiteral();
+        }
+
 
         if (left instanceof NullLiteral) {
             switch (right.getType().getDataType()) {
@@ -87,8 +91,6 @@ public abstract class DataTypeExpression extends Expression {
         LiteralExpression resultExpression = evaluate(methodName, left, right);
         return resultExpression;
     }
-
-
 
 
     private LiteralExpression evaluate(String methodName, Expression left, Expression right) throws InterpretException {
