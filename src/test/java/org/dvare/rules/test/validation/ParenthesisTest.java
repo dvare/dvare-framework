@@ -59,7 +59,7 @@ public class ParenthesisTest extends TestCase {
 
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = evaluator.evaluate(rule, parenthesis);
+        boolean result = (Boolean) evaluator.evaluate(rule, parenthesis);
         assertTrue(result);
     }
 

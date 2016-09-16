@@ -53,7 +53,24 @@ public class Not extends OperationExpression {
     }
 
     @Override
+    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+        int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
+        Expression right = stack.pop();
+        this.rightOperand = right;
+        stack.push(this);
+        return i;
+    }
+
+    @Override
     public Object interpret(final Object object) throws InterpretException {
         return !(Boolean) this.rightOperand.interpret(object);
     }
+
+
+    @Override
+    public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
+        return !(Boolean) this.rightOperand.interpret(selfRow, dataRow);
+    }
+
+
 }

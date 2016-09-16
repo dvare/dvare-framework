@@ -122,7 +122,9 @@ public class IntegerType extends DataTypeExpression {
         return false;
     }
 
+
     @TypeOperation(operations = {
+            org.dvare.expression.operation.aggregation.Sum.class,
             Add.class
     })
     public Integer sum(LiteralExpression left, LiteralExpression right) {
@@ -132,7 +134,7 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            Subtract.class
+            org.dvare.expression.operation.validation.Subtract.class
     })
     public Integer sub(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -141,7 +143,7 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            Multiply.class
+            org.dvare.expression.operation.validation.Multiply.class
     })
     public Integer mul(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -150,7 +152,7 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            Devide.class
+            org.dvare.expression.operation.validation.Devide.class
     })
     public Integer div(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -159,17 +161,21 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            Power.class
+            org.dvare.expression.operation.validation.Power.class
     })
-    public Float pow(LiteralExpression left, LiteralExpression right) {
+    public Integer pow(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
-        Integer rightValue = (Integer) right.getValue();
-        return new Float(Math.pow(leftValue, rightValue));
+        if (right.getValue() instanceof Integer) {
+            return (int) Math.pow(leftValue, (Integer) right.getValue());
+        } else if (right.getValue() instanceof Float) {
+            return (int) Math.pow(leftValue, (Float) right.getValue());
+        }
+        return null;
     }
 
     @TypeOperation(operations = {
-
-            Min.class
+            org.dvare.expression.operation.aggregation.Min.class,
+            org.dvare.expression.operation.validation.Min.class
     })
     public Integer min(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -178,7 +184,8 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            Max.class
+            org.dvare.expression.operation.aggregation.Max.class,
+            org.dvare.expression.operation.validation.Max.class
     })
     public Integer max(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();

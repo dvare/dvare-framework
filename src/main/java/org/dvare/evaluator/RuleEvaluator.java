@@ -26,16 +26,41 @@ package org.dvare.evaluator;
 
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.literal.LiteralExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class RuleEvaluator {
     static Logger logger = LoggerFactory.getLogger(RuleEvaluator.class);
 
-    public boolean evaluate(RuleBinding rule, Object object) throws InterpretException {
-        boolean result = (Boolean) rule.getExpression().interpret(object);
+    public Object evaluate(RuleBinding rule, Object object) throws InterpretException {
+        Object result = null;
+        Object ruleRawResult = rule.getExpression().interpret(object);
+        if (ruleRawResult instanceof LiteralExpression) {
+            LiteralExpression literalExpression = (LiteralExpression) ruleRawResult;
+            if (literalExpression.getValue() != null) {
+                result = literalExpression.getValue();
+            }
+        } else {
+            result = ruleRawResult;
+        }
         return result;
     }
 
+    public Object evaluate(List<RuleBinding> rules, Object aggregate, List<Object> dataset) throws InterpretException {
+        for (RuleBinding rule : rules) {
+            aggregate = rule.getExpression().interpret(aggregate, dataset);
+        }
+        return aggregate;
+    }
+
+    public Object evaluate(List<RuleBinding> rules, Object aggregate, Object dataset) throws InterpretException {
+        for (RuleBinding rule : rules) {
+            aggregate = rule.getExpression().interpret(aggregate, dataset);
+        }
+        return aggregate;
+    }
 
 }

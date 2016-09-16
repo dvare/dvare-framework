@@ -31,6 +31,7 @@ import org.dvare.annotations.OperationType;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
+import org.dvare.expression.operation.condition.ConditionOperation;
 import org.dvare.util.DataTypeMapping;
 
 import java.lang.annotation.Annotation;
@@ -112,7 +113,11 @@ public class RuleConfigurationProvider {
                 if (annotation != null && annotation instanceof org.dvare.annotations.Operation) {
                     org.dvare.annotations.Operation operation = (org.dvare.annotations.Operation) annotation;
                     if (operation.type().equals(OperationType.VALIDATION)) {
-                        configurationRegistry.registerValidationOperation((org.dvare.expression.operation.validation.Operation) _class.newInstance());
+                        configurationRegistry.registerOperation((org.dvare.expression.operation.Operation) _class.newInstance());
+                    } else if (operation.type().equals(OperationType.AGGREGATION)) {
+                        configurationRegistry.registerOperation((org.dvare.expression.operation.Operation) _class.newInstance());
+                    } else if (operation.type().equals(OperationType.CONDITION)) {
+                        configurationRegistry.registerConditionOperation((ConditionOperation) _class.newInstance());
                     }
                 }
 
@@ -126,5 +131,6 @@ public class RuleConfigurationProvider {
 
 
     }
+
 
 }

@@ -29,7 +29,7 @@ import org.junit.runners.Suite;
 
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ValidationTest.class})
+@Suite.SuiteClasses({ValidationTest.class, AggregationTest.class})
 public class AppTest {
 
 

@@ -32,6 +32,7 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.DateLiteral;
+import org.dvare.expression.operation.Operation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -91,7 +92,7 @@ public class ToDate extends OperationExpression {
         for (int i = pos; i < tokens.length; i++) {
             String token = tokens[i];
 
-            Operation op = configurationRegistry.getValidationOperation(token);
+            Operation op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
                 // we found an operation

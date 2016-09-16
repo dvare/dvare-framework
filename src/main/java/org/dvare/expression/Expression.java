@@ -25,12 +25,26 @@ package org.dvare.expression;
 
 import org.dvare.exceptions.interpreter.InterpretException;
 
+import java.util.List;
+
 
 public abstract class Expression {
+
+    public Object interpret(List<Object> dataSet) throws InterpretException {
+        return false;
+    }
 
     public Object interpret(final Object object) throws InterpretException {
         return false;
     }
 
+    public Object interpret(final Object self, final Object data) throws InterpretException {
+        return false;
+    }
+
+
+    public Object interpret(Object aggregate, List<Object> dataset) throws InterpretException {
+        return false;
+    }
 
 }

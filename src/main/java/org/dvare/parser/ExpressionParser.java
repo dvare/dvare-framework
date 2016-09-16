@@ -31,13 +31,15 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.operation.validation.Operation;
+import org.dvare.expression.operation.Operation;
+import org.dvare.expression.operation.condition.ConditionOperation;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 public class ExpressionParser {
@@ -50,68 +52,7 @@ public class ExpressionParser {
         configurationRegistry = ruleConfiguration.getConfigurationRegistry();
     }
 
-    public Expression fromString(String expr, HashMap<String, String> type) throws ExpressionParseException {
-        TypeBinding typeBinding = translate(type);
-        return fromString(expr, typeBinding);
-    }
-
-    public Expression fromString(String expr, Class type) throws ExpressionParseException {
-
-        TypeBinding typeBinding = translate(type);
-        return fromString(expr, typeBinding);
-    }
-
-    public Expression fromString(String expr, TypeBinding typeBinding) throws ExpressionParseException {
-
-        if (expr != null && !expr.isEmpty()) {
-
-            Stack<Expression> stack = new Stack<>();
-
-
-            String[] tokens = ExpressionTokenizer.toToken(expr);
-
-            if (tokens.length == 1) {
-                if (tokens[0].equalsIgnoreCase("true")) {
-                    return new BooleanExpression("true", true);
-                } else if (tokens[0].equalsIgnoreCase("false")) {
-                    return new BooleanExpression("false", false);
-                }
-
-            }
-
-
-            for (int i = 0; i < tokens.length - 1; i++) {
-
-                Operation op = configurationRegistry.getValidationOperation(tokens[i]);
-                if (op != null) {
-                    // create a new instance
-                    op = op.copy();
-                    i = op.parse(tokens, i, stack, typeBinding);
-                }
-            }
-
-
-            if (stack.empty()) {
-                throw new ExpressionParseException("Unable to Parse Expression");
-            }
-            Expression expression = stack.pop();
-          /*  if (expression instanceof Operation) {
-                Operation operation = (Operation) expression;
-              Node<String> root= operation.AST();
-
-                TreePrinter.printNode(root);
-            }*/
-            return expression;
-        } else {
-            String message = String.format("Expression is null or Empty");
-            logger.error(message);
-            throw new ExpressionParseException(message);
-        }
-
-
-    }
-
-    private TypeBinding translate(Class types) {
+    public static TypeBinding translate(Class types) {
         TypeBinding typeBinding = new TypeBinding();
 
         Field fields[] = FieldUtils.getAllFields(types);
@@ -130,12 +71,117 @@ public class ExpressionParser {
         return typeBinding;
     }
 
-    private TypeBinding translate(HashMap<String, String> types) {
+    public static TypeBinding translate(Map<String, String> types) {
         TypeBinding typeBinding = new TypeBinding();
         for (String name : types.keySet()) {
             DataType dataType = DataType.valueOf(types.get(name));
             typeBinding.addTypes(name, dataType);
         }
         return typeBinding;
+    }
+
+    public Expression fromString(String expr, HashMap<String, String> type) throws ExpressionParseException {
+        TypeBinding typeBinding = translate(type);
+        return fromString(expr, typeBinding);
+    }
+
+    public Expression fromString(String expr, Class type) throws ExpressionParseException {
+
+        TypeBinding typeBinding = translate(type);
+        return fromString(expr, typeBinding);
+    }
+
+    public Expression fromString(String expr, TypeBinding typeBinding) throws ExpressionParseException {
+        return fromStringSimple(expr, typeBinding, null);
+    }
+
+    public Expression fromString(String expr, Map<String, String> aTypes, Map<String, String> vTypes) throws ExpressionParseException {
+        TypeBinding vTypeBinding = ExpressionParser.translate(vTypes);
+        TypeBinding aTypeBinding = ExpressionParser.translate(aTypes);
+        return fromString(expr, aTypeBinding, vTypeBinding);
+    }
+
+    public Expression fromString(String expr, Class atype, Class vtype) throws ExpressionParseException {
+
+        TypeBinding aTypes = ExpressionParser.translate(atype);
+        TypeBinding vTypes = ExpressionParser.translate(vtype);
+        return fromString(expr, aTypes, vTypes);
+    }
+
+    public Expression fromString(String expr, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
+
+        if (expr != null && !expr.isEmpty()) {
+            if ((expr.contains("if") || expr.contains("IF")) && (expr.contains("endif") || expr.contains("ENDIF"))) {
+                return fromStringCondition(expr, aTypes, vTypes);
+            } else {
+                return fromStringSimple(expr, aTypes, vTypes);
+            }
+        } else {
+            String message = String.format("Expression is null or Empty");
+            logger.error(message);
+            throw new ExpressionParseException(message);
+        }
+
+    }
+
+    public Expression fromStringSimple(String expr, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
+        Stack<Expression> stack = new Stack<>();
+
+        String[] tokens = ExpressionTokenizer.toToken(expr);
+
+        if (tokens.length == 1) {
+            if (tokens[0].equalsIgnoreCase("true")) {
+                return new BooleanExpression("true", true);
+            } else if (tokens[0].equalsIgnoreCase("false")) {
+                return new BooleanExpression("false", false);
+            }
+
+        }
+        for (int i = 0; i < tokens.length - 1; i++) {
+            Operation op = configurationRegistry.getOperation(tokens[i]);
+            if (op != null) {
+                op = op.copy();
+
+                if (vTypes != null) {
+                    i = op.parse(tokens, i, stack, aTypes, vTypes);
+                } else {
+                    i = op.parse(tokens, i, stack, aTypes);
+                }
+            }
+        }
+        if (stack.empty()) {
+            throw new ExpressionParseException("Unable to Parse Expression");
+        }
+        return stack.pop();
+
+
+    }
+
+    public Expression fromStringCondition(String expr, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
+        if (expr != null && !expr.isEmpty()) {
+            Stack<Expression> stack = new Stack<>();
+
+            String[] tokens = ExpressionTokenizer.toToken(expr);
+
+            for (int i = 0; i < tokens.length - 1; i++) {
+
+                ConditionOperation op = configurationRegistry.getConditionOperation(tokens[i]);
+                if (op != null) {
+                    op = op.copy();
+                    i = op.parse(tokens, i, stack, aTypes, vTypes);
+                }
+
+            }
+            if (stack.empty()) {
+                throw new ExpressionParseException("Unable to Parse Expression");
+            }
+            return stack.pop();
+        } else {
+            String message = String.format("Expression is null or Empty");
+            logger.error(message);
+            throw new ExpressionParseException(message);
+        }
+
+
     }
 }

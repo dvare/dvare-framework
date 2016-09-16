@@ -59,7 +59,7 @@ public class BetweenOperationTest extends TestCase {
 
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = evaluator.evaluate(rule, betweenOperation);
+        boolean result = (Boolean) evaluator.evaluate(rule, betweenOperation);
         assertTrue(result);
     }
 

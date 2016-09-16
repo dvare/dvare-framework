@@ -16,7 +16,7 @@ DVARE is lightweight expression evaluator for Java, that allows evaluating Arith
 
 <dependencies>
         <dependency>
-            <groupId>com.dvare</groupId>
+            <groupId>org.dvare</groupId>
             <artifactId>dvare-framework</artifactId>
             <version>1.0</version>
         </dependency>         

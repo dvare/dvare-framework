@@ -50,9 +50,12 @@ public abstract class VariableExpression<T> extends Expression {
         this.listSize = listSize;
     }
 
-
     public String getName() {
         return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public DataTypeExpression getType() {

@@ -35,7 +35,7 @@ public class ExpressionTokenizer {
 
 
     public static void main(String args[]) {
-        String exp = "V1 in ['A','B'] And V2 in [2,3] And V3 in [3.1,3.2] And V4 in [true,false] And V5 in [12-05-2016,13-05-2016] And V6 in [12-05-2016-15:30:00,13-05-2016-15:30:00] And V7 in [R'B1.*',R'A1.*']";
+        String exp = "V1 in ['A','B'] Semicolon V2 in [2,3] Semicolon V3 in [3.1,3.2] Semicolon V4 in [true,false] Semicolon V5 in [12-05-2016,13-05-2016] Semicolon V6 in [12-05-2016-15:30:00,13-05-2016-15:30:00] Semicolon V7 in [R'B1.*',R'A1.*']";
 
         for (String token : toToken(exp)) {
 
@@ -137,6 +137,9 @@ public class ExpressionTokenizer {
         if (token.contains(">=")) {
             return true;
         }
+        if (token.contains(":=")) {
+            return true;
+        }
         if (token.contains("=")) {
             return true;
         }
@@ -191,6 +194,8 @@ public class ExpressionTokenizer {
             tokenArray.addAll(parse(token, "<="));
         } else if (token.contains(">=")) {
             tokenArray.addAll(parse(token, ">="));
+        } else if (token.contains(":=")) {
+            tokenArray.addAll(parse(token, ":="));
         } else if (token.contains("=")) {
             tokenArray.addAll(parse(token, "="));
         } else if (token.contains(">")) {

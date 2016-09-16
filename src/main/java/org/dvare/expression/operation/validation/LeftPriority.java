@@ -5,6 +5,7 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.operation.Operation;
 
 import java.util.Stack;
 
@@ -41,7 +42,7 @@ public class LeftPriority extends OperationExpression {
 
         for (int i = pos; i < tokens.length; i++) {
 
-            Operation op = configurationRegistry.getValidationOperation(tokens[i]);
+            Operation op = configurationRegistry.getOperation(tokens[i]);
             if (op != null) {
                 op = op.copy();
                 // we found an operation

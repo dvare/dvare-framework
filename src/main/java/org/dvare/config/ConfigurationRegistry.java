@@ -24,7 +24,8 @@ THE SOFTWARE.*/
 package org.dvare.config;
 
 import org.dvare.binding.function.FunctionBinding;
-import org.dvare.expression.operation.validation.Operation;
+import org.dvare.expression.operation.Operation;
+import org.dvare.expression.operation.condition.ConditionOperation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,35 +38,51 @@ public enum ConfigurationRegistry {
 
     private final Map<String, FunctionBinding> functions = new HashMap<String, FunctionBinding>();
 
-    private final Map<String, Operation> validationOperations = new HashMap<String, Operation>();
+    private final Map<String, Operation> operations = new HashMap<String, Operation>();
+
+    private final Map<String, ConditionOperation> conditionOperations = new HashMap<String, ConditionOperation>();
 
 
     public List<String> tokens() {
         List<String> tokens = new ArrayList<>();
-        for (String key : validationOperations.keySet()) {
+        for (String key : operations.keySet()) {
             tokens.add(key);
         }
         return tokens;
     }
 
 
-    public void registerValidationOperation(Operation op) {
+    public void registerOperation(Operation op) {
         for (String symbol : op.getSymbols()) {
-            if (!validationOperations.containsKey(symbol))
-                validationOperations.put(symbol, op);
+            if (!operations.containsKey(symbol))
+                operations.put(symbol, op);
         }
     }
 
+
+
+
+    public void registerConditionOperation(ConditionOperation op) {
+        for (String symbol : op.getSymbols()) {
+            if (!conditionOperations.containsKey(symbol))
+                conditionOperations.put(symbol, op);
+        }
+    }
 
     public void registerFunction(FunctionBinding binding) {
         if (!functions.containsKey(binding.getMethodName()))
             functions.put(binding.getMethodName(), binding);
     }
 
-    public Operation getValidationOperation(String symbol) {
-        return this.validationOperations.get(symbol);
+    public Operation getOperation(String symbol) {
+        return this.operations.get(symbol);
     }
 
+
+    public ConditionOperation getConditionOperation(String symbol) {
+        return this.conditionOperations.get(symbol);
+
+    }
 
     public FunctionBinding getFunction(String name) {
         return this.functions.get(name);
