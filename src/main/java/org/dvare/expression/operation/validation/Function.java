@@ -64,18 +64,18 @@ public class Function extends OperationExpression {
 
     private void computeFunction(List<Expression> expressions) throws ExpressionParseException {
         List<Expression> parameters = new ArrayList<>();
-        FunctionExpression tabelExpression = null;
+        FunctionExpression functionExpression = null;
         for (Expression expression : expressions) {
             if (expression instanceof FunctionExpression) {
-                tabelExpression = (FunctionExpression) expression;
+                functionExpression = (FunctionExpression) expression;
             } else {
                 parameters.add(expression);
             }
 
         }
 
-        tabelExpression.setParameters(parameters);
-        this.leftOperand = tabelExpression;
+        functionExpression.setParameters(parameters);
+        this.leftOperand = functionExpression;
 
 
         if (this.leftOperand == null) {
@@ -93,19 +93,6 @@ public class Function extends OperationExpression {
 
         logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
 
-    }
-
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-
-        return computeFunctionParam(tokens, pos, stack, selfTypes, dataTypes);
-    }
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-
-        return computeFunctionParam(tokens, pos, stack, selfTypes, null);
     }
 
 
@@ -150,13 +137,43 @@ public class Function extends OperationExpression {
                 stack.add(variableExpression);
 
             } else if (!token.equals(",")) {
-                String type = LiteralDataType.computeType(token);
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, DataType.valueOf(type));
-                stack.add(literalExpression);
+
+                if (token.equals("[") || token.contains("[")) {
+                    DataType type = null;
+                    List<String> values = new ArrayList<>();
+                    while (!tokens[++i].equals("]")) {
+                        String value = tokens[i];
+                        values.add(value);
+                        if (type == null) {
+                            type = LiteralDataType.computeDataType(value);
+                        }
+                    }
+
+                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(values.toArray(new String[values.size()]), type);
+                    stack.add(literalExpression);
+                } else {
+                    DataType type = LiteralDataType.computeDataType(token);
+                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
+                    stack.add(literalExpression);
+                }
+
             }
         }
         return null;
     }
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+
+        return computeFunctionParam(tokens, pos, stack, selfTypes, dataTypes);
+    }
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
+
+        return computeFunctionParam(tokens, pos, stack, selfTypes, null);
+    }
+
 
     @Override
     public Object interpret(Object selfRow) throws InterpretException {
@@ -170,60 +187,109 @@ public class Function extends OperationExpression {
         return result;
     }
 
+
     @Override
     public Object interpret(List<Object> dataSet) throws InterpretException {
+        Object result = interpretFunction2(null, dataSet);
+        return result;
+    }
 
-        FunctionExpression tabelExpression = (FunctionExpression) this.leftOperand;
+
+    @Override
+    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
+
+        Object result = interpretFunction2(aggregation, dataSet);
+        return result;
+    }
 
 
-        Class<?> params[] = new Class[tabelExpression.getParameters().size()];
-        Object values[] = new Object[tabelExpression.getParameters().size()];
+    private Object interpretFunction2(Object aggregation, List<Object> dataSet) throws InterpretException {
+
+        FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
+
+
+        Class<?> params[] = new Class[functionExpression.getParameters().size()];
+        Object values[] = new Object[functionExpression.getParameters().size()];
 
         int counter = 0;
-        for (Expression expression : tabelExpression.getParameters()) {
+        for (Expression expression : functionExpression.getParameters()) {
 
             if (expression instanceof VariableExpression) {
 
                 VariableExpression variableExpression = (VariableExpression) expression;
 
-                Class type = DataTypeMapping.getDataTypeMapping(variableExpression.getType().getDataType());
 
-                List<Object> listValues = new ArrayList<>();
+                List listValues = new ArrayList<>();
 
                 for (Object dataRow : dataSet) {
                     variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
                     listValues.add(variableExpression.getValue());
                 }
 
-                //  params[counter] = DataTypeMapping.getDataTypeMappingArray(variableExpression.getType().getDataType());
-                params[counter] = Object[].class;
-                values[counter] = listValues.toArray();
+                try {
+
+                    DataType dataType = variableExpression.getType().getDataType();
+                    Class type = DataTypeMapping.getDataTypeMapping(dataType);
+
+                    Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, dataSet.size());
+                    Object value = listValues.toArray(typedArray);
+
+                    Class arrayType = DataTypeMapping.getDataTypeMappingArray(dataType);
+                    params[counter] = arrayType;
+                    values[counter] = value;
+                } catch (Exception e) {
+                    throw new InterpretException(e);
+                }
+                /*params[counter] = Object[].class;
+                values[counter] = listValues.toArray();*/
 
             } else if (expression instanceof LiteralExpression) {
-                LiteralExpression literal = (LiteralExpression) expression;
-                params[counter] = DataTypeMapping.getDataTypeMapping(literal.getType().getDataType());
-                values[counter] = literal.getValue();
+                if (expression instanceof ListLiteral) {
+                    ListLiteral listLiteral = (ListLiteral) expression;
+
+
+                    try {
+
+                        DataType dataType = listLiteral.getType().getDataType();
+                        Class arrayType = DataTypeMapping.getDataTypeMappingArray(dataType);
+                        Class type = DataTypeMapping.getDataTypeMapping(dataType);
+
+                        Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, listLiteral.getSize());
+                        Object value = ((List) listLiteral.getValue()).toArray(typedArray);
+
+                        params[counter] = arrayType;
+                        values[counter] = value;
+
+                    } catch (Exception e) {
+                        throw new InterpretException(e);
+                    }
+
+
+                } else {
+                    LiteralExpression literalExpression = (LiteralExpression) expression;
+                    values[counter] = literalExpression.getValue();
+                    params[counter] = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
+                }
             }
 
             counter++;
         }
 
 
-        Object result = invokeFunction(tabelExpression, params, values);
+        Object functionReturn = invokeFunction(functionExpression, params, values);
 
-        return result;
+        return functionReturn;
     }
 
-
     private Object interpretFunction(final Object selfRow, final Object dataRow) throws InterpretException {
-        FunctionExpression tabelExpression = (FunctionExpression) this.leftOperand;
+        FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
 
 
-        Class<?> params[] = new Class[tabelExpression.getParameters().size()];
-        Object values[] = new Object[tabelExpression.getParameters().size()];
+        Class<?> params[] = new Class[functionExpression.getParameters().size()];
+        Object values[] = new Object[functionExpression.getParameters().size()];
 
         int counter = 0;
-        for (Expression expression : tabelExpression.getParameters()) {
+        for (Expression expression : functionExpression.getParameters()) {
 
             if (expression instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) expression;
@@ -231,12 +297,12 @@ public class Function extends OperationExpression {
                 String name = variableExpression.getName();
                 if (selfRow != null && name.matches(selfPatten)) {
                     name = name.substring(5, name.length());
-                    variableExpression.setName(name);
                     variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
+                    variableExpression.setName(name);
                 } else if (dataRow != null && name.matches(dataPatten)) {
                     name = name.substring(5, name.length());
-                    variableExpression.setName(name);
                     variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
+                    variableExpression.setName(name);
                 } else {
                     variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
                 }
@@ -246,69 +312,57 @@ public class Function extends OperationExpression {
                 params[counter] = DataTypeMapping.getDataTypeMapping(variableExpression.getType().getDataType());
 
             } else if (expression instanceof LiteralExpression) {
-                LiteralExpression literalExpression = (LiteralExpression) expression;
-                values[counter] = literalExpression.getValue();
-                params[counter] = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
+
+
+                if (expression instanceof ListLiteral) {
+                    ListLiteral listLiteral = (ListLiteral) expression;
+
+
+                    try {
+
+                        DataType dataType = listLiteral.getType().getDataType();
+                        Class type = DataTypeMapping.getDataTypeMapping(dataType);
+
+                        Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, listLiteral.getSize());
+                        Object value = ((List) listLiteral.getValue()).toArray(typedArray);
+
+                        Class arrayType = DataTypeMapping.getDataTypeMappingArray(dataType);
+                        params[counter] = arrayType;
+                        values[counter] = value;
+
+                    } catch (Exception e) {
+                        throw new InterpretException(e);
+                    }
+
+
+                } else {
+                    LiteralExpression literalExpression = (LiteralExpression) expression;
+                    values[counter] = literalExpression.getValue();
+                    params[counter] = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
+                }
+
             }
 
             counter++;
         }
 
-        Object result = invokeFunction(tabelExpression, params, values);
+        Object result = invokeFunction(functionExpression, params, values);
         return result;
     }
 
-
-    @Override
-    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
-
-        FunctionExpression tabelExpression = (FunctionExpression) this.leftOperand;
-
-        Class<?> params[] = new Class[tabelExpression.getParameters().size()];
-        Object values[] = new Object[tabelExpression.getParameters().size()];
-
-        int counter = 0;
-        for (Expression expression : tabelExpression.getParameters()) {
-
-            if (expression instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) expression;
-                List<Object> listValues = new ArrayList<>();
-                for (Object dataRow : dataSet) {
-                    variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
-                    listValues.add(variableExpression.getValue());
-                }
-                params[counter] = Object[].class;
-                values[counter] = listValues.toArray();
-            } else if (expression instanceof LiteralExpression) {
-                LiteralExpression literal = (LiteralExpression) expression;
-                params[counter] = DataTypeMapping.getDataTypeMapping(literal.getType().getDataType());
-                values[counter] = literal.getValue();
-            }
-
-
-            counter++;
-        }
-
-
-        Object functionReturn = invokeFunction(tabelExpression, params, values);
-
-        return functionReturn;
-    }
-
-
-    private Object invokeFunction(FunctionExpression tabelExpression, Class<?> params[], Object values[]) {
+    private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) {
 
         try {
-            Class functionClass = tabelExpression.getBinding().getTableClass();
+            Class functionClass = functionExpression.getBinding().getTableClass();
             Object obj = functionClass.newInstance();
-            Method method = functionClass.getMethod(tabelExpression.getName(), params);
+            Method method = functionClass.getMethod(functionExpression.getName(), params);
             Object value = method.invoke(obj, values);
 
             if (value instanceof Collection) {
                 Collection collection = (Collection) value;
-                return new ListLiteral<>(collection, tabelExpression.binding.getReturnType(), collection.size());
+                return new ListLiteral<>(collection, functionExpression.binding.getReturnType(), collection.size());
             } else {
-                return LiteralType.getLiteralExpression(value, tabelExpression.binding.getReturnType());
+                return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType());
             }
 
         } catch (Exception e) {
@@ -316,6 +370,5 @@ public class Function extends OperationExpression {
         }
         return null;
     }
-
 
 }

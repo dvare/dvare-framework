@@ -127,11 +127,11 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             right = stack.pop();
 
         } else if (rightType != null && rightType.equals(SELF) && selfTypes.getTypes().containsKey(rightString)) {
-            // DataType rightType = selfTypes.get(rightString);
+
             DataType rightType = TypeFinder.findType(rightString, selfTypes);
             right = VariableType.getVariableType(rightString, rightType);
         } else if (rightType != null && rightType.equals(DATA) && dataTypes.getTypes().containsKey(rightString)) {
-            // DataType rightType = dataTypes.get(rightString);
+
             DataType rightType = TypeFinder.findType(rightString, dataTypes);
             right = VariableType.getVariableType(rightString, rightType);
         } else {
