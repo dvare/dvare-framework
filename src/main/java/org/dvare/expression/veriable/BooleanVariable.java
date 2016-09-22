@@ -33,6 +33,10 @@ public class BooleanVariable extends VariableExpression {
 
     }
 
+    public BooleanVariable(String name, boolean list) {
+        this(name, null, list, 0);
+    }
+
     public BooleanVariable(String name, Object value) {
         this(name, value, false, 0);
     }

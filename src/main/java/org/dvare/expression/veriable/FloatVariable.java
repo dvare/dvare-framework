@@ -36,6 +36,10 @@ public class FloatVariable extends VariableExpression {
         this(name, value, false, 0);
     }
 
+    public FloatVariable(String name, boolean list) {
+        this(name, null, list, 0);
+    }
+
     public FloatVariable(String name, Object value, boolean list, Integer size) {
         super(name, new FloatType(), value, list, size);
 

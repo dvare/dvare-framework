@@ -64,24 +64,48 @@ public class VariableType {
                 variableExpression = new BooleanVariable(name);
                 break;
             }
+            case BooleanListType: {
+                variableExpression = new BooleanVariable(name, true);
+                break;
+            }
             case FloatType: {
                 variableExpression = new FloatVariable(name);
+                break;
+            }
+            case FloatListType: {
+                variableExpression = new FloatVariable(name, true);
                 break;
             }
             case IntegerType: {
                 variableExpression = new IntegerVariable(name);
                 break;
             }
+            case IntegerListType: {
+                variableExpression = new IntegerVariable(name, true);
+                break;
+            }
             case StringType: {
                 variableExpression = new StringVariable(name);
+                break;
+            }
+            case StringListType: {
+                variableExpression = new StringVariable(name, true);
                 break;
             }
             case DateTimeType: {
                 variableExpression = new DateTimeVariable(name);
                 break;
             }
+            case DateTimeListType: {
+                variableExpression = new DateTimeVariable(name, true);
+                break;
+            }
             case DateType: {
                 variableExpression = new DateVariable(name);
+                break;
+            }
+            case DateListType: {
+                variableExpression = new DateVariable(name, true);
                 break;
             }
             case RegexType: {
@@ -126,6 +150,25 @@ public class VariableType {
                     }
                 }
 
+                break;
+            }
+            case BooleanListType: {
+                if (value instanceof Boolean[]) {
+                    variable.setValue((Boolean[]) value);
+                } else {
+                    if (value.toString().equals("") || value == null) {
+                        variable.setValue(new Boolean[]{Boolean.valueOf(false)});
+                    } else {
+                        String tokens[] = value.toString().split(",");
+                        Boolean[] values = new Boolean[tokens.length];
+                        int index = 0;
+                        for (String token : tokens) {
+                            values[index++] = Boolean.parseBoolean((String) token);
+                        }
+
+                        variable.setValue(values);
+                    }
+                }
                 break;
             }
             case FloatType: {

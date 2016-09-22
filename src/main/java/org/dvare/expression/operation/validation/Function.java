@@ -188,6 +188,75 @@ public class Function extends OperationExpression {
     }
 
 
+    private Object interpretFunction(final Object selfRow, final Object dataRow) throws InterpretException {
+        FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
+
+
+        Class<?> params[] = new Class[functionExpression.getParameters().size()];
+        Object values[] = new Object[functionExpression.getParameters().size()];
+
+        int counter = 0;
+        for (Expression expression : functionExpression.getParameters()) {
+
+            if (expression instanceof VariableExpression) {
+                VariableExpression variableExpression = (VariableExpression) expression;
+
+                String name = variableExpression.getName();
+                if (selfRow != null && name.matches(selfPatten)) {
+                    name = name.substring(5, name.length());
+                    variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
+                    variableExpression.setName(name);
+                } else if (dataRow != null && name.matches(dataPatten)) {
+                    name = name.substring(5, name.length());
+                    variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
+                    variableExpression.setName(name);
+                } else {
+                    variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
+                }
+
+
+                values[counter] = variableExpression.getValue();
+                params[counter] = DataTypeMapping.getDataTypeMapping(variableExpression.getType().getDataType());
+
+            } else if (expression instanceof LiteralExpression) {
+
+
+                if (expression instanceof ListLiteral) {
+                    ListLiteral listLiteral = (ListLiteral) expression;
+
+
+                    try {
+
+                        DataType dataType = listLiteral.getType().getDataType();
+                        Class type = DataTypeMapping.getDataTypeMapping(dataType);
+
+                        Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, listLiteral.getSize());
+                        Object value = ((List) listLiteral.getValue()).toArray(typedArray);
+
+                        Class arrayType = DataTypeMapping.getDataTypeMappingArray(dataType);
+                        params[counter] = arrayType;
+                        values[counter] = value;
+
+                    } catch (Exception e) {
+                        throw new InterpretException(e);
+                    }
+
+
+                } else {
+                    LiteralExpression literalExpression = (LiteralExpression) expression;
+                    values[counter] = literalExpression.getValue();
+                    params[counter] = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
+                }
+
+            }
+
+            counter++;
+        }
+
+        Object result = invokeFunction(functionExpression, params, values);
+        return result;
+    }
+
     @Override
     public Object interpret(List<Object> dataSet) throws InterpretException {
         Object result = interpretFunction2(null, dataSet);
@@ -281,74 +350,6 @@ public class Function extends OperationExpression {
         return functionReturn;
     }
 
-    private Object interpretFunction(final Object selfRow, final Object dataRow) throws InterpretException {
-        FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
-
-
-        Class<?> params[] = new Class[functionExpression.getParameters().size()];
-        Object values[] = new Object[functionExpression.getParameters().size()];
-
-        int counter = 0;
-        for (Expression expression : functionExpression.getParameters()) {
-
-            if (expression instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) expression;
-
-                String name = variableExpression.getName();
-                if (selfRow != null && name.matches(selfPatten)) {
-                    name = name.substring(5, name.length());
-                    variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
-                    variableExpression.setName(name);
-                } else if (dataRow != null && name.matches(dataPatten)) {
-                    name = name.substring(5, name.length());
-                    variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
-                    variableExpression.setName(name);
-                } else {
-                    variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
-                }
-
-
-                values[counter] = variableExpression.getValue();
-                params[counter] = DataTypeMapping.getDataTypeMapping(variableExpression.getType().getDataType());
-
-            } else if (expression instanceof LiteralExpression) {
-
-
-                if (expression instanceof ListLiteral) {
-                    ListLiteral listLiteral = (ListLiteral) expression;
-
-
-                    try {
-
-                        DataType dataType = listLiteral.getType().getDataType();
-                        Class type = DataTypeMapping.getDataTypeMapping(dataType);
-
-                        Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, listLiteral.getSize());
-                        Object value = ((List) listLiteral.getValue()).toArray(typedArray);
-
-                        Class arrayType = DataTypeMapping.getDataTypeMappingArray(dataType);
-                        params[counter] = arrayType;
-                        values[counter] = value;
-
-                    } catch (Exception e) {
-                        throw new InterpretException(e);
-                    }
-
-
-                } else {
-                    LiteralExpression literalExpression = (LiteralExpression) expression;
-                    values[counter] = literalExpression.getValue();
-                    params[counter] = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
-                }
-
-            }
-
-            counter++;
-        }
-
-        Object result = invokeFunction(functionExpression, params, values);
-        return result;
-    }
 
     private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) {
 

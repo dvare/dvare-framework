@@ -36,6 +36,10 @@ public class StringVariable extends VariableExpression {
         this(name, value, false, 0);
     }
 
+    public StringVariable(String name, boolean list) {
+        this(name, null, list, 0);
+    }
+
     public StringVariable(String name, Object value, boolean list, Integer size) {
         super(name, new StringType(), value, list, size);
 
