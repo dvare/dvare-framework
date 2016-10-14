@@ -99,7 +99,7 @@ public abstract class DataTypeExpression extends Expression {
             Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
             Object result = method.invoke(this, left, right);
 
-            DataType type = DataType.valueOf(LiteralDataType.computeType(result.toString()));
+            DataType type = LiteralDataType.computeDataType(result.toString());
             if (type == null) {
                 type = this.getDataType();
             }
@@ -112,26 +112,18 @@ public abstract class DataTypeExpression extends Expression {
     }
 
 
-    public Boolean compare(OperationExpression operationExpression, Expression leftExpression, Expression rightExpression) throws InterpretException {
+    public Boolean compare(OperationExpression operationExpression, LiteralExpression left, LiteralExpression right) throws InterpretException {
 
-        LiteralExpression left = toLiteralExpression(leftExpression);
-        LiteralExpression right = toLiteralExpression(rightExpression);
+        String methodName = getMethodName(operationExpression.getClass());
+        try {
 
-        if ((left != null && !(left instanceof NullLiteral)) && (right != null && !(right instanceof NullLiteral))) {
+            Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
+            return (Boolean) method.invoke(this, left, right);
 
-
-            String methodName = getMethodName(operationExpression.getClass());
-            try {
-
-                Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
-                return (Boolean) method.invoke(this, left, right);
-
-            } catch (Exception m) {
-                throw new InterpretException(m);
-            }
-
+        } catch (Exception m) {
+            throw new InterpretException(m);
         }
-        return false;
+
     }
 
 

@@ -21,12 +21,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.literal;
+package org.dvare.expression.operation.arithmetic;
 
-import org.dvare.expression.datatype.NullType;
+import org.dvare.annotations.OperationType;
+import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.operation.validation.ArithmeticOperationExpression;
 
-public class NullLiteral<T> extends LiteralExpression {
-    public NullLiteral() {
-        super(null, new NullType());
+@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"startsWith", "Startswith", "StartsWith", "startswith"}, dataTypes = {DataType.StringType})
+public class StartsWith extends ArithmeticOperationExpression {
+    public StartsWith() {
+        super("startsWith", "Startswith", "StartsWith", "startswith");
     }
+
+    public StartsWith copy() {
+        return new StartsWith();
+    }
+
+
 }

@@ -21,19 +21,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.validation;
+package org.dvare.expression.operation.arithmetic;
 
 import org.dvare.annotations.OperationType;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.operation.validation.ArithmeticOperationExpression;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Mul", "mul", "*"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
-public class Multiply extends ArithmeticOperationExpression {
-    public Multiply() {
-        super("Mul", "mul", "*");
+@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"concat", "Concat"}, dataTypes = {DataType.StringType})
+public class Concat extends ArithmeticOperationExpression {
+    public Concat() {
+        super("concat", "Concat");
     }
 
-    public Multiply copy() {
-        return new Multiply();
+    public Concat copy() {
+        return new Concat();
     }
 
 }

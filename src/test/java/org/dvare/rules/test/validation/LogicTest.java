@@ -21,12 +21,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.literal;
+package org.dvare.rules.test.validation;
 
-import org.dvare.expression.datatype.NullType;
 
-public class NullLiteral<T> extends LiteralExpression {
-    public NullLiteral() {
-        super(null, new NullType());
+import junit.framework.TestCase;
+import org.dvare.binding.rule.RuleBinding;
+import org.dvare.config.RuleConfiguration;
+import org.dvare.evaluator.RuleEvaluator;
+import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.exceptions.parser.ExpressionParseException;
+import org.dvare.expression.Expression;
+import org.dvare.rules.test.validation.dataobjects.Parenthesis;
+import org.junit.Test;
+
+public class LogicTest extends TestCase {
+
+
+    @Test
+    public void testApp() throws ExpressionParseException, InterpretException {
+
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String expr = "Variable1 = null";
+        Expression expression = factory.getParser().fromString(expr, Parenthesis.class);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+        Parenthesis parenthesis = new Parenthesis();
+       /* parenthesis.setVariable1("A");*/
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, parenthesis);
+        assertTrue(result);
     }
+
 }

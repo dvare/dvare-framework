@@ -146,20 +146,20 @@ public class Combination extends OperationExpression {
                 stack.add(variableExpression);
 
             } else if (token.startsWith("[")) {
-                String variableType = null;
+                DataType variableType = null;
                 List<String> values = new ArrayList<>();
                 while (!tokens[++i].equals("]")) {
                     String value = tokens[i];
                     if (variableType == null) {
-                        variableType = LiteralDataType.computeType(value);
+                        variableType = LiteralDataType.computeDataType(value);
                     }
                     values.add(value);
                 }
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(values.toArray(new String[values.size()]), DataType.valueOf(variableType));
+                LiteralExpression literalExpression = LiteralType.getLiteralExpression(values.toArray(new String[values.size()]), variableType);
                 stack.add(literalExpression);
             } else {
-                String type = LiteralDataType.computeType(token);
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, DataType.valueOf(type));
+                DataType type = LiteralDataType.computeDataType(token);
+                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
                 stack.add(literalExpression);
             }
         }

@@ -30,51 +30,16 @@ public class LiteralDataType {
     static String dateTime = "\\s*(0[1-9]|1[0-9]|2[0-9]|3[0-1])-(0[1-9]|1[0-2])-([1-9][0-9][0-9][0-9])\\-{1}(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])\\s*";
 
 
-    public static String computeType(String value) {
-        if ("true".equals(value) || "false".equals(value)) {
-            return "BooleanType";
-        }
-        if (value.startsWith("'")) {
-            return "StringType";
-        }
-        if (value.startsWith("R'")) {
-            return "RegexType";
-        }
-        if (value.matches(date)) {
-            return "DateType";
-
-
-        }
-        if (value.matches(dateTime)) {
-            return "DateTimeType";
-
-
-        }
-        if (value.contains(".")) {
-            try {
-                Float.parseFloat(value);
-                return "FloatType";
-            } catch (NumberFormatException e) {
-            }
-        }
-
-
-        try {
-            Integer.parseInt(value);
-            return "IntegerType";
-        } catch (NumberFormatException e) {
-        }
-
-
-        return null;
-    }
-
-
     public static DataType computeDataType(String value) {
+
+        if ("null".equals(value) || "NULL".equals(value)) {
+            return DataType.NullType;
+        }
+
         if ("true".equals(value) || "false".equals(value)) {
             return DataType.BooleanType;
         }
-        if (value.startsWith("'")) {
+        if (value.startsWith("'") && value.endsWith("'")) {
             return DataType.StringType;
         }
         if (value.startsWith("R'")) {
@@ -82,15 +47,11 @@ public class LiteralDataType {
         }
         if (value.matches(date)) {
             return DataType.DateType;
-
-
         }
+
         if (value.matches(dateTime)) {
             return DataType.DateTimeType;
-
-
         }
-
 
         if (value.contains(".")) {
             try {

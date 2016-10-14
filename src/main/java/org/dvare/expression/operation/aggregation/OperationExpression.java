@@ -165,8 +165,8 @@ public abstract class OperationExpression extends Operation {
                 stack.add(variableExpression);
 
             } else if (!token.equals(",")) {
-                String type = LiteralDataType.computeType(token);
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, DataType.valueOf(type));
+                DataType type = LiteralDataType.computeDataType(token);
+                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
                 stack.add(literalExpression);
             }
         }

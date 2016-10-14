@@ -42,11 +42,11 @@ public abstract class Operation extends Expression {
 
     protected final String SELF = "self";
     protected final String DATA = "data";
+    protected final String selfPatten = "self\\..{1,}";
+    protected final String dataPatten = "data\\..{1,}";
     protected List<String> symbols = new ArrayList<>();
     protected Expression leftOperand = null;
     protected Expression rightOperand = null;
-    protected String selfPatten = "self\\..{1,}";
-    protected String dataPatten = "data\\..{1,}";
     protected String leftType;
     protected String rightType;
 

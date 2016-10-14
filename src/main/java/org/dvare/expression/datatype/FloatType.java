@@ -27,6 +27,7 @@ package org.dvare.expression.datatype;
 import org.dvare.annotations.Type;
 import org.dvare.annotations.TypeOperation;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.operation.arithmetic.*;
 import org.dvare.expression.operation.validation.*;
 
 import java.util.List;
@@ -134,7 +135,7 @@ public class FloatType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            org.dvare.expression.operation.validation.Subtract.class
+            Subtract.class
     })
     public Float sub(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();
@@ -143,7 +144,7 @@ public class FloatType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            org.dvare.expression.operation.validation.Multiply.class
+            Multiply.class
     })
     public Float mul(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();
@@ -152,7 +153,7 @@ public class FloatType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            org.dvare.expression.operation.validation.Devide.class
+            Devide.class
     })
     public Float div(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();
@@ -175,7 +176,7 @@ public class FloatType extends DataTypeExpression {
 
     @TypeOperation(operations = {
             org.dvare.expression.operation.aggregation.Min.class,
-            org.dvare.expression.operation.validation.Min.class
+            Min.class
     })
     public Float min(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();
@@ -185,7 +186,7 @@ public class FloatType extends DataTypeExpression {
 
     @TypeOperation(operations = {
             org.dvare.expression.operation.aggregation.Max.class,
-            org.dvare.expression.operation.validation.Max.class
+            Max.class
     })
     public Float max(LiteralExpression left, LiteralExpression right) {
 

@@ -26,6 +26,6 @@ package org.dvare.expression.datatype;
 
 public enum DataType {
 
-    IntegerType, FloatType, StringType, BooleanType, DateTimeType, DateType,
+    IntegerType, FloatType, StringType, BooleanType, DateTimeType, DateType, NullType,
     RegexType, IntegerListType, FloatListType, StringListType, BooleanListType, DateTimeListType, DateListType, ListType;
 }

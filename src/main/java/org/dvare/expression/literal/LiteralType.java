@@ -175,7 +175,6 @@ public class LiteralType {
             throw new IllegalValueException("The provided string must not be null");
         }
 
-
         DataType rightType = LiteralDataType.computeDataType(valueString);
         if (rightType != null) {
             type = rightType;
@@ -259,8 +258,9 @@ public class LiteralType {
                     literalExpression = new DateLiteral(date);
                     break;
                 }
-                default: {
+                case NullType: {
                     literalExpression = new NullLiteral();
+                    break;
                 }
 
 

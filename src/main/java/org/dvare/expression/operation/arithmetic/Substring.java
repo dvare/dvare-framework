@@ -21,19 +21,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.validation;
+package org.dvare.expression.operation.arithmetic;
 
 import org.dvare.annotations.OperationType;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.operation.validation.ArithmeticOperationExpression;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Sub", "sub", "-"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
-public class Subtract extends ArithmeticOperationExpression {
-    public Subtract() {
-        super("Sub", "sub", "-");
+@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Substring", "substring"}, dataTypes = {DataType.StringType})
+public class Substring extends ArithmeticOperationExpression {
+    public Substring() {
+        super("Substring", "substring");
     }
 
-    public Subtract copy() {
-        return new Subtract();
+    public Substring copy() {
+        return new Substring();
     }
 
 }

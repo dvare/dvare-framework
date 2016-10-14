@@ -27,21 +27,32 @@ package org.dvare.parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class ExpressionTokenizer {
     static Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
 
 
-    public static void main(String args[]) {
-        String exp = "V1 in ['A','B'] Semicolon V2 in [2,3] Semicolon V3 in [3.1,3.2] Semicolon V4 in [true,false] Semicolon V5 in [12-05-2016,13-05-2016] Semicolon V6 in [12-05-2016-15:30:00,13-05-2016-15:30:00] Semicolon V7 in [R'B1.*',R'A1.*']";
-
+    public static void main(String args[]) throws IOException {
+        //String exp = "V1 in ['A','B'] ; V2 in [2,3] ; V3 in [3.1,3.2] ; V4 in [true,false] ; V5 in [12-05-2016,13-05-2016] ; V6 in [12-05-2016-15:30:00,13-05-2016-15:30:00] ; V7 in [R'B1.*',R'A1.*']";
+        String exp = "Variable1 = (7 + 3)" +
+                " And Variable1 <> ( 30 - 10)" +
+                " And Variable2 = (4 * 5)" +
+                " And Variable8 = 'A' " +
+                " And Variable1 = ( Variable2 / 2 )" +
+                " And Variable1 = ( Variable1 min Variable2 )" +
+                " And Variable2 = ( Variable1 max Variable2 )";
         for (String token : toToken(exp)) {
 
             System.out.println(token);
         }
+
     }
+
 
     // private String operators[] = new String[]{"(", ")", "[", "]", "<>", "||", "&&", "=>", "!=", "<=", ">=", "=", ">", "<", "!", "+"};
 
@@ -68,28 +79,27 @@ public class ExpressionTokenizer {
             expr = expr.replaceAll("  ", " ");
             logger.debug("Parsing the expression : {}", expr);
 
-            String tokens[] = expr.split(regex);
-
 
             List<String> tokenArray = new ArrayList<>();
-            for (String token : tokens) {
-                token = token.trim();
-                if (!token.isEmpty()) {
+            Iterator<String> tokenizer = Arrays.asList(expr.split(regex)).iterator();
 
-                    if (validateToken(token)) {
 
-                        tokenArray.addAll(parseToken(token));
+            while (tokenizer.hasNext()) {
+                String token = tokenizer.next();
+                if (validateToken(token)) {
 
-                    } else {
-                        tokenArray.add(token);
-                    }
+                    tokenArray.addAll(parseToken(token));
 
+                } else {
+                    tokenArray.add(token);
                 }
+
+
             }
 
 
             logger.debug("tokens: {}", tokenArray);
-            tokens = tokenArray.toArray(new String[tokenArray.size()]);
+            String[] tokens = tokenArray.toArray(new String[tokenArray.size()]);
             return tokens;
         }
 
@@ -243,8 +253,13 @@ public class ExpressionTokenizer {
         return tokenArray;
     }
 
+
     public static String toString(String[] tokens, int pos) {
         StringBuilder stringBuilder = new StringBuilder("");
+
+        if (tokens.length >= pos + 1) {
+            pos++;
+        }
 
         for (int i = 0; i < pos; i++) {
             stringBuilder.append(tokens[i] + " ");

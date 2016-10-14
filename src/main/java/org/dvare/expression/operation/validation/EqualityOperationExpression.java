@@ -8,6 +8,7 @@ import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
+import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -66,14 +67,12 @@ public abstract class EqualityOperationExpression extends OperationExpression {
         DataType variableType = null;
         if (dataTypes != null && leftString.matches(dataPatten)) {
             leftString = leftString.substring(5, leftString.length());
-            // variableType = dataTypes.get(leftString);
             variableType = TypeFinder.findType(leftString, dataTypes);
             leftType = DATA;
         } else {
             if (leftString.matches(selfPatten)) {
                 leftString = leftString.substring(5, leftString.length());
             }
-            // variableType = selfTypes.get(leftString);
             variableType = TypeFinder.findType(leftString, selfTypes);
             leftType = SELF;
         }
@@ -92,10 +91,8 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
         if (variableType == null) {
             if (rightType != null && rightType.equals(SELF) && selfTypes.getTypes().containsKey(rightString)) {
-                //  variableType = selfTypes.get(rightString);
                 variableType = TypeFinder.findType(rightString, selfTypes);
             } else if (rightType != null && rightType.equals(DATA) && dataTypes.getTypes().containsKey(rightString)) {
-                // variableType = dataTypes.get(rightString);
                 variableType = TypeFinder.findType(rightString, dataTypes);
             } else {
                 variableType = LiteralDataType.computeDataType(rightString);
@@ -119,6 +116,9 @@ public abstract class EqualityOperationExpression extends OperationExpression {
         }
 
 
+        // computing expression right side̵
+
+
         Expression right;
         Operation op = ConfigurationRegistry.INSTANCE.getOperation(rightString);
         if (op != null) {
@@ -136,21 +136,19 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             right = VariableType.getVariableType(rightString, rightType);
         } else {
 
-            LiteralExpression literalExpression = null;
             if (rightString.equals("[")) {
-
+                //if List Type
                 List<String> values = new ArrayList<>();
                 while (!tokens[++pos].equals("]")) {
                     String value = tokens[pos];
                     values.add(value);
                 }
-
-                literalExpression = LiteralType.getLiteralExpression(values.toArray(new String[values.size()]), variableType);
+                right = LiteralType.getLiteralExpression(values.toArray(new String[values.size()]), variableType);
             } else {
-                literalExpression = LiteralType.getLiteralExpression(rightString, variableType);
+
+                right = LiteralType.getLiteralExpression(rightString, variableType);
             }
 
-            right = literalExpression;
 
         }
 
@@ -316,11 +314,16 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     public Object interpret(final Object selfRow, final Object dataRow) throws InterpretException {
         interpretOperand(selfRow, dataRow);
 
-        Expression leftExpression = leftValueOperand;
-        LiteralExpression<?> rightExpression = rightValueOperand;
+        if (leftValueOperand != null && rightValueOperand != null) {
 
-        if ((leftExpression != null && !(leftExpression instanceof NullLiteral)) && (rightExpression != null && !(rightExpression instanceof NullLiteral))) {
-            return dataType.compare(this, leftExpression, rightExpression);
+            LiteralExpression left = toLiteralExpression(leftValueOperand);
+            LiteralExpression right = toLiteralExpression(rightValueOperand);
+
+            if (left instanceof NullLiteral || right instanceof NullLiteral) {
+                dataType = new NullType();
+            }
+
+            return dataType.compare(this, left, right);
 
         }
         return false;
@@ -330,12 +333,31 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     public Object interpret(Object dataRow) throws InterpretException {
         interpretOperand(dataRow, null);
 
-        Expression leftExpression = leftValueOperand;
-        LiteralExpression<?> rightExpression = rightValueOperand;
-        if ((leftExpression != null && !(leftExpression instanceof NullLiteral)) && (rightExpression != null && !(rightExpression instanceof NullLiteral))) {
-            return dataType.compare(this, leftExpression, rightExpression);
+        if (leftValueOperand != null && rightValueOperand != null) {
+
+            LiteralExpression left = toLiteralExpression(leftValueOperand);
+            LiteralExpression right = toLiteralExpression(rightValueOperand);
+
+            if (left instanceof NullLiteral || right instanceof NullLiteral) {
+                dataType = new NullType();
+            }
+
+            return dataType.compare(this, left, right);
 
         }
         return false;
+    }
+
+
+    private LiteralExpression toLiteralExpression(Expression expression) {
+
+        LiteralExpression leftExpression = null;
+        if (expression instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) expression;
+            leftExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
+        } else if (expression instanceof LiteralExpression) {
+            leftExpression = (LiteralExpression) expression;
+        }
+        return leftExpression;
     }
 }
