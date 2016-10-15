@@ -1,4 +1,4 @@
-package org.dvare.expression.operation.validation;
+package org.dvare.expression.operation;
 
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -13,7 +13,6 @@ import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.Operation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.parser.ExpressionTokenizer;
@@ -25,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class EqualityOperationExpression extends OperationExpression {
+public abstract class EqualityOperationExpression extends ValidationOperationExpression {
 
     protected DataTypeExpression dataType;
     protected Expression leftValueOperand;
@@ -64,7 +63,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
         pos = pos + 1;
 
 
-        DataType variableType = null;
+        DataType variableType;
         if (dataTypes != null && leftString.matches(dataPatten)) {
             leftString = leftString.substring(5, leftString.length());
             variableType = TypeFinder.findType(leftString, dataTypes);
@@ -76,7 +75,6 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             variableType = TypeFinder.findType(leftString, selfTypes);
             leftType = SELF;
         }
-
 
         if (dataTypes != null && rightString.matches(dataPatten)) {
             rightString = rightString.substring(5, rightString.length());
@@ -100,7 +98,9 @@ public abstract class EqualityOperationExpression extends OperationExpression {
         }
 
 
-        Expression left = null;
+        // computing expression left side̵
+
+        Expression left;
         if (stack.isEmpty()) {
 
             if (leftType != null && leftType.equals(SELF) && selfTypes.getTypes().containsKey(leftString)) {
@@ -120,14 +120,13 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
 
         Expression right;
-        Operation op = ConfigurationRegistry.INSTANCE.getOperation(rightString);
+        OperationExpression op = ConfigurationRegistry.INSTANCE.getOperation(rightString);
         if (op != null) {
             op = op.copy();
             pos = op.parse(tokens, pos + 1, stack, selfTypes);
             right = stack.pop();
 
         } else if (rightType != null && rightType.equals(SELF) && selfTypes.getTypes().containsKey(rightString)) {
-
             DataType rightType = TypeFinder.findType(rightString, selfTypes);
             right = VariableType.getVariableType(rightString, rightType);
         } else if (rightType != null && rightType.equals(DATA) && dataTypes.getTypes().containsKey(rightString)) {
@@ -173,7 +172,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             VariableExpression vR = (VariableExpression) right;
 
             if (!vL.getType().getDataType().equals(vR.getType().getDataType())) {
-                String message = String.format("%s Operation  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), vL.getType().getDataType(), vR.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos));
+                String message = String.format("%s OperationExpression  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), vL.getType().getDataType(), vR.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos));
                 logger.error(message);
                 throw new IllegalOperationException(message);
             }
@@ -181,7 +180,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
         }
 
         if (dataType != null && !isLegalOperation(dataType.getDataType())) {
-            String message = String.format("Operation %s not possible on type %s at %s", this.getClass().getSimpleName(), dataType.getDataType(), ExpressionTokenizer.toString(tokens, pos));
+            String message = String.format("OperationExpression %s not possible on type %s at %s", this.getClass().getSimpleName(), dataType.getDataType(), ExpressionTokenizer.toString(tokens, pos));
             logger.error(message);
             throw new IllegalOperationException(message);
         }
@@ -198,7 +197,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
             validate(left, right, tokens, pos);
 
-            logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
+            logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
             stack.push(this);
             return pos;
@@ -217,7 +216,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             validate(left, right, tokens, pos);
 
 
-            logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
+            logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
             stack.push(this);
             return pos;
@@ -240,8 +239,8 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
         Expression leftExpression = null;
         Expression left = this.leftOperand;
-        if (left instanceof Operation) {
-            Operation operation = (Operation) left;
+        if (left instanceof OperationExpression) {
+            OperationExpression operation = (OperationExpression) left;
 
             LiteralExpression literalExpression = null;
             if (selfRow != null && dataRow != null) {
@@ -284,8 +283,8 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
         Expression right = this.rightOperand;
         LiteralExpression<?> rightExpression = null;
-        if (right instanceof Operation) {
-            Operation operation = (Operation) right;
+        if (right instanceof OperationExpression) {
+            OperationExpression operation = (OperationExpression) right;
             if (selfRow != null && dataRow != null) {
                 rightExpression = (LiteralExpression) operation.interpret(selfRow, dataRow);
             } else {
@@ -349,7 +348,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     }
 
 
-    private LiteralExpression toLiteralExpression(Expression expression) {
+    protected LiteralExpression toLiteralExpression(Expression expression) {
 
         LiteralExpression leftExpression = null;
         if (expression instanceof VariableExpression) {

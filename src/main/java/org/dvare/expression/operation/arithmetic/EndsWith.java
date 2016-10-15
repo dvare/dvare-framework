@@ -25,10 +25,10 @@ package org.dvare.expression.operation.arithmetic;
 
 import org.dvare.annotations.OperationType;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.operation.validation.ArithmeticOperationExpression;
+import org.dvare.expression.operation.ChainArithmeticOperationExpression;
 
 @org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"endsWith", "Endswith", "EndsWith", "endswith"}, dataTypes = {DataType.StringType})
-public class EndsWith extends ArithmeticOperationExpression {
+public class EndsWith extends ChainArithmeticOperationExpression {
     public EndsWith() {
         super("endsWith", "Endswith", "EndsWith", "endswith");
     }

@@ -30,6 +30,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 @Operation(type = OperationType.AGGREGATION, symbols = {"Sum", "sum"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
-public class Sum extends OperationExpression {
+public class Sum extends AggregationOperationExpression {
     static Logger logger = LoggerFactory.getLogger(Sum.class);
 
 
@@ -75,7 +76,7 @@ public class Sum extends OperationExpression {
                     break;
                 }
                 default: {
-                    throw new IllegalOperationException("Sum Operation Not Allowed");
+                    throw new IllegalOperationException("Sum OperationExpression Not Allowed");
                 }
 
             }

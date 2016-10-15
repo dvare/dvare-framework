@@ -25,7 +25,7 @@ package org.dvare.expression.operation.arithmetic;
 
 import org.dvare.annotations.OperationType;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.operation.validation.ArithmeticOperationExpression;
+import org.dvare.expression.operation.ArithmeticOperationExpression;
 
 @org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"concat", "Concat"}, dataTypes = {DataType.StringType})
 public class Concat extends ArithmeticOperationExpression {

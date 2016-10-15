@@ -56,4 +56,24 @@ public class LogicTest extends TestCase {
         assertTrue(result);
     }
 
+
+    @Test
+    public void testApp2() throws ExpressionParseException, InterpretException {
+
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String expr = "Variable1->substring(1,2) = 'va'";
+        Expression expression = factory.getParser().fromString(expr, Parenthesis.class);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+        Parenthesis parenthesis = new Parenthesis();
+        parenthesis.setVariable1("dvare");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, parenthesis);
+        assertTrue(result);
+    }
+
 }

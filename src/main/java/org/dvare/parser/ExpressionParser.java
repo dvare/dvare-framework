@@ -33,8 +33,8 @@ import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralDataType;
-import org.dvare.expression.operation.Operation;
-import org.dvare.expression.operation.condition.ConditionOperation;
+import org.dvare.expression.operation.ConditionOperationExpression;
+import org.dvare.expression.operation.OperationExpression;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,7 +142,7 @@ public class ExpressionParser {
         }
         for (int i = 0; i < tokens.length - 1; i++) {
             String token = tokens[i];
-            Operation op = configurationRegistry.getOperation(token);
+            OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
 
@@ -158,7 +158,7 @@ public class ExpressionParser {
                         DataType dataType = LiteralDataType.computeDataType(token);
                         if (dataType == null) {
 
-                            String message = String.format("%s is not an Operation or Variable near \"%s\"", token, ExpressionTokenizer.toString(tokens, i));
+                            String message = String.format("%s is not an OperationExpression or Variable near \"%s\"", token, ExpressionTokenizer.toString(tokens, i));
                             logger.error(message);
                             throw new IllegalOperationException(message);
 
@@ -184,7 +184,7 @@ public class ExpressionParser {
 
             for (int i = 0; i < tokens.length - 1; i++) {
 
-                ConditionOperation op = configurationRegistry.getConditionOperation(tokens[i]);
+                ConditionOperationExpression op = configurationRegistry.getConditionOperation(tokens[i]);
                 if (op != null) {
                     op = op.copy();
                     i = op.parse(tokens, i, stack, aTypes, vTypes);

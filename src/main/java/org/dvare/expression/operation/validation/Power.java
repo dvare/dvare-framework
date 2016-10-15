@@ -26,6 +26,7 @@ package org.dvare.expression.operation.validation;
 import org.dvare.annotations.Operation;
 import org.dvare.annotations.OperationType;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.operation.ArithmeticOperationExpression;
 
 @Operation(type = OperationType.VALIDATION, symbols = {"Pow", "pow", "^"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Power extends ArithmeticOperationExpression {

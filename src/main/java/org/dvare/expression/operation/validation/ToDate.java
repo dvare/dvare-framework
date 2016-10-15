@@ -32,7 +32,8 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.DateLiteral;
-import org.dvare.expression.operation.Operation;
+import org.dvare.expression.operation.OperationExpression;
+import org.dvare.expression.operation.ValidationOperationExpression;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,7 +41,7 @@ import java.util.Date;
 import java.util.Stack;
 
 @org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"ToDate", "toDate"}, dataTypes = {DataType.DateType, DataType.DateTimeType})
-public class ToDate extends OperationExpression {
+public class ToDate extends ValidationOperationExpression {
 
 
     public ToDate() {
@@ -92,7 +93,7 @@ public class ToDate extends OperationExpression {
         for (int i = pos; i < tokens.length; i++) {
             String token = tokens[i];
 
-            Operation op = configurationRegistry.getOperation(token);
+            OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
                 // we found an operation

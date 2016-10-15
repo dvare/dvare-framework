@@ -29,13 +29,15 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.operation.ConditionOperationExpression;
+import org.dvare.expression.operation.OperationExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
 
 @Operation(type = OperationType.CONDITION, symbols = {"THEN", "then"})
-public class THEN extends ConditionOperation {
+public class THEN extends ConditionOperationExpression {
     static Logger logger = LoggerFactory.getLogger(THEN.class);
 
 
@@ -60,7 +62,7 @@ public class THEN extends ConditionOperation {
 
         for (int i = pos; i < tokens.length; i++) {
 
-            org.dvare.expression.operation.Operation aggregationOperation = configurationRegistry.getOperation(tokens[i]);
+            OperationExpression aggregationOperation = configurationRegistry.getOperation(tokens[i]);
             if (aggregationOperation != null) {
                 aggregationOperation = aggregationOperation.copy();
                 i = aggregationOperation.parse(tokens, i, stack, aTypes, vTypes);

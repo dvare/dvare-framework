@@ -30,6 +30,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 @Operation(type = OperationType.AGGREGATION, symbols = {"Minimum", "minimum"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
-public class Min extends OperationExpression {
+public class Min extends AggregationOperationExpression {
     static Logger logger = LoggerFactory.getLogger(Min.class);
 
 
@@ -72,7 +73,7 @@ public class Min extends OperationExpression {
                 }
 
                 default: {
-                    throw new IllegalOperationException("Min Operation Not Allowed");
+                    throw new IllegalOperationException("Min OperationExpression Not Allowed");
                 }
 
             }

@@ -6,6 +6,8 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.AggregationOperationExpression;
+import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 @Operation(type = OperationType.AGGREGATION, symbols = {"Value", "value"})
-public class Value extends OperationExpression {
+public class Value extends AggregationOperationExpression {
     static Logger logger = LoggerFactory.getLogger(Value.class);
 
 
@@ -37,8 +39,8 @@ public class Value extends OperationExpression {
         } else if (right instanceof LiteralExpression) {
             LiteralExpression literalExpression = (LiteralExpression) right;
             return literalExpression;
-        } else if (right instanceof org.dvare.expression.operation.Operation) {
-            org.dvare.expression.operation.Operation operation = (org.dvare.expression.operation.Operation) right;
+        } else if (right instanceof OperationExpression) {
+            OperationExpression operation = (OperationExpression) right;
             Object result = operation.interpret(aggregation, dataSet);
             if (result instanceof LiteralExpression) {
                 LiteralExpression literalExpression = (LiteralExpression) result;
@@ -63,8 +65,8 @@ public class Value extends OperationExpression {
         } else if (right instanceof LiteralExpression) {
             LiteralExpression literalExpression = (LiteralExpression) right;
             return literalExpression;
-        } else if (right instanceof org.dvare.expression.operation.Operation && !dataSet.isEmpty()) {
-            org.dvare.expression.operation.Operation operation = (org.dvare.expression.operation.Operation) right;
+        } else if (right instanceof OperationExpression && !dataSet.isEmpty()) {
+            OperationExpression operation = (OperationExpression) right;
             Object result = operation.interpret(aggregation, dataSet);
             if (result instanceof LiteralExpression) {
                 LiteralExpression literalExpression = (LiteralExpression) result;

@@ -24,8 +24,8 @@ THE SOFTWARE.*/
 package org.dvare.config;
 
 import org.dvare.binding.function.FunctionBinding;
-import org.dvare.expression.operation.Operation;
-import org.dvare.expression.operation.condition.ConditionOperation;
+import org.dvare.expression.operation.ConditionOperationExpression;
+import org.dvare.expression.operation.OperationExpression;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,9 +38,9 @@ public enum ConfigurationRegistry {
 
     private final Map<String, FunctionBinding> functions = new HashMap<String, FunctionBinding>();
 
-    private final Map<String, Operation> operations = new HashMap<String, Operation>();
+    private final Map<String, OperationExpression> operations = new HashMap<String, OperationExpression>();
 
-    private final Map<String, ConditionOperation> conditionOperations = new HashMap<String, ConditionOperation>();
+    private final Map<String, ConditionOperationExpression> conditionOperations = new HashMap<String, ConditionOperationExpression>();
 
 
     public List<String> tokens() {
@@ -52,7 +52,7 @@ public enum ConfigurationRegistry {
     }
 
 
-    public void registerOperation(Operation op) {
+    public void registerOperation(OperationExpression op) {
         for (String symbol : op.getSymbols()) {
             if (!operations.containsKey(symbol))
                 operations.put(symbol, op);
@@ -60,9 +60,7 @@ public enum ConfigurationRegistry {
     }
 
 
-
-
-    public void registerConditionOperation(ConditionOperation op) {
+    public void registerConditionOperation(ConditionOperationExpression op) {
         for (String symbol : op.getSymbols()) {
             if (!conditionOperations.containsKey(symbol))
                 conditionOperations.put(symbol, op);
@@ -74,12 +72,12 @@ public enum ConfigurationRegistry {
             functions.put(binding.getMethodName(), binding);
     }
 
-    public Operation getOperation(String symbol) {
+    public OperationExpression getOperation(String symbol) {
         return this.operations.get(symbol);
     }
 
 
-    public ConditionOperation getConditionOperation(String symbol) {
+    public ConditionOperationExpression getConditionOperation(String symbol) {
         return this.conditionOperations.get(symbol);
 
     }

@@ -25,9 +25,10 @@ package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.OperationType;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.operation.ValidationOperationExpression;
 
 @org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"OR", "or", "||"})
-public class OR extends OperationExpression {
+public class OR extends ValidationOperationExpression {
     public OR() {
         super("OR", "or", "||");
     }

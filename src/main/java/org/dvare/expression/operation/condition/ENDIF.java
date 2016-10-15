@@ -26,13 +26,14 @@ package org.dvare.expression.operation.condition;
 import org.dvare.annotations.Operation;
 import org.dvare.annotations.OperationType;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.operation.ConditionOperationExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @Operation(type = OperationType.CONDITION, symbols = {"ENDIF", "endif"})
-public class ENDIF extends ConditionOperation {
+public class ENDIF extends ConditionOperationExpression {
     static Logger logger = LoggerFactory.getLogger(ENDIF.class);
 
 

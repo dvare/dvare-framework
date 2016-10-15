@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class Operation extends Expression {
+public abstract class OperationExpression extends Expression {
 
     protected final String SELF = "self";
     protected final String DATA = "data";
@@ -51,15 +51,15 @@ public abstract class Operation extends Expression {
     protected String rightType;
 
 
-    public Operation(String symbol) {
+    public OperationExpression(String symbol) {
         this.symbols.add(symbol);
     }
 
-    public Operation(List<String> symbols) {
+    public OperationExpression(List<String> symbols) {
         this.symbols.addAll(symbols);
     }
 
-    public Operation(String... symbols) {
+    public OperationExpression(String... symbols) {
         this.symbols.addAll(Arrays.asList(symbols));
     }
 
@@ -67,7 +67,7 @@ public abstract class Operation extends Expression {
         return this.symbols;
     }
 
-    public abstract Operation copy();
+    public abstract OperationExpression copy();
 
 
     public abstract int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException;
@@ -102,8 +102,8 @@ public abstract class Operation extends Expression {
     private Node<String> ASTNusted(Expression expression) {
 
         Node root;
-        if (expression instanceof Operation) {
-            Operation operation = (Operation) expression;
+        if (expression instanceof OperationExpression) {
+            OperationExpression operation = (OperationExpression) expression;
 
             root = operation.AST();
         } else if (expression instanceof VariableExpression<?>) {
