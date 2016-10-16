@@ -24,17 +24,66 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.arithmetic;
 
 import org.dvare.annotations.OperationType;
+import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.operation.ArithmeticOperationExpression;
+import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.ChainArithmeticOperationExpression;
+import org.dvare.util.TrimString;
 
 @org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"concat", "Concat"}, dataTypes = {DataType.StringType})
-public class Concat extends ArithmeticOperationExpression {
+public class Concat extends ChainArithmeticOperationExpression {
     public Concat() {
         super("concat", "Concat");
     }
 
     public Concat copy() {
         return new Concat();
+    }
+
+    private Object contains(Object selfRow, Object dataRow) throws InterpretException {
+        interpretOperand(selfRow, dataRow);
+        LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
+        if (!(literalExpression instanceof NullLiteral)) {
+
+            String value = literalExpression.getValue().toString();
+            value = TrimString.trim(value);
+
+
+            LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
+
+            String start = null;
+            if (startExpression.getValue() instanceof Integer) {
+                start = (String) startExpression.getValue();
+            } else {
+                start = startExpression.getValue().toString();
+            }
+
+            start = TrimString.trim(start);
+
+            value = value.concat(start);
+
+            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataType);
+            return returnExpression;
+
+        }
+
+        return null;
+    }
+
+    @Override
+    public Object interpret(Object dataRow) throws InterpretException {
+
+
+        return contains(dataRow, null);
+
+    }
+
+    @Override
+    public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
+
+        return contains(selfRow, dataRow);
     }
 
 }

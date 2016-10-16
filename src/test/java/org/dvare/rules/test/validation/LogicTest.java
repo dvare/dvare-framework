@@ -31,7 +31,7 @@ import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.rules.test.validation.dataobjects.Parenthesis;
+import org.dvare.rules.test.validation.dataobjects.ArithmeticOperation;
 import org.junit.Test;
 
 public class LogicTest extends TestCase {
@@ -43,16 +43,16 @@ public class LogicTest extends TestCase {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        String expr = "Variable1 = null";
-        Expression expression = factory.getParser().fromString(expr, Parenthesis.class);
+        String expr = "Variable1 = null && Variable5 = ''";
+        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
 
         RuleBinding rule = new RuleBinding(expression);
 
-        Parenthesis parenthesis = new Parenthesis();
-       /* parenthesis.setVariable1("A");*/
+        ArithmeticOperation ArithmeticOperation = new ArithmeticOperation();
+        ArithmeticOperation.setVariable5("");
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(rule, parenthesis);
+        boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
         assertTrue(result);
     }
 
@@ -63,16 +63,54 @@ public class LogicTest extends TestCase {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        String expr = "Variable1->substring(1,2) = 'va'";
-        Expression expression = factory.getParser().fromString(expr, Parenthesis.class);
+        String expr = "Variable5->substring(1,2) = 'va'";
+        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
 
         RuleBinding rule = new RuleBinding(expression);
 
-        Parenthesis parenthesis = new Parenthesis();
-        parenthesis.setVariable1("dvare");
+        ArithmeticOperation ArithmeticOperation = new ArithmeticOperation();
+        ArithmeticOperation.setVariable5("dvare");
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(rule, parenthesis);
+        boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testApp3() throws ExpressionParseException, InterpretException {
+
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String expr = "Variable5->startswith('dva')";
+        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+        ArithmeticOperation ArithmeticOperation = new ArithmeticOperation();
+        ArithmeticOperation.setVariable5("dvare");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testApp4() throws ExpressionParseException, InterpretException {
+
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String expr = "Variable5->endswith('re') = true";
+        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+        ArithmeticOperation ArithmeticOperation = new ArithmeticOperation();
+        ArithmeticOperation.setVariable5("dvare");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
         assertTrue(result);
     }
 

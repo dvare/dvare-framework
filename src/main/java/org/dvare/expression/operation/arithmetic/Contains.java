@@ -33,17 +33,17 @@ import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.ChainArithmeticOperationExpression;
 import org.dvare.util.TrimString;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"endsWith", "Endswith", "EndsWith", "endswith"}, dataTypes = {DataType.StringType})
-public class EndsWith extends ChainArithmeticOperationExpression {
-    public EndsWith() {
-        super("endsWith", "Endswith", "EndsWith", "endswith");
+@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Contains", "contains"}, dataTypes = {DataType.StringType})
+public class Contains extends ChainArithmeticOperationExpression {
+    public Contains() {
+        super("Contains", "contains");
     }
 
-    public EndsWith copy() {
-        return new EndsWith();
+    public Contains copy() {
+        return new Contains();
     }
 
-    private Object endswith(Object selfRow, Object dataRow) throws InterpretException {
+    private Object contains(Object selfRow, Object dataRow) throws InterpretException {
         interpretOperand(selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (!(literalExpression instanceof NullLiteral)) {
@@ -54,16 +54,17 @@ public class EndsWith extends ChainArithmeticOperationExpression {
 
             LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
 
-            String end = null;
+            String start = null;
             if (startExpression.getValue() instanceof Integer) {
-                end = (String) startExpression.getValue();
+                start = (String) startExpression.getValue();
             } else {
-                end = startExpression.getValue().toString();
+                start = startExpression.getValue().toString();
             }
 
-            end = TrimString.trim(end);
+            start = TrimString.trim(start);
 
-            Boolean result = value.endsWith(end);
+            Boolean result = value.contains(start);
+
             try {
                 LiteralExpression returnExpression = LiteralType.getLiteralExpression(result.toString(), DataType.BooleanType);
                 return returnExpression;
@@ -79,14 +80,14 @@ public class EndsWith extends ChainArithmeticOperationExpression {
     public Object interpret(Object dataRow) throws InterpretException {
 
 
-        return endswith(dataRow, null);
+        return contains(dataRow, null);
 
     }
 
     @Override
     public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
 
-        return endswith(selfRow, dataRow);
+        return contains(selfRow, dataRow);
     }
 
 }
