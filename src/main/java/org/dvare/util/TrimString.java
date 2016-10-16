@@ -29,7 +29,7 @@ public class TrimString {
 
         if (!value.isEmpty()) {
             char[] chars = value.toCharArray();
-            if (chars.length > 2) {
+            if (chars.length > 1) {
                 if (chars[0] == '\'' && chars[chars.length - 1] == '\'') {
                     if (value.length() >= 1) {
                         value = value.substring(1, value.length() - 1);

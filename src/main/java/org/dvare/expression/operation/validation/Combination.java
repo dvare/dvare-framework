@@ -13,7 +13,8 @@ import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.Operation;
+import org.dvare.expression.operation.OperationExpression;
+import org.dvare.expression.operation.ValidationOperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
@@ -23,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 @org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Combination", "combination", "comb"})
-public class Combination extends OperationExpression {
+public class Combination extends ValidationOperationExpression {
     static Logger logger = LoggerFactory.getLogger(Combination.class);
 
     protected List<Expression> leftOperand;
@@ -92,7 +93,7 @@ public class Combination extends OperationExpression {
 
         this.leftOperand = expressions;
 
-        logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
+        logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
     }
 
@@ -116,7 +117,7 @@ public class Combination extends OperationExpression {
         for (int i = pos; i < tokens.length; i++) {
             String token = tokens[i];
 
-            Operation op = configurationRegistry.getOperation(token);
+            OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
                 if (op.getClass().equals(RightPriority.class)) {
@@ -146,20 +147,20 @@ public class Combination extends OperationExpression {
                 stack.add(variableExpression);
 
             } else if (token.startsWith("[")) {
-                String variableType = null;
+                DataType variableType = null;
                 List<String> values = new ArrayList<>();
                 while (!tokens[++i].equals("]")) {
                     String value = tokens[i];
                     if (variableType == null) {
-                        variableType = LiteralDataType.computeType(value);
+                        variableType = LiteralDataType.computeDataType(value);
                     }
                     values.add(value);
                 }
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(values.toArray(new String[values.size()]), DataType.valueOf(variableType));
+                LiteralExpression literalExpression = LiteralType.getLiteralExpression(values.toArray(new String[values.size()]), variableType);
                 stack.add(literalExpression);
             } else {
-                String type = LiteralDataType.computeType(token);
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, DataType.valueOf(type));
+                DataType type = LiteralDataType.computeDataType(token);
+                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
                 stack.add(literalExpression);
             }
         }

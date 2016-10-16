@@ -4,11 +4,13 @@
 
     <groupId>org.dvare</groupId>
     <artifactId>dvare-framework</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
 
     <description>DVARE is lightweight expression evaluator for Java, that allows evaluating Arithmetic and boolean
         Comparison expressions.
     </description>
+
+
     <packaging>jar</packaging>
 
     <name>DVARE FRAMEWORK</name>
@@ -38,6 +40,7 @@
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
         <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
         <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+        <spring.version>4.3.2.RELEASE</spring.version>
     </properties>
 
     <repositories>
@@ -98,6 +101,20 @@
 
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

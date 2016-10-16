@@ -35,6 +35,10 @@ public class IntegerVariable extends VariableExpression {
         this(name, value, false, 0);
     }
 
+    public IntegerVariable(String name, boolean list) {
+        this(name, null, list, 0);
+    }
+
     public IntegerVariable(String name, Object value, boolean list, Integer size) {
         super(name, new IntegerType(), value, list, size);
     }

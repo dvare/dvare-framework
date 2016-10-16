@@ -28,11 +28,12 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.operation.ValidationOperationExpression;
 
 import java.util.Stack;
 
 @org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"NOT", "Not", "not", "!"})
-public class Not extends OperationExpression {
+public class Not extends ValidationOperationExpression {
     public Not() {
         super("NOT", "Not", "not", "!");
     }

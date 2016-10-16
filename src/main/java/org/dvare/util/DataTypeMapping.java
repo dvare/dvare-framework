@@ -130,24 +130,48 @@ public class DataTypeMapping {
                 return Boolean.class;
 
             }
+            case BooleanListType: {
+                return Boolean[].class;
+
+            }
             case FloatType: {
 
                 return Float.class;
             }
+            case FloatListType: {
+
+                return Float[].class;
+            }
             case IntegerType: {
                 return Integer.class;
+
+            }
+            case IntegerListType: {
+                return Integer[].class;
 
             }
             case StringType: {
 
                 return String.class;
             }
+            case StringListType: {
+
+                return String[].class;
+            }
             case DateTimeType: {
 
                 return Date.class;
             }
+            case DateTimeListType: {
+
+                return Date[].class;
+            }
             case DateType: {
                 return Date.class;
+
+            }
+            case DateListType: {
+                return Date[].class;
 
             }
             case RegexType: {
@@ -168,32 +192,37 @@ public class DataTypeMapping {
     public static Class getDataTypeMappingArray(DataType type) {
 
         switch (type) {
-            case BooleanType: {
+            case BooleanType:
+            case BooleanListType: {
                 return Boolean[].class;
-
             }
-            case FloatType: {
 
+            case FloatType:
+            case FloatListType: {
                 return Float[].class;
             }
-            case IntegerType: {
+
+            case IntegerType:
+            case IntegerListType: {
                 return Integer[].class;
-
             }
-            case StringType: {
 
+            case StringType:
+            case StringListType: {
                 return String[].class;
             }
-            case DateTimeType: {
 
+            case DateTimeType:
+            case DateTimeListType: {
                 return Date[].class;
             }
-            case DateType: {
-                return Date[].class;
 
+            case DateType:
+            case DateListType: {
+                return Date[].class;
             }
+
             case RegexType: {
-
                 return String[].class;
             }
 

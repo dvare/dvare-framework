@@ -28,11 +28,13 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.exceptions.parser.ExpressionParseException;
+import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.operation.Operation;
-import org.dvare.expression.operation.condition.ConditionOperation;
+import org.dvare.expression.literal.LiteralDataType;
+import org.dvare.expression.operation.ConditionOperationExpression;
+import org.dvare.expression.operation.OperationExpression;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +45,8 @@ import java.util.Map;
 import java.util.Stack;
 
 public class ExpressionParser {
-
+    protected static final String selfPatten = "self\\..{1,}";
+    protected static final String dataPatten = "data\\..{1,}";
     static Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
 
     private ConfigurationRegistry configurationRegistry = null;
@@ -124,7 +127,7 @@ public class ExpressionParser {
 
     }
 
-    public Expression fromStringSimple(String expr, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
+    public Expression fromStringSimple(String expr, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         Stack<Expression> stack = new Stack<>();
 
         String[] tokens = ExpressionTokenizer.toToken(expr);
@@ -138,14 +141,30 @@ public class ExpressionParser {
 
         }
         for (int i = 0; i < tokens.length - 1; i++) {
-            Operation op = configurationRegistry.getOperation(tokens[i]);
+            String token = tokens[i];
+            OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
 
-                if (vTypes != null) {
-                    i = op.parse(tokens, i, stack, aTypes, vTypes);
+                if (dataTypes != null) {
+                    i = op.parse(tokens, i, stack, selfTypes, dataTypes);
                 } else {
-                    i = op.parse(tokens, i, stack, aTypes);
+                    i = op.parse(tokens, i, stack, selfTypes);
+                }
+            } else {
+                if (!token.matches(selfPatten) && !token.matches(dataPatten)) {
+
+                    if (selfTypes == null || !selfTypes.getTypes().containsKey(token)) {
+                        DataType dataType = LiteralDataType.computeDataType(token);
+                        if (dataType == null) {
+
+                            String message = String.format("%s is not an OperationExpression or Variable near \"%s\"", token, ExpressionTokenizer.toString(tokens, i));
+                            logger.error(message);
+                            throw new IllegalOperationException(message);
+
+
+                        }
+                    }
                 }
             }
         }
@@ -165,7 +184,7 @@ public class ExpressionParser {
 
             for (int i = 0; i < tokens.length - 1; i++) {
 
-                ConditionOperation op = configurationRegistry.getConditionOperation(tokens[i]);
+                ConditionOperationExpression op = configurationRegistry.getConditionOperation(tokens[i]);
                 if (op != null) {
                     op = op.copy();
                     i = op.parse(tokens, i, stack, aTypes, vTypes);

@@ -29,23 +29,19 @@ import org.dvare.expression.datatype.DataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 @FunctionService
 public class FuntionProvider {
     static Logger logger = LoggerFactory.getLogger(FuntionProvider.class);
 
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.StringType})
-    public Integer addFiveFunction(Integer veriable, String veriable2) {
-        logger.debug("inside addFiveFuntion with arguments : " + veriable + " and " + veriable2);
-        return veriable + 5;
+    public Integer addFiveFunction(Integer variable, String variable2) {
+        logger.debug("inside addFiveFuntion with arguments : " + variable + " and " + variable2);
+        return variable + 5;
     }
 
 
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.StringType})
-    public Integer addRowsFunction(Object[] rows) {
+    public Integer addRowsFunction(Integer[] rows) {
         logger.debug("inside addRowsFunction with rows : " + rows.length);
 
         Integer result = 0;
@@ -60,9 +56,9 @@ public class FuntionProvider {
     }
 
 
-    @FunctionMethod(returnType = DataType.IntegerType, list = true, parameters = {DataType.IntegerType})
-    public List<Integer> testFun2(Integer veriable) {
-        logger.debug("inside testFun2 with argument literal: " + veriable);
-        return new ArrayList<Integer>(Arrays.asList(new Integer[]{3, 5, 7}));
+    @FunctionMethod(returnType = DataType.IntegerType, list = false, parameters = {DataType.IntegerType, DataType.IntegerType})
+    public Integer addTenFunction(Integer variable, Integer[] values) {
+        logger.debug("inside addFiveFuntion with arguments : " + variable + " and " + values.length);
+        return variable + 10;
     }
 }

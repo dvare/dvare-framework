@@ -6,6 +6,7 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.operation.AssignOperationExpression;
 
 import java.util.List;
 import java.util.Stack;
@@ -24,7 +25,7 @@ public class Semicolon extends AssignOperationExpression {
     public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
         pos = parseOperands(tokens, pos + 1, stack, aTypeBinding, vTypeBinding);
 
-        logger.debug("Aggregation Operation Call Expression : {}", getClass().getSimpleName());
+        logger.debug("Aggregation OperationExpression Call Expression : {}", getClass().getSimpleName());
 
         stack.push(this);
 

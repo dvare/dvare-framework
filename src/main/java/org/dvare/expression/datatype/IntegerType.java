@@ -27,6 +27,7 @@ package org.dvare.expression.datatype;
 import org.dvare.annotations.Type;
 import org.dvare.annotations.TypeOperation;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.operation.arithmetic.*;
 import org.dvare.expression.operation.validation.*;
 
 import java.util.List;
@@ -134,7 +135,7 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            org.dvare.expression.operation.validation.Subtract.class
+            Subtract.class
     })
     public Integer sub(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -143,7 +144,7 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            org.dvare.expression.operation.validation.Multiply.class
+            Multiply.class
     })
     public Integer mul(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -152,7 +153,7 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @TypeOperation(operations = {
-            org.dvare.expression.operation.validation.Devide.class
+            Devide.class
     })
     public Integer div(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -175,7 +176,7 @@ public class IntegerType extends DataTypeExpression {
 
     @TypeOperation(operations = {
             org.dvare.expression.operation.aggregation.Min.class,
-            org.dvare.expression.operation.validation.Min.class
+            Min.class
     })
     public Integer min(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -185,7 +186,7 @@ public class IntegerType extends DataTypeExpression {
 
     @TypeOperation(operations = {
             org.dvare.expression.operation.aggregation.Max.class,
-            org.dvare.expression.operation.validation.Max.class
+            Max.class
     })
     public Integer max(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();

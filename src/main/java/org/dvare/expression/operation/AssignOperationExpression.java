@@ -1,4 +1,4 @@
-package org.dvare.expression.operation.aggregation;
+package org.dvare.expression.operation;
 
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class AssignOperationExpression extends OperationExpression {
-    static Logger logger = LoggerFactory.getLogger(AssignOperationExpression.class);
+public abstract class AssignOperationExpression extends AggregationOperationExpression {
+    protected static Logger logger = LoggerFactory.getLogger(AssignOperationExpression.class);
 
 
     public AssignOperationExpression(String symbol) {

@@ -7,6 +7,7 @@ import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.operation.EqualityOperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.parser.ExpressionTokenizer;
 
@@ -55,13 +56,13 @@ public class In extends EqualityOperationExpression {
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) right;
             if (!variableExpression.isList()) {
-                message = String.format("List Operation %s not possible on type %s near %s", this.getClass().getSimpleName(), variableExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
+                message = String.format("List OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), variableExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
 
             }
         } else if (right instanceof LiteralExpression) {
             LiteralExpression literalExpression = (LiteralExpression) right;
             if (!(literalExpression instanceof ListLiteral)) {
-                message = String.format("List Operation %s not possible on type %s near %s", this.getClass().getSimpleName(), literalExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
+                message = String.format("List OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), literalExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
 
             }
         }
@@ -75,12 +76,12 @@ public class In extends EqualityOperationExpression {
 
         if (dataType != null && !isLegalOperation(dataType.getDataType())) {
 
-            String message2 = String.format("Operation %s not possible on type %s near %s", this.getClass().getSimpleName(), left.getClass().getSimpleName(), ExpressionTokenizer.toString(tokens, pos + 2));
+            String message2 = String.format("OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), left.getClass().getSimpleName(), ExpressionTokenizer.toString(tokens, pos + 2));
             logger.error(message2);
             throw new IllegalOperationException(message2);
         }
 
-        logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
+        logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
     }
 }

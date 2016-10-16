@@ -58,24 +58,22 @@ public class FunctionTestExclude extends TestCase {
         assertTrue(result);
     }
 
-
-  /*  @Test
-    public void testApp2()  throws ExpressionParseException, InterpretException {
+    @Test
+    public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.rules.util"});
 
-        Expression expression = configuration.getParser().fromString("Variable1 in fun ( testFun2 , Variable2 )", Function.class);
+        Expression expression = configuration.getParser().fromString("Variable1 = fun ( addTenFunction , Variable2, [4,5,6] )", Function.class);
         RuleBinding rule = new RuleBinding(expression);
 
-        Function function=new Function();
-        function.setVariable1(5);
-        function.setVariable2(9);
+        Function function = new Function();
+        function.setVariable1(20);
+        function.setVariable2(10);
 
         RuleEvaluator evaluator = configuration.getEvaluator();
-        boolean result = evaluator.evaluate(rule, function);
+        boolean result = (Boolean) evaluator.evaluate(rule, function);
         assertTrue(result);
     }
-*/
 
 
 }

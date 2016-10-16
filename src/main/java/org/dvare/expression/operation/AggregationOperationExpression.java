@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.aggregation;
+package org.dvare.expression.operation;
 
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.TypeBinding;
@@ -36,7 +36,6 @@ import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.Operation;
 import org.dvare.expression.operation.validation.LeftPriority;
 import org.dvare.expression.operation.validation.RightPriority;
 import org.dvare.expression.veriable.VariableExpression;
@@ -48,18 +47,18 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class OperationExpression extends Operation {
-    static Logger logger = LoggerFactory.getLogger(OperationExpression.class);
+public abstract class AggregationOperationExpression extends OperationExpression {
+    static Logger logger = LoggerFactory.getLogger(AggregationOperationExpression.class);
 
-    public OperationExpression(String symbol) {
+    public AggregationOperationExpression(String symbol) {
         super(symbol);
     }
 
-    public OperationExpression(List<String> symbols) {
+    public AggregationOperationExpression(List<String> symbols) {
         super(symbols);
     }
 
-    public OperationExpression(String... symbols) {
+    public AggregationOperationExpression(String... symbols) {
         super(symbols);
     }
 
@@ -90,7 +89,7 @@ public abstract class OperationExpression extends Operation {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (int i = pos; i < tokens.length; i++) {
-            Operation op = configurationRegistry.getOperation(tokens[i]);
+            OperationExpression op = configurationRegistry.getOperation(tokens[i]);
             if (op != null) {
                 if (op instanceof LeftPriority) {
 
@@ -122,7 +121,7 @@ public abstract class OperationExpression extends Operation {
         for (int i = pos; i < tokens.length; i++) {
             String token = tokens[i];
 
-            org.dvare.expression.operation.Operation op = configurationRegistry.getOperation(token);
+            OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
                 if (op.getClass().equals(RightPriority.class)) {
@@ -165,8 +164,8 @@ public abstract class OperationExpression extends Operation {
                 stack.add(variableExpression);
 
             } else if (!token.equals(",")) {
-                String type = LiteralDataType.computeType(token);
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, DataType.valueOf(type));
+                DataType type = LiteralDataType.computeDataType(token);
+                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
                 stack.add(literalExpression);
             }
         }
@@ -188,8 +187,8 @@ public abstract class OperationExpression extends Operation {
 
             Expression right = this.rightOperand;
             LiteralExpression<?> literalExpression = null;
-            if (right instanceof Operation) {
-                Operation operation = (Operation) right;
+            if (right instanceof OperationExpression) {
+                OperationExpression operation = (OperationExpression) right;
                 literalExpression = (LiteralExpression) operation.interpret(aggregation, dataSet);
             } else if (right instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) right;

@@ -1,10 +1,10 @@
-## What is DVARE FRAMEWORK [![Build Status](https://travis-ci.org/dvare/dvare.svg?branch=master)](https://travis-ci.org/dvare/dvare)
+## What is DVARE FRAMEWORK [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework)
 DVARE is lightweight expression evaluator for Java, that allows evaluating Arithmetic and boolean Comparison expressions.
 [https://dvare.org/](https://dvare.org/)
 
 ## Current version
 
-* The current  version is `1.0` 
+* The current  version is `1.1` 
 
  you need to add the following maven repository in your `pom.xml`:
 
@@ -18,7 +18,7 @@ DVARE is lightweight expression evaluator for Java, that allows evaluating Arith
         <dependency>
             <groupId>org.dvare</groupId>
             <artifactId>dvare-framework</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
         </dependency>         
 <dependencies>
 ```

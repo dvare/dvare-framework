@@ -10,6 +10,8 @@ import org.dvare.exceptions.parser.IllegalPropertyException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.operation.AssignOperationExpression;
+import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.parser.ExpressionTokenizer;
@@ -59,7 +61,7 @@ public class Assign extends AssignOperationExpression {
                 VariableExpression variableExpression = (VariableExpression) left;
 
                 if (variableExpression.getType() != null && !isLegalOperation(right, variableExpression.getType().getDataType())) {
-                    String message = String.format("Aggregation Operation %s not possible on type %s at %s", this.getClass().getSimpleName(), variableExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos));
+                    String message = String.format("Aggregation OperationExpression %s not possible on type %s at %s", this.getClass().getSimpleName(), variableExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos));
                     logger.error(message);
                     throw new IllegalOperationException(message);
                 }
@@ -71,7 +73,7 @@ public class Assign extends AssignOperationExpression {
             }
 
 
-            logger.debug("Aggregation Operation Call Expression : {}", getClass().getSimpleName());
+            logger.debug("Aggregation OperationExpression Call Expression : {}", getClass().getSimpleName());
 
             stack.push(this);
 
@@ -102,8 +104,8 @@ public class Assign extends AssignOperationExpression {
         LiteralExpression<?> literalExpression = null;
         Expression right = this.rightOperand;
 
-        if (right instanceof org.dvare.expression.operation.Operation) {
-            org.dvare.expression.operation.Operation operation = (org.dvare.expression.operation.Operation) right;
+        if (right instanceof OperationExpression) {
+            OperationExpression operation = (OperationExpression) right;
             literalExpression = (LiteralExpression) operation.interpret(aggregation, dataSet);
         }
 
@@ -123,8 +125,8 @@ public class Assign extends AssignOperationExpression {
 
         Expression right = this.rightOperand;
         LiteralExpression<?> literalExpression = null;
-        if (right instanceof org.dvare.expression.operation.Operation) {
-            org.dvare.expression.operation.Operation operation = (org.dvare.expression.operation.Operation) right;
+        if (right instanceof OperationExpression) {
+            OperationExpression operation = (OperationExpression) right;
             literalExpression = (LiteralExpression) operation.interpret(aggregation, dataSet);
         }
 

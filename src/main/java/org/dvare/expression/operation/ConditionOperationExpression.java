@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.condition;
+package org.dvare.expression.operation;
 
 
 import org.dvare.binding.model.TypeBinding;
@@ -33,22 +33,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class ConditionOperation extends Expression {
+public abstract class ConditionOperationExpression extends Expression {
 
     protected List<String> symbols = new ArrayList<>();
     protected Expression condition = null;
     protected Expression thenOperand = null;
     protected Expression elseOperand = null;
 
-    public ConditionOperation(String symbol) {
+    public ConditionOperationExpression(String symbol) {
         this.symbols.add(symbol);
     }
 
-    public ConditionOperation(List<String> symbols) {
+    public ConditionOperationExpression(List<String> symbols) {
         this.symbols.addAll(symbols);
     }
 
-    public ConditionOperation(String... symbols) {
+    public ConditionOperationExpression(String... symbols) {
         this.symbols.addAll(Arrays.asList(symbols));
     }
 
@@ -56,7 +56,7 @@ public abstract class ConditionOperation extends Expression {
         return this.symbols;
     }
 
-    public abstract ConditionOperation copy();
+    public abstract ConditionOperationExpression copy();
 
 
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding vTypes, TypeBinding aTypes) throws ExpressionParseException {

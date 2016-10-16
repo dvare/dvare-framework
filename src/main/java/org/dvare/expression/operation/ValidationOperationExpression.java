@@ -21,31 +21,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.validation;
+package org.dvare.expression.operation;
 
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.operation.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Stack;
 
-public abstract class OperationExpression extends Operation {
-    static Logger logger = LoggerFactory.getLogger(OperationExpression.class);
+public abstract class ValidationOperationExpression extends OperationExpression {
+    protected static Logger logger = LoggerFactory.getLogger(ValidationOperationExpression.class);
 
-    public OperationExpression(String symbol) {
+    public ValidationOperationExpression(String symbol) {
         super(symbol);
     }
 
-    public OperationExpression(List<String> symbols) {
+    public ValidationOperationExpression(List<String> symbols) {
         super(symbols);
     }
 
-    public OperationExpression(String... symbols) {
+    public ValidationOperationExpression(String... symbols) {
         super(symbols);
     }
 
@@ -58,7 +57,7 @@ public abstract class OperationExpression extends Operation {
         this.leftOperand = left;
         this.rightOperand = right;
 
-        logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
+        logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
         stack.push(this);
 
@@ -74,7 +73,7 @@ public abstract class OperationExpression extends Operation {
         this.leftOperand = left;
         this.rightOperand = right;
 
-        logger.debug("Operation Call Expression : {}", getClass().getSimpleName());
+        logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
         stack.push(this);
 
@@ -85,7 +84,7 @@ public abstract class OperationExpression extends Operation {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (int i = pos; i < tokens.length; i++) {
-            Operation op = configurationRegistry.getOperation(tokens[i]);
+            OperationExpression op = configurationRegistry.getOperation(tokens[i]);
             if (op != null) {
                 op = op.copy();
                 i = op.parse(tokens, i, stack, selfTypes, dataTypes);
@@ -99,7 +98,7 @@ public abstract class OperationExpression extends Operation {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (int i = pos; i < tokens.length; i++) {
-            Operation op = configurationRegistry.getOperation(tokens[i]);
+            OperationExpression op = configurationRegistry.getOperation(tokens[i]);
             if (op != null) {
                 op = op.copy();
                 i = op.parse(tokens, i, stack, typeBinding);

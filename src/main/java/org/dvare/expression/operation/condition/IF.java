@@ -29,7 +29,8 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.operation.Operation;
+import org.dvare.expression.operation.ConditionOperationExpression;
+import org.dvare.expression.operation.OperationExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.Stack;
 
 @org.dvare.annotations.Operation(type = OperationType.CONDITION, symbols = {"IF", "if", "ELSEIF", "elseif"})
-public class IF extends ConditionOperation {
+public class IF extends ConditionOperationExpression {
     static Logger logger = LoggerFactory.getLogger(IF.class);
 
 
@@ -62,7 +63,7 @@ public class IF extends ConditionOperation {
 
         for (int i = pos; i < tokens.length; i++) {
 
-            Operation operation = configurationRegistry.getOperation(tokens[i]);
+            OperationExpression operation = configurationRegistry.getOperation(tokens[i]);
             if (operation != null) {
                 operation = operation.copy();
 
@@ -74,7 +75,7 @@ public class IF extends ConditionOperation {
                 continue;
             }
 
-            ConditionOperation conditionOperation = configurationRegistry.getConditionOperation(tokens[i]);
+            ConditionOperationExpression conditionOperation = configurationRegistry.getConditionOperation(tokens[i]);
 
             if (conditionOperation != null) {
                 conditionOperation = conditionOperation.copy();

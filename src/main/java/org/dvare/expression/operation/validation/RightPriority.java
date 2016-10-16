@@ -24,9 +24,10 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.OperationType;
+import org.dvare.expression.operation.ValidationOperationExpression;
 
 @org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {")"})
-public class RightPriority extends OperationExpression {
+public class RightPriority extends ValidationOperationExpression {
     public RightPriority() {
         super(")");
     }

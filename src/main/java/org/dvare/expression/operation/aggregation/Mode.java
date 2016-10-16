@@ -33,6 +33,7 @@ import org.dvare.expression.datatype.IntegerType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Operation(type = OperationType.AGGREGATION, symbols = {"Mode", "mode"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
-public class Mode extends OperationExpression {
+public class Mode extends AggregationOperationExpression {
     static Logger logger = LoggerFactory.getLogger(Mode.class);
 
 

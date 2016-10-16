@@ -5,6 +5,8 @@ public class ArithmeticOperation {
     public Integer Variable2;
     public Float Variable3;
     public Float Variable4;
+    public String Variable5;
+    public String Variable6;
 
     public Integer getVariable1() {
         return Variable1;
@@ -36,5 +38,21 @@ public class ArithmeticOperation {
 
     public void setVariable4(Float variable4) {
         Variable4 = variable4;
+    }
+
+    public String getVariable5() {
+        return Variable5;
+    }
+
+    public void setVariable5(String variable5) {
+        Variable5 = variable5;
+    }
+
+    public String getVariable6() {
+        return Variable6;
+    }
+
+    public void setVariable6(String variable6) {
+        Variable6 = variable6;
     }
 }
