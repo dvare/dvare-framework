@@ -77,6 +77,7 @@ public class ExpressionTokenizer {
 
         if (expr != null && !expr.isEmpty()) {
             expr = expr.replaceAll("  ", " ");
+            expr = expr.trim();
             logger.debug("Parsing the expression : {}", expr);
 
 
@@ -91,7 +92,9 @@ public class ExpressionTokenizer {
                     tokenArray.addAll(parseToken(token));
 
                 } else {
-                    tokenArray.add(token);
+                    if (!token.isEmpty()) {
+                        tokenArray.add(token);
+                    }
                 }
 
 
@@ -236,13 +239,19 @@ public class ExpressionTokenizer {
         while (token.contains(symbol)) {
 
             if (token.indexOf(symbol) == 0) {
-                tokenArray.add(symbol);
+
+                if (!symbol.isEmpty()) {
+                    tokenArray.add(symbol);
+                }
+
                 token = token.substring(symbol.length(), token.length()).trim();
             } else {
 
                 String left = token.substring(0, token.indexOf(symbol)).trim();
                 tokenArray.addAll(parseToken(left));
-                tokenArray.add(symbol);
+                if (!symbol.isEmpty()) {
+                    tokenArray.add(symbol);
+                }
                 token = token.substring(token.indexOf(symbol) + symbol.length(), token.length()).trim();
             }
         }

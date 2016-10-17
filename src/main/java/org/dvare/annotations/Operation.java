@@ -38,5 +38,5 @@ public @interface Operation {
 
     String[] symbols() default "";
 
-    DataType[] dataTypes() default {DataType.IntegerType, DataType.FloatType, DataType.StringType, DataType.BooleanType, DataType.DateTimeType, DataType.DateType, DataType.RegexType};
+    DataType[] dataTypes() default {DataType.IntegerType, DataType.FloatType, DataType.StringType, DataType.BooleanType, DataType.DateTimeType, DataType.DateType, DataType.RegexType, DataType.NullType};
 }

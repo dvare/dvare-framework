@@ -86,7 +86,7 @@ public class LiteralType {
                     try {
                         list.add(Integer.parseInt(value));
                     } catch (NumberFormatException e) {
-                        String message = String.format("Unable to Parse literal %s to Integer", value);
+                        String message = String.format("Unable to Parse Literal \" %s \" to Integer", value);
                         logger.error(message);
                         throw new IllegalValueException(message);
                     }

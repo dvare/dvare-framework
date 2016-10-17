@@ -84,4 +84,18 @@ public class NullType extends DataTypeExpression {
         return false;
     }
 
+    @TypeOperation(operations = {
+            Between.class
+    })
+    public boolean between(LiteralExpression left, LiteralExpression right) {
+        return false;
+    }
+
+    @TypeOperation(operations = {
+            In.class
+    })
+    public boolean in(LiteralExpression left, LiteralExpression right) {
+        return false;
+    }
+
 }

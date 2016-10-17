@@ -213,7 +213,12 @@ public class VariableType {
                 break;
             }
             case StringType: {
-                variable.setValue((String) value);
+
+                if (value instanceof String) {
+                    variable.setValue((String) value);
+                } else {
+                    variable.setValue(value.toString());
+                }
                 break;
             }
             case DateTimeType: {
