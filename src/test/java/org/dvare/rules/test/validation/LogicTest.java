@@ -63,7 +63,7 @@ public class LogicTest extends TestCase {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        String expr = "Variable5->substring(1,2) = 'va'";
+        String expr = "Variable5->substring(2,2) = 'va'";
         Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
 
         RuleBinding rule = new RuleBinding(expression);

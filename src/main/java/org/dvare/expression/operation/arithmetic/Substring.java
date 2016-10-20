@@ -73,7 +73,11 @@ public class Substring extends ChainArithmeticOperationExpression {
             }
 
 
-            value = value.substring(index, index + count);
+            try {
+                value = value.substring(index - 1, index - 1 + count);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                value = value.substring(index, index + count);
+            }
             LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataType);
             return returnExpression;
 

@@ -68,8 +68,8 @@ public enum ConfigurationRegistry {
     }
 
     public void registerFunction(FunctionBinding binding) {
-        if (!functions.containsKey(binding.getMethodName()))
-            functions.put(binding.getMethodName(), binding);
+        // if (!functions.containsKey(binding.getMethodName()))
+        functions.put(binding.getMethodName(), binding);
     }
 
     public OperationExpression getOperation(String symbol) {
