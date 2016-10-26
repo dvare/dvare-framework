@@ -15,7 +15,6 @@ import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -24,17 +23,10 @@ public abstract class ChainArithmeticOperationExpression extends EqualityOperati
 
     protected List<Expression> rightOperand = null;
 
-    public ChainArithmeticOperationExpression(String symbol) {
-        this.symbols.add(symbol);
+    public ChainArithmeticOperationExpression(OperationType operationType) {
+        super(operationType);
     }
 
-    public ChainArithmeticOperationExpression(List<String> symbols) {
-        this.symbols.addAll(symbols);
-    }
-
-    public ChainArithmeticOperationExpression(String... symbols) {
-        this.symbols.addAll(Arrays.asList(symbols));
-    }
 
     protected int parseOperands(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
@@ -89,7 +81,7 @@ public abstract class ChainArithmeticOperationExpression extends EqualityOperati
 
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
         pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         List<Expression> expressions = new ArrayList<>(stack);
@@ -100,7 +92,7 @@ public abstract class ChainArithmeticOperationExpression extends EqualityOperati
     }
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
         pos = parseOperands(tokens, pos, stack, selfTypes, null);
         pos = findNextExpression(tokens, pos + 1, stack, selfTypes);
         List<Expression> expressions = new ArrayList<>(stack);
@@ -210,5 +202,6 @@ public abstract class ChainArithmeticOperationExpression extends EqualityOperati
         this.leftValueOperand = leftExpression;
 
     }
+
 
 }

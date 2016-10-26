@@ -41,6 +41,7 @@ public class DateVariable extends VariableExpression {
     public DateVariable(String name, boolean list) {
         this(name, null, list, 0);
     }
+
     public DateVariable(String name, Object value, boolean list, Integer size) {
         super(name, new DateType(), value, list, size);
 

@@ -23,8 +23,8 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.datatype;
 
+import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
-import org.dvare.annotations.TypeOperation;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.validation.Equals;
 import org.dvare.expression.operation.validation.In;
@@ -38,7 +38,7 @@ public class BooleanType extends DataTypeExpression {
         super(DataType.BooleanType);
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Equals.class
     })
     public boolean equal(LiteralExpression left, LiteralExpression right) {
@@ -47,7 +47,7 @@ public class BooleanType extends DataTypeExpression {
         return leftValue == rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             NotEquals.class
     })
     public boolean notEqual(LiteralExpression left, LiteralExpression right) {
@@ -56,7 +56,7 @@ public class BooleanType extends DataTypeExpression {
         return leftValue != rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             In.class
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {

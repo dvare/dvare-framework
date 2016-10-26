@@ -30,17 +30,10 @@ public abstract class EqualityOperationExpression extends ValidationOperationExp
     protected Expression leftValueOperand;
     protected LiteralExpression rightValueOperand;
 
-    public EqualityOperationExpression(String symbol) {
-        this.symbols.add(symbol);
+    public EqualityOperationExpression(OperationType operationType) {
+        super(operationType);
     }
 
-    public EqualityOperationExpression(List<String> symbols) {
-        this.symbols.addAll(symbols);
-    }
-
-    public EqualityOperationExpression(String... symbols) {
-        this.symbols.addAll(Arrays.asList(symbols));
-    }
 
     protected boolean isLegalOperation(DataType dataType) {
 
@@ -187,7 +180,7 @@ public abstract class EqualityOperationExpression extends ValidationOperationExp
     }
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
             pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
@@ -206,7 +199,7 @@ public abstract class EqualityOperationExpression extends ValidationOperationExp
     }
 
     @Override
-    public int parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
             pos = parseOperands(tokens, pos, stack, typeBinding, null);
 

@@ -50,21 +50,13 @@ import java.util.Stack;
 public abstract class AggregationOperationExpression extends OperationExpression {
     static Logger logger = LoggerFactory.getLogger(AggregationOperationExpression.class);
 
-    public AggregationOperationExpression(String symbol) {
-        super(symbol);
-    }
-
-    public AggregationOperationExpression(List<String> symbols) {
-        super(symbols);
-    }
-
-    public AggregationOperationExpression(String... symbols) {
-        super(symbols);
+    public AggregationOperationExpression(OperationType operationType) {
+        super(operationType);
     }
 
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
         return 0;
     }
 
@@ -75,7 +67,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
         pos = findNextExpression(tokens, pos + 1, stack, aTypeBinding, vTypeBinding);
         if (!stack.isEmpty()) {
             Expression right = stack.pop();

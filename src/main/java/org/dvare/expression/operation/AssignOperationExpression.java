@@ -11,23 +11,13 @@ import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Stack;
 
 public abstract class AssignOperationExpression extends AggregationOperationExpression {
     protected static Logger logger = LoggerFactory.getLogger(AssignOperationExpression.class);
 
-
-    public AssignOperationExpression(String symbol) {
-        super(symbol);
-    }
-
-    public AssignOperationExpression(List<String> symbols) {
-        super(symbols);
-    }
-
-    public AssignOperationExpression(String... symbols) {
-        super(symbols);
+    public AssignOperationExpression(OperationType operationType) {
+        super(operationType);
     }
 
 
@@ -77,13 +67,11 @@ public abstract class AssignOperationExpression extends AggregationOperationExpr
     }
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
         pos = parseOperands(tokens, pos, stack, aTypeBinding, vTypeBinding);
         stack.push(this);
         return pos;
     }
-
-
 
 
 }

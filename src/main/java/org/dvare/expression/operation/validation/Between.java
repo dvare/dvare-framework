@@ -1,6 +1,6 @@
 package org.dvare.expression.operation.validation;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalOperationException;
@@ -9,15 +9,16 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.EqualityOperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.parser.ExpressionTokenizer;
 
 import java.util.Stack;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Between", "between"}, dataTypes = {DataType.FloatType, DataType.IntegerType, DataType.DateTimeType, DataType.DateType})
+@Operation(type = OperationType.BETWEEN, dataTypes = {DataType.FloatType, DataType.IntegerType, DataType.DateTimeType, DataType.DateType})
 public class Between extends EqualityOperationExpression {
     public Between() {
-        super("Between", "between");
+        super(OperationType.BETWEEN);
     }
 
     public Between copy() {
@@ -25,7 +26,7 @@ public class Between extends EqualityOperationExpression {
     }
 
     @Override
-    public int parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
             pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
             testBetweenOperation(tokens, pos);
@@ -36,7 +37,7 @@ public class Between extends EqualityOperationExpression {
     }
 
     @Override
-    public int parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
+    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
             pos = parseOperands(tokens, pos, stack, selfTypes, null);
             testBetweenOperation(tokens, pos);

@@ -27,13 +27,13 @@ package org.dvare.config;
 import org.dvare.annotations.ClassFinder;
 import org.dvare.annotations.FunctionMethod;
 import org.dvare.annotations.FunctionService;
-import org.dvare.annotations.OperationType;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
-import org.dvare.expression.operation.ConditionOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.util.DataTypeMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -41,10 +41,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RuleConfigurationProvider {
-
-    public ConfigurationRegistry configurationRegistry = null;
+    static Logger logger = LoggerFactory.getLogger(RuleConfigurationProvider.class);
+    private final String baseOperationPackage = "org.dvare.expression.operation";
+    public ConfigurationRegistry configurationRegistry;
     private String[] functionBasePackages;
-    private String baseOperationPackage = "org.dvare.expression.operation";
 
     public RuleConfigurationProvider(ConfigurationRegistry configurationRegistry, String[] functionBasePackages) {
         this.configurationRegistry = configurationRegistry;
@@ -112,20 +112,13 @@ public class RuleConfigurationProvider {
 
                 Annotation annotation = _class.getAnnotation(org.dvare.annotations.Operation.class);
                 if (annotation != null && annotation instanceof org.dvare.annotations.Operation) {
-                    org.dvare.annotations.Operation operation = (org.dvare.annotations.Operation) annotation;
-                    if (operation.type().equals(OperationType.VALIDATION)) {
-                        configurationRegistry.registerOperation((OperationExpression) _class.newInstance());
-                    } else if (operation.type().equals(OperationType.AGGREGATION)) {
-                        configurationRegistry.registerOperation((OperationExpression) _class.newInstance());
-                    } else if (operation.type().equals(OperationType.CONDITION)) {
-                        configurationRegistry.registerConditionOperation((ConditionOperationExpression) _class.newInstance());
-                    }
+                    configurationRegistry.registerOperation((OperationExpression) _class.newInstance());
                 }
 
             } catch (InstantiationException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
 
         }

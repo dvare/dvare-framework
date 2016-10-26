@@ -51,7 +51,6 @@ public class RuleConfiguration {
     }
 
 
-
     public ExpressionParser getParser() {
         if (expressionParser == null) {
             expressionParser = new ExpressionParser(this);

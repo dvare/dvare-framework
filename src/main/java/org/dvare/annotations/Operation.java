@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.annotations;
 
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.operation.OperationType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -36,7 +37,6 @@ public @interface Operation {
 
     OperationType type();
 
-    String[] symbols() default "";
 
     DataType[] dataTypes() default {DataType.IntegerType, DataType.FloatType, DataType.StringType, DataType.BooleanType, DataType.DateTimeType, DataType.DateType, DataType.RegexType, DataType.NullType};
 }

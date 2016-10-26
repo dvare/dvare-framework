@@ -33,8 +33,6 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.util.ValueFinder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -44,38 +42,30 @@ public abstract class OperationExpression extends Expression {
     protected final String DATA = "data";
     protected final String selfPatten = "self\\..{1,}";
     protected final String dataPatten = "data\\..{1,}";
-    protected List<String> symbols = new ArrayList<>();
     protected Expression leftOperand = null;
     protected Expression rightOperand = null;
     protected String leftType;
     protected String rightType;
 
+    protected OperationType operationType;
 
-    public OperationExpression(String symbol) {
-        this.symbols.add(symbol);
-    }
-
-    public OperationExpression(List<String> symbols) {
-        this.symbols.addAll(symbols);
-    }
-
-    public OperationExpression(String... symbols) {
-        this.symbols.addAll(Arrays.asList(symbols));
+    public OperationExpression(OperationType operationType) {
+        this.operationType = operationType;
     }
 
     public List<String> getSymbols() {
-        return this.symbols;
+        return this.operationType.getSymbols();
     }
 
     public abstract OperationExpression copy();
 
 
-    public abstract int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException;
+    public abstract Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException;
 
     public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException;
 
 
-    public abstract int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException;
+    public abstract Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException;
 
     public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException;
 
@@ -92,14 +82,14 @@ public abstract class OperationExpression extends Expression {
 
         Node<String> root = new Node<String>(this.getClass().getSimpleName());
 
-        root.left = ASTNusted(this.leftOperand);
+        root.left = ACTNested(this.leftOperand);
 
-        root.right = ASTNusted(this.rightOperand);
+        root.right = ACTNested(this.rightOperand);
 
         return root;
     }
 
-    private Node<String> ASTNusted(Expression expression) {
+    private Node<String> ACTNested(Expression expression) {
 
         Node root;
         if (expression instanceof OperationExpression) {
@@ -119,5 +109,22 @@ public abstract class OperationExpression extends Expression {
 
 
         return root;
+    }
+
+
+    public Expression getLeftOperand() {
+        return leftOperand;
+    }
+
+    public void setLeftOperand(Expression leftOperand) {
+        this.leftOperand = leftOperand;
+    }
+
+    public Expression getRightOperand() {
+        return rightOperand;
+    }
+
+    public void setRightOperand(Expression rightOperand) {
+        this.rightOperand = rightOperand;
     }
 }

@@ -23,7 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.validation;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -33,6 +33,7 @@ import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.DateLiteral;
 import org.dvare.expression.operation.OperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.ValidationOperationExpression;
 
 import java.text.ParseException;
@@ -40,19 +41,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Stack;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"ToDate", "toDate"}, dataTypes = {DataType.DateType, DataType.DateTimeType})
+@Operation(type = OperationType.TO_DATE, dataTypes = {DataType.DateType, DataType.DateTimeType})
 public class ToDate extends ValidationOperationExpression {
 
 
     public ToDate() {
-        super("ToDate", "toDate");
+        super(OperationType.TO_DATE);
     }
 
     public ToDate copy() {
         return new ToDate();
     }
 
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
 
         int i = findNextExpression(tokens, pos + 1, stack, typeBinding);
 

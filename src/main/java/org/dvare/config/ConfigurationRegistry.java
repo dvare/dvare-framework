@@ -24,7 +24,6 @@ THE SOFTWARE.*/
 package org.dvare.config;
 
 import org.dvare.binding.function.FunctionBinding;
-import org.dvare.expression.operation.ConditionOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 
 import java.util.ArrayList;
@@ -39,8 +38,6 @@ public enum ConfigurationRegistry {
     private final Map<String, FunctionBinding> functions = new HashMap<String, FunctionBinding>();
 
     private final Map<String, OperationExpression> operations = new HashMap<String, OperationExpression>();
-
-    private final Map<String, ConditionOperationExpression> conditionOperations = new HashMap<String, ConditionOperationExpression>();
 
 
     public List<String> tokens() {
@@ -60,13 +57,6 @@ public enum ConfigurationRegistry {
     }
 
 
-    public void registerConditionOperation(ConditionOperationExpression op) {
-        for (String symbol : op.getSymbols()) {
-            if (!conditionOperations.containsKey(symbol))
-                conditionOperations.put(symbol, op);
-        }
-    }
-
     public void registerFunction(FunctionBinding binding) {
         // if (!functions.containsKey(binding.getMethodName()))
         functions.put(binding.getMethodName(), binding);
@@ -77,21 +67,16 @@ public enum ConfigurationRegistry {
     }
 
 
-    public ConditionOperationExpression getConditionOperation(String symbol) {
-        return this.conditionOperations.get(symbol);
-
-    }
-
     public FunctionBinding getFunction(String name) {
         return this.functions.get(name);
     }
 
 
-    public List<String> getfunctionNames() {
-        List<String> tablenames = new ArrayList<>();
+    public List<String> getFunctionNames() {
+        List<String> functionNames = new ArrayList<>();
         for (String key : functions.keySet()) {
-            tablenames.add(key);
+            functionNames.add(key);
         }
-        return tablenames;
+        return functionNames;
     }
 }

@@ -1,6 +1,6 @@
 package org.dvare.expression.operation.validation;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -8,6 +8,7 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.OperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.ValidationOperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
@@ -17,12 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Found", "found"})
+@Operation(type = OperationType.FOUND)
 public class Found extends ValidationOperationExpression {
     protected List<Expression> leftOperand;
 
     public Found() {
-        super("Found", "found");
+        super(OperationType.FOUND);
     }
 
     public Found copy() {
@@ -30,7 +31,7 @@ public class Found extends ValidationOperationExpression {
     }
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding types) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding types) throws ExpressionParseException {
         int i = findNextExpression(tokens, pos + 1, stack, types, null);
         List<Expression> expressions = new ArrayList<Expression>(stack);
         stack.clear();
@@ -40,7 +41,7 @@ public class Found extends ValidationOperationExpression {
     }
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         List<Expression> expressions = new ArrayList<Expression>(stack);
         stack.clear();

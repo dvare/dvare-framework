@@ -24,35 +24,35 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.annotations.OperationType;
 import org.dvare.exceptions.interpreter.IllegalOperationException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.AggregationOperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Operation(type = OperationType.AGGREGATION, symbols = {"Maximum", "maximum"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
-public class Max extends AggregationOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Max.class);
+@Operation(type = OperationType.MINIMUM, dataTypes = {DataType.FloatType, DataType.IntegerType})
+public class Minimum extends AggregationOperationExpression {
+    static Logger logger = LoggerFactory.getLogger(Minimum.class);
 
 
-    public Max() {
-        super("Maximum", "maximum");
+    public Minimum() {
+        super(OperationType.MINIMUM);
     }
 
-    public Max copy() {
-        return new Max();
+    public Minimum copy() {
+        return new Minimum();
     }
-
 
     @Override
     public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
+
 
         Expression right = this.rightOperand;
 
@@ -64,11 +64,11 @@ public class Max extends AggregationOperationExpression {
             switch (type) {
 
                 case FloatType: {
-                    leftOperand = LiteralType.getLiteralExpression(Float.MIN_VALUE, variableExpression.getType());
+                    leftOperand = LiteralType.getLiteralExpression(Float.MAX_VALUE, variableExpression.getType());
                     break;
                 }
                 case IntegerType: {
-                    leftOperand = LiteralType.getLiteralExpression(Integer.MIN_VALUE, variableExpression.getType());
+                    leftOperand = LiteralType.getLiteralExpression(Integer.MAX_VALUE, variableExpression.getType());
                     break;
                 }
 
@@ -82,6 +82,5 @@ public class Max extends AggregationOperationExpression {
 
         return super.interpret(aggregation, dataSet);
     }
-
 
 }

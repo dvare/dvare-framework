@@ -23,19 +23,20 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.validation;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.ValidationOperationExpression;
 
 import java.util.Stack;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"NOT", "Not", "not", "!"})
+@Operation(type = OperationType.NOT)
 public class Not extends ValidationOperationExpression {
     public Not() {
-        super("NOT", "Not", "not", "!");
+        super(OperationType.NOT);
     }
 
     public Not copy() {
@@ -43,7 +44,7 @@ public class Not extends ValidationOperationExpression {
     }
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
         int i = findNextExpression(tokens, pos + 1, stack, typeBinding);
         Expression right = stack.pop();
 
@@ -54,7 +55,7 @@ public class Not extends ValidationOperationExpression {
     }
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         Expression right = stack.pop();
         this.rightOperand = right;

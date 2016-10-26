@@ -1,12 +1,13 @@
 package org.dvare.expression.operation.validation;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.expression.operation.EqualityOperationExpression;
+import org.dvare.expression.operation.OperationType;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"eq", "="})
+@Operation(type = OperationType.EQUAL)
 public class Equals extends EqualityOperationExpression {
     public Equals() {
-        super("eq", "=");
+        super(OperationType.EQUAL);
     }
 
     public Equals copy() {

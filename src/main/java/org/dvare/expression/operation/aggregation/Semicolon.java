@@ -1,20 +1,20 @@
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.annotations.OperationType;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.operation.AssignOperationExpression;
+import org.dvare.expression.operation.OperationType;
 
 import java.util.List;
 import java.util.Stack;
 
-@Operation(type = OperationType.AGGREGATION, symbols = {";"})
+@Operation(type = OperationType.COLON)
 public class Semicolon extends AssignOperationExpression {
     public Semicolon() {
-        super(";");
+        super(OperationType.COLON);
     }
 
     public Semicolon copy() {
@@ -22,7 +22,7 @@ public class Semicolon extends AssignOperationExpression {
     }
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
         pos = parseOperands(tokens, pos + 1, stack, aTypeBinding, vTypeBinding);
 
         logger.debug("Aggregation OperationExpression Call Expression : {}", getClass().getSimpleName());
