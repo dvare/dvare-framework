@@ -170,10 +170,13 @@ public class LiteralType {
     }
 
 
-    public static LiteralExpression<?> getLiteralExpression(String valueString, DataType type) throws IllegalValueException {
-        if (valueString == null) {
+    public static LiteralExpression<?> getLiteralExpression(Object value, DataType type) throws IllegalValueException {
+        if (value == null) {
             throw new IllegalValueException("The provided string must not be null");
         }
+
+        String valueString = value.toString();
+
 
         DataType rightType = LiteralDataType.computeDataType(valueString);
         if (rightType != null) {
@@ -196,12 +199,20 @@ public class LiteralType {
 
 
                 case BooleanType: {
-                    literalExpression = new BooleanLiteral(Boolean.parseBoolean(valueString));
+                    if (value instanceof Boolean) {
+                        literalExpression = new BooleanLiteral(value);
+                    } else {
+                        literalExpression = new BooleanLiteral(Boolean.parseBoolean(valueString));
+                    }
                     break;
                 }
                 case FloatType: {
                     try {
-                        literalExpression = new FloatLiteral(Float.parseFloat(valueString));
+                        if (value instanceof Float) {
+                            literalExpression = new FloatLiteral(value);
+                        } else {
+                            literalExpression = new FloatLiteral(Float.parseFloat(valueString));
+                        }
                     } catch (NumberFormatException e) {
                         String message = String.format("Unable to Parse literal %s to Float", valueString);
                         logger.error(message);
@@ -212,7 +223,11 @@ public class LiteralType {
                 case IntegerType: {
 
                     try {
-                        literalExpression = new IntegerLiteral(Integer.parseInt(valueString));
+                        if (value instanceof Integer) {
+                            literalExpression = new IntegerLiteral(value);
+                        } else {
+                            literalExpression = new IntegerLiteral(Integer.parseInt(valueString));
+                        }
                     } catch (NumberFormatException e) {
                         String message = String.format("Unable to Parse literal %s to Integer", valueString);
                         logger.error(message);
@@ -226,15 +241,21 @@ public class LiteralType {
                     break;
                 }
                 case RegexType: {
-                    String value = valueString.substring(1, valueString.length()).trim();
-                    literalExpression = new RegexLiteral(value);
+                    valueString = valueString.substring(1, valueString.length()).trim();
+                    literalExpression = new RegexLiteral(valueString);
                     break;
                 }
 
                 case DateTimeType: {
                     Date date = null;
                     try {
-                        date = dateTimeFormat.parse(valueString);
+
+                        if (value instanceof Date) {
+                            date = (Date) value;
+                        } else {
+                            date = dateTimeFormat.parse(valueString);
+                        }
+
                     } catch (ParseException e) {
                         String message = String.format("Unable to Parse literal %s to Date Time", valueString);
                         logger.error(message);
@@ -248,7 +269,11 @@ public class LiteralType {
 
                     Date date = null;
                     try {
-                        date = dateFormat.parse(valueString);
+                        if (value instanceof Date) {
+                            date = (Date) value;
+                        } else {
+                            date = dateFormat.parse(valueString);
+                        }
                     } catch (ParseException e) {
                         String message = String.format("Unable to Parse literal %s to Date", valueString);
                         logger.error(message);

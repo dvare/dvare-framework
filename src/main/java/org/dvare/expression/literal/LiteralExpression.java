@@ -24,7 +24,9 @@ THE SOFTWARE.*/
 package org.dvare.expression.literal;
 
 import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
+import org.dvare.util.TrimString;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,5 +65,14 @@ public class LiteralExpression<T> extends Expression {
         return legalOperations.containsKey(operation);
     }
 
+    @Override
+    public String toString() {
+        if (type.getDataType().equals(DataType.StringType) || type.getDataType().equals(DataType.RegexType)) {
+            return "'" + TrimString.trim(value.toString()) + "'";
+        } else {
+            return value.toString();
+        }
+
+    }
 
 }

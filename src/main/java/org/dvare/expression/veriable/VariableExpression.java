@@ -50,6 +50,11 @@ public abstract class VariableExpression<T> extends Expression {
         this.listSize = listSize;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public String getName() {
         return this.name;
     }

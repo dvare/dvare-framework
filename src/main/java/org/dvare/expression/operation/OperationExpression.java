@@ -111,6 +111,26 @@ public abstract class OperationExpression extends Expression {
         return root;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+
+        if (leftOperand != null) {
+            toStringBuilder.append(leftOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(" ");
+
+        if (rightOperand != null) {
+            toStringBuilder.append(rightOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        return toStringBuilder.toString();
+    }
+
 
     public Expression getLeftOperand() {
         return leftOperand;

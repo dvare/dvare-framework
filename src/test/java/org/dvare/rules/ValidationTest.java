@@ -37,6 +37,7 @@ import org.junit.runners.Suite;
         BetweenOperationTest.class,
         ParenthesisTest.class,
         LogicTest.class,
+        BuilderTest.class,
       /*  FunctionTestExclude.class,*/
         ArithmeticOperationTest.class})
 public class ValidationTest {

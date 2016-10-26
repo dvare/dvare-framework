@@ -32,7 +32,7 @@ public enum OperationType {
     ABSOLUTE("Abs", "abs"), COMBINATION("Combination", "combination", "comb"), FUNCTION("Function", "function", "fun"),//
     LEFT_PRIORITY("("), RIGHT_PRIORITY(")"), TO_DATE("ToDate", "toDate"),
     FOUND("Found", "found"), POWER("Pow", "pow", "^"),//
-    NOT("NOT", "Not", "not", "!"), AND("AND", "And", "and", "&&"), OR("OR", "or", "||"), IMPLIES("Implies", "implies", "=>"),//
+    NOT("not", "NOT", "Not", "!"), AND("and", "AND", "And", "&&"), OR("or", "OR", "||"), IMPLIES("implies", "Implies", "=>"),//
     EQUAL("eq", "="), NOT_EQUAL("ne", "!=", "<>"),//
     LESS("lt", "<"), LESS_EQUAL("le", "<="), GREATER("gt", ">"), GREATER_EQUAL("ge", ">="),//
     IN("IN", "In", "in"), BETWEEN("Between", "between"), //
