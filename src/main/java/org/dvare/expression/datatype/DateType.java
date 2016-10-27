@@ -28,6 +28,7 @@ import org.dvare.annotations.Type;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.validation.*;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -38,12 +39,22 @@ public class DateType extends DataTypeExpression {
 
     }
 
+    private static Date setTimeToMidnight(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
     @OperationMapping(operations = {
             Equals.class
     })
     public boolean equal(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = (Date) left.getValue();
-        Date rightValue = (Date) right.getValue();
+        Date leftValue = setTimeToMidnight((Date) left.getValue());
+        Date rightValue = setTimeToMidnight((Date) right.getValue());
         return leftValue.compareTo(rightValue) == 0;
     }
 
@@ -51,8 +62,8 @@ public class DateType extends DataTypeExpression {
             NotEquals.class
     })
     public boolean notEqual(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = (Date) left.getValue();
-        Date rightValue = (Date) right.getValue();
+        Date leftValue = setTimeToMidnight((Date) left.getValue());
+        Date rightValue = setTimeToMidnight((Date) right.getValue());
         return leftValue.compareTo(rightValue) != 0;
     }
 
@@ -60,8 +71,8 @@ public class DateType extends DataTypeExpression {
             Less.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = (Date) left.getValue();
-        Date rightValue = (Date) right.getValue();
+        Date leftValue = setTimeToMidnight((Date) left.getValue());
+        Date rightValue = setTimeToMidnight((Date) right.getValue());
         return leftValue.compareTo(rightValue) < 0;
     }
 
@@ -69,8 +80,8 @@ public class DateType extends DataTypeExpression {
             LessEqual.class
     })
     public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = (Date) left.getValue();
-        Date rightValue = (Date) right.getValue();
+        Date leftValue = setTimeToMidnight((Date) left.getValue());
+        Date rightValue = setTimeToMidnight((Date) right.getValue());
         return leftValue.compareTo(rightValue) <= 0;
     }
 
@@ -78,8 +89,8 @@ public class DateType extends DataTypeExpression {
             Greater.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = (Date) left.getValue();
-        Date rightValue = (Date) right.getValue();
+        Date leftValue = setTimeToMidnight((Date) left.getValue());
+        Date rightValue = setTimeToMidnight((Date) right.getValue());
         return leftValue.compareTo(rightValue) > 0;
     }
 
@@ -87,8 +98,8 @@ public class DateType extends DataTypeExpression {
             GreaterEqual.class
     })
     public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = (Date) left.getValue();
-        Date rightValue = (Date) right.getValue();
+        Date leftValue = setTimeToMidnight((Date) left.getValue());
+        Date rightValue = setTimeToMidnight((Date) right.getValue());
         return leftValue.compareTo(rightValue) >= 0;
     }
 
@@ -96,9 +107,10 @@ public class DateType extends DataTypeExpression {
             In.class
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = (Date) left.getValue();
+        Date leftValue = setTimeToMidnight((Date) left.getValue());
         List<Date> values = (List<Date>) right.getValue();
         for (Date rightValue : values) {
+            rightValue = setTimeToMidnight(rightValue);
             if (leftValue.compareTo(rightValue) == 0) {
                 return true;
             }
@@ -110,10 +122,10 @@ public class DateType extends DataTypeExpression {
             Between.class
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = (Date) left.getValue();
+        Date leftValue = setTimeToMidnight((Date) left.getValue());
         List<Date> values = (List<Date>) right.getValue();
-        Date lower = values.get(0);
-        Date upper = values.get(1);
+        Date lower = setTimeToMidnight(values.get(0));
+        Date upper = setTimeToMidnight(values.get(1));
 
         if (lower.compareTo(leftValue) <= 0 && leftValue.compareTo(upper) <= 0) {
             {
