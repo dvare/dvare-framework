@@ -23,6 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare.rules;
 
+import org.dvare.rules.test.aggregation.DistanceTest;
 import org.dvare.rules.test.validation.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -38,6 +39,7 @@ import org.junit.runners.Suite;
         ParenthesisTest.class,
         LogicTest.class,
         BuilderTest.class,
+        DistanceTest.class,
       /*  FunctionTestExclude.class,*/
         ArithmeticOperationTest.class})
 public class ValidationTest {

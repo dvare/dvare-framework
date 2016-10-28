@@ -38,4 +38,11 @@ public class Semicolon extends AssignOperationExpression {
         aggregation = rightOperand.interpret(aggregation, dataSet);
         return aggregation;
     }
+
+    @Override
+    public Object interpret(Object aggregation, Object data) throws InterpretException {
+        aggregation = leftOperand.interpret(aggregation, data);
+        aggregation = rightOperand.interpret(aggregation, data);
+        return aggregation;
+    }
 }
