@@ -39,6 +39,22 @@ public class LeftPriority extends ValidationOperationExpression {
     }
 
     @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+
+        int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
+
+        while (!stack.peek().getClass().equals(RightPriority.class)) {
+            i = findNextExpression(tokens, i + 1, stack, selfTypes, dataTypes);
+        }
+
+        if (stack.peek().getClass().equals(RightPriority.class)) {
+            stack.pop();
+        }
+
+        return i;
+    }
+
+    @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
@@ -47,7 +63,6 @@ public class LeftPriority extends ValidationOperationExpression {
             OperationExpression op = configurationRegistry.getOperation(tokens[i]);
             if (op != null) {
                 op = op.copy();
-                // we found an operation
 
                 if (op.getClass().equals(RightPriority.class)) {
                     stack.push(op);
@@ -63,4 +78,27 @@ public class LeftPriority extends ValidationOperationExpression {
         return null;
     }
 
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+
+        for (int i = pos; i < tokens.length; i++) {
+
+            OperationExpression op = configurationRegistry.getOperation(tokens[i]);
+            if (op != null) {
+                op = op.copy();
+
+                if (op.getClass().equals(RightPriority.class)) {
+                    stack.push(op);
+                    return i;
+
+                } else {
+                    i = op.parse(tokens, i, stack, selfTypes, dataTypes);
+                }
+
+
+            }
+        }
+        return null;
+    }
 }

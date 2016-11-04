@@ -73,9 +73,20 @@ public class Substring extends ChainArithmeticOperationExpression {
                 count = Integer.parseInt(countExpression.getValue().toString());
             }
 
+            if (value.length() < count) {
+                return null;
+            }
+
+            Integer start = index - 1;
+            Integer end = index - 1 + count;
+
+            if (start < 0 || end > value.length()) {
+                return null;
+            }
+
 
             try {
-                value = value.substring(index - 1, index - 1 + count);
+                value = value.substring(start, end);
             } catch (ArrayIndexOutOfBoundsException e) {
                 value = value.substring(index, index + count);
             }

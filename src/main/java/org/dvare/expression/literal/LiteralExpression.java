@@ -67,6 +67,10 @@ public class LiteralExpression<T> extends Expression {
 
     @Override
     public String toString() {
+        if (value == null) {
+            return "null";
+        }
+
         if (type.getDataType().equals(DataType.StringType) || type.getDataType().equals(DataType.RegexType)) {
             return "'" + TrimString.trim(value.toString()) + "'";
         } else {
