@@ -116,7 +116,13 @@ public abstract class EqualityOperationExpression extends ValidationOperationExp
         OperationExpression op = ConfigurationRegistry.INSTANCE.getOperation(rightString);
         if (op != null) {
             op = op.copy();
-            pos = op.parse(tokens, pos + 1, stack, selfTypes);
+
+            if (dataTypes != null) {
+                pos = op.parse(tokens, pos + 1, stack, selfTypes, dataTypes);
+            } else {
+                pos = op.parse(tokens, pos + 1, stack, selfTypes);
+            }
+
             right = stack.pop();
 
         } else if (rightType != null && rightType.equals(SELF) && selfTypes.getTypes().containsKey(rightString)) {
