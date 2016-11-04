@@ -1,13 +1,14 @@
 package org.dvare.expression.operation.validation;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.EqualityOperationExpression;
+import org.dvare.expression.operation.OperationType;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"lt", "<"}, dataTypes = {DataType.FloatType, DataType.IntegerType, DataType.StringType, DataType.DateType, DataType.DateTimeType})
+@Operation(type = OperationType.LESS, dataTypes = {DataType.FloatType, DataType.IntegerType, DataType.StringType, DataType.DateType, DataType.DateTimeType})
 public class Less extends EqualityOperationExpression {
     public Less() {
-        super("lt", "<");
+        super(OperationType.LESS);
     }
 
     public Less copy() {

@@ -24,9 +24,11 @@ THE SOFTWARE.*/
 package org.dvare.expression.datatype;
 
 
+import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
-import org.dvare.annotations.TypeOperation;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.operation.aggregation.Maximum;
+import org.dvare.expression.operation.aggregation.Minimum;
 import org.dvare.expression.operation.arithmetic.*;
 import org.dvare.expression.operation.validation.*;
 
@@ -38,7 +40,7 @@ public class IntegerType extends DataTypeExpression {
         super(DataType.IntegerType);
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Equals.class
     })
     public boolean equal(LiteralExpression left, LiteralExpression right) {
@@ -47,7 +49,7 @@ public class IntegerType extends DataTypeExpression {
         return leftValue == rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             NotEquals.class
     })
     public boolean notEqual(LiteralExpression left, LiteralExpression right) {
@@ -56,7 +58,7 @@ public class IntegerType extends DataTypeExpression {
         return leftValue != rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Less.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
@@ -65,7 +67,7 @@ public class IntegerType extends DataTypeExpression {
         return leftValue < rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             LessEqual.class
     })
     public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
@@ -74,7 +76,7 @@ public class IntegerType extends DataTypeExpression {
         return leftValue <= rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Greater.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
@@ -83,7 +85,7 @@ public class IntegerType extends DataTypeExpression {
         return leftValue > rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             GreaterEqual.class
     })
     public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
@@ -92,7 +94,7 @@ public class IntegerType extends DataTypeExpression {
         return leftValue >= rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             In.class
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
@@ -106,7 +108,7 @@ public class IntegerType extends DataTypeExpression {
         return false;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Between.class
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {
@@ -124,7 +126,7 @@ public class IntegerType extends DataTypeExpression {
     }
 
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             org.dvare.expression.operation.aggregation.Sum.class,
             Add.class
     })
@@ -134,7 +136,7 @@ public class IntegerType extends DataTypeExpression {
         return leftValue + rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Subtract.class
     })
     public Integer sub(LiteralExpression left, LiteralExpression right) {
@@ -143,7 +145,7 @@ public class IntegerType extends DataTypeExpression {
         return leftValue - rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Multiply.class
     })
     public Integer mul(LiteralExpression left, LiteralExpression right) {
@@ -152,8 +154,8 @@ public class IntegerType extends DataTypeExpression {
         return leftValue * rightValue;
     }
 
-    @TypeOperation(operations = {
-            Devide.class
+    @OperationMapping(operations = {
+            Divide.class
     })
     public Integer div(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -161,8 +163,8 @@ public class IntegerType extends DataTypeExpression {
         return leftValue / rightValue;
     }
 
-    @TypeOperation(operations = {
-            org.dvare.expression.operation.validation.Power.class
+    @OperationMapping(operations = {
+            Power.class
     })
     public Integer pow(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
@@ -174,8 +176,8 @@ public class IntegerType extends DataTypeExpression {
         return null;
     }
 
-    @TypeOperation(operations = {
-            org.dvare.expression.operation.aggregation.Min.class,
+    @OperationMapping(operations = {
+            Minimum.class,
             Min.class
     })
     public Integer min(LiteralExpression left, LiteralExpression right) {
@@ -184,8 +186,8 @@ public class IntegerType extends DataTypeExpression {
         return Integer.min((leftValue), rightValue);
     }
 
-    @TypeOperation(operations = {
-            org.dvare.expression.operation.aggregation.Max.class,
+    @OperationMapping(operations = {
+            Maximum.class,
             Max.class
     })
     public Integer max(LiteralExpression left, LiteralExpression right) {

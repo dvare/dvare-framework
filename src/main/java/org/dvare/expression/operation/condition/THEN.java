@@ -24,25 +24,25 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.condition;
 
 import org.dvare.annotations.Operation;
-import org.dvare.annotations.OperationType;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.operation.ConditionOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
 
-@Operation(type = OperationType.CONDITION, symbols = {"THEN", "then"})
+@Operation(type = OperationType.THEN)
 public class THEN extends ConditionOperationExpression {
     static Logger logger = LoggerFactory.getLogger(THEN.class);
 
 
     public THEN() {
-        super("THEN", "then");
+        super(OperationType.THEN);
     }
 
     public THEN copy() {

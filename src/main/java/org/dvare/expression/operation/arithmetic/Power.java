@@ -21,16 +21,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.annotations;
+package org.dvare.expression.operation.arithmetic;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dvare.annotations.Operation;
+import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.operation.ArithmeticOperationExpression;
+import org.dvare.expression.operation.OperationType;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface TypeOperation {
+@Operation(type = OperationType.POWER, dataTypes = {DataType.FloatType, DataType.IntegerType})
+public class Power extends ArithmeticOperationExpression {
+    public Power() {
+        super(OperationType.POWER);
+    }
 
-    Class[] operations();
+    public Power copy() {
+        return new Power();
+    }
+
 }

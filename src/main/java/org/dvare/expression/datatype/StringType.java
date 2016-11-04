@@ -24,12 +24,13 @@ THE SOFTWARE.*/
 package org.dvare.expression.datatype;
 
 
+import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
-import org.dvare.annotations.TypeOperation;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.validation.*;
 import org.dvare.util.TrimString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Type(dataType = DataType.StringType)
@@ -38,12 +39,12 @@ public class StringType extends DataTypeExpression {
         super(DataType.StringType);
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Equals.class
     })
     public boolean equal(LiteralExpression left, LiteralExpression right) {
-        String leftValue = (String) left.getValue();
-        String rightValue = (String) right.getValue();
+        String leftValue = (String) left.getValue().toString();
+        String rightValue = (String) right.getValue().toString();
 
         leftValue = TrimString.trim(leftValue);
         rightValue = TrimString.trim(rightValue);
@@ -67,12 +68,12 @@ public class StringType extends DataTypeExpression {
 
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             NotEquals.class
     })
     public boolean notEqual(LiteralExpression left, LiteralExpression right) {
-        String leftValue = (String) left.getValue();
-        String rightValue = (String) right.getValue();
+        String leftValue = (String) left.getValue().toString();
+        String rightValue = (String) right.getValue().toString();
 
         leftValue = TrimString.trim(leftValue);
         rightValue = TrimString.trim(rightValue);
@@ -95,34 +96,34 @@ public class StringType extends DataTypeExpression {
 
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Less.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
-        String leftValue = (String) left.getValue();
-        String rightValue = (String) right.getValue();
+        String leftValue = (String) left.getValue().toString();
+        String rightValue = (String) right.getValue().toString();
         return leftValue.length() < rightValue.length();
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             LessEqual.class
     })
     public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
-        String leftValue = (String) left.getValue();
-        String rightValue = (String) right.getValue();
+        String leftValue = (String) left.getValue().toString();
+        String rightValue = (String) right.getValue().toString();
         return leftValue.length() <= rightValue.length();
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Greater.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
-        String leftValue = (String) left.getValue();
-        String rightValue = (String) right.getValue();
+        String leftValue = (String) left.getValue().toString();
+        String rightValue = (String) right.getValue().toString();
         return leftValue.length() > rightValue.length();
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             GreaterEqual.class
     })
     public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
@@ -131,13 +132,19 @@ public class StringType extends DataTypeExpression {
         return leftValue.length() >= rightValue.length();
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             In.class
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
 
-        String leftValue = (String) left.getValue();
-        List<String> values = (List<String>) right.getValue();
+        String leftValue = (String) left.getValue().toString();
+
+        List<Object> tempValues = (List<Object>) right.getValue();
+        List<String> values = new ArrayList<>();
+        for (Object tempValue : tempValues) {
+            values.add(tempValue.toString());
+        }
+
 
         leftValue = TrimString.trim(leftValue);
 

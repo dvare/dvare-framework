@@ -24,7 +24,6 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.annotations.OperationType;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
@@ -34,6 +33,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +41,13 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Operation(type = OperationType.AGGREGATION, symbols = {"Mode", "mode"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
+@Operation(type = OperationType.MODE, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Mode extends AggregationOperationExpression {
     static Logger logger = LoggerFactory.getLogger(Mode.class);
 
 
     public Mode() {
-        super("Mode", "mode");
+        super(OperationType.MODE);
     }
 
     public Mode copy() {

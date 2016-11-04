@@ -2,13 +2,13 @@ package org.dvare.expression.operation.validation;
 
 
 import org.dvare.annotations.Operation;
-import org.dvare.annotations.OperationType;
 import org.dvare.expression.operation.ArithmeticOperationExpression;
+import org.dvare.expression.operation.OperationType;
 
-@Operation(type = OperationType.VALIDATION, symbols = {"Abs", "abs"})
+@Operation(type = OperationType.ABSOLUTE)
 public class Absolute extends ArithmeticOperationExpression {
     public Absolute() {
-        super("Abs", "abs");
+        super(OperationType.ABSOLUTE);
     }
 
     public Absolute copy() {

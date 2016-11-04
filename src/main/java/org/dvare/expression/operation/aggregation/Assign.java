@@ -1,7 +1,6 @@
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.annotations.OperationType;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -12,6 +11,7 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.AssignOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.parser.ExpressionTokenizer;
@@ -23,12 +23,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-@Operation(type = OperationType.AGGREGATION, symbols = {":=", "assign", "update"})
+@Operation(type = OperationType.ASSIGN)
 public class Assign extends AssignOperationExpression {
     static Logger logger = LoggerFactory.getLogger(Assign.class);
 
     public Assign() {
-        super(":=", "assign", "update");
+        super(OperationType.ASSIGN);
     }
 
     public Assign copy() {
@@ -50,7 +50,7 @@ public class Assign extends AssignOperationExpression {
     }
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
             pos = parseOperands(tokens, pos, stack, aTypeBinding, vTypeBinding);
 

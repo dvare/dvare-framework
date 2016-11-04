@@ -24,9 +24,11 @@ THE SOFTWARE.*/
 package org.dvare.expression.datatype;
 
 
+import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
-import org.dvare.annotations.TypeOperation;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.operation.aggregation.Maximum;
+import org.dvare.expression.operation.aggregation.Minimum;
 import org.dvare.expression.operation.arithmetic.*;
 import org.dvare.expression.operation.validation.*;
 
@@ -39,7 +41,7 @@ public class FloatType extends DataTypeExpression {
 
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Equals.class
     })
     public boolean equal(LiteralExpression left, LiteralExpression right) {
@@ -48,7 +50,7 @@ public class FloatType extends DataTypeExpression {
         return leftValue.compareTo(rightValue) == 0;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             NotEquals.class
     })
     public boolean notEqual(LiteralExpression left, LiteralExpression right) {
@@ -57,7 +59,7 @@ public class FloatType extends DataTypeExpression {
         return leftValue.compareTo(rightValue) != 0;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Less.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
@@ -66,7 +68,7 @@ public class FloatType extends DataTypeExpression {
         return leftValue < rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             LessEqual.class
     })
     public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
@@ -75,7 +77,7 @@ public class FloatType extends DataTypeExpression {
         return leftValue <= rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Greater.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
@@ -84,7 +86,7 @@ public class FloatType extends DataTypeExpression {
         return leftValue > rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             GreaterEqual.class
     })
     public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
@@ -93,7 +95,7 @@ public class FloatType extends DataTypeExpression {
         return leftValue >= rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             In.class
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
@@ -107,7 +109,7 @@ public class FloatType extends DataTypeExpression {
         return false;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Between.class
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {
@@ -124,7 +126,7 @@ public class FloatType extends DataTypeExpression {
         return false;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             org.dvare.expression.operation.aggregation.Sum.class,
             Add.class
     })
@@ -134,7 +136,7 @@ public class FloatType extends DataTypeExpression {
         return leftValue + rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Subtract.class
     })
     public Float sub(LiteralExpression left, LiteralExpression right) {
@@ -143,7 +145,7 @@ public class FloatType extends DataTypeExpression {
         return leftValue - rightValue;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Multiply.class
     })
     public Float mul(LiteralExpression left, LiteralExpression right) {
@@ -152,8 +154,8 @@ public class FloatType extends DataTypeExpression {
         return leftValue * rightValue;
     }
 
-    @TypeOperation(operations = {
-            Devide.class
+    @OperationMapping(operations = {
+            Divide.class
     })
     public Float div(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();
@@ -161,8 +163,8 @@ public class FloatType extends DataTypeExpression {
         return leftValue / rightValue;
     }
 
-    @TypeOperation(operations = {
-            org.dvare.expression.operation.validation.Power.class
+    @OperationMapping(operations = {
+            Power.class
     })
     public Float pow(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();
@@ -174,8 +176,8 @@ public class FloatType extends DataTypeExpression {
         return null;
     }
 
-    @TypeOperation(operations = {
-            org.dvare.expression.operation.aggregation.Min.class,
+    @OperationMapping(operations = {
+            Minimum.class,
             Min.class
     })
     public Float min(LiteralExpression left, LiteralExpression right) {
@@ -184,8 +186,8 @@ public class FloatType extends DataTypeExpression {
         return Float.min((leftValue), rightValue);
     }
 
-    @TypeOperation(operations = {
-            org.dvare.expression.operation.aggregation.Max.class,
+    @OperationMapping(operations = {
+            Maximum.class,
             Max.class
     })
     public Float max(LiteralExpression left, LiteralExpression right) {

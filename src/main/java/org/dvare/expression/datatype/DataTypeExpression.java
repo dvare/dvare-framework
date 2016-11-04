@@ -24,7 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.datatype;
 
 
-import org.dvare.annotations.TypeOperation;
+import org.dvare.annotations.OperationMapping;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralDataType;
@@ -129,10 +129,10 @@ public abstract class DataTypeExpression extends Expression {
 
     private String getMethodName(Class operation) {
         for (Method method : this.getClass().getMethods()) {
-            Annotation annotation = method.getAnnotation(TypeOperation.class);
-            if (annotation != null && annotation instanceof TypeOperation) {
-                TypeOperation typeOperation = (TypeOperation) annotation;
-                if (Arrays.asList(typeOperation.operations()).contains(operation)) {
+            Annotation annotation = method.getAnnotation(OperationMapping.class);
+            if (annotation != null && annotation instanceof OperationMapping) {
+                OperationMapping operationMapping = (OperationMapping) annotation;
+                if (Arrays.asList(operationMapping.operations()).contains(operation)) {
                     return method.getName();
                 }
 

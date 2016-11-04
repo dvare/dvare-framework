@@ -1,26 +1,26 @@
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.annotations.OperationType;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Operation(type = OperationType.AGGREGATION, symbols = {"Value", "value"})
+@Operation(type = OperationType.VALUE)
 public class Value extends AggregationOperationExpression {
     static Logger logger = LoggerFactory.getLogger(Value.class);
 
 
     public Value() {
-        super("Value", "value");
+        super(OperationType.VALUE);
     }
 
     public Value copy() {

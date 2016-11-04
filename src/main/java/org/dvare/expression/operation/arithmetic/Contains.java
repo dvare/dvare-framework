@@ -23,7 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.arithmetic;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
@@ -31,12 +31,13 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.ChainArithmeticOperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Contains", "contains"}, dataTypes = {DataType.StringType})
+@Operation(type = OperationType.CONTAINS, dataTypes = {DataType.StringType})
 public class Contains extends ChainArithmeticOperationExpression {
     public Contains() {
-        super("Contains", "contains");
+        super(OperationType.CONTAINS);
     }
 
     public Contains copy() {

@@ -23,8 +23,8 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.datatype;
 
+import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
-import org.dvare.annotations.TypeOperation;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.validation.*;
 
@@ -38,7 +38,7 @@ public class DateTimeType extends DataTypeExpression {
 
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Equals.class
     })
     public boolean equal(LiteralExpression left, LiteralExpression right) {
@@ -47,7 +47,7 @@ public class DateTimeType extends DataTypeExpression {
         return leftValue.compareTo(rightValue) == 0;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             NotEquals.class
     })
     public boolean notEqual(LiteralExpression left, LiteralExpression right) {
@@ -56,7 +56,7 @@ public class DateTimeType extends DataTypeExpression {
         return leftValue.compareTo(rightValue) != 0;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Less.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
@@ -65,7 +65,7 @@ public class DateTimeType extends DataTypeExpression {
         return leftValue.compareTo(rightValue) < 0;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             LessEqual.class
     })
 
@@ -75,7 +75,7 @@ public class DateTimeType extends DataTypeExpression {
         return leftValue.compareTo(rightValue) <= 0;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Greater.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
@@ -84,7 +84,7 @@ public class DateTimeType extends DataTypeExpression {
         return leftValue.compareTo(rightValue) > 0;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             GreaterEqual.class
     })
     public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
@@ -93,7 +93,7 @@ public class DateTimeType extends DataTypeExpression {
         return leftValue.compareTo(rightValue) >= 0;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             In.class
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
@@ -107,7 +107,7 @@ public class DateTimeType extends DataTypeExpression {
         return false;
     }
 
-    @TypeOperation(operations = {
+    @OperationMapping(operations = {
             Between.class
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {

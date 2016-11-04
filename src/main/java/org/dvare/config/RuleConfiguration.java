@@ -24,9 +24,15 @@ THE SOFTWARE.*/
 package org.dvare.config;
 
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.parser.ExpressionParser;
+
+import java.util.Collections;
+import java.util.List;
 
 public class RuleConfiguration {
 
@@ -34,12 +40,25 @@ public class RuleConfiguration {
     private String[] functionBasePackages;
     private ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
     private ExpressionParser expressionParser;
+    private boolean silentMode = false;
 
     public RuleConfiguration() {
         this(null);
     }
 
+
     public RuleConfiguration(String[] functionBasePackages) {
+
+        if (silentMode) {
+            List<Logger> loggers = Collections.<Logger>list(LogManager.getCurrentLoggers());
+            loggers.add(LogManager.getRootLogger());
+            for (Logger logger : loggers) {
+                if (logger.getName().startsWith("org.dvare") || logger.getName().equals("root")) {
+                    logger.setLevel(Level.OFF);
+                }
+            }
+        }
+
         this.functionBasePackages = functionBasePackages;
         if (configurationProvider == null) {
             configurationProvider = new RuleConfigurationProvider(configurationRegistry, functionBasePackages);
@@ -49,7 +68,6 @@ public class RuleConfiguration {
     public RuleEvaluator getEvaluator() {
         return new RuleEvaluator();
     }
-
 
 
     public ExpressionParser getParser() {
@@ -76,4 +94,11 @@ public class RuleConfiguration {
         this.functionBasePackages = functionBasePackages;
     }
 
+    public boolean isSilentMode() {
+        return silentMode;
+    }
+
+    public void setSilentMode(boolean silentMode) {
+        this.silentMode = silentMode;
+    }
 }

@@ -1,13 +1,14 @@
 package org.dvare.expression.operation.validation;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.ValidationOperationExpression;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"AND", "And", "and", "&&"})
+@Operation(type = OperationType.AND)
 public class And extends ValidationOperationExpression {
     public And() {
-        super("AND", "And", "and", "&&");
+        super(OperationType.AND);
     }
 
     public And copy() {

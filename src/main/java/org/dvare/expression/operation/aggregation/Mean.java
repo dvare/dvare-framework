@@ -24,7 +24,6 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.annotations.OperationType;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
@@ -34,6 +33,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,13 +42,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Operation(type = OperationType.AGGREGATION, symbols = {"Mean", "mean", "Avg", "avg"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
+@Operation(type = OperationType.MEAN, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Mean extends AggregationOperationExpression {
     static Logger logger = LoggerFactory.getLogger(Mean.class);
 
 
     public Mean() {
-        super("Mean", "mean", "Avg", "avg");
+        super(OperationType.MEAN);
     }
 
     public Mean copy() {

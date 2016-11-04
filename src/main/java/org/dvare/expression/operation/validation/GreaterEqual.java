@@ -1,14 +1,15 @@
 package org.dvare.expression.operation.validation;
 
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.EqualityOperationExpression;
+import org.dvare.expression.operation.OperationType;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"ge", ">="}, dataTypes = {DataType.FloatType, DataType.IntegerType, DataType.StringType, DataType.DateType, DataType.DateTimeType})
+@Operation(type = OperationType.GREATER_EQUAL, dataTypes = {DataType.FloatType, DataType.IntegerType, DataType.StringType, DataType.DateType, DataType.DateTimeType})
 public class GreaterEqual extends EqualityOperationExpression {
     public GreaterEqual() {
-        super("ge", ">=");
+        super(OperationType.GREATER_EQUAL);
     }
 
     public GreaterEqual copy() {

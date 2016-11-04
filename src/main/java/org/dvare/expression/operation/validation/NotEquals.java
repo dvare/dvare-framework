@@ -23,13 +23,14 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.validation;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.expression.operation.EqualityOperationExpression;
+import org.dvare.expression.operation.OperationType;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"ne", "!=", "<>"})
+@Operation(type = OperationType.NOT_EQUAL)
 public class NotEquals extends EqualityOperationExpression {
     public NotEquals() {
-        super("ne", "!=", "<>");
+        super(OperationType.NOT_EQUAL);
     }
 
     public NotEquals copy() {

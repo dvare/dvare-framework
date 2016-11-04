@@ -33,7 +33,6 @@ import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralDataType;
-import org.dvare.expression.operation.ConditionOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
@@ -95,7 +94,7 @@ public class ExpressionParser {
     }
 
     public Expression fromString(String expr, TypeBinding typeBinding) throws ExpressionParseException {
-        return fromStringSimple(expr, typeBinding, null);
+        return fromString(expr, typeBinding, null);
     }
 
     public Expression fromString(String expr, Map<String, String> aTypes, Map<String, String> vTypes) throws ExpressionParseException {
@@ -111,96 +110,61 @@ public class ExpressionParser {
         return fromString(expr, aTypes, vTypes);
     }
 
-    public Expression fromString(String expr, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
+    public Expression fromString(String expr, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
-        if (expr != null && !expr.isEmpty()) {
-            if ((expr.contains("if") || expr.contains("IF")) && (expr.contains("endif") || expr.contains("ENDIF"))) {
-                return fromStringCondition(expr, aTypes, vTypes);
-            } else {
-                return fromStringSimple(expr, aTypes, vTypes);
-            }
-        } else {
-            String message = String.format("Expression is null or Empty");
-            logger.error(message);
-            throw new ExpressionParseException(message);
-        }
-
-    }
-
-    public Expression fromStringSimple(String expr, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-        Stack<Expression> stack = new Stack<>();
-
-        String[] tokens = ExpressionTokenizer.toToken(expr);
-
-        if (tokens.length == 1) {
-            if (tokens[0].equalsIgnoreCase("true")) {
-                return new BooleanExpression("true", true);
-            } else if (tokens[0].equalsIgnoreCase("false")) {
-                return new BooleanExpression("false", false);
-            }
-
-        }
-        for (int i = 0; i < tokens.length - 1; i++) {
-            String token = tokens[i];
-            OperationExpression op = configurationRegistry.getOperation(token);
-            if (op != null) {
-                op = op.copy();
-
-                if (dataTypes != null) {
-                    i = op.parse(tokens, i, stack, selfTypes, dataTypes);
-                } else {
-                    i = op.parse(tokens, i, stack, selfTypes);
-                }
-            } else {
-                if (!token.matches(selfPatten) && !token.matches(dataPatten)) {
-
-                    if (selfTypes == null || !selfTypes.getTypes().containsKey(token)) {
-                        DataType dataType = LiteralDataType.computeDataType(token);
-                        if (dataType == null) {
-
-                            String message = String.format("%s is not an OperationExpression or Variable near \"%s\"", token, ExpressionTokenizer.toString(tokens, i));
-                            logger.error(message);
-                            throw new IllegalOperationException(message);
-
-
-                        }
-                    }
-                }
-            }
-        }
-        if (stack.empty()) {
-            throw new ExpressionParseException("Unable to Parse Expression");
-        }
-        return stack.pop();
-
-
-    }
-
-    public Expression fromStringCondition(String expr, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
         if (expr != null && !expr.isEmpty()) {
             Stack<Expression> stack = new Stack<>();
 
             String[] tokens = ExpressionTokenizer.toToken(expr);
 
-            for (int i = 0; i < tokens.length - 1; i++) {
-
-                ConditionOperationExpression op = configurationRegistry.getConditionOperation(tokens[i]);
-                if (op != null) {
-                    op = op.copy();
-                    i = op.parse(tokens, i, stack, aTypes, vTypes);
+            if (tokens.length == 1) {
+                if (tokens[0].equalsIgnoreCase("true")) {
+                    return new BooleanExpression("true", true);
+                } else if (tokens[0].equalsIgnoreCase("false")) {
+                    return new BooleanExpression("false", false);
                 }
 
+            }
+            for (int i = 0; i < tokens.length - 1; i++) {
+                String token = tokens[i];
+                OperationExpression op = configurationRegistry.getOperation(token);
+                if (op != null) {
+                    op = op.copy();
+
+                    if (dataTypes != null) {
+                        i = op.parse(tokens, i, stack, selfTypes, dataTypes);
+                    } else {
+                        i = op.parse(tokens, i, stack, selfTypes);
+                    }
+                } else {
+                    if (!token.matches(selfPatten) && !token.matches(dataPatten)) {
+
+                        if (selfTypes == null || !selfTypes.getTypes().containsKey(token)) {
+                            DataType dataType = LiteralDataType.computeDataType(token);
+                            if (dataType == null) {
+
+                                String message = String.format("%s is not an OperationExpression or Variable near \"%s\"", token, ExpressionTokenizer.toString(tokens, i));
+                                logger.error(message);
+                                throw new IllegalOperationException(message);
+
+
+                            }
+                        }
+                    }
+                }
             }
             if (stack.empty()) {
                 throw new ExpressionParseException("Unable to Parse Expression");
             }
             return stack.pop();
+
+
         } else {
             String message = String.format("Expression is null or Empty");
             logger.error(message);
             throw new ExpressionParseException(message);
         }
 
-
     }
+
 }

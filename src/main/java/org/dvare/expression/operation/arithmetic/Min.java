@@ -1,13 +1,14 @@
 package org.dvare.expression.operation.arithmetic;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.ArithmeticOperationExpression;
+import org.dvare.expression.operation.OperationType;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Min", "min"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
+@Operation(type = OperationType.MIN, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Min extends ArithmeticOperationExpression {
     public Min() {
-        super("Min", "min");
+        super(OperationType.MIN);
     }
 
     public Min copy() {

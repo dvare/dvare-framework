@@ -23,14 +23,15 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.arithmetic;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.ArithmeticOperationExpression;
+import org.dvare.expression.operation.OperationType;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Sub", "sub", "-"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
+@Operation(type = OperationType.SUBTRACT, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Subtract extends ArithmeticOperationExpression {
     public Subtract() {
-        super("Sub", "sub", "-");
+        super(OperationType.SUBTRACT);
     }
 
     public Subtract copy() {

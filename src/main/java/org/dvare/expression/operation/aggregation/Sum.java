@@ -24,26 +24,26 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.annotations.OperationType;
 import org.dvare.exceptions.interpreter.IllegalOperationException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.AggregationOperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Operation(type = OperationType.AGGREGATION, symbols = {"Sum", "sum"}, dataTypes = {DataType.FloatType, DataType.IntegerType})
+@Operation(type = OperationType.SUM, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Sum extends AggregationOperationExpression {
     static Logger logger = LoggerFactory.getLogger(Sum.class);
 
 
     public Sum() {
-        super("Sum", "sum");
+        super(OperationType.SUM);
     }
 
     public Sum copy() {

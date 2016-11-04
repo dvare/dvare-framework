@@ -4,7 +4,7 @@
 
     <groupId>org.dvare</groupId>
     <artifactId>dvare-framework</artifactId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
 
     <description>DVARE is lightweight expression evaluator for Java, that allows evaluating Arithmetic and boolean
         Comparison expressions.

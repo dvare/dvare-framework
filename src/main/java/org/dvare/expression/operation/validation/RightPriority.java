@@ -23,13 +23,14 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.validation;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.ValidationOperationExpression;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {")"})
+@Operation(type = OperationType.RIGHT_PRIORITY)
 public class RightPriority extends ValidationOperationExpression {
     public RightPriority() {
-        super(")");
+        super(OperationType.RIGHT_PRIORITY);
     }
 
     public RightPriority copy() {

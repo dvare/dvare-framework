@@ -23,21 +23,22 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.arithmetic;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.ChainArithmeticOperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
-@org.dvare.annotations.Operation(type = OperationType.VALIDATION, symbols = {"Substring", "substring"}, dataTypes = {DataType.StringType})
+@Operation(type = OperationType.SUBSTRING, dataTypes = {DataType.StringType})
 public class Substring extends ChainArithmeticOperationExpression {
 
 
     public Substring() {
-        super("Substring", "substring");
+        super(OperationType.SUBSTRING);
     }
 
     public Substring copy() {
@@ -73,7 +74,11 @@ public class Substring extends ChainArithmeticOperationExpression {
             }
 
 
-            value = value.substring(index, index + count);
+            try {
+                value = value.substring(index - 1, index - 1 + count);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                value = value.substring(index, index + count);
+            }
             LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataType);
             return returnExpression;
 

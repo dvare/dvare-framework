@@ -30,26 +30,18 @@ import org.dvare.expression.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Stack;
 
 public abstract class ValidationOperationExpression extends OperationExpression {
     protected static Logger logger = LoggerFactory.getLogger(ValidationOperationExpression.class);
 
-    public ValidationOperationExpression(String symbol) {
-        super(symbol);
+    public ValidationOperationExpression(OperationType operationType) {
+        super(operationType);
     }
 
-    public ValidationOperationExpression(List<String> symbols) {
-        super(symbols);
-    }
-
-    public ValidationOperationExpression(String... symbols) {
-        super(symbols);
-    }
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         Expression left = stack.pop();
         int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         Expression right = stack.pop();
@@ -65,7 +57,7 @@ public abstract class ValidationOperationExpression extends OperationExpression 
     }
 
     @Override
-    public int parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
         Expression left = stack.pop();
         int i = findNextExpression(tokens, pos + 1, stack, typeBinding);
         Expression right = stack.pop();
@@ -107,7 +99,6 @@ public abstract class ValidationOperationExpression extends OperationExpression 
         }
         return null;
     }
-
 
 
 }

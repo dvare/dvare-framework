@@ -23,7 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.condition;
 
-import org.dvare.annotations.OperationType;
+import org.dvare.annotations.Operation;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -31,19 +31,20 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.operation.ConditionOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Stack;
 
-@org.dvare.annotations.Operation(type = OperationType.CONDITION, symbols = {"IF", "if", "ELSEIF", "elseif"})
+@Operation(type = OperationType.IF)
 public class IF extends ConditionOperationExpression {
     static Logger logger = LoggerFactory.getLogger(IF.class);
 
 
     public IF() {
-        super("IF", "if", "ELSEIF", "elseif");
+        super(OperationType.IF);
     }
 
     public IF copy() {
@@ -65,42 +66,41 @@ public class IF extends ConditionOperationExpression {
 
             OperationExpression operation = configurationRegistry.getOperation(tokens[i]);
             if (operation != null) {
-                operation = operation.copy();
 
-                if (condition != null) {
-                    stack.push(condition);
+
+                if (operation instanceof IF || operation instanceof ELSE || operation instanceof THEN || operation instanceof ENDIF) {
+                    operation = operation.copy();
+                    if (operation instanceof THEN) {
+                        i = operation.parse(tokens, i, stack, selfTypes, dataTypes);
+                        this.thenOperand = stack.pop();
+                        continue;
+                    }
+
+                    if (operation instanceof ELSE) {
+                        i = operation.parse(tokens, i, stack, selfTypes, dataTypes);
+                        this.elseOperand = stack.pop();
+                        continue;
+                    }
+
+                    if (operation instanceof IF) {
+                        i = operation.parse(tokens, i, stack, selfTypes, dataTypes);
+                        this.elseOperand = stack.pop();
+                        return i;
+                    }
+
+                    if (operation instanceof ENDIF) {
+                        return i;
+                    }
+
+                } else {
+                    operation = operation.copy();
+
+                    if (condition != null) {
+                        stack.push(condition);
+                    }
+                    i = operation.parse(tokens, i, stack, selfTypes, dataTypes);
+                    this.condition = stack.pop();
                 }
-                i = operation.parse(tokens, i, stack, selfTypes, dataTypes);
-                this.condition = stack.pop();
-                continue;
-            }
-
-            ConditionOperationExpression conditionOperation = configurationRegistry.getConditionOperation(tokens[i]);
-
-            if (conditionOperation != null) {
-                conditionOperation = conditionOperation.copy();
-                if (conditionOperation instanceof THEN) {
-                    i = conditionOperation.parse(tokens, i, stack, selfTypes, dataTypes);
-                    this.thenOperand = stack.pop();
-                    continue;
-                }
-
-                if (conditionOperation instanceof ELSE) {
-                    i = conditionOperation.parse(tokens, i, stack, selfTypes, dataTypes);
-                    this.elseOperand = stack.pop();
-                    continue;
-                }
-
-                if (conditionOperation instanceof IF) {
-                    i = conditionOperation.parse(tokens, i, stack, selfTypes, dataTypes);
-                    this.elseOperand = stack.pop();
-                    return i;
-                }
-
-                if (conditionOperation instanceof ENDIF) {
-                    return i;
-                }
-
             }
         }
         return null;

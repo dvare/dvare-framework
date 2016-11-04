@@ -24,21 +24,21 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.condition;
 
 import org.dvare.annotations.Operation;
-import org.dvare.annotations.OperationType;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.operation.ConditionOperationExpression;
+import org.dvare.expression.operation.OperationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Operation(type = OperationType.CONDITION, symbols = {"ENDIF", "endif"})
+@Operation(type = OperationType.ENDIF)
 public class ENDIF extends ConditionOperationExpression {
     static Logger logger = LoggerFactory.getLogger(ENDIF.class);
 
 
     public ENDIF() {
-        super("ENDIF", "endif");
+        super(OperationType.ENDIF);
     }
 
     public ENDIF copy() {
