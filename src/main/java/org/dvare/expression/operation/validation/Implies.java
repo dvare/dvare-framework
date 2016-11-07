@@ -15,7 +15,6 @@ public class Implies extends ValidationOperationExpression {
         return new Implies();
     }
 
-
     @Override
     public Object interpret(Object object) throws InterpretException {
 
@@ -23,6 +22,13 @@ public class Implies extends ValidationOperationExpression {
         boolean left = (Boolean) leftOperand.interpret(object);
         boolean right = (Boolean) rightOperand.interpret(object);
 
+        return (!left) | right;
+    }
+
+    @Override
+    public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
+        boolean left = (Boolean) leftOperand.interpret(selfRow, dataRow);
+        boolean right = (Boolean) rightOperand.interpret(selfRow, dataRow);
         return (!left) | right;
     }
 }

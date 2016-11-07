@@ -49,13 +49,8 @@ public class StringType extends DataTypeExpression {
         leftValue = TrimString.trim(leftValue);
         rightValue = TrimString.trim(rightValue);
 
-        if (left.getType().getClass().equals(StringType.class) && right.getType().getClass().equals(StringType.class)) {
+        if (right.getType().getClass().equals(StringType.class)) {
             if (leftValue.equals(rightValue)) {
-                return true;
-            }
-        } else if (left.getType().getClass().equals(RegexType.class)) {
-
-            if (rightValue.matches(leftValue)) {
                 return true;
             }
         } else if (right.getType().getClass().equals(RegexType.class)) {
@@ -77,13 +72,9 @@ public class StringType extends DataTypeExpression {
 
         leftValue = TrimString.trim(leftValue);
         rightValue = TrimString.trim(rightValue);
-        if (left.getType().getClass().equals(StringType.class) && right.getType().getClass().equals(StringType.class)) {
-            if (!leftValue.equals(rightValue)) {
-                return true;
-            }
-        } else if (left.getType().getClass().equals(RegexType.class)) {
 
-            if (!rightValue.matches(leftValue)) {
+        if (right.getType().getClass().equals(StringType.class)) {
+            if (!leftValue.equals(rightValue)) {
                 return true;
             }
         } else if (right.getType().getClass().equals(RegexType.class)) {
@@ -145,20 +136,13 @@ public class StringType extends DataTypeExpression {
             values.add(tempValue.toString());
         }
 
-
         leftValue = TrimString.trim(leftValue);
 
         for (String rightValue : values) {
-
             rightValue = TrimString.trim(rightValue);
 
-            if (left.getType().getClass().equals(StringType.class) && right.getType().getClass().equals(StringType.class)) {
+            if (right.getType().getClass().equals(StringType.class)) {
                 if (leftValue.equals(rightValue)) {
-                    return true;
-                }
-            } else if (left.getType().getClass().equals(RegexType.class)) {
-
-                if (rightValue.matches(leftValue)) {
                     return true;
                 }
             } else if (right.getType().getClass().equals(RegexType.class)) {

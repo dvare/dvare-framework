@@ -36,27 +36,33 @@ public class DataTypeMapping {
     public static Class getDataTypeClass(DataType type) {
 
         switch (type) {
-            case BooleanType: {
+            case BooleanType:
+            case BooleanListType: {
                 return BooleanType.class;
 
             }
-            case FloatType: {
+            case FloatType:
+            case FloatListType: {
 
                 return FloatType.class;
             }
-            case IntegerType: {
+            case IntegerType:
+            case IntegerListType: {
                 return IntegerType.class;
 
             }
-            case StringType: {
+            case StringType:
+            case StringListType: {
 
                 return StringType.class;
             }
-            case DateTimeType: {
+            case DateTimeType:
+            case DateTimeListType: {
 
                 return DateTimeType.class;
             }
-            case DateType: {
+            case DateType:
+            case DateListType: {
                 return DateType.class;
 
             }
@@ -185,45 +191,45 @@ public class DataTypeMapping {
     }
 
 
-    public static Class getDataTypeMappingArray(String type) {
-        return getDataTypeMapping(DataType.valueOf(type));
+  /*  public static Class getDataTypeMappingSingleType(String type) {
+        return getDataTypeMappingSingleType(DataType.valueOf(type));
     }
 
-    public static Class getDataTypeMappingArray(DataType type) {
+    public static Class getDataTypeMappingSingleType(DataType type) {
 
         switch (type) {
             case BooleanType:
             case BooleanListType: {
-                return Boolean[].class;
+                return Boolean.class;
             }
 
             case FloatType:
             case FloatListType: {
-                return Float[].class;
+                return Float.class;
             }
 
             case IntegerType:
             case IntegerListType: {
-                return Integer[].class;
+                return Integer.class;
             }
 
             case StringType:
             case StringListType: {
-                return String[].class;
+                return String.class;
             }
 
             case DateTimeType:
             case DateTimeListType: {
-                return Date[].class;
+                return Date.class;
             }
 
             case DateType:
             case DateListType: {
-                return Date[].class;
+                return Date.class;
             }
 
             case RegexType: {
-                return String[].class;
+                return String.class;
             }
 
         }
@@ -231,5 +237,5 @@ public class DataTypeMapping {
 
     }
 
-
+*/
 }

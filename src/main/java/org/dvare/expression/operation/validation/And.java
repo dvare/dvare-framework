@@ -21,6 +21,14 @@ public class And extends ValidationOperationExpression {
         Boolean left = (Boolean) leftOperand.interpret(object);
         Boolean right = (Boolean) rightOperand.interpret(object);
 
-        return left & right;
+        return left && right;
+    }
+
+
+    @Override
+    public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
+        boolean left = (Boolean) leftOperand.interpret(selfRow, dataRow);
+        boolean right = (Boolean) rightOperand.interpret(selfRow, dataRow);
+        return left && right;
     }
 }

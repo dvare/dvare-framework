@@ -98,13 +98,8 @@ public class DateTimeType extends DataTypeExpression {
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
         Date leftValue = (Date) left.getValue();
-        List<Date> values = (List<Date>) right.getValue();
-        for (Date rightValue : values) {
-            if (leftValue.compareTo(rightValue) == 0) {
-                return true;
-            }
-        }
-        return false;
+        List<Date> rightValues = (List<Date>) right.getValue();
+        return rightValues.contains(leftValue);
     }
 
     @OperationMapping(operations = {
@@ -115,11 +110,8 @@ public class DateTimeType extends DataTypeExpression {
         List<Date> values = (List<Date>) right.getValue();
         Date lower = values.get(0);
         Date upper = values.get(1);
-
         if (lower.compareTo(leftValue) <= 0 && leftValue.compareTo(upper) <= 0) {
-            {
-                return true;
-            }
+            return true;
         }
         return false;
     }

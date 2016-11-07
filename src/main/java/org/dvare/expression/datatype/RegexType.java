@@ -31,6 +31,7 @@ import org.dvare.expression.operation.validation.In;
 import org.dvare.expression.operation.validation.NotEquals;
 import org.dvare.util.TrimString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Type(dataType = DataType.RegexType)
@@ -73,10 +74,16 @@ public class RegexType extends DataTypeExpression {
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
         String leftValue = (String) left.getValue();
-        List<String> values = (List<String>) right.getValue();
+        List<Object> tempValues = (List<Object>) right.getValue();
 
-        for (String value : values) {
-            String rightValue = TrimString.trim(value);
+        List<String> values = new ArrayList<>();
+        for (Object tempValue : tempValues) {
+            values.add(tempValue.toString());
+        }
+
+
+        for (String rightValue : values) {
+            rightValue = TrimString.trim(rightValue);
             if (leftValue.matches(rightValue)) {
                 return true;
             }

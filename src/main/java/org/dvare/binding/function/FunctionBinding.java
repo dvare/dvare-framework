@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.binding.function;
 
 
+import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
 
 import java.util.ArrayList;
@@ -31,9 +32,9 @@ import java.util.List;
 
 public class FunctionBinding {
     private String methodName;
-    private Class tableClass;
+    private Class functionClass;
     private DataTypeExpression returnType;
-    private List<DataTypeExpression> parameters = new ArrayList<>();
+    private List<DataType> parameters = new ArrayList<>();
     private boolean isList = false;
 
     public FunctionBinding(String methodName, Class tableClass, DataTypeExpression returnType) {
@@ -41,9 +42,9 @@ public class FunctionBinding {
     }
 
 
-    public FunctionBinding(String methodName, Class tableClass, DataTypeExpression returnType, boolean isList, List<DataTypeExpression> parameters) {
+    public FunctionBinding(String methodName, Class functionClass, DataTypeExpression returnType, boolean isList, List<DataType> parameters) {
         this.methodName = methodName;
-        this.tableClass = tableClass;
+        this.functionClass = functionClass;
         this.returnType = returnType;
         this.isList = isList;
         this.parameters = parameters;
@@ -57,12 +58,13 @@ public class FunctionBinding {
         this.methodName = methodName;
     }
 
-    public Class getTableClass() {
-        return tableClass;
+
+    public Class getFunctionClass() {
+        return functionClass;
     }
 
-    public void setTableClass(Class tableClass) {
-        this.tableClass = tableClass;
+    public void setFunctionClass(Class functionClass) {
+        this.functionClass = functionClass;
     }
 
     public DataTypeExpression getReturnType() {
@@ -81,11 +83,11 @@ public class FunctionBinding {
         isList = list;
     }
 
-    public List<DataTypeExpression> getParameters() {
+    public List<DataType> getParameters() {
         return parameters;
     }
 
-    public void setParameters(List<DataTypeExpression> parameters) {
+    public void setParameters(List<DataType> parameters) {
         this.parameters = parameters;
     }
 }
