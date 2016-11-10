@@ -178,11 +178,56 @@ public abstract class EqualityOperationExpression extends ValidationOperationExp
 
         }
 
+
+        if (!(left instanceof NullLiteral) && !(right instanceof NullLiteral)) {
+
+            DataType leftDataType = null;
+            DataType rightDataType = null;
+            if (left instanceof VariableExpression) {
+
+                leftDataType = ((VariableExpression) left).getType().getDataType();
+
+            } else if (left instanceof LiteralExpression) {
+                leftDataType = ((LiteralExpression) left).getType().getDataType();
+            }
+
+
+            if (right instanceof VariableExpression) {
+                rightDataType = ((VariableExpression) right).getType().getDataType();
+            } else if (right instanceof LiteralExpression) {
+                rightDataType = ((LiteralExpression) right).getType().getDataType();
+            }
+
+
+            if (leftDataType != null && rightDataType != null) {
+
+                if (leftDataType.equals(DataType.StringType) && !(rightDataType.equals(DataType.StringType) || rightDataType.equals(DataType.RegexType))) {
+
+                    String message = String.format("%s OperationExpression  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), leftDataType, rightDataType, ExpressionTokenizer.toString(tokens, pos));
+                    logger.error(message);
+                    throw new IllegalOperationException(message);
+
+                } else {
+
+                    if (!leftDataType.equals(rightDataType)) {
+                        String message = String.format("%s OperationExpression  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), leftDataType, rightDataType, ExpressionTokenizer.toString(tokens, pos));
+                        logger.error(message);
+                        throw new IllegalOperationException(message);
+                    }
+
+                }
+
+            }
+        }
+
+
         if (dataType != null && !isLegalOperation(dataType.getDataType())) {
             String message = String.format("OperationExpression %s not possible on type %s at %s", this.getClass().getSimpleName(), dataType.getDataType(), ExpressionTokenizer.toString(tokens, pos));
             logger.error(message);
             throw new IllegalOperationException(message);
         }
+
+
     }
 
     @Override

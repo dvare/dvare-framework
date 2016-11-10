@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -335,8 +336,14 @@ public class Function extends ValidationOperationExpression {
                 return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType());
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            logger.error(e.getMessage(), e);
+        } catch (InstantiationException e) {
+            logger.error(e.getMessage(), e);
+        } catch (IllegalAccessException e) {
+            logger.error(e.getMessage(), e);
+        } catch (InvocationTargetException e) {
+            logger.error(e.getMessage(), e);
         }
         return null;
     }
