@@ -201,12 +201,14 @@ public abstract class EqualityOperationExpression extends ValidationOperationExp
 
             if (leftDataType != null && rightDataType != null) {
 
-                if (leftDataType.equals(DataType.StringType) && !(rightDataType.equals(DataType.StringType) || rightDataType.equals(DataType.RegexType))) {
+                if (leftDataType.equals(DataType.StringType)) {
+                    if (!rightDataType.equals(DataType.StringType) && !rightDataType.equals(DataType.RegexType)) {
 
-                    String message = String.format("%s OperationExpression  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), leftDataType, rightDataType, ExpressionTokenizer.toString(tokens, pos));
-                    logger.error(message);
-                    throw new IllegalOperationException(message);
+                        String message = String.format("%s OperationExpression  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), leftDataType, rightDataType, ExpressionTokenizer.toString(tokens, pos));
+                        logger.error(message);
+                        throw new IllegalOperationException(message);
 
+                    }
                 } else {
 
                     if (!leftDataType.equals(rightDataType)) {
