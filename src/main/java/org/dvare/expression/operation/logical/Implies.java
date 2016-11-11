@@ -1,12 +1,12 @@
-package org.dvare.expression.operation.validation;
+package org.dvare.expression.operation.logical;
 
 import org.dvare.annotations.Operation;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.operation.LogicalOperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.ValidationOperationExpression;
 
 @Operation(type = OperationType.IMPLIES)
-public class Implies extends ValidationOperationExpression {
+public class Implies extends LogicalOperationExpression {
     public Implies() {
         super(OperationType.IMPLIES);
     }

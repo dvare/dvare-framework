@@ -38,7 +38,7 @@ public class ToString extends ChainOperationExpression {
 
 
     public ToString() {
-        super(OperationType.TO_INTEGER);
+        super(OperationType.TO_STRING);
     }
 
     public ToString copy() {

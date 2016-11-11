@@ -4,6 +4,10 @@ package org.dvare.builder;
 import org.dvare.expression.Expression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.logical.And;
+import org.dvare.expression.operation.logical.Implies;
+import org.dvare.expression.operation.logical.Not;
+import org.dvare.expression.operation.logical.OR;
 import org.dvare.expression.operation.validation.*;
 
 public class OperationBuilder {

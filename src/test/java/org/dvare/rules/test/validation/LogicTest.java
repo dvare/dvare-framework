@@ -158,6 +158,27 @@ public class LogicTest extends TestCase {
         assertTrue(result);
     }
 
+    @Test
+    public void testApp7() throws ExpressionParseException, InterpretException {
+
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        String expr = "not (Variable5->toInteger() between [ 68 , 78 ] or Variable5->toInteger() between [ 81 , 89 ])";
+
+        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+        ArithmeticOperation ArithmeticOperation = new ArithmeticOperation();
+        ArithmeticOperation.setVariable5("79");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
+        assertTrue(result);
+    }
+
 
 
 }

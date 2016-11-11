@@ -32,41 +32,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
 
-public abstract class ValidationOperationExpression extends OperationExpression {
-    protected static Logger logger = LoggerFactory.getLogger(ValidationOperationExpression.class);
+public abstract class LogicalOperationExpression extends ValidationOperationExpression {
+    protected static Logger logger = LoggerFactory.getLogger(LogicalOperationExpression.class);
 
-    public ValidationOperationExpression(OperationType operationType) {
+    public LogicalOperationExpression(OperationType operationType) {
         super(operationType);
-    }
-
-
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-
-        pos = parse(tokens, pos, stack, typeBinding, null);
-
-
-        return pos;
-    }
-
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-        Expression left = stack.pop();
-        if (dataTypes == null) {
-            pos = findNextExpression(tokens, pos + 1, stack, selfTypes);
-        } else {
-            pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-        }
-        Expression right = stack.pop();
-
-        this.leftOperand = left;
-        this.rightOperand = right;
-
-        logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
-
-        stack.push(this);
-
-        return pos;
     }
 
 
@@ -88,7 +58,13 @@ public abstract class ValidationOperationExpression extends OperationExpression 
                 } else {
                     i = op.parse(tokens, i, stack, selfTypes, dataTypes);
                 }
-                return i;
+                if (!stack.isEmpty() && stack.peek() instanceof ChainOperationExpression) {
+                    continue;
+                } else {
+                    return i;
+                }
+
+
             }
         }
         return null;
