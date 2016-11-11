@@ -30,12 +30,12 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.ChainArithmeticOperationExpression;
+import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
 @Operation(type = OperationType.CONTAINS, dataTypes = {DataType.StringType})
-public class Contains extends ChainArithmeticOperationExpression {
+public class Contains extends ChainOperationExpression {
     public Contains() {
         super(OperationType.CONTAINS);
     }

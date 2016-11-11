@@ -18,12 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class ChainArithmeticOperationExpression extends EqualityOperationExpression {
+public abstract class ChainOperationExpression extends EqualityOperationExpression {
 
 
     protected List<Expression> rightOperand = null;
 
-    public ChainArithmeticOperationExpression(OperationType operationType) {
+    public ChainOperationExpression(OperationType operationType) {
         super(operationType);
     }
 
@@ -81,43 +81,36 @@ public abstract class ChainArithmeticOperationExpression extends EqualityOperati
 
 
     @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
+        pos = parse(tokens, pos, stack, selfTypes, null);
+        return pos;
+    }
+
+
+    @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
         pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         List<Expression> expressions = new ArrayList<>(stack);
         stack.clear(); // arrayList fill with stack elements
-        computeFunction(expressions);
-        stack.push(this);
-        return pos;
-    }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-        pos = parseOperands(tokens, pos, stack, selfTypes, null);
-        pos = findNextExpression(tokens, pos + 1, stack, selfTypes);
-        List<Expression> expressions = new ArrayList<>(stack);
-        stack.clear(); // arrayList fill with stack elements
-        computeFunction(expressions);
-        stack.push(this);
-        return pos;
-    }
-
-
-    private void computeFunction(List<Expression> expressions) throws ExpressionParseException {
         List<Expression> parameters = new ArrayList<>();
         for (Expression expression : expressions) {
             parameters.add(expression);
         }
         this.rightOperand = parameters;
-        if (this.rightOperand.isEmpty()) {
+
+     /*   if (this.rightOperand.isEmpty()) {
 
             String error = String.format("Parameter Found of Operation %s not Found", this.getClass().getSimpleName());
             logger.error(error);
             throw new ExpressionParseException(error);
         }
-
+*/
         logger.debug("Operation Expression Call Expression : {}", getClass().getSimpleName());
 
+        stack.push(this);
+        return pos;
     }
 
 

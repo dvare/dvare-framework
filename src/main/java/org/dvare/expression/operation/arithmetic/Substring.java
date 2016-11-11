@@ -29,12 +29,12 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.ChainArithmeticOperationExpression;
+import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
 @Operation(type = OperationType.SUBSTRING, dataTypes = {DataType.StringType})
-public class Substring extends ChainArithmeticOperationExpression {
+public class Substring extends ChainOperationExpression {
 
 
     public Substring() {

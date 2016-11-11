@@ -30,7 +30,7 @@ import java.util.List;
 
 public abstract class Expression {
 
-    public Object interpret(List<Object> dataSet) throws InterpretException {
+    public Object interpret(final List<Object> dataSet) throws InterpretException {
         return false;
     }
 
@@ -43,7 +43,7 @@ public abstract class Expression {
     }
 
 
-    public Object interpret(Object aggregate, List<Object> dataset) throws InterpretException {
+    public Object interpret(final Object aggregate, final List<Object> dataset) throws InterpretException {
         return false;
     }
 

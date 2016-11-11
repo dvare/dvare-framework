@@ -40,7 +40,7 @@ public class ArithmeticOperationTest extends TestCase {
         RuleConfiguration factory = new RuleConfiguration();
 
         String exp = "Variable1 = (7 + 3)" +
-                " And Variable1 <> ( 30 - 10)" +
+                " And Variable1 != ( 30 - 10)" +
                 " And Variable2 = (4 * 5)" +
                 " And Variable1 = ( Variable2 / 2 )" +
                 " And Variable1 = ( Variable1 min Variable2 )" +

@@ -35,9 +35,9 @@ import java.util.Date;
 import java.util.List;
 
 public class LiteralType {
+    public final static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
+    public final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     static Logger logger = LoggerFactory.getLogger(LiteralType.class);
-    static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
-    static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     public static LiteralExpression<?> getLiteralExpression(String values[], DataType type) throws IllegalValueException {
         LiteralExpression literalExpression = null;

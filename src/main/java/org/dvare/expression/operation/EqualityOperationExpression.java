@@ -96,7 +96,20 @@ public abstract class EqualityOperationExpression extends ValidationOperationExp
         Expression left;
         if (stack.isEmpty()) {
 
-            if (leftType != null && leftType.equals(SELF) && selfTypes.getTypes().containsKey(leftString)) {
+
+            OperationExpression op = ConfigurationRegistry.INSTANCE.getOperation(leftString);
+            if (op != null) {
+                op = op.copy();
+
+                if (dataTypes != null) {
+                    pos = op.parse(tokens, pos + 1, stack, selfTypes, dataTypes);
+                } else {
+                    pos = op.parse(tokens, pos + 1, stack, selfTypes);
+                }
+
+                left = stack.pop();
+
+            } else if (leftType != null && leftType.equals(SELF) && selfTypes.getTypes().containsKey(leftString)) {
                 left = VariableType.getVariableType(leftString, variableType);
             } else if (leftType != null && leftType.equals(DATA) && dataTypes.getTypes().containsKey(leftString)) {
                 left = VariableType.getVariableType(leftString, variableType);
@@ -232,35 +245,25 @@ public abstract class EqualityOperationExpression extends ValidationOperationExp
 
     }
 
+
+    @Override
+    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+        pos = parse(tokens, pos, stack, typeBinding, null);
+        return pos;
+    }
+
+
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
+
             pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
 
             Expression left = this.leftOperand;
             Expression right = this.rightOperand;
 
             validate(left, right, tokens, pos);
-
-            logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
-
-            stack.push(this);
-            return pos;
-        }
-        throw new ExpressionParseException("Cannot assign literal to variable");
-    }
-
-    @Override
-    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        if (pos - 1 >= 0 && tokens.length >= pos + 1) {
-            pos = parseOperands(tokens, pos, stack, typeBinding, null);
-
-            Expression left = this.leftOperand;
-            Expression right = this.rightOperand;
-
-            validate(left, right, tokens, pos);
-
 
             logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
