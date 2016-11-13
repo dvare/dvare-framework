@@ -24,8 +24,6 @@ THE SOFTWARE.*/
 package org.dvare.parser;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.dvare.ast.Node;
-import org.dvare.ast.TreePrinter;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.config.RuleConfiguration;
@@ -160,11 +158,11 @@ public class ExpressionParser {
             }
             Expression expression = stack.pop();
 
-            if (expression instanceof OperationExpression) {
+           /* if (expression instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) expression;
                 Node<String> root = operation.AST();
                 TreePrinter.printNode(root);
-            }
+            }*/
             return expression;
 
         } else {
