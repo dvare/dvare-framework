@@ -52,11 +52,25 @@ public class IF extends ConditionOperationExpression {
     }
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-        int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-        stack.push(this);
-        return i;
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
+        pos = parse(tokens, pos, stack, selfTypes, null);
+        return pos;
     }
+
+
+    @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+        pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
+        stack.push(this);
+        return pos;
+    }
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
+        pos = findNextExpression(tokens, pos + 1, stack, selfTypes, null);
+        return pos;
+    }
+
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
@@ -106,6 +120,20 @@ public class IF extends ConditionOperationExpression {
         return null;
     }
 
+
+    @Override
+    public Object interpret(Object dataRow) throws InterpretException {
+
+        Boolean result = (Boolean) condition.interpret(dataRow);
+        if (result) {
+            return thenOperand.interpret(dataRow);
+        } else if (elseOperand != null) {
+            return elseOperand.interpret(dataRow);
+        } else {
+
+        }
+        return null;
+    }
 
     @Override
     public Object interpret(Object aggregation, Object dataRow) throws InterpretException {

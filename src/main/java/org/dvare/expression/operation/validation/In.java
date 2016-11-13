@@ -24,22 +24,16 @@ public class In extends EqualityOperationExpression {
         return new In();
     }
 
+    @Override
+    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
+        pos = parse(tokens, pos, stack, selfTypes, null);
+        return pos;
+    }
 
     @Override
     public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
             pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
-            testInOperation(tokens, pos);
-            stack.push(this);
-            return pos;
-        }
-        throw new ExpressionParseException("Cannot assign literal to variable");
-    }
-
-    @Override
-    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-        if (pos - 1 >= 0 && tokens.length >= pos + 1) {
-            pos = parseOperands(tokens, pos, stack, selfTypes, null);
             testInOperation(tokens, pos);
             stack.push(this);
             return pos;
@@ -75,7 +69,7 @@ public class In extends EqualityOperationExpression {
         }
 
 
-        if (dataType != null && !isLegalOperation(dataType.getDataType())) {
+        if (dataTypeExpression != null && !isLegalOperation(dataTypeExpression.getDataType())) {
 
             String message2 = String.format("OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), left.getClass().getSimpleName(), ExpressionTokenizer.toString(tokens, pos + 2));
             logger.error(message2);

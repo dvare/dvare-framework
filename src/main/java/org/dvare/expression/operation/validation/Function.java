@@ -16,7 +16,6 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.ValidationOperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.DataTypeMapping;
@@ -33,7 +32,7 @@ import java.util.List;
 import java.util.Stack;
 
 @Operation(type = OperationType.FUNCTION)
-public class Function extends ValidationOperationExpression {
+public class Function extends OperationExpression {
     static Logger logger = LoggerFactory.getLogger(Function.class);
 
 
@@ -46,28 +45,18 @@ public class Function extends ValidationOperationExpression {
     }
 
     @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding types) throws ExpressionParseException {
+        pos = parse(tokens, pos, stack, types, null);
+        return pos;
+    }
+
+    @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
         int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         List<Expression> expressions = new ArrayList<Expression>(stack);
         stack.clear(); // arrayList fill with stack elements
-        computeFunction(expressions);
-        stack.push(this);
-        return i;
-    }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding types) throws ExpressionParseException {
-        int i = findNextExpression(tokens, pos + 1, stack, types);
-        List<Expression> expressions = new ArrayList<Expression>(stack);
-        stack.clear(); // arrayList fill with stack elements
-        computeFunction(expressions);
-        stack.push(this);
-        return i;
-    }
-
-
-    private void computeFunction(List<Expression> expressions) throws ExpressionParseException {
         List<Expression> parameters = new ArrayList<>();
         FunctionExpression functionExpression = null;
         for (Expression expression : expressions) {
@@ -98,10 +87,22 @@ public class Function extends ValidationOperationExpression {
 
         logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
+
+        stack.push(this);
+        return i;
     }
 
 
-    private Integer computeFunctionParam(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
+
+        return findNextExpression(tokens, pos, stack, selfTypes, null);
+    }
+
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (int i = pos; i < tokens.length; i++) {
@@ -167,17 +168,6 @@ public class Function extends ValidationOperationExpression {
         return null;
     }
 
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-
-        return computeFunctionParam(tokens, pos, stack, selfTypes, dataTypes);
-    }
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-
-        return computeFunctionParam(tokens, pos, stack, selfTypes, null);
-    }
 
 
     @Override
@@ -289,7 +279,7 @@ public class Function extends ValidationOperationExpression {
                         variableExpression = buildVariableParam(variableExpression, selfRow, dataSet.get(0));
 
                         /*
-                            variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
+                            variableExpression = VariableType.setVariableValue(variableExpression, DATA_ROW);
                         */
 
                         Object value = variableExpression.getValue();

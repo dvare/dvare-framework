@@ -37,7 +37,7 @@ import org.junit.runners.Suite;
         InOperationTest.class,
         BetweenOperationTest.class,
         ParenthesisTest.class,
-        LogicTest.class,
+        ChainOperationTest.class,
         BuilderTest.class,
         DistanceTest.class,
       /*  FunctionTestExclude.class,*/

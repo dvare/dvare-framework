@@ -38,13 +38,8 @@ public class Between extends EqualityOperationExpression {
 
     @Override
     public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-        if (pos - 1 >= 0 && tokens.length >= pos + 1) {
-            pos = parseOperands(tokens, pos, stack, selfTypes, null);
-            testBetweenOperation(tokens, pos);
-            stack.push(this);
-            return pos;
-        }
-        throw new ExpressionParseException("Cannot assign literal to variable");
+        pos = parse(tokens, pos, stack, selfTypes, null);
+        return pos;
     }
 
 
@@ -89,7 +84,7 @@ public class Between extends EqualityOperationExpression {
         }
 
 
-        if (dataType != null && !isLegalOperation(dataType.getDataType())) {
+        if (dataTypeExpression != null && !isLegalOperation(dataTypeExpression.getDataType())) {
 
             String message2 = String.format("OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), left.getClass().getSimpleName(), ExpressionTokenizer.toString(tokens, pos + 2));
             logger.error(message2);

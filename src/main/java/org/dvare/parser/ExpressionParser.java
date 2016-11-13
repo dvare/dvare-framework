@@ -24,6 +24,8 @@ THE SOFTWARE.*/
 package org.dvare.parser;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.dvare.ast.Node;
+import org.dvare.ast.TreePrinter;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.config.RuleConfiguration;
@@ -156,8 +158,14 @@ public class ExpressionParser {
             if (stack.empty()) {
                 throw new ExpressionParseException("Unable to Parse Expression");
             }
-            return stack.pop();
+            Expression expression = stack.pop();
 
+            if (expression instanceof OperationExpression) {
+                OperationExpression operation = (OperationExpression) expression;
+                Node<String> root = operation.AST();
+                TreePrinter.printNode(root);
+            }
+            return expression;
 
         } else {
             String message = String.format("Expression is null or Empty");

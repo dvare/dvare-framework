@@ -15,4 +15,5 @@ public class Min extends ArithmeticOperationExpression {
         return new Min();
     }
 
+
 }

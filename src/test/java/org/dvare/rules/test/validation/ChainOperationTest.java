@@ -34,7 +34,7 @@ import org.dvare.expression.Expression;
 import org.dvare.rules.test.validation.dataobjects.ArithmeticOperation;
 import org.junit.Test;
 
-public class LogicTest extends TestCase {
+public class ChainOperationTest extends TestCase {
 
 
     @Test
@@ -179,6 +179,25 @@ public class LogicTest extends TestCase {
         assertTrue(result);
     }
 
+    @Test
+    public void testApp8() throws ExpressionParseException, InterpretException {
 
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        String expr = "Variable5->substring(2,2)->toInteger() between [80,90] ";
+
+        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+        ArithmeticOperation ArithmeticOperation = new ArithmeticOperation();
+        ArithmeticOperation.setVariable5("9845");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
+        assertTrue(result);
+    }
 
 }

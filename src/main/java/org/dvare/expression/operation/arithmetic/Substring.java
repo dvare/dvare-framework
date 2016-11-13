@@ -90,7 +90,7 @@ public class Substring extends ChainOperationExpression {
             } catch (ArrayIndexOutOfBoundsException e) {
                 value = value.substring(index, index + count);
             }
-            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataType);
+            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataTypeExpression);
             return returnExpression;
 
         }

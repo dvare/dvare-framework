@@ -25,6 +25,7 @@ package org.dvare.expression.operation;
 
 
 import org.dvare.binding.model.TypeBinding;
+import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 
@@ -37,29 +38,42 @@ public abstract class ConditionOperationExpression extends OperationExpression {
     protected Expression thenOperand = null;
     protected Expression elseOperand = null;
 
-
     public ConditionOperationExpression(OperationType operationType) {
         super(operationType);
     }
 
-
-    public abstract ConditionOperationExpression copy();
-
-
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        return 0;
+    @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes) throws ExpressionParseException {
+        pos = parse(tokens, pos, stack, aTypes, null);
+        return pos;
     }
 
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        return 0;
+    @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
+        pos = findNextExpression(tokens, pos + 1, stack, aTypes, vTypes);
+        return pos;
     }
 
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-        return 0;
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes) throws ExpressionParseException {
+        pos = findNextExpression(tokens, pos + 1, stack, aTypes, null);
+        return pos;
     }
 
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-        return 0;
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
+        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+        for (int i = pos; i < tokens.length; i++) {
+            OperationExpression op = configurationRegistry.getOperation(tokens[i]);
+            if (op != null) {
+                op = op.copy();
+                i = op.parse(tokens, i, stack, aTypes, vTypes);
+                return i;
+            }
+
+        }
+        return null;
     }
+
 
 }

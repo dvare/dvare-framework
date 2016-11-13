@@ -35,7 +35,6 @@ import org.dvare.expression.literal.DateLiteral;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.ValidationOperationExpression;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,7 +42,7 @@ import java.util.Date;
 import java.util.Stack;
 
 @Operation(type = OperationType.TO_DATE, dataTypes = {DataType.DateType, DataType.DateTimeType})
-public class ToDate extends ValidationOperationExpression {
+public class ToDate extends OperationExpression {
 
 
     public ToDate() {

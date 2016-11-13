@@ -65,7 +65,7 @@ public class Concat extends ChainOperationExpression {
 
             value = value.concat(start);
 
-            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataType);
+            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataTypeExpression);
             return returnExpression;
 
         }

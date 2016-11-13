@@ -1,3 +1,25 @@
+/*The MIT License (MIT)
+
+Copyright (c) 2016 Muhammad Hammad
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Sogiftware.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.*/
+
 package org.dvare.expression.operation;
 
 import org.dvare.binding.model.TypeBinding;
@@ -18,8 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class ChainOperationExpression extends EqualityOperationExpression {
-
+public abstract class ChainOperationExpression extends OperationExpression {
 
     protected List<Expression> rightOperand = null;
 
@@ -28,52 +49,61 @@ public abstract class ChainOperationExpression extends EqualityOperationExpressi
     }
 
 
-    protected int parseOperands(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    private int parseOperands(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
-        String leftString = tokens[pos - 1];
+        String token = tokens[pos - 1];
         pos = pos + 1;
 
 
-        DataType variableType;
-        if (dataTypes != null && leftString.matches(dataPatten)) {
-            leftString = leftString.substring(5, leftString.length());
-            variableType = TypeFinder.findType(leftString, dataTypes);
-            leftType = DATA;
-        } else {
-            if (leftString.matches(selfPatten)) {
-                leftString = leftString.substring(5, leftString.length());
-            }
-            leftType = SELF;
-            variableType = TypeFinder.findType(leftString, selfTypes);
-
-        }
-
-
-        // computing expression left side̵
-
-        Expression left;
         if (stack.isEmpty()) {
-            if (leftType != null && leftType.equals(SELF) && selfTypes.getTypes().containsKey(leftString)) {
-                left = VariableType.getVariableType(leftString, variableType);
-            } else if (leftType != null && leftType.equals(DATA) && dataTypes.getTypes().containsKey(leftString)) {
-                left = VariableType.getVariableType(leftString, variableType);
+            DataType variableType = null;
+
+
+            if (token.matches(selfPatten) || token.matches(dataPatten)) {
+
+                if (dataTypes != null && token.matches(dataPatten)) {
+                    leftOperandType = DATA_ROW;
+                    token = token.substring(5, token.length());
+                    variableType = TypeFinder.findType(token, dataTypes);
+
+                }
+                if (token.matches(selfPatten)) {
+                    leftOperandType = SELF_ROW;
+                    token = token.substring(5, token.length());
+                    variableType = TypeFinder.findType(token, selfTypes);
+                }
+
+
+                VariableExpression variableExpression = VariableType.getVariableType(token, variableType);
+                this.leftOperand = variableExpression;
             } else {
-                left = LiteralType.getLiteralExpression(leftString, variableType);
+
+                if (selfTypes.getTypes().containsKey(token)) {
+                    leftOperandType = SELF_ROW;
+                    variableType = TypeFinder.findType(token, selfTypes);
+                    VariableExpression variableExpression = VariableType.getVariableType(token, variableType);
+                    this.leftOperand = variableExpression;
+                } else {
+
+                    LiteralExpression literalExpression = null;
+                    if (token.equals("[")) {
+                        List<String> values = new ArrayList<>();
+                        while (!tokens[++pos].equals("]")) {
+                            String value = tokens[pos];
+                            values.add(value);
+                        }
+                        literalExpression = LiteralType.getLiteralExpression(values.toArray(new String[values.size()]), variableType);
+                    } else {
+                        literalExpression = LiteralType.getLiteralExpression(token);
+                    }
+
+                    this.leftOperand = literalExpression;
+                }
+
             }
 
         } else {
-            left = stack.pop();
-        }
-
-        this.leftOperand = left;
-
-
-        if (left instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) left;
-            dataType = variableExpression.getType();
-        } else if (left instanceof LiteralExpression) {
-            LiteralExpression literalExpression = (LiteralExpression) left;
-            dataType = literalExpression.getType();
+            this.leftOperand = stack.pop();
         }
 
         return pos;
@@ -114,7 +144,15 @@ public abstract class ChainOperationExpression extends EqualityOperationExpressi
     }
 
 
-    private Integer computeFunctionParam(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
+
+        return findNextExpression(tokens, pos, stack, selfTypes, null);
+    }
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (int i = pos; i < tokens.length; i++) {
@@ -134,26 +172,14 @@ public abstract class ChainOperationExpression extends EqualityOperationExpressi
         return null;
     }
 
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-
-        return computeFunctionParam(tokens, pos, stack, selfTypes, dataTypes);
-    }
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-
-        return computeFunctionParam(tokens, pos, stack, selfTypes, null);
-    }
-
 
     public void interpretOperand(final Object selfRow, final Object dataRow) throws InterpretException {
 
 
         Object leftDataRow;
-        if (leftType != null && leftType.equals(SELF)) {
+        if (leftOperandType != null && leftOperandType.equals(SELF_ROW)) {
             leftDataRow = selfRow;
-        } else if (leftType != null && leftType.equals(DATA)) {
+        } else if (leftOperandType != null && leftOperandType.equals(DATA_ROW)) {
             leftDataRow = dataRow;
         } else {
             leftDataRow = selfRow;
@@ -172,7 +198,7 @@ public abstract class ChainOperationExpression extends EqualityOperationExpressi
             }
 
             if (literalExpression != null) {
-                dataType = literalExpression.getType();
+                dataTypeExpression = literalExpression.getType();
             }
             leftExpression = literalExpression;
 
@@ -180,13 +206,13 @@ public abstract class ChainOperationExpression extends EqualityOperationExpressi
             VariableExpression variableExpression = (VariableExpression) left;
             variableExpression = VariableType.setVariableValue(variableExpression, leftDataRow);
             if (variableExpression != null) {
-                dataType = variableExpression.getType();
+                dataTypeExpression = variableExpression.getType();
             }
             leftExpression = variableExpression;
         } else if (left instanceof LiteralExpression) {
             LiteralExpression literalExpression = (LiteralExpression) left;
             if (literalExpression != null) {
-                dataType = literalExpression.getType();
+                dataTypeExpression = literalExpression.getType();
             }
             leftExpression = literalExpression;
 

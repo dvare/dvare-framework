@@ -31,13 +31,12 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.literal.DateLiteral;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.ValidationOperationExpression;
 
 import java.util.Date;
 import java.util.Stack;
 
 @Operation(type = OperationType.TO_DAY)
-public class Today extends ValidationOperationExpression {
+public class Today extends OperationExpression {
 
 
     public Today() {

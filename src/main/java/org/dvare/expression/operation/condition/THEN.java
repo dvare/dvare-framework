@@ -24,17 +24,10 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.condition;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.model.TypeBinding;
-import org.dvare.config.ConfigurationRegistry;
-import org.dvare.exceptions.parser.ExpressionParseException;
-import org.dvare.expression.Expression;
 import org.dvare.expression.operation.ConditionOperationExpression;
-import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Stack;
 
 @Operation(type = OperationType.THEN)
 public class THEN extends ConditionOperationExpression {
@@ -49,29 +42,7 @@ public class THEN extends ConditionOperationExpression {
         return new THEN();
     }
 
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
 
-        int i = findNextExpression(tokens, pos + 1, stack, aTypes, vTypes);
-
-        return i;
-    }
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
-        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-
-        for (int i = pos; i < tokens.length; i++) {
-
-            OperationExpression aggregationOperation = configurationRegistry.getOperation(tokens[i]);
-            if (aggregationOperation != null) {
-                aggregationOperation = aggregationOperation.copy();
-                i = aggregationOperation.parse(tokens, i, stack, aTypes, vTypes);
-                return i;
-            }
-
-        }
-        return null;
-    }
 
 
 }

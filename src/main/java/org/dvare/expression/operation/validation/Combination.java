@@ -15,7 +15,6 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.ValidationOperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
@@ -25,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 @Operation(type = OperationType.COMBINATION)
-public class Combination extends ValidationOperationExpression {
+public class Combination extends OperationExpression {
     static Logger logger = LoggerFactory.getLogger(Combination.class);
 
     protected List<Expression> leftOperand;
@@ -38,21 +37,16 @@ public class Combination extends ValidationOperationExpression {
         return new Combination();
     }
 
+    @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding types) throws ExpressionParseException {
+        int i = parse(tokens, pos, stack, types, null);
+        return pos;
+    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
         int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-        List<Expression> expressions = new ArrayList<Expression>(stack);
-        stack.clear();
-        computeParam(expressions);
-        stack.push(this);
-        return i;
-    }
-
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding types) throws ExpressionParseException {
-        int i = findNextExpression(tokens, pos + 1, stack, types);
         List<Expression> expressions = new ArrayList<Expression>(stack);
         stack.clear();
         computeParam(expressions);
@@ -98,21 +92,14 @@ public class Combination extends ValidationOperationExpression {
 
     }
 
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-
-        return computeFunctionParam(tokens, pos, stack, selfTypes, dataTypes);
-    }
-
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
 
-        return computeFunctionParam(tokens, pos, stack, selfTypes, null);
+        return findNextExpression(tokens, pos, stack, selfTypes, null);
     }
 
-
-    private Integer computeFunctionParam(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (int i = pos; i < tokens.length; i++) {
