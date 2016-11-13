@@ -29,23 +29,30 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.util.ValueFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Stack;
 
 public abstract class OperationExpression extends Expression {
-
-    protected final String SELF = "self";
-    protected final String DATA = "data";
-    protected final String selfPatten = "self\\..{1,}";
-    protected final String dataPatten = "data\\..{1,}";
+    public static final String SELF_ROW = "SELF_ROW";
+    public static final String DATA_ROW = "DATA_ROW";
+    public static final String selfPatten = "self\\..{1,}";
+    public static final String dataPatten = "data\\..{1,}";
+    protected static Logger logger = LoggerFactory.getLogger(OperationExpression.class);
     protected Expression leftOperand = null;
     protected Expression rightOperand = null;
-    protected String leftType;
-    protected String rightType;
+    protected DataTypeExpression dataTypeExpression;
+    protected Expression leftValueOperand;
+    protected Expression rightValueOperand;
+    protected String leftOperandType;
+    protected String rightOperandType;
 
     protected OperationType operationType;
 
@@ -64,10 +71,10 @@ public abstract class OperationExpression extends Expression {
 
     public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException;
 
-
     public abstract Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException;
 
     public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException;
+
 
     protected Object getValue(Object object, String name) throws IllegalPropertyValueException {
         return ValueFinder.findValue(name, object);
@@ -78,38 +85,30 @@ public abstract class OperationExpression extends Expression {
     }
 
 
+    protected LiteralExpression toLiteralExpression(Expression expression) {
+
+        LiteralExpression leftExpression = null;
+        if (expression instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) expression;
+            leftExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
+        } else if (expression instanceof LiteralExpression) {
+            leftExpression = (LiteralExpression) expression;
+        }
+        return leftExpression;
+    }
+
+
     public Node<String> AST() {
 
-        Node<String> root = new Node<String>(this.getClass().getSimpleName());
+        Node<String> root = new Node<String>(this.toString());
 
-        root.left = ACTNested(this.leftOperand);
+        root.left = new Node<String>(this.leftOperand.toString());
 
-        root.right = ACTNested(this.rightOperand);
-
-        return root;
-    }
-
-    private Node<String> ACTNested(Expression expression) {
-
-        Node root;
-        if (expression instanceof OperationExpression) {
-            OperationExpression operation = (OperationExpression) expression;
-
-            root = operation.AST();
-        } else if (expression instanceof VariableExpression<?>) {
-            VariableExpression variableExpression = (VariableExpression) expression;
-
-            root = new Node<String>(variableExpression.getName());
-        } else if (expression instanceof LiteralExpression) {
-            LiteralExpression literalExpression = (LiteralExpression) expression;
-            root = new Node<String>(literalExpression.getValue().toString());
-        } else {
-            root = new Node<String>("Value");
-        }
-
+        root.right = new Node<String>(this.rightOperand.toString());
 
         return root;
     }
+
 
     @Override
     public String toString() {

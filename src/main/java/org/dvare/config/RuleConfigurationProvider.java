@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RuleConfigurationProvider {
@@ -79,13 +79,8 @@ public class RuleConfigurationProvider {
                                 FunctionBinding functionBinding = new FunctionBinding(functionName, _class, returnTypeInstance);
 
                                 if (parameters != null) {
-                                    List<DataTypeExpression> parameterExpressions = new ArrayList<>();
-                                    for (DataType parameter : parameters) {
-                                        Class parameterExpression = DataTypeMapping.getDataTypeClass(parameter);
-                                        DataTypeExpression parameterExpressionInstance = (DataTypeExpression) parameterExpression.newInstance();
-                                        parameterExpressions.add(parameterExpressionInstance);
-                                    }
-                                    functionBinding.setParameters(parameterExpressions);
+
+                                    functionBinding.setParameters(Arrays.asList(parameters));
                                 }
 
                                 configurationRegistry.registerFunction(functionBinding);

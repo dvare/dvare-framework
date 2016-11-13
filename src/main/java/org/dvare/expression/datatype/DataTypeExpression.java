@@ -32,7 +32,6 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
-import org.dvare.expression.operation.ValidationOperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 
 import java.lang.annotation.Annotation;
@@ -112,7 +111,7 @@ public abstract class DataTypeExpression extends Expression {
     }
 
 
-    public Boolean compare(ValidationOperationExpression operationExpression, LiteralExpression left, LiteralExpression right) throws InterpretException {
+    public Boolean compare(OperationExpression operationExpression, LiteralExpression left, LiteralExpression right) throws InterpretException {
 
         String methodName = getMethodName(operationExpression.getClass());
         try {

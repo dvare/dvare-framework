@@ -30,7 +30,8 @@ import java.util.List;
 public enum OperationType {
 
     ABSOLUTE("Abs", "abs"), COMBINATION("Combination", "combination", "comb"), FUNCTION("Function", "function", "fun"),//
-    LEFT_PRIORITY("("), RIGHT_PRIORITY(")"), TO_DATE("ToDate", "toDate"),
+    LEFT_PRIORITY("("), RIGHT_PRIORITY(")"),//
+    TO_DATE("ToDate", "toDate"), TO_DAY("today", "ToDay"),//
     FOUND("Found", "found"), POWER("Pow", "pow", "^"),//
     NOT("not", "NOT", "Not", "!"), AND("and", "AND", "And", "&&"), OR("or", "OR", "||"), IMPLIES("implies", "Implies", "=>"),//
     EQUAL("eq", "="), NOT_EQUAL("ne", "!=", "<>"),//
@@ -38,6 +39,7 @@ public enum OperationType {
     IN("IN", "In", "in"), BETWEEN("Between", "between"), //
     MUL("Mul", "mul", "*"), DIVIDE("Div", "div", "/"), ADD("Add", "add", "+"), SUBTRACT("Sub", "sub", "-"),//
     MAX("Max", "max"), MIN("Min", "min"),//
+    TO_INTEGER("toInteger", "ToInteger"), TO_STRING("toString", "ToString"),//
     SUBSTRING("Substring", "substring"), CONCAT("concat", "Concat"), CONTAINS("Contains", "contains"), STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
     IF("IF", "if", "ELSEIF", "elseif"), THEN("THEN", "then"), ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
     ASSIGN(":=", "assign", "update"), COUNT("Count", "count"), FIRST("First", "first"), LAST("Last", "last"),//
@@ -48,6 +50,7 @@ public enum OperationType {
     private List<String> symbols = new ArrayList<>();
 
     OperationType() {
+
     }
 
     OperationType(String... symbols) {

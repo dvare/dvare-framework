@@ -54,21 +54,13 @@ public abstract class AggregationOperationExpression extends OperationExpression
         super(operationType);
     }
 
-
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
         return 0;
     }
-
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        return 0;
-    }
-
-
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos + 1, stack, aTypeBinding, vTypeBinding);
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+        pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         if (!stack.isEmpty()) {
             Expression right = stack.pop();
             this.rightOperand = right;
@@ -78,17 +70,22 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
+        return 0;
+    }
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (int i = pos; i < tokens.length; i++) {
             OperationExpression op = configurationRegistry.getOperation(tokens[i]);
             if (op != null) {
                 if (op instanceof LeftPriority) {
 
-                    i = parseArguments(tokens, pos + 1, stack, aTypeBinding, vTypeBinding);
+                    i = parseArguments(tokens, pos + 1, stack, selfTypes, dataTypes);
 
                     while (!stack.peek().getClass().equals(RightPriority.class)) {
-                        i = parseArguments(tokens, i, stack, aTypeBinding, vTypeBinding);
+                        i = parseArguments(tokens, i, stack, selfTypes, dataTypes);
                     }
 
                     if (stack.peek().getClass().equals(RightPriority.class)) {
@@ -98,7 +95,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
                     return i;
                 } else {
                     op = op.copy();
-                    i = op.parse(tokens, i, stack, aTypeBinding, vTypeBinding);
+                    i = op.parse(tokens, i, stack, selfTypes, dataTypes);
                     return i;
                 }
             }
@@ -107,7 +104,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
 
-    private Integer parseArguments(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
+    private Integer parseArguments(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (int i = pos; i < tokens.length; i++) {
@@ -120,7 +117,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
                     stack.push(op);
                     return i;
                 } else {
-                    i = op.parse(tokens, i, stack, aTypeBinding, vTypeBinding);
+                    i = op.parse(tokens, i, stack, selfTypes, dataTypes);
                 }
             } else if (configurationRegistry.getFunction(token) != null) {
 
@@ -128,16 +125,16 @@ public abstract class AggregationOperationExpression extends OperationExpression
                 FunctionExpression tableExpression = new FunctionExpression(token, table);
                 stack.add(tableExpression);
 
-            } else if (token.matches("self\\..{1,}|data\\..{1,}")) {
+            } else if (token.matches(selfPatten) || token.matches(dataPatten)) {
 
                 DataType type = null;
-                if (token.matches("self\\..{1,}+")) {
+                if (token.matches(selfPatten)) {
 
                     String name = token.substring(5, token.length());
-                    type = TypeFinder.findType(name, aTypeBinding);
-                } else if (token.matches("data\\..{1,}")) {
+                    type = TypeFinder.findType(name, selfTypes);
+                } else if (token.matches(dataPatten)) {
                     String name = token.substring(5, token.length());
-                    type = TypeFinder.findType(name, vTypeBinding);
+                    type = TypeFinder.findType(name, dataTypes);
                 }
 
                 if (type != null) {
@@ -150,8 +147,8 @@ public abstract class AggregationOperationExpression extends OperationExpression
                 }
 
 
-            } else if (vTypeBinding.getTypes().containsKey(token)) {
-                DataType type = TypeFinder.findType(token, vTypeBinding);
+            } else if (dataTypes.getTypes().containsKey(token)) {
+                DataType type = TypeFinder.findType(token, dataTypes);
                 VariableExpression variableExpression = VariableType.getVariableType(token, type);
                 stack.add(variableExpression);
 

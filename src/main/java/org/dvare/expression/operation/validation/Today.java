@@ -20,6 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
+
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
@@ -27,78 +28,63 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.literal.DateLiteral;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 
+import java.util.Date;
 import java.util.Stack;
 
-@Operation(type = OperationType.LEFT_PRIORITY)
-public class LeftPriority extends OperationExpression {
-    public LeftPriority() {
-        super(OperationType.LEFT_PRIORITY);
+@Operation(type = OperationType.TO_DAY)
+public class Today extends OperationExpression {
+
+
+    public Today() {
+        super(OperationType.TO_DAY);
     }
 
-    public LeftPriority copy() {
-        return new LeftPriority();
+    public Today copy() {
+        return new Today();
     }
 
-
-    @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
 
         pos = parse(tokens, pos, stack, typeBinding, null);
-
-
         return pos;
     }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfType, TypeBinding dataTypes) throws ExpressionParseException {
 
-        pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
+        pos = findNextExpression(tokens, pos + 1, stack, selfType, dataTypes);
 
-        while (!stack.peek().getClass().equals(RightPriority.class)) {
-            pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-        }
+        Date date = new Date();
+        DateLiteral<Date> literal = new DateLiteral<>(date);
+        stack.push(literal);
 
-        if (stack.peek().getClass().equals(RightPriority.class)) {
-            stack.pop();
-        }
 
         return pos;
     }
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos, stack, typeBinding, null);
-        return pos;
+        return findNextExpression(tokens, pos, stack, typeBinding, null);
     }
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfType, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-
         for (int i = pos; i < tokens.length; i++) {
-
-            OperationExpression op = configurationRegistry.getOperation(tokens[i]);
+            String token = tokens[i];
+            OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
-
                 if (op.getClass().equals(RightPriority.class)) {
-                    stack.push(op);
                     return i;
-
-                } else {
-                    if (dataTypes == null) {
-                        i = op.parse(tokens, i, stack, selfTypes);
-                    } else {
-                        i = op.parse(tokens, i, stack, selfTypes, dataTypes);
-                    }
                 }
-
-
             }
         }
         return null;
     }
+
+
 }

@@ -34,17 +34,20 @@ import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
-@Operation(type = OperationType.ENDS_WITH, dataTypes = {DataType.StringType})
-public class EndsWith extends ChainOperationExpression {
-    public EndsWith() {
-        super(OperationType.ENDS_WITH);
+@Operation(type = OperationType.TO_INTEGER, dataTypes = {DataType.StringType})
+public class ToInteger extends ChainOperationExpression {
+
+
+    public ToInteger() {
+        super(OperationType.TO_INTEGER);
     }
 
-    public EndsWith copy() {
-        return new EndsWith();
+    public ToInteger copy() {
+        return new ToInteger();
     }
 
-    private Object endswith(Object selfRow, Object dataRow) throws InterpretException {
+
+    private Object toInteger(Object selfRow, Object dataRow) throws InterpretException {
         interpretOperand(selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (!(literalExpression instanceof NullLiteral)) {
@@ -52,25 +55,14 @@ public class EndsWith extends ChainOperationExpression {
             String value = literalExpression.getValue().toString();
             value = TrimString.trim(value);
 
-
-            LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
-
-            String end = null;
-            if (startExpression.getValue() instanceof Integer) {
-                end = (String) startExpression.getValue();
-            } else {
-                end = startExpression.getValue().toString();
-            }
-
-            end = TrimString.trim(end);
-
-            Boolean result = value.endsWith(end);
             try {
-                LiteralExpression returnExpression = LiteralType.getLiteralExpression(result.toString(), DataType.BooleanType);
+                LiteralExpression returnExpression = LiteralType.getLiteralExpression(Integer.parseInt(value), DataType.IntegerType);
                 return returnExpression;
             } catch (IllegalValueException e) {
+                logger.error(e.getMessage(), e);
+            } catch (NumberFormatException e) {
+                logger.error(e.getMessage(), e);
             }
-
         }
 
         return null;
@@ -80,14 +72,15 @@ public class EndsWith extends ChainOperationExpression {
     public Object interpret(Object dataRow) throws InterpretException {
 
 
-        return endswith(dataRow, null);
+        return toInteger(dataRow, null);
 
     }
 
     @Override
     public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
 
-        return endswith(selfRow, dataRow);
+        return toInteger(selfRow, dataRow);
     }
+
 
 }

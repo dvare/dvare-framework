@@ -156,8 +156,14 @@ public class ExpressionParser {
             if (stack.empty()) {
                 throw new ExpressionParseException("Unable to Parse Expression");
             }
-            return stack.pop();
+            Expression expression = stack.pop();
 
+           /* if (expression instanceof OperationExpression) {
+                OperationExpression operation = (OperationExpression) expression;
+                Node<String> root = operation.AST();
+                TreePrinter.printNode(root);
+            }*/
+            return expression;
 
         } else {
             String message = String.format("Expression is null or Empty");

@@ -29,12 +29,12 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.ChainArithmeticOperationExpression;
+import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
 @Operation(type = OperationType.SUBSTRING, dataTypes = {DataType.StringType})
-public class Substring extends ChainArithmeticOperationExpression {
+public class Substring extends ChainOperationExpression {
 
 
     public Substring() {
@@ -73,13 +73,24 @@ public class Substring extends ChainArithmeticOperationExpression {
                 count = Integer.parseInt(countExpression.getValue().toString());
             }
 
+            if (value.length() < count) {
+                return null;
+            }
+
+            Integer start = index - 1;
+            Integer end = index - 1 + count;
+
+            if (start < 0 || end > value.length()) {
+                return null;
+            }
+
 
             try {
-                value = value.substring(index - 1, index - 1 + count);
+                value = value.substring(start, end);
             } catch (ArrayIndexOutOfBoundsException e) {
                 value = value.substring(index, index + count);
             }
-            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataType);
+            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataTypeExpression);
             return returnExpression;
 
         }

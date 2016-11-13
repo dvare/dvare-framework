@@ -28,6 +28,7 @@ import org.dvare.annotations.Type;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.validation.*;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -108,14 +109,11 @@ public class DateType extends DataTypeExpression {
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
         Date leftValue = setTimeToMidnight((Date) left.getValue());
-        List<Date> values = (List<Date>) right.getValue();
-        for (Date rightValue : values) {
-            rightValue = setTimeToMidnight(rightValue);
-            if (leftValue.compareTo(rightValue) == 0) {
-                return true;
-            }
+        List<Date> rightValues = new ArrayList<>();
+        for (Date rightValue : (List<Date>) right.getValue()) {
+            rightValues.add(setTimeToMidnight(rightValue));
         }
-        return false;
+        return rightValues.contains(leftValue);
     }
 
     @OperationMapping(operations = {
@@ -126,11 +124,8 @@ public class DateType extends DataTypeExpression {
         List<Date> values = (List<Date>) right.getValue();
         Date lower = setTimeToMidnight(values.get(0));
         Date upper = setTimeToMidnight(values.get(1));
-
         if (lower.compareTo(leftValue) <= 0 && leftValue.compareTo(upper) <= 0) {
-            {
-                return true;
-            }
+            return true;
         }
         return false;
     }

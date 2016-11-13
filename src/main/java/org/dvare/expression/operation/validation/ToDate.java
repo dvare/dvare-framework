@@ -32,9 +32,9 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.DateLiteral;
+import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.ValidationOperationExpression;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,7 +42,7 @@ import java.util.Date;
 import java.util.Stack;
 
 @Operation(type = OperationType.TO_DATE, dataTypes = {DataType.DateType, DataType.DateTimeType})
-public class ToDate extends ValidationOperationExpression {
+public class ToDate extends OperationExpression {
 
 
     public ToDate() {
@@ -53,22 +53,50 @@ public class ToDate extends ValidationOperationExpression {
         return new ToDate();
     }
 
+    @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+        int i = parse(tokens, pos, stack, typeBinding, null);
+        return i;
+    }
 
-        int i = findNextExpression(tokens, pos + 1, stack, typeBinding);
 
-        SimpleDateFormat dateFormat = null;
-        Expression formatExpression = stack.pop();
-        if (formatExpression instanceof NamedExpression) {
-            NamedExpression namedExpression = (NamedExpression) formatExpression;
-            dateFormat = new SimpleDateFormat(namedExpression.getName());
+    @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+
+        if (dataTypes == null) {
+            pos = findNextExpression(tokens, pos + 1, stack, selfTypes);
+        } else {
+            pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         }
 
+        SimpleDateFormat dateFormat = null;
         String value = null;
-        Expression valueExpression = stack.pop();
-        if (valueExpression instanceof NamedExpression) {
-            NamedExpression namedExpression = (NamedExpression) valueExpression;
+
+        Expression expression = stack.pop();
+
+        if (!stack.isEmpty() && stack.peek() instanceof NamedExpression) {
+
+            if (expression instanceof NamedExpression) {
+                NamedExpression namedExpression = (NamedExpression) expression;
+                dateFormat = new SimpleDateFormat(namedExpression.getName());
+            }
+
+
+            Expression valueExpression = stack.pop();
+            if (valueExpression instanceof NamedExpression) {
+                NamedExpression namedExpression = (NamedExpression) valueExpression;
+                value = namedExpression.getName();
+            }
+
+
+        } else if (expression instanceof NamedExpression) {
+
+            dateFormat = LiteralType.dateFormat;
+
+            NamedExpression namedExpression = (NamedExpression) expression;
             value = namedExpression.getName();
+
+
         }
 
 
@@ -84,11 +112,18 @@ public class ToDate extends ValidationOperationExpression {
             throw new IllegalValueException(message);
         }
 
-        return i;
+        return pos;
     }
+
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+
+        return findNextExpression(tokens, pos, stack, typeBinding, null);
+    }
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (int i = pos; i < tokens.length; i++) {
@@ -97,7 +132,6 @@ public class ToDate extends ValidationOperationExpression {
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
-                // we found an operation
 
                 if (op.getClass().equals(RightPriority.class)) {
                     return i;

@@ -21,15 +21,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.validation;
+package org.dvare.expression.operation.logical;
 
 import org.dvare.annotations.Operation;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.operation.LogicalOperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.ValidationOperationExpression;
 
 @Operation(type = OperationType.OR)
-public class OR extends ValidationOperationExpression {
+public class OR extends LogicalOperationExpression {
     public OR() {
         super(OperationType.OR);
     }
@@ -44,7 +44,13 @@ public class OR extends ValidationOperationExpression {
     public Object interpret(Object object) throws InterpretException {
         boolean left = (Boolean) leftOperand.interpret(object);
         boolean right = (Boolean) rightOperand.interpret(object);
+        return left || right;
+    }
 
-        return left | right;
+    @Override
+    public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
+        boolean left = (Boolean) leftOperand.interpret(selfRow, dataRow);
+        boolean right = (Boolean) rightOperand.interpret(selfRow, dataRow);
+        return left || right;
     }
 }

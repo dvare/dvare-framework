@@ -29,12 +29,12 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.ChainArithmeticOperationExpression;
+import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
 @Operation(type = OperationType.CONCAT, dataTypes = {DataType.StringType})
-public class Concat extends ChainArithmeticOperationExpression {
+public class Concat extends ChainOperationExpression {
     public Concat() {
         super(OperationType.CONCAT);
     }
@@ -65,7 +65,7 @@ public class Concat extends ChainArithmeticOperationExpression {
 
             value = value.concat(start);
 
-            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataType);
+            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataTypeExpression);
             return returnExpression;
 
         }

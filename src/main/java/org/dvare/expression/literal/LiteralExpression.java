@@ -28,15 +28,8 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.util.TrimString;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class LiteralExpression<T> extends Expression {
 
-
-    protected final Map<Class, String> legalOperations = new HashMap<Class, String>();
     protected T value;
     protected DataTypeExpression type;
 
@@ -53,20 +46,13 @@ public class LiteralExpression<T> extends Expression {
         return this.type;
     }
 
-    public List<?> legalOperations() {
-
-        return Arrays.asList(legalOperations.keySet().toArray());
-    }
-
-    public boolean isLegalOperations(Class operation) {
-        if (operation == null) {
-            return false;
-        }
-        return legalOperations.containsKey(operation);
-    }
 
     @Override
     public String toString() {
+        if (value == null) {
+            return "null";
+        }
+
         if (type.getDataType().equals(DataType.StringType) || type.getDataType().equals(DataType.RegexType)) {
             return "'" + TrimString.trim(value.toString()) + "'";
         } else {

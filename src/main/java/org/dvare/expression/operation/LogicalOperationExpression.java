@@ -32,34 +32,30 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
 
-public abstract class ValidationOperationExpression extends OperationExpression {
-    protected static Logger logger = LoggerFactory.getLogger(ValidationOperationExpression.class);
+public abstract class LogicalOperationExpression extends OperationExpression {
+    protected static Logger logger = LoggerFactory.getLogger(LogicalOperationExpression.class);
 
-    public ValidationOperationExpression(OperationType operationType) {
+    public LogicalOperationExpression(OperationType operationType) {
         super(operationType);
-    }
-
-
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-        Expression left = stack.pop();
-        int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-        Expression right = stack.pop();
-
-        this.leftOperand = left;
-        this.rightOperand = right;
-
-        logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
-
-        stack.push(this);
-
-        return i;
     }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+
+        pos = parse(tokens, pos, stack, typeBinding, null);
+
+
+        return pos;
+    }
+
+    @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         Expression left = stack.pop();
-        int i = findNextExpression(tokens, pos + 1, stack, typeBinding);
+        if (dataTypes == null) {
+            pos = findNextExpression(tokens, pos + 1, stack, selfTypes);
+        } else {
+            pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
+        }
         Expression right = stack.pop();
 
         this.leftOperand = left;
@@ -69,8 +65,14 @@ public abstract class ValidationOperationExpression extends OperationExpression 
 
         stack.push(this);
 
-        return i;
+        return pos;
     }
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+        return findNextExpression(tokens, pos, stack, typeBinding, null);
+    }
+
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
@@ -79,22 +81,18 @@ public abstract class ValidationOperationExpression extends OperationExpression 
             OperationExpression op = configurationRegistry.getOperation(tokens[i]);
             if (op != null) {
                 op = op.copy();
-                i = op.parse(tokens, i, stack, selfTypes, dataTypes);
-                return i;
-            }
-        }
-        return null;
-    }
+                if (dataTypes == null) {
+                    i = op.parse(tokens, i, stack, selfTypes);
+                } else {
+                    i = op.parse(tokens, i, stack, selfTypes, dataTypes);
+                }
+                if (!stack.isEmpty() && stack.peek() instanceof ChainOperationExpression) {
+                    continue;
+                } else {
+                    return i;
+                }
 
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-        for (int i = pos; i < tokens.length; i++) {
-            OperationExpression op = configurationRegistry.getOperation(tokens[i]);
-            if (op != null) {
-                op = op.copy();
-                i = op.parse(tokens, i, stack, typeBinding);
-                return i;
+
             }
         }
         return null;

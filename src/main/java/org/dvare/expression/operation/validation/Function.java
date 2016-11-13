@@ -4,6 +4,7 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
+import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -15,7 +16,6 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.ValidationOperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.DataTypeMapping;
@@ -23,6 +23,8 @@ import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +32,7 @@ import java.util.List;
 import java.util.Stack;
 
 @Operation(type = OperationType.FUNCTION)
-public class Function extends ValidationOperationExpression {
+public class Function extends OperationExpression {
     static Logger logger = LoggerFactory.getLogger(Function.class);
 
 
@@ -43,28 +45,18 @@ public class Function extends ValidationOperationExpression {
     }
 
     @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding types) throws ExpressionParseException {
+        pos = parse(tokens, pos, stack, types, null);
+        return pos;
+    }
+
+    @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
         int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         List<Expression> expressions = new ArrayList<Expression>(stack);
         stack.clear(); // arrayList fill with stack elements
-        computeFunction(expressions);
-        stack.push(this);
-        return i;
-    }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding types) throws ExpressionParseException {
-        int i = findNextExpression(tokens, pos + 1, stack, types);
-        List<Expression> expressions = new ArrayList<Expression>(stack);
-        stack.clear(); // arrayList fill with stack elements
-        computeFunction(expressions);
-        stack.push(this);
-        return i;
-    }
-
-
-    private void computeFunction(List<Expression> expressions) throws ExpressionParseException {
         List<Expression> parameters = new ArrayList<>();
         FunctionExpression functionExpression = null;
         for (Expression expression : expressions) {
@@ -95,10 +87,22 @@ public class Function extends ValidationOperationExpression {
 
         logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
+
+        stack.push(this);
+        return i;
     }
 
 
-    private Integer computeFunctionParam(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
+
+        return findNextExpression(tokens, pos, stack, selfTypes, null);
+    }
+
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (int i = pos; i < tokens.length; i++) {
@@ -164,17 +168,6 @@ public class Function extends ValidationOperationExpression {
         return null;
     }
 
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-
-        return computeFunctionParam(tokens, pos, stack, selfTypes, dataTypes);
-    }
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-
-        return computeFunctionParam(tokens, pos, stack, selfTypes, null);
-    }
 
 
     @Override
@@ -196,25 +189,16 @@ public class Function extends ValidationOperationExpression {
 
         Class<?> params[] = new Class[functionExpression.getParameters().size()];
         Object values[] = new Object[functionExpression.getParameters().size()];
-
+        List<DataType> parameters = functionExpression.getBinding().getParameters();
         int counter = 0;
         for (Expression expression : functionExpression.getParameters()) {
+            DataType dataType = parameters.get(counter);
+            Class originalType = DataTypeMapping.getDataTypeMapping(dataType);
 
             if (expression instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) expression;
 
-                String name = variableExpression.getName();
-                if (selfRow != null && name.matches(selfPatten)) {
-                    name = name.substring(5, name.length());
-                    variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
-                    variableExpression.setName(name);
-                } else if (dataRow != null && name.matches(dataPatten)) {
-                    name = name.substring(5, name.length());
-                    variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
-                    variableExpression.setName(name);
-                } else {
-                    variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
-                }
+                variableExpression = buildVariableParam(variableExpression, selfRow, dataRow);
 
 
                 values[counter] = variableExpression.getValue();
@@ -222,34 +206,9 @@ public class Function extends ValidationOperationExpression {
 
             } else if (expression instanceof LiteralExpression) {
 
-
-                if (expression instanceof ListLiteral) {
-                    ListLiteral listLiteral = (ListLiteral) expression;
-
-
-                    try {
-
-                        DataType dataType = listLiteral.getType().getDataType();
-                        Class type = DataTypeMapping.getDataTypeMapping(dataType);
-
-                        Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, listLiteral.getSize());
-                        Object value = ((List) listLiteral.getValue()).toArray(typedArray);
-
-                        Class arrayType = DataTypeMapping.getDataTypeMappingArray(dataType);
-                        params[counter] = arrayType;
-                        values[counter] = value;
-
-                    } catch (Exception e) {
-                        throw new InterpretException(e);
-                    }
-
-
-                } else {
-                    LiteralExpression literalExpression = (LiteralExpression) expression;
-                    values[counter] = literalExpression.getValue();
-                    params[counter] = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
-                }
-
+                ParamValue paramsValue = buildLiteralParam(expression, originalType);
+                params[counter] = paramsValue.param;
+                values[counter] = paramsValue.value;
             }
 
             counter++;
@@ -261,7 +220,7 @@ public class Function extends ValidationOperationExpression {
 
     @Override
     public Object interpret(List<Object> dataSet) throws InterpretException {
-        Object result = interpretFunction2(null, dataSet);
+        Object result = interpretListFunction(null, dataSet);
         return result;
     }
 
@@ -269,12 +228,12 @@ public class Function extends ValidationOperationExpression {
     @Override
     public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
 
-        Object result = interpretFunction2(aggregation, dataSet);
+        Object result = interpretListFunction(aggregation, dataSet);
         return result;
     }
 
 
-    private Object interpretFunction2(Object aggregation, List<Object> dataSet) throws InterpretException {
+    private Object interpretListFunction(Object selfRow, List<Object> dataSet) throws InterpretException {
 
         FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
 
@@ -282,68 +241,66 @@ public class Function extends ValidationOperationExpression {
         Class<?> params[] = new Class[functionExpression.getParameters().size()];
         Object values[] = new Object[functionExpression.getParameters().size()];
 
+
+        List<DataType> parameters = functionExpression.getBinding().getParameters();
+
+
         int counter = 0;
         for (Expression expression : functionExpression.getParameters()) {
+            DataType dataType = parameters.get(counter);
+            Class originalType = DataTypeMapping.getDataTypeMapping(dataType);
 
             if (expression instanceof VariableExpression) {
-
                 VariableExpression variableExpression = (VariableExpression) expression;
 
 
-                List listValues = new ArrayList<>();
-
-                for (Object dataRow : dataSet) {
-                    variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
-                    listValues.add(variableExpression.getValue());
-                }
-
                 try {
+                    DataType variableDataType = variableExpression.getType().getDataType();
 
-                    DataType dataType = variableExpression.getType().getDataType();
-                    Class type = DataTypeMapping.getDataTypeMapping(dataType);
+                    if (originalType.isArray()) {
 
-                    Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, dataSet.size());
-                    Object value = listValues.toArray(typedArray);
 
-                    Class arrayType = DataTypeMapping.getDataTypeMappingArray(dataType);
-                    params[counter] = arrayType;
-                    values[counter] = value;
+                        List listValues = new ArrayList<>();
+
+                        for (Object dataRow : dataSet) {
+                            variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
+                            listValues.add(variableExpression.getValue());
+                        }
+
+                        Class type = DataTypeMapping.getDataTypeMapping(variableDataType);
+                        Object[] typedArray = (Object[]) Array.newInstance(type, dataSet.size());
+                        Object value = listValues.toArray(typedArray);
+                        params[counter] = originalType;
+                        values[counter] = value;
+
+                    } else {
+
+
+                        variableExpression = buildVariableParam(variableExpression, selfRow, dataSet.get(0));
+
+                        /*
+                            variableExpression = VariableType.setVariableValue(variableExpression, DATA_ROW);
+                        */
+
+                        Object value = variableExpression.getValue();
+                        params[counter] = originalType;
+                        values[counter] = value;
+                    }
+
                 } catch (Exception e) {
                     throw new InterpretException(e);
                 }
-                /*params[counter] = Object[].class;
-                values[counter] = listValues.toArray();*/
+
 
             } else if (expression instanceof LiteralExpression) {
-                if (expression instanceof ListLiteral) {
-                    ListLiteral listLiteral = (ListLiteral) expression;
 
-
-                    try {
-
-                        DataType dataType = listLiteral.getType().getDataType();
-                        Class arrayType = DataTypeMapping.getDataTypeMappingArray(dataType);
-                        Class type = DataTypeMapping.getDataTypeMapping(dataType);
-
-                        Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, listLiteral.getSize());
-                        Object value = ((List) listLiteral.getValue()).toArray(typedArray);
-
-                        params[counter] = arrayType;
-                        values[counter] = value;
-
-                    } catch (Exception e) {
-                        throw new InterpretException(e);
-                    }
-
-
-                } else {
-                    LiteralExpression literalExpression = (LiteralExpression) expression;
-                    values[counter] = literalExpression.getValue();
-                    params[counter] = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
-                }
+                ParamValue paramsValue = buildLiteralParam(expression, originalType);
+                params[counter] = paramsValue.param;
+                values[counter] = paramsValue.value;
             }
 
             counter++;
+
         }
 
 
@@ -356,8 +313,9 @@ public class Function extends ValidationOperationExpression {
     private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) {
 
         try {
-            Class functionClass = functionExpression.getBinding().getTableClass();
+            Class functionClass = functionExpression.getBinding().getFunctionClass();
             Object obj = functionClass.newInstance();
+
             Method method = functionClass.getMethod(functionExpression.getName(), params);
             Object value = method.invoke(obj, values);
 
@@ -368,10 +326,90 @@ public class Function extends ValidationOperationExpression {
                 return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType());
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            logger.error(e.getMessage(), e);
+        } catch (InstantiationException e) {
+            logger.error(e.getMessage(), e);
+        } catch (IllegalAccessException e) {
+            logger.error(e.getMessage(), e);
+        } catch (InvocationTargetException e) {
+            logger.error(e.getMessage(), e);
         }
         return null;
+    }
+
+
+    private VariableExpression buildVariableParam(VariableExpression variableExpression, final Object selfRow, final Object dataRow) throws IllegalPropertyValueException {
+        String name = variableExpression.getName();
+        if (selfRow != null && name.matches(selfPatten)) {
+            name = name.substring(5, name.length());
+            variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
+            variableExpression.setName(name);
+        } else if (dataRow != null && name.matches(dataPatten)) {
+            name = name.substring(5, name.length());
+            variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
+            variableExpression.setName(name);
+        } else {
+            variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
+        }
+        return variableExpression;
+    }
+
+    private ParamValue buildLiteralParam(Expression expression, Class originalType) throws InterpretException {
+        ParamValue paramsValue = new ParamValue();
+        if (expression instanceof ListLiteral) {
+            ListLiteral listLiteral = (ListLiteral) expression;
+
+            try {
+
+                DataType literalDataType = listLiteral.getType().getDataType();
+
+                if (originalType.isArray()) {
+
+                    Class type = DataTypeMapping.getDataTypeMapping(literalDataType);
+                    Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, listLiteral.getSize());
+                    Object value = ((List) listLiteral.getValue()).toArray(typedArray);
+
+                    paramsValue.param = originalType;
+                    paramsValue.value = value;
+
+                } else {
+                    Object value = ((List) listLiteral.getValue()).get(0);
+                    paramsValue.param = originalType;
+                    paramsValue.value = value;
+                }
+
+
+            } catch (Exception e) {
+                throw new InterpretException(e);
+            }
+
+
+        } else {
+            LiteralExpression literalExpression = (LiteralExpression) expression;
+            if (originalType.isArray()) {
+                List listValues = new ArrayList<>();
+                listValues.add(literalExpression.getValue());
+                Class type = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
+                Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, 1);
+                Object value = listValues.toArray(typedArray);
+                paramsValue.param = originalType;
+                paramsValue.value = value;
+
+            } else {
+                paramsValue.param = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
+                paramsValue.value = literalExpression.getValue();
+
+            }
+
+
+        }
+        return paramsValue;
+    }
+
+    private class ParamValue {
+        Class<?> param;
+        Object value;
     }
 
 }

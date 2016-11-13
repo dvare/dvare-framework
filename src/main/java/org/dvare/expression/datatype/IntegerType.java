@@ -100,12 +100,7 @@ public class IntegerType extends DataTypeExpression {
     public boolean in(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
         List<Integer> rightValues = (List<Integer>) right.getValue();
-        for (Integer rightValue : rightValues) {
-            if (leftValue == rightValue) {
-                return true;
-            }
-        }
-        return false;
+        return rightValues.contains(leftValue);
     }
 
     @OperationMapping(operations = {

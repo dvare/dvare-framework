@@ -24,17 +24,43 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.model.TypeBinding;
+import org.dvare.exceptions.parser.ExpressionParseException;
+import org.dvare.expression.Expression;
+import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.ValidationOperationExpression;
+
+import java.util.Stack;
 
 @Operation(type = OperationType.RIGHT_PRIORITY)
-public class RightPriority extends ValidationOperationExpression {
+public class RightPriority extends OperationExpression {
     public RightPriority() {
         super(OperationType.RIGHT_PRIORITY);
     }
 
     public RightPriority copy() {
         return new RightPriority();
+    }
+
+
+    @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+        return 0;
+    }
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
+        return 0;
+    }
+
+    @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+        return 0;
+    }
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+        return 0;
     }
 
 

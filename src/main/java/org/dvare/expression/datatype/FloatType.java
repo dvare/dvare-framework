@@ -101,12 +101,7 @@ public class FloatType extends DataTypeExpression {
     public boolean in(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();
         List<Float> rightValues = (List<Float>) right.getValue();
-        for (Float rightValue : rightValues) {
-            if (leftValue.compareTo(rightValue) == 0) {
-                return true;
-            }
-        }
-        return false;
+        return rightValues.contains(leftValue);
     }
 
     @OperationMapping(operations = {
