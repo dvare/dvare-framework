@@ -30,7 +30,6 @@ import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.NullType;
-import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -42,9 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Stack;
 
 public abstract class EqualityOperationExpression extends OperationExpression {
@@ -85,21 +82,28 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             expression = stack.pop();
 
         } else if (type != null && type.equals(SELF_ROW) && selfTypes.getTypes().containsKey(token)) {
-            DataType rightType = TypeFinder.findType(token, selfTypes);
-            expression = VariableType.getVariableType(token, rightType);
+            DataType variableType = TypeFinder.findType(token, selfTypes);
+            expression = VariableType.getVariableType(token, variableType);
         } else if (type != null && type.equals(DATA_ROW) && dataTypes.getTypes().containsKey(token)) {
-            DataType rightType = TypeFinder.findType(token, dataTypes);
-            expression = VariableType.getVariableType(token, rightType);
+            DataType variableType = TypeFinder.findType(token, dataTypes);
+            expression = VariableType.getVariableType(token, variableType);
         } else {
 
             if (token.equals("[")) {
                 //if List Type
-                List<String> values = new ArrayList<>();
+         /*       List<String> values = new ArrayList<>();
                 while (!tokens[++pos].equals("]")) {
                     String value = tokens[pos];
                     values.add(value);
                 }
+
+
                 expression = LiteralType.getLiteralExpression(values.toArray(new String[values.size()]));
+*/
+                OperationExpression operationExpression = new ListOperationExpression();
+                pos = operationExpression.parse(tokens, pos, stack, selfTypes, dataTypes);
+                expression = stack.pop();
+
             } else {
 
                 expression = LiteralType.getLiteralExpression(token);
@@ -112,12 +116,14 @@ public abstract class EqualityOperationExpression extends OperationExpression {
         return pos;
     }
 
+
     protected int parseOperands(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
         String leftString = tokens[pos - 1];
         String rightString = tokens[pos + 1];
         pos = pos + 1;
 
+/*
 
         DataType variableType;
         if (dataTypes != null && leftString.matches(dataPatten)) {
@@ -131,8 +137,9 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             variableType = TypeFinder.findType(leftString, selfTypes);
             leftOperandType = SELF_ROW;
         }
+*/
 
-        if (dataTypes != null && rightString.matches(dataPatten)) {
+ /*       if (dataTypes != null && rightString.matches(dataPatten)) {
             rightString = rightString.substring(5, rightString.length());
             rightOperandType = DATA_ROW;
         } else if (rightString.matches(selfPatten)) {
@@ -141,9 +148,25 @@ public abstract class EqualityOperationExpression extends OperationExpression {
         } else {
             rightOperandType = SELF_ROW;
         }
+*/
+
+        String typeString = findDataObject(leftString, selfTypes, dataTypes);
+        String typeStringTokens[] = typeString.split(":");
+        if (typeStringTokens.length == 2) {
+            leftString = typeStringTokens[0];
+            leftOperandType = typeStringTokens[1];
+        }
 
 
-        if (variableType == null) {
+        typeString = findDataObject(rightString, selfTypes, dataTypes);
+        typeStringTokens = typeString.split(":");
+        if (typeStringTokens.length == 2) {
+            rightString = typeStringTokens[0];
+            rightOperandType = typeStringTokens[1];
+        }
+
+
+      /*  if (variableType == null) {
             if (rightOperandType != null && rightOperandType.equals(SELF_ROW) && selfTypes.getTypes().containsKey(rightString)) {
                 variableType = TypeFinder.findType(rightString, selfTypes);
             } else if (rightOperandType != null && rightOperandType.equals(DATA_ROW) && dataTypes.getTypes().containsKey(rightString)) {
@@ -151,7 +174,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             } else {
                 variableType = LiteralDataType.computeDataType(rightString);
             }
-        }
+        }*/
 
 
         // computing expression left side̵

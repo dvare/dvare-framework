@@ -42,9 +42,10 @@ public class VariableType {
     static SimpleDateFormat defaultFormate = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
 
 
-    public static VariableExpression getVariableType(String name, String type) throws IllegalPropertyException {
-
-        return getVariableType(name, DataType.valueOf(type));
+    public static VariableExpression getVariableType(String name, DataType type, String operandType) throws IllegalPropertyException {
+        VariableExpression variableExpression = getVariableType(name, type);
+        variableExpression.setOperandType(operandType);
+        return variableExpression;
     }
 
 

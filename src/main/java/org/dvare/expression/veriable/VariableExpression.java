@@ -30,6 +30,7 @@ public abstract class VariableExpression<T> extends Expression {
 
     protected String name;
     protected DataTypeExpression type;
+    protected String operandType;
     protected T value;
     protected boolean list;
     protected Integer listSize;
@@ -88,4 +89,11 @@ public abstract class VariableExpression<T> extends Expression {
     public abstract void setValue(T value);
 
 
+    public String getOperandType() {
+        return operandType;
+    }
+
+    public void setOperandType(String operandType) {
+        this.operandType = operandType;
+    }
 }

@@ -42,6 +42,8 @@ public class InOperationTest extends TestCase {
     public void testApp() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
+
+
         String exp = "Variable1 in ['A','B']" +
                 " And Variable2 in [2,3]" +
                 " And Variable3 in [3.1,3.2]" +
@@ -49,7 +51,6 @@ public class InOperationTest extends TestCase {
                 " And Variable5 in [12-05-2016,13-05-2016]" +
                 " And Variable6 in [12-05-2016-15:30:00,13-05-2016-15:30:00]" +
                 " And Variable7 in [R'B1.*',R'A1.*']";
-
 
         Expression expression = factory.getParser().fromString(exp, InOperation.class);
         RuleBinding rule = new RuleBinding(expression);

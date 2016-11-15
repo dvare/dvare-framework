@@ -32,6 +32,7 @@ import org.dvare.expression.operation.aggregation.Minimum;
 import org.dvare.expression.operation.arithmetic.*;
 import org.dvare.expression.operation.validation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Type(dataType = DataType.FloatType)
@@ -100,7 +101,7 @@ public class FloatType extends DataTypeExpression {
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();
-        List<Float> rightValues = (List<Float>) right.getValue();
+        List<Float> rightValues = buildFloatList((List<Object>) right.getValue());
         return rightValues.contains(leftValue);
     }
 
@@ -109,7 +110,7 @@ public class FloatType extends DataTypeExpression {
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();
-        List<Float> rightValues = (List<Float>) right.getValue();
+        List<Float> rightValues = buildFloatList((List<Object>) right.getValue());
         Float lower = rightValues.get(0);
         Float upper = rightValues.get(1);
 
@@ -190,6 +191,27 @@ public class FloatType extends DataTypeExpression {
         Float leftValue = (Float) left.getValue();
         Float rightValue = (Float) right.getValue();
         return Float.max((leftValue), rightValue);
+    }
+
+
+    private List<Float> buildFloatList(List<Object> tempValues) {
+        List<Float> values = new ArrayList<>();
+        for (Object tempValue : tempValues) {
+
+            if (tempValue instanceof Float) {
+                values.add((Float) tempValue);
+            } else {
+                try {
+                    Float value = Float.parseFloat(tempValue.toString());
+                    values.add(value);
+                } catch (NumberFormatException e) {
+                    values.add(null);
+                } catch (NullPointerException e) {
+                    values.add(null);
+                }
+            }
+        }
+        return values;
     }
 }
 

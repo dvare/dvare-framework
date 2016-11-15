@@ -32,6 +32,7 @@ import org.dvare.expression.operation.aggregation.Minimum;
 import org.dvare.expression.operation.arithmetic.*;
 import org.dvare.expression.operation.validation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Type(dataType = DataType.IntegerType)
@@ -46,7 +47,7 @@ public class IntegerType extends DataTypeExpression {
     public boolean equal(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
         Integer rightValue = (Integer) right.getValue();
-        return leftValue == rightValue;
+        return leftValue.equals(rightValue);
     }
 
     @OperationMapping(operations = {
@@ -55,7 +56,7 @@ public class IntegerType extends DataTypeExpression {
     public boolean notEqual(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
         Integer rightValue = (Integer) right.getValue();
-        return leftValue != rightValue;
+        return !leftValue.equals(rightValue);
     }
 
     @OperationMapping(operations = {
@@ -99,7 +100,7 @@ public class IntegerType extends DataTypeExpression {
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
-        List<Integer> rightValues = (List<Integer>) right.getValue();
+        List<Integer> rightValues = buildIntegerList((List<Object>) right.getValue());
         return rightValues.contains(leftValue);
     }
 
@@ -108,7 +109,7 @@ public class IntegerType extends DataTypeExpression {
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
-        List<Integer> rightValues = (List<Integer>) right.getValue();
+        List<Integer> rightValues = buildIntegerList((List<Object>) right.getValue());
         Integer lower = rightValues.get(0);
         Integer upper = rightValues.get(1);
 
@@ -189,5 +190,26 @@ public class IntegerType extends DataTypeExpression {
         Integer leftValue = (Integer) left.getValue();
         Integer rightValue = (Integer) right.getValue();
         return Integer.max((leftValue), rightValue);
+    }
+
+
+    private List<Integer> buildIntegerList(List<Object> tempValues) {
+        List<Integer> values = new ArrayList<>();
+        for (Object tempValue : tempValues) {
+
+            if (tempValue instanceof Integer) {
+                values.add((Integer) tempValue);
+            } else {
+                try {
+                    Integer value = Integer.parseInt(tempValue.toString());
+                    values.add(value);
+                } catch (NumberFormatException e) {
+                    values.add(null);
+                } catch (NullPointerException e) {
+                    values.add(null);
+                }
+            }
+        }
+        return values;
     }
 }
