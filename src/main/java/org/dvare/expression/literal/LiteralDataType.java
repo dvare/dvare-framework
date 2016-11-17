@@ -69,6 +69,7 @@ public class LiteralDataType {
         }
 
 
+      /*  return DataType.NullType;*/
         return null;
     }
 }

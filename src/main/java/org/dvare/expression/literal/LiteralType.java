@@ -189,7 +189,9 @@ public class LiteralType {
 
         LiteralExpression literalExpression = null;
 
-
+      /*  if (type == null) {
+            type = DataType.NullType;
+        }*/
         switch (type) {
 
 

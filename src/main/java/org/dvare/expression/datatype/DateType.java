@@ -152,7 +152,7 @@ public class DateType extends DataTypeExpression {
                         values.add(value);
                     } catch (ParseException e2) {
                         try {
-                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E MMM dd hh:mm:ss Z yyyy");
                             Date value = simpleDateFormat.parse(tempValue.toString());
                             values.add(value);
                         } catch (ParseException e3) {

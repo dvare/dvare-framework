@@ -66,8 +66,9 @@ public class ListOperationExpression extends OperationExpression {
 
         String values[] = listPrams.toArray(new String[listPrams.size()]);
 
-
+        Stack<Expression> localStack = new Stack<>();
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+
         for (int i = 0; i < values.length; i++) {
             String token = values[i];
 
@@ -86,12 +87,12 @@ public class ListOperationExpression extends OperationExpression {
                 op = op.copy();
 
                 if (dataTypes != null) {
-                    i = op.parse(values, i, stack, selfTypes, dataTypes);
+                    i = op.parse(values, i, localStack, selfTypes, dataTypes);
                 } else {
-                    i = op.parse(values, i, stack, selfTypes);
+                    i = op.parse(values, i, localStack, selfTypes);
                 }
 
-                expression = stack.pop();
+                expression = localStack.pop();
 
             } else if (operandType != null && operandType.equals(SELF_ROW) && selfTypes.getTypes().containsKey(token)) {
                 DataType variableType = TypeFinder.findType(token, selfTypes);
@@ -102,8 +103,8 @@ public class ListOperationExpression extends OperationExpression {
             } else {
                 if (token.equals("[")) {
 
-                    pos = new ListOperationExpression().parse(values, pos, stack, selfTypes, dataTypes);
-                    expression = stack.pop();
+                    i = new ListOperationExpression().parse(values, i, localStack, selfTypes, dataTypes);
+                    expression = localStack.pop();
 
 
                 } else {
@@ -111,8 +112,15 @@ public class ListOperationExpression extends OperationExpression {
                 }
             }
 
-            expressions.add(expression);
+
+            localStack.push(expression);
+
+
         }
+
+        expressions.addAll(localStack);
+
+
 
         stack.push(this);
 

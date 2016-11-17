@@ -42,7 +42,7 @@ import java.util.Stack;
 
 public abstract class ChainOperationExpression extends OperationExpression {
 
-    protected List<Expression> rightOperand = null;
+    protected List<Expression> rightOperand = new ArrayList<>();
 
     public ChainOperationExpression(OperationType operationType) {
         super(operationType);
@@ -121,14 +121,15 @@ public abstract class ChainOperationExpression extends OperationExpression {
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
         pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-        List<Expression> expressions = new ArrayList<>(stack);
+
+    /*    List<Expression> expressions = new ArrayList<>(stack);
         stack.clear(); // arrayList fill with stack elements
 
         List<Expression> parameters = new ArrayList<>();
         for (Expression expression : expressions) {
             parameters.add(expression);
         }
-        this.rightOperand = parameters;
+        this.rightOperand = parameters;*/
 
      /*   if (this.rightOperand.isEmpty()) {
 
@@ -166,7 +167,7 @@ public abstract class ChainOperationExpression extends OperationExpression {
             } else {
                 DataType type = LiteralDataType.computeDataType(token);
                 LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
-                stack.add(literalExpression);
+                rightOperand.add(literalExpression);
             }
         }
         return null;

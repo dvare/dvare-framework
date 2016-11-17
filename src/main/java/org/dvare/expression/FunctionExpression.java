@@ -55,6 +55,12 @@ public class FunctionExpression extends Expression {
         return new FunctionExpression("");
     }
 
+
+    public void addParameter(Expression parameter) {
+        this.parameters.add(parameter);
+    }
+
+
     public String getName() {
         return name;
     }

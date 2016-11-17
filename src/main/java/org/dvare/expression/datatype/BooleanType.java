@@ -30,6 +30,7 @@ import org.dvare.expression.operation.validation.Equals;
 import org.dvare.expression.operation.validation.In;
 import org.dvare.expression.operation.validation.NotEquals;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Type(dataType = DataType.BooleanType)
@@ -61,13 +62,31 @@ public class BooleanType extends DataTypeExpression {
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
         Boolean leftValue = (Boolean) left.getValue();
-        List<Boolean> rightValues = (List<Boolean>) right.getValue();
+        List<Boolean> rightValues = buildIntegerBoolean((List<Object>) right.getValue());
         for (Boolean rightValue : rightValues) {
             if (leftValue == rightValue) {
                 return true;
             }
         }
         return false;
+    }
+
+    private List<Boolean> buildIntegerBoolean(List<Object> tempValues) {
+        List<Boolean> values = new ArrayList<>();
+        for (Object tempValue : tempValues) {
+
+            if (tempValue instanceof Boolean) {
+                values.add((Boolean) tempValue);
+            } else {
+                try {
+                    Boolean value = Boolean.parseBoolean(tempValue.toString());
+                    values.add(value);
+                } catch (NullPointerException e) {
+                    values.add(null);
+                }
+            }
+        }
+        return values;
     }
 
 }
