@@ -51,6 +51,11 @@ public class ToString extends ChainOperationExpression {
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (!(literalExpression instanceof NullLiteral)) {
 
+
+            if (literalExpression.getValue() == null) {
+                return new NullLiteral();
+            }
+
             String value = literalExpression.getValue().toString();
 
             try {
@@ -63,7 +68,7 @@ public class ToString extends ChainOperationExpression {
             }
         }
 
-        return null;
+        return literalExpression;
     }
 
     @Override

@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -119,7 +120,6 @@ public class ListOperationExpression extends OperationExpression {
         }
 
         expressions.addAll(localStack);
-
 
 
         stack.push(this);
@@ -231,6 +231,26 @@ public class ListOperationExpression extends OperationExpression {
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         return null;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("[");
+        Iterator<Expression> iterator = expressions.iterator();
+
+        while (iterator.hasNext()) {
+            stringBuilder.append(iterator.next().toString());
+            if (iterator.hasNext()) {
+                stringBuilder.append(", ");
+            }
+        }
+        stringBuilder.append("]");
+
+        return stringBuilder.toString();
+
+
     }
 
 

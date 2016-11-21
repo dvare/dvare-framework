@@ -34,9 +34,9 @@ public enum OperationType {
     TO_DATE("ToDate", "toDate"), TO_DAY("today", "ToDay"),//
     FOUND("Found", "found"), POWER("Pow", "pow", "^"),//
     NOT("not", "NOT", "Not", "!"), AND("and", "AND", "And", "&&"), OR("or", "OR", "||"), IMPLIES("implies", "Implies", "=>"),//
-    EQUAL("eq", "="), NOT_EQUAL("ne", "!=", "<>"),//
-    LESS("lt", "<"), LESS_EQUAL("le", "<="), GREATER("gt", ">"), GREATER_EQUAL("ge", ">="),//
-    IN("IN", "In", "in"), BETWEEN("Between", "between"), //
+    EQUAL("=", "eq"), NOT_EQUAL("!=", "ne", "<>"),//
+    LESS("<", "lt"), LESS_EQUAL("<=", "le"), GREATER(">", "gt"), GREATER_EQUAL(">=", "ge"),//
+    IN("in", "IN", "In"), BETWEEN("between", "Between"), //
     MUL("Mul", "mul", "*"), DIVIDE("Div", "div", "/"), ADD("Add", "add", "+"), SUBTRACT("Sub", "sub", "-"),//
     MAX("Max", "max"), MIN("Min", "min"),//
     TO_INTEGER("toInteger", "ToInteger"), TO_STRING("toString", "ToString"),//

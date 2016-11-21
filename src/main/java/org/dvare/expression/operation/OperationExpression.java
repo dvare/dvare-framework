@@ -88,6 +88,7 @@ public abstract class OperationExpression extends Expression {
 
     protected LiteralExpression toLiteralExpression(Expression expression) {
 
+
         LiteralExpression leftExpression = null;
         if (expression instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) expression;
