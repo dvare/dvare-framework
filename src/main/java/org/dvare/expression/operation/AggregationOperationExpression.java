@@ -58,6 +58,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
         return 0;
     }
+
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);

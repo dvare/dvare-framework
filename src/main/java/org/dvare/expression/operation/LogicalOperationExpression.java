@@ -27,6 +27,8 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.operation.validation.RightPriority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,26 +79,40 @@ public abstract class LogicalOperationExpression extends OperationExpression {
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-        for (int i = pos; i < tokens.length; i++) {
-            OperationExpression op = configurationRegistry.getOperation(tokens[i]);
+        for (; pos < tokens.length; pos++) {
+            OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
+
+                if (op instanceof RightPriority) {
+                    return pos - 1;
+                }
+
                 op = op.copy();
                 if (dataTypes == null) {
-                    i = op.parse(tokens, i, stack, selfTypes);
+                    pos = op.parse(tokens, pos, stack, selfTypes);
                 } else {
-                    i = op.parse(tokens, i, stack, selfTypes, dataTypes);
+                    pos = op.parse(tokens, pos, stack, selfTypes, dataTypes);
                 }
                 if (!stack.isEmpty() && stack.peek() instanceof ChainOperationExpression) {
                     continue;
                 } else {
-                    return i;
+                    return pos;
                 }
 
 
             }
         }
-        return null;
+        return pos;
     }
 
+    protected Boolean toBoolean(Object interpret) {
+        Boolean result;
+        if (interpret instanceof LiteralExpression) {
+            result = (Boolean) ((LiteralExpression) interpret).getValue();
+        } else {
+            result = (Boolean) interpret;
+        }
+        return result;
+    }
 
 }

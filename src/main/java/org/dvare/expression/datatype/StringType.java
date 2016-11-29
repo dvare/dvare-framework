@@ -133,7 +133,12 @@ public class StringType extends DataTypeExpression {
         List<Object> tempValues = (List<Object>) right.getValue();
         List<String> values = new ArrayList<>();
         for (Object tempValue : tempValues) {
-            values.add(tempValue.toString());
+            if (tempValue == null) {
+                values.add(null);
+            } else {
+                values.add(tempValue.toString());
+            }
+
         }
 
         leftValue = TrimString.trim(leftValue);
@@ -141,7 +146,9 @@ public class StringType extends DataTypeExpression {
         for (String rightValue : values) {
             rightValue = TrimString.trim(rightValue);
 
-            if (right.getType().getClass().equals(StringType.class)) {
+            if (right == null && left == null) {
+                return true;
+            } else if (right.getType().getClass().equals(StringType.class)) {
                 if (leftValue.equals(rightValue)) {
                     return true;
                 }

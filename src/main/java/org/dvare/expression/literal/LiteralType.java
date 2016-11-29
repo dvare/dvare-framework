@@ -192,6 +192,9 @@ public class LiteralType {
       /*  if (type == null) {
             type = DataType.NullType;
         }*/
+        if (type == null) {
+            throw new IllegalValueException("Unable to parse Literal " + value);
+        }
         switch (type) {
 
 

@@ -149,7 +149,7 @@ public class ListOperationExpression extends OperationExpression {
                     LiteralExpression literalExpression = (LiteralExpression) interpret;
                     values.add(literalExpression.getValue());
 
-                    if (dataType == null) {
+                    if (dataType == null || dataType.getDataType().equals(DataType.NullType)) {
                         dataType = literalExpression.getType();
                     }
                 } else {
@@ -176,7 +176,7 @@ public class ListOperationExpression extends OperationExpression {
             } else if (expression instanceof LiteralExpression) {
                 LiteralExpression literalExpression = (LiteralExpression) expression;
                 values.add(literalExpression.getValue());
-                if (dataType == null) {
+                if (dataType == null || dataType.getDataType().equals(DataType.NullType)) {
                     dataType = literalExpression.getType();
                 }
             }

@@ -78,27 +78,27 @@ public class LeftPriority extends OperationExpression {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
-        for (int i = pos; i < tokens.length; i++) {
+        for (; pos < tokens.length; pos++) {
 
-            OperationExpression op = configurationRegistry.getOperation(tokens[i]);
+            OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
                 op = op.copy();
 
                 if (op.getClass().equals(RightPriority.class)) {
                     stack.push(op);
-                    return i;
+                    return pos;
 
                 } else {
                     if (dataTypes == null) {
-                        i = op.parse(tokens, i, stack, selfTypes);
+                        pos = op.parse(tokens, pos, stack, selfTypes);
                     } else {
-                        i = op.parse(tokens, i, stack, selfTypes, dataTypes);
+                        pos = op.parse(tokens, pos, stack, selfTypes, dataTypes);
                     }
                 }
 
 
             }
         }
-        return null;
+        return pos;
     }
 }

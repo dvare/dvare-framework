@@ -26,9 +26,12 @@ package org.dvare.expression.datatype;
 
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
+import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.validation.*;
+
+import java.util.List;
 
 @Type(dataType = DataType.NullType)
 public class NullType extends DataTypeExpression {
@@ -95,6 +98,16 @@ public class NullType extends DataTypeExpression {
             In.class
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
+
+        if (right instanceof ListLiteral) {
+            List<Object> tempValues = (List<Object>) right.getValue();
+            if (tempValues.contains(null)) {
+                return true;
+            }
+
+        }
+
+
         return false;
     }
 

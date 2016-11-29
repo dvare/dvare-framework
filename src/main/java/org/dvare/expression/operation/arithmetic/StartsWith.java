@@ -48,7 +48,7 @@ public class StartsWith extends ChainOperationExpression {
     private Object startswith(Object selfRow, Object dataRow) throws InterpretException {
         interpretOperand(selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (!(literalExpression instanceof NullLiteral)) {
+        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
             if (literalExpression.getValue() == null) {
                 return new NullLiteral<>();
@@ -59,7 +59,7 @@ public class StartsWith extends ChainOperationExpression {
 
             LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
 
-            String start = null;
+            String start;
             if (startExpression.getValue() instanceof Integer) {
                 start = (String) startExpression.getValue();
             } else {
@@ -78,7 +78,7 @@ public class StartsWith extends ChainOperationExpression {
 
         }
 
-        return null;
+        return new NullLiteral<>();
     }
 
     @Override

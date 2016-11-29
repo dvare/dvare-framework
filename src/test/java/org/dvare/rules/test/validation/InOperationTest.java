@@ -93,4 +93,41 @@ public class InOperationTest extends TestCase {
         assertTrue(result);
     }
 
+
+    @Test
+    public void testApp3() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        String exp = "Variable1 in [ null, '4']";
+
+        Expression expression = factory.getParser().fromString(exp, InOperation.class);
+        RuleBinding rule = new RuleBinding(expression);
+
+        InOperation inOperation = new InOperation();
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, inOperation);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testApp4() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        String exp = "Variable2 in [ null, 4]";
+
+        Expression expression = factory.getParser().fromString(exp, InOperation.class);
+        RuleBinding rule = new RuleBinding(expression);
+
+        InOperation inOperation = new InOperation();
+        inOperation.setVariable2(4);
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, inOperation);
+        assertTrue(result);
+    }
+
+
 }

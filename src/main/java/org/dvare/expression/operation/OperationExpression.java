@@ -149,7 +149,6 @@ public abstract class OperationExpression extends Expression {
     }
 
 
-
     public Expression getLeftOperand() {
         return leftOperand;
     }
