@@ -54,22 +54,7 @@ public class Function extends OperationExpression {
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
-        int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-        /*List<Expression> expressions = new ArrayList<Expression>(stack);
-        stack.clear(); // arrayList fill with stack elements
-
-        List<Expression> parameters = new ArrayList<>();
-        FunctionExpression functionExpression = null;
-        for (Expression expression : expressions) {
-            if (expression instanceof FunctionExpression) {
-                functionExpression = (FunctionExpression) expression;
-            } else {
-                parameters.add(expression);
-            }
-
-        }
-
-        functionExpression.setParameters(parameters);*/
+        pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         FunctionExpression functionExpression = (FunctionExpression) stack.pop();
         this.leftOperand = functionExpression;
 
@@ -91,7 +76,7 @@ public class Function extends OperationExpression {
 
 
         stack.push(this);
-        return i;
+        return pos;
     }
 
 
@@ -109,8 +94,8 @@ public class Function extends OperationExpression {
 
         Stack<Expression> localStack = new Stack<>();
 
-        for (int i = pos; i < tokens.length; i++) {
-            String token = tokens[i];
+        for (; pos < tokens.length; pos++) {
+            String token = tokens[pos];
 
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
@@ -118,7 +103,7 @@ public class Function extends OperationExpression {
                 if (op.getClass().equals(RightPriority.class)) {
 
 
-                    List<Expression> expressions = new ArrayList<Expression>(localStack);
+                    List<Expression> expressions = new ArrayList<>(localStack);
                     List<Expression> parameters = new ArrayList<>();
                     FunctionExpression functionExpression = null;
                     for (Expression expression : expressions) {
@@ -133,7 +118,13 @@ public class Function extends OperationExpression {
                     stack.push(functionExpression);
 
 
-                    return i;
+                    return pos;
+                } else if (!op.getClass().equals(LeftPriority.class)) {
+                    if (dataTypes == null) {
+                        pos = op.parse(tokens, pos, localStack, selfTypes);
+                    } else {
+                        pos = op.parse(tokens, pos, localStack, selfTypes, dataTypes);
+                    }
                 }
             } else if (configurationRegistry.getFunction(token) != null) {
                 String name = token;
@@ -166,22 +157,8 @@ public class Function extends OperationExpression {
             } else {
 
                 if (token.equals("[")) {
-                   /* DataType type = null;
-                    List<String> values = new ArrayList<>();
-                    while (!tokens[++i].equals("]")) {
-                        String value = tokens[i];
-                        values.add(value);
-                        if (type == null) {
-                            type = LiteralDataType.computeDataType(value);
-                        }
-                    }
-
-                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(values.toArray(new String[values.size()]), type);
-                    localStack.add(literalExpression);*/
-
-
                     OperationExpression operationExpression = new ListOperationExpression();
-                    i = operationExpression.parse(tokens, i, localStack, selfTypes, dataTypes);
+                    pos = operationExpression.parse(tokens, pos, localStack, selfTypes, dataTypes);
                     Expression literalExpression = localStack.pop();
                     localStack.add(literalExpression);
 
@@ -222,11 +199,22 @@ public class Function extends OperationExpression {
             DataType dataType = parameters.get(counter);
             Class originalType = DataTypeMapping.getDataTypeMapping(dataType);
 
-            if (expression instanceof VariableExpression) {
+            if (expression instanceof OperationExpression) {
+                OperationExpression operation = (OperationExpression) expression;
+                LiteralExpression literalExpression;
+                if (selfRow != null && dataRow != null) {
+                    literalExpression = (LiteralExpression) operation.interpret(selfRow, dataRow);
+                } else {
+                    literalExpression = (LiteralExpression) operation.interpret(selfRow);
+                }
+
+                ParamValue paramsValue = buildLiteralParam(literalExpression, originalType);
+                params[counter] = paramsValue.param;
+                values[counter] = paramsValue.value;
+
+            } else if (expression instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) expression;
-
                 variableExpression = buildVariableParam(variableExpression, selfRow, dataRow);
-
 
                 values[counter] = variableExpression.getValue();
                 params[counter] = DataTypeMapping.getDataTypeMapping(variableExpression.getType().getDataType());
@@ -244,6 +232,7 @@ public class Function extends OperationExpression {
         Object result = invokeFunction(functionExpression, params, values);
         return result;
     }
+
 
     @Override
     public Object interpret(List<Object> dataSet) throws InterpretException {
@@ -432,6 +421,31 @@ public class Function extends OperationExpression {
 
         }
         return paramsValue;
+    }
+
+    @Override
+    public String toString() {
+
+        if (this.leftOperand instanceof FunctionExpression) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("function");
+            stringBuilder.append("(");
+
+            FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
+
+
+            stringBuilder.append(functionExpression.getName());
+            stringBuilder.append(", ");
+
+            for (Expression expression : functionExpression.getParameters()) {
+                stringBuilder.append(expression);
+                stringBuilder.append(", ");
+            }
+
+            stringBuilder.append(")");
+            return stringBuilder.toString();
+        }
+        return super.toString();
     }
 
     private class ParamValue {

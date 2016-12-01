@@ -40,7 +40,7 @@ public class FuntionProvider {
     }
 
 
-    @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.StringType})
+    @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerListType})
     public Integer addRowsFunction(Integer[] rows) {
         logger.debug("inside addRowsFunction with rows : " + rows.length);
 
@@ -56,9 +56,9 @@ public class FuntionProvider {
     }
 
 
-    @FunctionMethod(returnType = DataType.IntegerType, list = false, parameters = {DataType.IntegerType, DataType.IntegerType})
+    @FunctionMethod(returnType = DataType.IntegerType, list = false, parameters = {DataType.IntegerType, DataType.IntegerListType})
     public Integer addTenFunction(Integer variable, Integer[] values) {
-        logger.debug("inside addFiveFuntion with arguments : " + variable + " and " + values.length);
+        logger.debug("inside addFiveFuntion with arguments : " + variable + " and " + values.length + " list arguments");
         return variable + 10;
     }
 

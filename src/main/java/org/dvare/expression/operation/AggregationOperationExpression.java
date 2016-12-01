@@ -72,36 +72,36 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-        return 0;
+        return pos;
     }
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-        for (int i = pos; i < tokens.length; i++) {
-            OperationExpression op = configurationRegistry.getOperation(tokens[i]);
+        for (; pos < tokens.length; pos++) {
+            OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
                 if (op instanceof LeftPriority) {
 
-                    i = parseArguments(tokens, pos + 1, stack, selfTypes, dataTypes);
+                    pos = parseArguments(tokens, pos + 1, stack, selfTypes, dataTypes);
 
                     while (!stack.peek().getClass().equals(RightPriority.class)) {
-                        i = parseArguments(tokens, i, stack, selfTypes, dataTypes);
+                        pos = parseArguments(tokens, pos, stack, selfTypes, dataTypes);
                     }
 
                     if (stack.peek().getClass().equals(RightPriority.class)) {
                         stack.pop();
                     }
 
-                    return i;
+                    return pos;
                 } else {
                     op = op.copy();
-                    i = op.parse(tokens, i, stack, selfTypes, dataTypes);
-                    return i;
+                    pos = op.parse(tokens, pos, stack, selfTypes, dataTypes);
+                    return pos;
                 }
             }
         }
-        return null;
+        return pos;
     }
 
 
