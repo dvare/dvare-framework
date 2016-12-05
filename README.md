@@ -4,7 +4,7 @@ DVARE is lightweight expression evaluator for Java, that allows evaluating Arith
 
 ## Current version
 
-* The current  version is `1.1` 
+* The current  version is `1.2` 
 
  you need to add the following maven repository in your `pom.xml`:
 
@@ -18,7 +18,7 @@ DVARE is lightweight expression evaluator for Java, that allows evaluating Arith
         <dependency>
             <groupId>org.dvare</groupId>
             <artifactId>dvare-framework</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>         
 <dependencies>
 ```

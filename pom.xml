@@ -4,9 +4,10 @@
 
     <groupId>org.dvare</groupId>
     <artifactId>dvare-framework</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
 
-    <description>DVARE is lightweight expression evaluator for Java, that allows evaluating Arithmetic and boolean
+    <description>DVARE is model-based lightweight expression evaluator for Java, that allows evaluating Arithmetic and
+        boolean
         Comparison expressions.
     </description>
 
@@ -49,14 +50,6 @@
             <url>http://repo1.maven.org/maven/</url>
         </repository>
 
-        <repository>
-            <id>oss-sonatype-snapshots</id>
-            <name>oss-sonatype-snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
 
         <repository>
             <id>oss-sonatype</id>
