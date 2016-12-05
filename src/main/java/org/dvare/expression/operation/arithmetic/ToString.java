@@ -49,7 +49,12 @@ public class ToString extends ChainOperationExpression {
     private Object toString(Object selfRow, Object dataRow) throws InterpretException {
         interpretOperand(selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (!(literalExpression instanceof NullLiteral)) {
+        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+
+
+            if (literalExpression.getValue() == null) {
+                return new NullLiteral();
+            }
 
             String value = literalExpression.getValue().toString();
 
@@ -63,7 +68,7 @@ public class ToString extends ChainOperationExpression {
             }
         }
 
-        return null;
+        return new NullLiteral<>();
     }
 
     @Override

@@ -66,7 +66,14 @@ public class ClassFinder {
         } catch (NullPointerException e) {
 
             if (classes.isEmpty()) {
-                String pathToJar = scannedUrl.getPath().substring(5, scannedUrl.getPath().indexOf(".jar") + 4);
+
+                String pathToJar = null;
+                if (scannedUrl.getPath().contains("file:")) {
+                    pathToJar = scannedUrl.getPath().substring(5, scannedUrl.getPath().indexOf(".jar") + 4);
+                } else {
+                    pathToJar = scannedUrl.getPath().substring(0, scannedUrl.getPath().indexOf(".jar") + 4);
+                }
+
                 classes.addAll(findjar(pathToJar, scannedPath, annotation));
             }
         }

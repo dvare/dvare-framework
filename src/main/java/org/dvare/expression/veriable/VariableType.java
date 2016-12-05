@@ -39,12 +39,13 @@ public class VariableType {
     static Logger logger = LoggerFactory.getLogger(VariableType.class);
     static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     static SimpleDateFormat datTimeFormat = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
-    static SimpleDateFormat defaultFormate = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+    static SimpleDateFormat defaultFormate = new SimpleDateFormat("E MMM dd hh:mm:ss Z yyyy");
 
 
-    public static VariableExpression getVariableType(String name, String type) throws IllegalPropertyException {
-
-        return getVariableType(name, DataType.valueOf(type));
+    public static VariableExpression getVariableType(String name, DataType type, String operandType) throws IllegalPropertyException {
+        VariableExpression variableExpression = getVariableType(name, type);
+        variableExpression.setOperandType(operandType);
+        return variableExpression;
     }
 
 

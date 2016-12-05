@@ -95,6 +95,46 @@ public class ChainOperationTest extends TestCase {
         assertTrue(result);
     }
 
+
+    @Test
+    public void testApp31() throws ExpressionParseException, InterpretException {
+
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String expr = "Variable1 = 1 implies (Variable5->startswith('dv') or Variable5->startswith('dva'))";
+        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+        ArithmeticOperation ArithmeticOperation = new ArithmeticOperation();
+        ArithmeticOperation.setVariable5("dvare");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
+        assertTrue(result);
+    }
+
+
+    @Test
+    public void testApp32() throws ExpressionParseException, InterpretException {
+
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String expr = "(Variable5->startswith('dva') = true or Variable5->startswith('dva') = true)";
+        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+        ArithmeticOperation ArithmeticOperation = new ArithmeticOperation();
+        ArithmeticOperation.setVariable5("dvare");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
+        assertTrue(result);
+    }
+
     @Test
     public void testApp4() throws ExpressionParseException, InterpretException {
 

@@ -69,7 +69,7 @@ public class LiteralType {
                 for (String value : values) {
                     list.add(Boolean.parseBoolean(value));
                 }
-                literalExpression = new ListLiteral(list, new BooleanType(), list.size());
+                literalExpression = new ListLiteral<List<Boolean>>(list, new BooleanType(), list.size());
                 break;
             }
             case FloatType: {
@@ -164,7 +164,7 @@ public class LiteralType {
             }
 
         }
-        logger.debug("List Litral Expression : {} [{}]", literalExpression.getType().getDataType(), literalExpression.getValue());
+        logger.debug("List Literal Expression : {} [{}]", literalExpression.getType().getDataType(), literalExpression.getValue());
         return literalExpression;
     }
 
@@ -189,7 +189,12 @@ public class LiteralType {
 
         LiteralExpression literalExpression = null;
 
-
+      /*  if (type == null) {
+            type = DataType.NullType;
+        }*/
+        if (type == null) {
+            throw new IllegalValueException("Unable to parse Literal " + value);
+        }
         switch (type) {
 
 
@@ -285,6 +290,7 @@ public class LiteralType {
 
 
         }
+
         logger.debug("{} Expression : {} [{}]", literalExpression.getClass().getSimpleName(), literalExpression.getType().getDataType(), literalExpression.getValue());
 
 

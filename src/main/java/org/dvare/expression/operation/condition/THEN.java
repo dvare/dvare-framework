@@ -43,6 +43,4 @@ public class THEN extends ConditionOperationExpression {
     }
 
 
-
-
 }

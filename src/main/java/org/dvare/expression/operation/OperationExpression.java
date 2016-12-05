@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Stack;
 
 public abstract class OperationExpression extends Expression {
+
     public static final String SELF_ROW = "SELF_ROW";
     public static final String DATA_ROW = "DATA_ROW";
     public static final String selfPatten = "self\\..{1,}";
@@ -87,6 +88,7 @@ public abstract class OperationExpression extends Expression {
 
     protected LiteralExpression toLiteralExpression(Expression expression) {
 
+
         LiteralExpression leftExpression = null;
         if (expression instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) expression;
@@ -131,6 +133,22 @@ public abstract class OperationExpression extends Expression {
     }
 
 
+    protected String findDataObject(String token, TypeBinding selfTypes, TypeBinding dataTypes) {
+
+        String type;
+        if (dataTypes != null && token.matches(dataPatten)) {
+            token = token.substring(5, token.length());
+            type = token + ":" + DATA_ROW;
+        } else {
+            if (token.matches(selfPatten)) {
+                token = token.substring(5, token.length());
+            }
+            type = token + ":" + SELF_ROW;
+        }
+        return type;
+    }
+
+
     public Expression getLeftOperand() {
         return leftOperand;
     }
@@ -146,4 +164,6 @@ public abstract class OperationExpression extends Expression {
     public void setRightOperand(Expression rightOperand) {
         this.rightOperand = rightOperand;
     }
+
+
 }

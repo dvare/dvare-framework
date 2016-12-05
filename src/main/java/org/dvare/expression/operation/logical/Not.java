@@ -65,13 +65,13 @@ public class Not extends LogicalOperationExpression {
 
     @Override
     public Object interpret(final Object object) throws InterpretException {
-        return !(Boolean) this.rightOperand.interpret(object);
+        return !toBoolean(this.rightOperand.interpret(object));
     }
 
 
     @Override
     public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
-        return !(Boolean) this.rightOperand.interpret(selfRow, dataRow);
+        return !toBoolean(this.rightOperand.interpret(selfRow, dataRow));
     }
 
 

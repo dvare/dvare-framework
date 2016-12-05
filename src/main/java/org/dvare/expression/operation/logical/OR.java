@@ -42,15 +42,16 @@ public class OR extends LogicalOperationExpression {
 
     @Override
     public Object interpret(Object object) throws InterpretException {
-        boolean left = (Boolean) leftOperand.interpret(object);
-        boolean right = (Boolean) rightOperand.interpret(object);
+
+        Boolean left = toBoolean(leftOperand.interpret(object));
+        Boolean right = toBoolean(rightOperand.interpret(object));
         return left || right;
     }
 
     @Override
     public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
-        boolean left = (Boolean) leftOperand.interpret(selfRow, dataRow);
-        boolean right = (Boolean) rightOperand.interpret(selfRow, dataRow);
+        Boolean left = toBoolean(leftOperand.interpret(selfRow, dataRow));
+        Boolean right = toBoolean(rightOperand.interpret(selfRow, dataRow));
         return left || right;
     }
 }

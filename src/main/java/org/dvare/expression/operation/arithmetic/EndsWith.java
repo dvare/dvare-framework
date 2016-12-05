@@ -47,7 +47,11 @@ public class EndsWith extends ChainOperationExpression {
     private Object endswith(Object selfRow, Object dataRow) throws InterpretException {
         interpretOperand(selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (!(literalExpression instanceof NullLiteral)) {
+        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+
+            if (literalExpression.getValue() == null) {
+                return new NullLiteral<>();
+            }
 
             String value = literalExpression.getValue().toString();
             value = TrimString.trim(value);
@@ -55,7 +59,7 @@ public class EndsWith extends ChainOperationExpression {
 
             LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
 
-            String end = null;
+            String end;
             if (startExpression.getValue() instanceof Integer) {
                 end = (String) startExpression.getValue();
             } else {
@@ -73,7 +77,7 @@ public class EndsWith extends ChainOperationExpression {
 
         }
 
-        return null;
+        return new NullLiteral<>();
     }
 
     @Override

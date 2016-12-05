@@ -42,6 +42,8 @@ public class InOperationTest extends TestCase {
     public void testApp() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
+
+
         String exp = "Variable1 in ['A','B']" +
                 " And Variable2 in [2,3]" +
                 " And Variable3 in [3.1,3.2]" +
@@ -49,7 +51,6 @@ public class InOperationTest extends TestCase {
                 " And Variable5 in [12-05-2016,13-05-2016]" +
                 " And Variable6 in [12-05-2016-15:30:00,13-05-2016-15:30:00]" +
                 " And Variable7 in [R'B1.*',R'A1.*']";
-
 
         Expression expression = factory.getParser().fromString(exp, InOperation.class);
         RuleBinding rule = new RuleBinding(expression);
@@ -70,5 +71,63 @@ public class InOperationTest extends TestCase {
         boolean result = (Boolean) evaluator.evaluate(rule, inOperation);
         assertTrue(result);
     }
+
+
+    @Test
+    public void testApp2() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        String exp = "Variable2 in [2,Variable2 + 2 ,Variable1->toInteger(),Variable2 + 3 ]";
+
+        Expression expression = factory.getParser().fromString(exp, InOperation.class);
+        RuleBinding rule = new RuleBinding(expression);
+
+        InOperation inOperation = new InOperation();
+        inOperation.setVariable1("3");
+        inOperation.setVariable2(2);
+/**/
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, inOperation);
+        assertTrue(result);
+    }
+
+
+    @Test
+    public void testApp3() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        String exp = "Variable1 in [ null, '4']";
+
+        Expression expression = factory.getParser().fromString(exp, InOperation.class);
+        RuleBinding rule = new RuleBinding(expression);
+
+        InOperation inOperation = new InOperation();
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, inOperation);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testApp4() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        String exp = "Variable2 in [ null, 4]";
+
+        Expression expression = factory.getParser().fromString(exp, InOperation.class);
+        RuleBinding rule = new RuleBinding(expression);
+
+        InOperation inOperation = new InOperation();
+        inOperation.setVariable2(4);
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, inOperation);
+        assertTrue(result);
+    }
+
 
 }

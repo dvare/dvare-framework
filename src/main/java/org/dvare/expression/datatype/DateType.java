@@ -25,9 +25,12 @@ package org.dvare.expression.datatype;
 
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
+import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.validation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -110,7 +113,7 @@ public class DateType extends DataTypeExpression {
     public boolean in(LiteralExpression left, LiteralExpression right) {
         Date leftValue = setTimeToMidnight((Date) left.getValue());
         List<Date> rightValues = new ArrayList<>();
-        for (Date rightValue : (List<Date>) right.getValue()) {
+        for (Date rightValue : buildDateList((List<Object>) right.getValue())) {
             rightValues.add(setTimeToMidnight(rightValue));
         }
         return rightValues.contains(leftValue);
@@ -121,7 +124,7 @@ public class DateType extends DataTypeExpression {
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {
         Date leftValue = setTimeToMidnight((Date) left.getValue());
-        List<Date> values = (List<Date>) right.getValue();
+        List<Date> values = buildDateList((List<Object>) right.getValue());
         Date lower = setTimeToMidnight(values.get(0));
         Date upper = setTimeToMidnight(values.get(1));
         if (lower.compareTo(leftValue) <= 0 && leftValue.compareTo(upper) <= 0) {
@@ -130,5 +133,40 @@ public class DateType extends DataTypeExpression {
         return false;
     }
 
+    private List<Date> buildDateList(List<Object> tempValues) {
+        List<Date> values = new ArrayList<>();
+        for (Object tempValue : tempValues) {
 
+            if (tempValue instanceof Date) {
+                values.add((Date) tempValue);
+            } else {
+                try {
+
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(LiteralDataType.date);
+                    Date value = simpleDateFormat.parse(tempValue.toString());
+                    values.add(value);
+                } catch (ParseException e) {
+                    try {
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(LiteralDataType.dateTime);
+                        Date value = simpleDateFormat.parse(tempValue.toString());
+                        values.add(value);
+                    } catch (ParseException e2) {
+                        try {
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E MMM dd hh:mm:ss Z yyyy");
+                            Date value = simpleDateFormat.parse(tempValue.toString());
+                            values.add(value);
+                        } catch (ParseException e3) {
+                            values.add(null);
+                        }
+                    }
+
+                } catch (NumberFormatException e) {
+                    values.add(null);
+                } catch (NullPointerException e) {
+                    values.add(null);
+                }
+            }
+        }
+        return values;
+    }
 }

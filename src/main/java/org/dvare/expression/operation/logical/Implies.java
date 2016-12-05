@@ -19,16 +19,16 @@ public class Implies extends LogicalOperationExpression {
     public Object interpret(Object object) throws InterpretException {
 
 
-        boolean left = (Boolean) leftOperand.interpret(object);
-        boolean right = (Boolean) rightOperand.interpret(object);
+        boolean left = toBoolean(leftOperand.interpret(object));
+        boolean right = toBoolean(rightOperand.interpret(object));
 
         return (!left) | right;
     }
 
     @Override
     public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
-        boolean left = (Boolean) leftOperand.interpret(selfRow, dataRow);
-        boolean right = (Boolean) rightOperand.interpret(selfRow, dataRow);
+        boolean left = toBoolean(leftOperand.interpret(selfRow, dataRow));
+        boolean right = toBoolean(rightOperand.interpret(selfRow, dataRow));
         return (!left) | right;
     }
 }

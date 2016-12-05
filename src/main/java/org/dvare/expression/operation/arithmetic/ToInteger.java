@@ -50,7 +50,11 @@ public class ToInteger extends ChainOperationExpression {
     private Object toInteger(Object selfRow, Object dataRow) throws InterpretException {
         interpretOperand(selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (!(literalExpression instanceof NullLiteral)) {
+        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+
+            if (literalExpression.getValue() == null) {
+                return new NullLiteral();
+            }
 
             String value = literalExpression.getValue().toString();
             value = TrimString.trim(value);
@@ -65,7 +69,7 @@ public class ToInteger extends ChainOperationExpression {
             }
         }
 
-        return null;
+        return new NullLiteral<>();
     }
 
     @Override

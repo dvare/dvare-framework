@@ -17,6 +17,7 @@ import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
+import org.dvare.util.TrimString;
 import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,6 +193,30 @@ public class Combination extends OperationExpression {
 
 
             switch (dataType) {
+                case StringType: {
+                    List<String> valueSet = (List<String>) (List<?>) values;
+                    TreeSet<String> treeSet = new TreeSet<>();
+                    for (String value : valueSet) {
+                        treeSet.add(TrimString.trim(value));
+                    }
+
+
+                    try {
+                        List<String> testValues = (List<String>) (List<?>) comb;
+
+
+                        List<String> testSet = new ArrayList<>();
+                        for (String value : testValues) {
+                            testSet.add(TrimString.trim(value));
+                        }
+
+                        return treeSet.containsAll(testSet);
+
+                    } catch (ClassCastException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+
+                }
 
                 case IntegerType: {
                     List<Integer> valueSet = (List<Integer>) (List<?>) values;

@@ -49,7 +49,12 @@ public class Substring extends ChainOperationExpression {
     private Object substring(Object selfRow, Object dataRow) throws InterpretException {
         interpretOperand(selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (!(literalExpression instanceof NullLiteral)) {
+        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+
+
+            if (literalExpression.getValue() == null) {
+                return new NullLiteral<>();
+            }
 
             String value = literalExpression.getValue().toString();
             value = TrimString.trim(value);
@@ -58,7 +63,7 @@ public class Substring extends ChainOperationExpression {
             LiteralExpression indexExpression = (LiteralExpression) rightOperand.get(0);
             LiteralExpression countExpression = (LiteralExpression) rightOperand.get(1);
 
-            Integer index = 0;
+            Integer index;
             if (indexExpression.getValue() instanceof Integer) {
                 index = (Integer) indexExpression.getValue();
             } else {
@@ -66,7 +71,7 @@ public class Substring extends ChainOperationExpression {
             }
 
 
-            Integer count = 0;
+            Integer count;
             if (countExpression.getValue() instanceof Integer) {
                 count = (Integer) countExpression.getValue();
             } else {
@@ -74,14 +79,14 @@ public class Substring extends ChainOperationExpression {
             }
 
             if (value.length() < count) {
-                return null;
+                return new NullLiteral<>();
             }
 
             Integer start = index - 1;
             Integer end = index - 1 + count;
 
             if (start < 0 || end > value.length()) {
-                return null;
+                return new NullLiteral<>();
             }
 
 
@@ -95,7 +100,7 @@ public class Substring extends ChainOperationExpression {
 
         }
 
-        return null;
+        return new NullLiteral<>();
     }
 
     @Override

@@ -26,7 +26,9 @@ package org.dvare.util;
 
 public class TrimString {
     public static String trim(String value) {
-
+        if (value == null) {
+            return null;
+        }
         if (!value.isEmpty()) {
             char[] chars = value.toCharArray();
             if (chars.length > 1) {
