@@ -104,6 +104,8 @@ public abstract class ChainOperationExpression extends OperationExpression {
 
         } else {
             this.leftOperand = stack.pop();
+
+
         }
 
         return pos;
@@ -122,25 +124,20 @@ public abstract class ChainOperationExpression extends OperationExpression {
         pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
         pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
 
-    /*    List<Expression> expressions = new ArrayList<>(stack);
-        stack.clear(); // arrayList fill with stack elements
 
-        List<Expression> parameters = new ArrayList<>();
-        for (Expression expression : expressions) {
-            parameters.add(expression);
-        }
-        this.rightOperand = parameters;*/
-
-     /*   if (this.rightOperand.isEmpty()) {
-
-            String error = String.format("Parameter Found of Operation %s not Found", this.getClass().getSimpleName());
-            logger.error(error);
-            throw new ExpressionParseException(error);
-        }
-*/
         logger.debug("Operation Expression Call Expression : {}", getClass().getSimpleName());
 
-        stack.push(this);
+  /*      if (this.leftOperand instanceof LogicalOperationExpression) {
+            LogicalOperationExpression logicalPart = (LogicalOperationExpression) this.leftOperand;
+            this.leftOperand = logicalPart.rightOperand;
+            logicalPart.rightOperand = this;;
+            stack.push(logicalPart);
+        } else*/
+        {
+            stack.push(this);
+        }
+
+
         return pos;
     }
 

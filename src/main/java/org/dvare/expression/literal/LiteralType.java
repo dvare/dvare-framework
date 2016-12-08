@@ -183,7 +183,7 @@ public class LiteralType {
 
 
         DataType rightType = LiteralDataType.computeDataType(valueString);
-        if (rightType != null) {
+        if (type != null && (rightType == DataType.RegexType)) {
             type = rightType;
         }
 

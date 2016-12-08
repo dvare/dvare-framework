@@ -33,14 +33,14 @@ import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
-@Operation(type = OperationType.CONCAT, dataTypes = {DataType.StringType})
-public class Concat extends ChainOperationExpression {
-    public Concat() {
-        super(OperationType.CONCAT);
+@Operation(type = OperationType.PREPEND, dataTypes = {DataType.StringType})
+public class Prepend extends ChainOperationExpression {
+    public Prepend() {
+        super(OperationType.PREPEND);
     }
 
-    public Concat copy() {
-        return new Concat();
+    public Prepend copy() {
+        return new Prepend();
     }
 
     private Object contains(Object selfRow, Object dataRow) throws InterpretException {
@@ -58,17 +58,16 @@ public class Concat extends ChainOperationExpression {
 
             LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
 
-            String start;
+            String prepend;
             if (startExpression.getValue() instanceof Integer) {
-                start = (String) startExpression.getValue();
+                prepend = (String) startExpression.getValue();
             } else {
-                start = startExpression.getValue().toString();
+                prepend = startExpression.getValue().toString();
             }
-
-            start = TrimString.trim(start);
-
-            value = value.concat(start);
-
+            prepend = TrimString.trim(prepend);
+            if (prepend != null && !prepend.isEmpty()) {
+                value = new String(prepend + value);
+            }
             LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataTypeExpression);
             return returnExpression;
 

@@ -40,7 +40,8 @@ public enum OperationType {
     MUL("Mul", "mul", "*"), DIVIDE("Div", "div", "/"), ADD("Add", "add", "+"), SUBTRACT("Sub", "sub", "-"),//
     MAX("Max", "max"), MIN("Min", "min"),//
     TO_INTEGER("toInteger", "ToInteger"), TO_STRING("toString", "ToString"),//
-    SUBSTRING("Substring", "substring"), CONCAT("concat", "Concat"), CONTAINS("Contains", "contains"), STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
+    SUBSTRING("substring", "Substring"), APPEND("append", "Append"), PREPEND("prepend", "Prepend"), CONTAINS("contains", "Contains"),//
+    STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
     IF("IF", "if", "ELSEIF", "elseif"), THEN("THEN", "then"), ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
     ASSIGN(":=", "assign", "update"), COUNT("Count", "count"), FIRST("First", "first"), LAST("Last", "last"),//
     MAXIMUM("Maximum", "maximum"), MINIMUM("Minimum", "minimum"),//

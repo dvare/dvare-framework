@@ -76,34 +76,34 @@ public class IF extends ConditionOperationExpression {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
-        for (int i = pos; i < tokens.length; i++) {
+        for (; pos < tokens.length; pos++) {
 
-            OperationExpression operation = configurationRegistry.getOperation(tokens[i]);
+            OperationExpression operation = configurationRegistry.getOperation(tokens[pos]);
             if (operation != null) {
 
 
                 if (operation instanceof IF || operation instanceof ELSE || operation instanceof THEN || operation instanceof ENDIF) {
                     operation = operation.copy();
                     if (operation instanceof THEN) {
-                        i = operation.parse(tokens, i, stack, selfTypes, dataTypes);
+                        pos = operation.parse(tokens, pos, stack, selfTypes, dataTypes);
                         this.thenOperand = stack.pop();
                         continue;
                     }
 
                     if (operation instanceof ELSE) {
-                        i = operation.parse(tokens, i, stack, selfTypes, dataTypes);
+                        pos = operation.parse(tokens, pos, stack, selfTypes, dataTypes);
                         this.elseOperand = stack.pop();
                         continue;
                     }
 
                     if (operation instanceof IF) {
-                        i = operation.parse(tokens, i, stack, selfTypes, dataTypes);
+                        pos = operation.parse(tokens, pos, stack, selfTypes, dataTypes);
                         this.elseOperand = stack.pop();
-                        return i;
+                        return pos;
                     }
 
                     if (operation instanceof ENDIF) {
-                        return i;
+                        return pos;
                     }
 
                 } else {
@@ -112,19 +112,19 @@ public class IF extends ConditionOperationExpression {
                     if (condition != null) {
                         stack.push(condition);
                     }
-                    i = operation.parse(tokens, i, stack, selfTypes, dataTypes);
+                    pos = operation.parse(tokens, pos, stack, selfTypes, dataTypes);
                     this.condition = stack.pop();
                 }
             }
         }
-        return null;
+        return pos;
     }
 
 
     @Override
     public Object interpret(Object dataRow) throws InterpretException {
 
-        Boolean result = (Boolean) condition.interpret(dataRow);
+        Boolean result = toBoolean(condition.interpret(dataRow));
         if (result) {
             return thenOperand.interpret(dataRow);
         } else if (elseOperand != null) {
@@ -138,7 +138,7 @@ public class IF extends ConditionOperationExpression {
     @Override
     public Object interpret(Object aggregation, Object dataRow) throws InterpretException {
 
-        Boolean result = (Boolean) condition.interpret(aggregation, dataRow);
+        Boolean result = toBoolean(condition.interpret(aggregation, dataRow));
         if (result) {
             return thenOperand.interpret(aggregation, dataRow);
         } else if (elseOperand != null) {
@@ -155,7 +155,7 @@ public class IF extends ConditionOperationExpression {
         List<Object> newDataSet = new java.util.ArrayList<>();
 
         for (Object dataRow : dataSet) {
-            Boolean result = (Boolean) condition.interpret(aggregation, dataRow);
+            Boolean result = toBoolean(condition.interpret(aggregation, dataRow));
             if (result) {
                 newDataSet.add(dataRow);
             }

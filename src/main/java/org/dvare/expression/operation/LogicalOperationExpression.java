@@ -93,12 +93,21 @@ public abstract class LogicalOperationExpression extends OperationExpression {
                 } else {
                     pos = op.parse(tokens, pos, stack, selfTypes, dataTypes);
                 }
-                if (!stack.isEmpty() && stack.peek() instanceof ChainOperationExpression) {
+
+
+                if (pos + 1 < tokens.length) {
+                    OperationExpression testOp = configurationRegistry.getOperation(tokens[pos + 1]);
+                    if (testOp instanceof LogicalOperationExpression) {
+                        return pos;
+                    }
+                }
+
+
+                /*if (!stack.isEmpty() && stack.peek() instanceof ChainOperationExpression) {
                     continue;
                 } else {
                     return pos;
-                }
-
+                }*/
 
             }
         }
