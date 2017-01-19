@@ -43,16 +43,6 @@ public class Not extends LogicalOperationExpression {
         return new Not();
     }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        int i = findNextExpression(tokens, pos + 1, stack, typeBinding);
-        Expression right = stack.pop();
-
-        this.rightOperand = right;
-        stack.push(this);
-
-        return i;
-    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {

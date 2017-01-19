@@ -36,12 +36,6 @@ public class Between extends EqualityOperationExpression {
         throw new ExpressionParseException("Cannot assign literal to variable");
     }
 
-    @Override
-    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-        pos = parse(tokens, pos, stack, selfTypes, null);
-        return pos;
-    }
-
 
     private void testBetweenOperation(String[] tokens, int pos) throws ExpressionParseException {
 

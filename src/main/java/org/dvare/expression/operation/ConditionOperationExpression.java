@@ -43,11 +43,6 @@ public abstract class ConditionOperationExpression extends OperationExpression {
         super(operationType);
     }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes) throws ExpressionParseException {
-        pos = parse(tokens, pos, stack, aTypes, null);
-        return pos;
-    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
@@ -55,11 +50,6 @@ public abstract class ConditionOperationExpression extends OperationExpression {
         return pos;
     }
 
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos + 1, stack, aTypes, null);
-        return pos;
-    }
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {

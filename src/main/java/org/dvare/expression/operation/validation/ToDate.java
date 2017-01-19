@@ -53,18 +53,12 @@ public class ToDate extends OperationExpression {
         return new ToDate();
     }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        int i = parse(tokens, pos, stack, typeBinding, null);
-        return i;
-    }
-
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
         if (dataTypes == null) {
-            pos = findNextExpression(tokens, pos + 1, stack, selfTypes);
+            pos = findNextExpression(tokens, pos + 1, stack, selfTypes, null);
         } else {
             pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         }
@@ -115,12 +109,6 @@ public class ToDate extends OperationExpression {
         return pos;
     }
 
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-
-        return findNextExpression(tokens, pos, stack, typeBinding, null);
-    }
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {

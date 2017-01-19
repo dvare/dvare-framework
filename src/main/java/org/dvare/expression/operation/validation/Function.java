@@ -45,11 +45,6 @@ public class Function extends OperationExpression {
         return new Function();
     }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding types) throws ExpressionParseException {
-        pos = parse(tokens, pos, stack, types, null);
-        return pos;
-    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
@@ -77,13 +72,6 @@ public class Function extends OperationExpression {
 
         stack.push(this);
         return pos;
-    }
-
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-
-        return findNextExpression(tokens, pos, stack, selfTypes, null);
     }
 
 
@@ -120,11 +108,7 @@ public class Function extends OperationExpression {
 
                     return pos;
                 } else if (!op.getClass().equals(LeftPriority.class)) {
-                    if (dataTypes == null) {
-                        pos = op.parse(tokens, pos, localStack, selfTypes);
-                    } else {
-                        pos = op.parse(tokens, pos, localStack, selfTypes, dataTypes);
-                    }
+                    pos = op.parse(tokens, pos, localStack, selfTypes, dataTypes);
                 }
             } else if (configurationRegistry.getFunction(token) != null) {
                 String name = token;

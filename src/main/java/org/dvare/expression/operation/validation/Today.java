@@ -65,10 +65,6 @@ public class Today extends OperationExpression {
         return pos;
     }
 
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        return findNextExpression(tokens, pos, stack, typeBinding, null);
-    }
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfType, TypeBinding dataTypes) throws ExpressionParseException {

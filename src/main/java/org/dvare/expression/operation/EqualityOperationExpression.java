@@ -56,7 +56,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     protected boolean isLegalOperation(DataType dataType) {
 
         Annotation annotation = this.getClass().getAnnotation(org.dvare.annotations.Operation.class);
-        if (annotation != null && annotation instanceof org.dvare.annotations.Operation) {
+        if (annotation != null) {
             org.dvare.annotations.Operation operation = (org.dvare.annotations.Operation) annotation;
             DataType dataTypes[] = operation.dataTypes();
             if (Arrays.asList(dataTypes).contains(dataType)) {
@@ -73,11 +73,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
         if (op != null) {
             op = op.copy();
 
-            if (dataTypes != null) {
-                pos = op.parse(tokens, pos + 1, stack, selfTypes, dataTypes);
-            } else {
-                pos = op.parse(tokens, pos + 1, stack, selfTypes);
-            }
+            pos = op.parse(tokens, pos + 1, stack, selfTypes, dataTypes);
 
             expression = stack.pop();
 
@@ -128,7 +124,6 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             rightString = typeStringTokens[0];
             rightOperandType = typeStringTokens[1];
         }
-
 
 
         // computing expression left side̵
@@ -188,7 +183,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
                 if (leftDataType.equals(DataType.StringType)) {
                     if (!rightDataType.equals(DataType.StringType) && !rightDataType.equals(DataType.RegexType)) {
 
-                        String message = String.format("%s OperationExpression  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), leftDataType, rightDataType, ExpressionTokenizer.toString(tokens, pos));
+                        String message = String.format("%s OperationExpression not possible between  type %s and %s near %s", this.getClass().getSimpleName(), leftDataType, rightDataType, ExpressionTokenizer.toString(tokens, pos));
                         logger.error(message);
                         throw new IllegalOperationException(message);
 
@@ -196,7 +191,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
                 } else {
 
                     if (!leftDataType.equals(rightDataType)) {
-                        String message = String.format("%s OperationExpression  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), leftDataType, rightDataType, ExpressionTokenizer.toString(tokens, pos));
+                        String message = String.format("%s OperationExpression not possible between  type %s and %s near %s", this.getClass().getSimpleName(), leftDataType, rightDataType, ExpressionTokenizer.toString(tokens, pos));
                         logger.error(message);
                         throw new IllegalOperationException(message);
                     }
@@ -214,13 +209,6 @@ public abstract class EqualityOperationExpression extends OperationExpression {
         }
 
 
-    }
-
-
-    @Override
-    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        pos = parse(tokens, pos, stack, typeBinding, null);
-        return pos;
     }
 
 
@@ -246,29 +234,18 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        return findNextExpression(tokens, pos, stack, typeBinding, null);
-    }
-
-
-    @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (int i = pos; i < tokens.length; i++) {
             OperationExpression op = configurationRegistry.getOperation(tokens[i]);
             if (op != null) {
                 op = op.copy();
-                if (dataTypes == null) {
-                    i = op.parse(tokens, i, stack, selfTypes);
-                } else {
-                    i = op.parse(tokens, i, stack, selfTypes, dataTypes);
-                }
-
+                i = op.parse(tokens, i, stack, selfTypes, dataTypes);
                 return i;
 
             }
         }
-        return null;
+        return pos;
     }
 
 

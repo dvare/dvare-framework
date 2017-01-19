@@ -51,23 +51,11 @@ public class IF extends ConditionOperationExpression {
         return new IF();
     }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-        pos = parse(tokens, pos, stack, selfTypes, null);
-        return pos;
-    }
-
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         stack.push(this);
-        return pos;
-    }
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos + 1, stack, selfTypes, null);
         return pos;
     }
 
@@ -129,10 +117,8 @@ public class IF extends ConditionOperationExpression {
             return thenOperand.interpret(dataRow);
         } else if (elseOperand != null) {
             return elseOperand.interpret(dataRow);
-        } else {
-
         }
-        return null;
+        return result;
     }
 
     @Override
@@ -143,10 +129,8 @@ public class IF extends ConditionOperationExpression {
             return thenOperand.interpret(aggregation, dataRow);
         } else if (elseOperand != null) {
             return elseOperand.interpret(aggregation, dataRow);
-        } else {
-
         }
-        return null;
+        return result;
     }
 
     @Override

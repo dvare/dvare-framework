@@ -44,15 +44,6 @@ public class LeftPriority extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-
-        pos = parse(tokens, pos, stack, typeBinding, null);
-
-
-        return pos;
-    }
-
-    @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
         pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
@@ -68,11 +59,6 @@ public class LeftPriority extends OperationExpression {
         return pos;
     }
 
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos, stack, typeBinding, null);
-        return pos;
-    }
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
@@ -89,11 +75,7 @@ public class LeftPriority extends OperationExpression {
                     return pos;
 
                 } else {
-                    if (dataTypes == null) {
-                        pos = op.parse(tokens, pos, stack, selfTypes);
-                    } else {
-                        pos = op.parse(tokens, pos, stack, selfTypes, dataTypes);
-                    }
+                    pos = op.parse(tokens, pos, stack, selfTypes, dataTypes);
                 }
 
 

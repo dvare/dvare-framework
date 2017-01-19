@@ -131,11 +131,7 @@ public class ExpressionParser {
                 if (op != null) {
                     op = op.copy();
 
-                    if (dataTypes != null) {
-                        i = op.parse(tokens, i, stack, selfTypes, dataTypes);
-                    } else {
-                        i = op.parse(tokens, i, stack, selfTypes);
-                    }
+                    i = op.parse(tokens, i, stack, selfTypes, dataTypes);
                 } else {
                     if (!token.matches(selfPatten) && !token.matches(dataPatten)) {
 
