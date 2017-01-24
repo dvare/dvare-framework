@@ -27,12 +27,14 @@ package org.dvare.expression.operation;
 import org.dvare.ast.Node;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
+import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.veriable.VariableExpression;
+import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.ValueFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,6 +161,54 @@ public abstract class OperationExpression extends Expression {
 
     public void setRightOperand(Expression rightOperand) {
         this.rightOperand = rightOperand;
+    }
+
+
+    public Expression interpretOperand(Expression expression, String operandType, final Object selfRow, final Object dataRow) throws InterpretException {
+
+
+        Object leftDataRow;
+        if (operandType != null && operandType.equals(SELF_ROW)) {
+            leftDataRow = selfRow;
+        } else if (operandType != null && operandType.equals(DATA_ROW)) {
+            leftDataRow = dataRow;
+        } else {
+            leftDataRow = selfRow;
+        }
+
+        Expression leftExpression = null;
+
+        if (expression instanceof OperationExpression) {
+            OperationExpression operation = (OperationExpression) expression;
+
+            LiteralExpression literalExpression;
+            if (selfRow != null && dataRow != null) {
+                literalExpression = (LiteralExpression) operation.interpret(selfRow, dataRow);
+            } else {
+                literalExpression = (LiteralExpression) operation.interpret(selfRow);
+            }
+
+            if (literalExpression != null) {
+                dataTypeExpression = literalExpression.getType();
+            }
+            leftExpression = literalExpression;
+
+        } else if (expression instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) expression;
+            variableExpression = VariableType.setVariableValue(variableExpression, leftDataRow);
+            if (variableExpression != null) {
+                dataTypeExpression = variableExpression.getType();
+            }
+            leftExpression = variableExpression;
+        } else if (expression instanceof LiteralExpression) {
+            LiteralExpression literalExpression = (LiteralExpression) expression;
+            dataTypeExpression = literalExpression.getType();
+            leftExpression = literalExpression;
+
+        }
+
+        return leftExpression;
+
     }
 
 

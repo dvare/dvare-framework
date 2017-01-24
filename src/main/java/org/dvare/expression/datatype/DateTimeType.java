@@ -25,8 +25,8 @@ package org.dvare.expression.datatype;
 
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
-import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.validation.*;
 
 import java.text.ParseException;
@@ -130,13 +130,12 @@ public class DateTimeType extends DataTypeExpression {
             } else {
                 try {
 
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(LiteralDataType.date);
-                    Date value = simpleDateFormat.parse(tempValue.toString());
+
+                    Date value = LiteralType.dateFormat.parse(tempValue.toString());
                     values.add(value);
                 } catch (ParseException e) {
                     try {
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(LiteralDataType.dateTime);
-                        Date value = simpleDateFormat.parse(tempValue.toString());
+                        Date value = LiteralType.dateTimeFormat.parse(tempValue.toString());
                         values.add(value);
                     } catch (ParseException e2) {
                         try {

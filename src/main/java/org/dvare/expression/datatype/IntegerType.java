@@ -30,6 +30,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.aggregation.Maximum;
 import org.dvare.expression.operation.aggregation.Minimum;
 import org.dvare.expression.operation.arithmetic.*;
+import org.dvare.expression.operation.chain.Subtract;
 import org.dvare.expression.operation.validation.*;
 
 import java.util.ArrayList;

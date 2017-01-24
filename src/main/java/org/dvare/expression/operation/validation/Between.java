@@ -77,6 +77,7 @@ public class Between extends EqualityOperationExpression {
 
         }
 
+/*
 
         if (dataTypeExpression != null && !isLegalOperation(dataTypeExpression.getDataType())) {
 
@@ -84,6 +85,7 @@ public class Between extends EqualityOperationExpression {
             logger.error(message2);
             throw new IllegalOperationException(message2);
         }
+*/
 
         logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 

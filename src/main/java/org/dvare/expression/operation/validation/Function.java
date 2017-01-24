@@ -11,7 +11,6 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
-import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.ListOperationExpression;
@@ -147,7 +146,7 @@ public class Function extends OperationExpression {
                     localStack.add(literalExpression);
 
                 } else {
-                    DataType type = LiteralDataType.computeDataType(token);
+                    DataType type = LiteralType.computeDataType(token);
                     LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
                     localStack.add(literalExpression);
                 }

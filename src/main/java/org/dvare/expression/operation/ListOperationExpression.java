@@ -133,7 +133,7 @@ public class ListOperationExpression extends OperationExpression {
             if (expression instanceof OperationExpression) {
                 OperationExpression operationExpression = (OperationExpression) expression;
 
-                Object interpret = null;
+                Object interpret;
                 if (dataRow == null) {
                     interpret = operationExpression.interpret(selfRow);
 

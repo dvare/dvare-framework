@@ -26,7 +26,6 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
@@ -61,7 +60,7 @@ public abstract class AssignOperationExpression extends AggregationOperationExpr
                 if (aTypeBinding.getTypes().containsKey(rightString)) {
                     variableType = TypeFinder.findType(rightString, aTypeBinding);
                 } else {
-                    variableType = LiteralDataType.computeDataType(rightString);
+                    variableType = LiteralType.computeDataType(rightString);
                 }
             }
 

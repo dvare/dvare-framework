@@ -31,7 +31,7 @@ public enum OperationType {
 
     ABSOLUTE("Abs", "abs"), COMBINATION("Combination", "combination", "comb"), FUNCTION("Function", "function", "fun"),//
     LEFT_PRIORITY("("), RIGHT_PRIORITY(")"),//
-    TO_DATE("ToDate", "toDate"), TO_DAY("today", "ToDay"),//
+    DATE("Date", "date"), DATE_TIME("DateTime", "dateTime"), TO_DAY("today", "ToDay"),//
     FOUND("Found", "found"), POWER("Pow", "pow", "^"),//
     NOT("not", "NOT", "Not", "!"), AND("and", "AND", "And", "&&"), OR("or", "OR", "||"), IMPLIES("implies", "Implies", "=>"),//
     EQUAL("=", "eq"), NOT_EQUAL("!=", "ne", "<>"),//
@@ -39,7 +39,7 @@ public enum OperationType {
     IN("in", "IN", "In"), BETWEEN("between", "Between"), //
     MUL("Mul", "mul", "*"), DIVIDE("Div", "div", "/"), ADD("Add", "add", "+"), SUBTRACT("Sub", "sub", "-"),//
     MAX("Max", "max"), MIN("Min", "min"),//
-    TO_INTEGER("toInteger", "ToInteger"), TO_STRING("toString", "ToString"),//
+    TO_INTEGER("toInteger", "ToInteger"), TO_STRING("toString", "ToString"), TO_DATE("ToDate", "toDate"),//
     SUBSTRING("substring", "Substring"), APPEND("append", "Append"), PREPEND("prepend", "Prepend"), CONTAINS("contains", "Contains"),//
     STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
     IF("IF", "if", "ELSEIF", "elseif"), THEN("THEN", "then"), ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//

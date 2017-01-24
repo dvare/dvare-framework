@@ -27,7 +27,6 @@ package org.dvare.expression.datatype;
 import org.dvare.annotations.OperationMapping;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -98,7 +97,7 @@ public abstract class DataTypeExpression extends Expression {
             Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
             Object result = method.invoke(this, left, right);
 
-            DataType type = LiteralDataType.computeDataType(result.toString());
+            DataType type = LiteralType.computeDataType(result.toString());
             if (type == null) {
                 type = this.getDataType();
             }

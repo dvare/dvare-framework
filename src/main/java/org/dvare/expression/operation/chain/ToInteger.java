@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.arithmetic;
+package org.dvare.expression.operation.chain;
 
 import org.dvare.annotations.Operation;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -48,7 +48,7 @@ public class ToInteger extends ChainOperationExpression {
 
 
     private Object toInteger(Object selfRow, Object dataRow) throws InterpretException {
-        interpretOperand(selfRow, dataRow);
+        leftValueOperand = super.interpretOperand(this.leftOperand, leftOperandType, selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 

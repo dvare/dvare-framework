@@ -10,9 +10,9 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
-import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -93,19 +93,18 @@ public class Combination extends OperationExpression {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
-        for (int i = pos; i < tokens.length; i++) {
-            String token = tokens[i];
+        for (; pos < tokens.length; pos++) {
+            String token = tokens[pos];
 
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
                 op = op.copy();
                 if (op.getClass().equals(RightPriority.class)) {
-                    return i;
+                    return pos;
                 }
             } else if (configurationRegistry.getFunction(token) != null) {
-                String name = token;
                 FunctionBinding table = configurationRegistry.getFunction(token);
-                FunctionExpression tableExpression = new FunctionExpression(name, table);
+                FunctionExpression tableExpression = new FunctionExpression(token, table);
                 stack.add(tableExpression);
 
             } else if (token.matches(selfPatten) && selfTypes != null) {
@@ -126,20 +125,13 @@ public class Combination extends OperationExpression {
                 stack.add(variableExpression);
 
             } else if (token.startsWith("[")) {
-                DataType variableType = null;
-                List<String> values = new ArrayList<>();
-                while (!tokens[++i].equals("]")) {
-                    String value = tokens[i];
-                    if (variableType == null) {
-                        variableType = LiteralDataType.computeDataType(value);
-                    }
-                    values.add(value);
-                }
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(values.toArray(new String[values.size()]), variableType);
-                stack.add(literalExpression);
+
+                OperationExpression operationExpression = new ListOperationExpression();
+                pos = operationExpression.parse(tokens, pos, stack, selfTypes, dataTypes);
+
             } else {
-                DataType type = LiteralDataType.computeDataType(token);
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
+
+                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
                 stack.add(literalExpression);
             }
         }
@@ -173,6 +165,7 @@ public class Combination extends OperationExpression {
             if (dataType == null) {
                 listLiteral.getType().getDataType();
             }
+
             if (listLiteral.getValue() instanceof Collection) {
                 comb = (List) listLiteral.getValue();
             }

@@ -21,51 +21,84 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.arithmetic;
+package org.dvare.expression.operation.chain;
 
 import org.dvare.annotations.Operation;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.StringType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.util.TrimString;
 
-@Operation(type = OperationType.TO_STRING)
-public class ToString extends ChainOperationExpression {
+@Operation(type = OperationType.SUBSTRING, dataTypes = {DataType.StringType})
+public class Substring extends ChainOperationExpression {
 
 
-    public ToString() {
-        super(OperationType.TO_STRING);
+    public Substring() {
+        super(OperationType.SUBSTRING);
     }
 
-    public ToString copy() {
-        return new ToString();
+    public Substring copy() {
+        return new Substring();
     }
 
 
-    private Object toString(Object selfRow, Object dataRow) throws InterpretException {
-        interpretOperand(selfRow, dataRow);
+    private Object substring(Object selfRow, Object dataRow) throws InterpretException {
+        leftValueOperand = super.interpretOperand(this.leftOperand, leftOperandType, selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
 
             if (literalExpression.getValue() == null) {
-                return new NullLiteral();
+                return new NullLiteral<>();
             }
 
             String value = literalExpression.getValue().toString();
+            value = TrimString.trim(value);
+
+
+            LiteralExpression indexExpression = (LiteralExpression) rightOperand.get(0);
+            LiteralExpression countExpression = (LiteralExpression) rightOperand.get(1);
+
+            Integer index;
+            if (indexExpression.getValue() instanceof Integer) {
+                index = (Integer) indexExpression.getValue();
+            } else {
+                index = Integer.parseInt(indexExpression.getValue().toString());
+            }
+
+
+            Integer count;
+            if (countExpression.getValue() instanceof Integer) {
+                count = (Integer) countExpression.getValue();
+            } else {
+                count = Integer.parseInt(countExpression.getValue().toString());
+            }
+
+            if (value.length() < count) {
+                return new NullLiteral<>();
+            }
+
+            Integer start = index - 1;
+            Integer end = index - 1 + count;
+
+            if (start < 0 || end > value.length()) {
+                return new NullLiteral<>();
+            }
+
 
             try {
-                LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, DataType.StringType);
-                return returnExpression;
-            } catch (IllegalValueException e) {
-                logger.error(e.getMessage(), e);
-            } catch (NumberFormatException e) {
-                logger.error(e.getMessage(), e);
+                value = value.substring(start, end);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                value = value.substring(index, index + count);
             }
+            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, new StringType());
+            return returnExpression;
+
         }
 
         return new NullLiteral<>();
@@ -75,14 +108,14 @@ public class ToString extends ChainOperationExpression {
     public Object interpret(Object dataRow) throws InterpretException {
 
 
-        return toString(dataRow, null);
+        return substring(dataRow, null);
 
     }
 
     @Override
     public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
 
-        return toString(selfRow, dataRow);
+        return substring(selfRow, dataRow);
     }
 
 

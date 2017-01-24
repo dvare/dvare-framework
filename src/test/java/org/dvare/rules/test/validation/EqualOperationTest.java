@@ -46,8 +46,8 @@ public class EqualOperationTest extends TestCase {
                 " And Variable1 = 'A' And Variable2 = 2" +
                 " And Variable3 = 3.2" +
                 " And Variable4 = false" +
-                " And Variable5 = toDate ( 12-05-2016 , dd-MM-yyyy )" +
-                " And Variable6 = toDate ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss )" +
+                " And Variable5 = date ( 12-05-2016 , dd-MM-yyyy )" +
+                " And Variable6 = dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss )" +
                 " And Variable7 = R'A1.*'";
 
         Expression expression = factory.getParser().fromString(exp, EqualOperation.class);

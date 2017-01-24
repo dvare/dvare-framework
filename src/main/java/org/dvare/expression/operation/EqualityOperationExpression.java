@@ -68,7 +68,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
 
     private int expression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes, String token, String type) throws ExpressionParseException {
-        Expression expression = null;
+        Expression expression;
         OperationExpression op = ConfigurationRegistry.INSTANCE.getOperation(token);
         if (op != null) {
             op = op.copy();
@@ -190,7 +190,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
                     }
                 } else {
 
-                    if (!leftDataType.equals(rightDataType)) {
+                    if (!leftDataType.equals(rightDataType) && (leftDataType != DataType.DateType && rightDataType != DataType.DateTimeType)) {
                         String message = String.format("%s OperationExpression not possible between  type %s and %s near %s", this.getClass().getSimpleName(), leftDataType, rightDataType, ExpressionTokenizer.toString(tokens, pos));
                         logger.error(message);
                         throw new IllegalOperationException(message);
@@ -199,13 +199,15 @@ public abstract class EqualityOperationExpression extends OperationExpression {
                 }
 
             }
-        }
 
 
-        if (dataTypeExpression != null && !isLegalOperation(dataTypeExpression.getDataType())) {
-            String message = String.format("OperationExpression %s not possible on type %s at %s", this.getClass().getSimpleName(), dataTypeExpression.getDataType(), ExpressionTokenizer.toString(tokens, pos));
-            logger.error(message);
-            throw new IllegalOperationException(message);
+            if (leftDataType != null && !isLegalOperation(leftDataType)) {
+                String message = String.format("OperationExpression %s not possible on type %s at %s", this.getClass().getSimpleName(), leftDataType, ExpressionTokenizer.toString(tokens, pos));
+                logger.error(message);
+                throw new IllegalOperationException(message);
+            }
+
+
         }
 
 
@@ -252,48 +254,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     public void interpretOperand(final Object selfRow, final Object dataRow) throws InterpretException {
 
 
-        Object leftDataRow = null;
-        if (leftOperandType != null && leftOperandType.equals(SELF_ROW)) {
-            leftDataRow = selfRow;
-        } else if (leftOperandType != null && leftOperandType.equals(OperationExpression.DATA_ROW)) {
-            leftDataRow = dataRow;
-        } else {
-            leftDataRow = selfRow;
-        }
-
-        Expression leftExpression = null;
-        Expression left = this.leftOperand;
-        if (left instanceof OperationExpression) {
-            OperationExpression operation = (OperationExpression) left;
-
-            LiteralExpression literalExpression = null;
-            if (selfRow != null && dataRow != null) {
-                literalExpression = (LiteralExpression) operation.interpret(selfRow, dataRow);
-            } else {
-                literalExpression = (LiteralExpression) operation.interpret(selfRow);
-            }
-
-            if (literalExpression != null) {
-                dataTypeExpression = literalExpression.getType();
-            }
-            leftExpression = literalExpression;
-
-        } else if (left instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) left;
-            variableExpression = VariableType.setVariableValue(variableExpression, leftDataRow);
-            if (variableExpression != null) {
-                dataTypeExpression = variableExpression.getType();
-            }
-            leftExpression = variableExpression;
-        } else if (left instanceof LiteralExpression) {
-            LiteralExpression literalExpression = (LiteralExpression) left;
-            if (literalExpression != null) {
-                dataTypeExpression = literalExpression.getType();
-            }
-            leftExpression = literalExpression;
-
-        }
-
+        Expression leftExpression = super.interpretOperand(leftOperand, leftOperandType, selfRow, dataRow);
 
         Object rightDataRow = null;
         if (rightOperandType != null && rightOperandType.equals(SELF_ROW)) {
