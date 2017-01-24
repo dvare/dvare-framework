@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +49,8 @@ public class Function extends OperationExpression {
 
         pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         FunctionExpression functionExpression = (FunctionExpression) stack.pop();
+
+
         this.leftOperand = functionExpression;
 
 
@@ -325,13 +326,7 @@ public class Function extends OperationExpression {
                 return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType());
             }
 
-        } catch (NoSuchMethodException e) {
-            logger.error(e.getMessage(), e);
-        } catch (InstantiationException e) {
-            logger.error(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            logger.error(e.getMessage(), e);
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
         return null;

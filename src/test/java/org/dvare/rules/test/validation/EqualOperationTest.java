@@ -31,6 +31,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.rules.test.validation.dataobjects.EqualOperation;
+import org.dvare.rules.test.validation.dataobjects.Function;
 import org.junit.Test;
 
 import java.text.ParseException;
@@ -68,6 +69,23 @@ public class EqualOperationTest extends TestCase {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, equalOperation);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testApp1() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.rules.util"});
+
+        Expression expression = configuration.getParser().fromString("Variable3->toString() = Variable1->toString()", Function.class);
+        RuleBinding rule = new RuleBinding(expression);
+
+        Function function = new Function();
+        function.setVariable1(15);
+        function.setVariable3("15");
+
+        RuleEvaluator evaluator = configuration.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, function);
         assertTrue(result);
     }
 

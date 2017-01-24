@@ -99,6 +99,19 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
         }
 
+
+        while (pos + 1 < tokens.length) {
+            ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+            OperationExpression testOp = configurationRegistry.getOperation(tokens[pos + 1]);
+            if (testOp instanceof ChainOperationExpression) {
+                stack.push(expression);
+                pos = testOp.parse(tokens, pos + 1, stack, selfTypes, dataTypes);
+                expression = stack.pop();
+            }
+
+            break;
+        }
+
         stack.push(expression);
         return pos;
     }
@@ -107,22 +120,13 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     protected int parseOperands(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
         String leftString = tokens[pos - 1];
-        String rightString = tokens[pos + 1];
-        pos = pos + 1;
+
 
         String typeString = findDataObject(leftString, selfTypes, dataTypes);
         String typeStringTokens[] = typeString.split(":");
         if (typeStringTokens.length == 2) {
             leftString = typeStringTokens[0];
             leftOperandType = typeStringTokens[1];
-        }
-
-
-        typeString = findDataObject(rightString, selfTypes, dataTypes);
-        typeStringTokens = typeString.split(":");
-        if (typeStringTokens.length == 2) {
-            rightString = typeStringTokens[0];
-            rightOperandType = typeStringTokens[1];
         }
 
 
@@ -134,9 +138,19 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
         this.leftOperand = stack.pop();
 
+
+        pos = pos + 1; // after equal sign
+        String rightString = tokens[pos];
+
+
+        typeString = findDataObject(rightString, selfTypes, dataTypes);
+        typeStringTokens = typeString.split(":");
+        if (typeStringTokens.length == 2) {
+            rightString = typeStringTokens[0];
+            rightOperandType = typeStringTokens[1];
+        }
+
         // computing expression right side̵
-
-
         pos = expression(tokens, pos, stack, selfTypes, dataTypes, rightString, rightOperandType);
         this.rightOperand = stack.pop();
 

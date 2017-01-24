@@ -33,6 +33,14 @@ import org.slf4j.LoggerFactory;
 public class FuntionProvider {
     static Logger logger = LoggerFactory.getLogger(FuntionProvider.class);
 
+
+    @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.StringType})
+    public Integer addFunction(Integer variable, Integer variable2) {
+        logger.debug("inside addFunction with arguments : " + variable + " and " + variable2);
+        return variable + variable2;
+    }
+
+
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.StringType})
     public Integer addFiveFunction(Integer variable, String variable2) {
         logger.debug("inside addFiveFuntion with arguments : " + variable + " and " + variable2);
