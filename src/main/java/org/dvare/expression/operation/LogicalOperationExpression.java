@@ -28,6 +28,7 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.validation.RightPriority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,10 +99,15 @@ public abstract class LogicalOperationExpression extends OperationExpression {
     }
 
     protected Boolean toBoolean(Object interpret) {
-        Boolean result;
+        Boolean result = false;
         if (interpret instanceof LiteralExpression) {
-            result = (Boolean) ((LiteralExpression) interpret).getValue();
-        } else {
+
+
+            if (!(interpret instanceof NullLiteral) && ((LiteralExpression) interpret).getValue() != null) {
+                result = (Boolean) ((LiteralExpression) interpret).getValue();
+            }
+
+        } else if (interpret != null) {
             result = (Boolean) interpret;
         }
         return result;

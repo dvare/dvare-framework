@@ -392,6 +392,9 @@ public class Function extends OperationExpression {
 
             } else {
                 paramsValue.param = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
+                if (paramsValue.param == null) {
+                    paramsValue.param = originalType;
+                }
                 paramsValue.value = literalExpression.getValue();
 
             }
