@@ -11,7 +11,6 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
-import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.ListOperationExpression;
@@ -25,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,17 +43,14 @@ public class Function extends OperationExpression {
         return new Function();
     }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding types) throws ExpressionParseException {
-        pos = parse(tokens, pos, stack, types, null);
-        return pos;
-    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
         pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         FunctionExpression functionExpression = (FunctionExpression) stack.pop();
+
+
         this.leftOperand = functionExpression;
 
 
@@ -77,13 +72,6 @@ public class Function extends OperationExpression {
 
         stack.push(this);
         return pos;
-    }
-
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-
-        return findNextExpression(tokens, pos, stack, selfTypes, null);
     }
 
 
@@ -120,11 +108,7 @@ public class Function extends OperationExpression {
 
                     return pos;
                 } else if (!op.getClass().equals(LeftPriority.class)) {
-                    if (dataTypes == null) {
-                        pos = op.parse(tokens, pos, localStack, selfTypes);
-                    } else {
-                        pos = op.parse(tokens, pos, localStack, selfTypes, dataTypes);
-                    }
+                    pos = op.parse(tokens, pos, localStack, selfTypes, dataTypes);
                 }
             } else if (configurationRegistry.getFunction(token) != null) {
                 String name = token;
@@ -163,7 +147,7 @@ public class Function extends OperationExpression {
                     localStack.add(literalExpression);
 
                 } else {
-                    DataType type = LiteralDataType.computeDataType(token);
+                    DataType type = LiteralType.computeDataType(token);
                     LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
                     localStack.add(literalExpression);
                 }
@@ -342,13 +326,7 @@ public class Function extends OperationExpression {
                 return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType());
             }
 
-        } catch (NoSuchMethodException e) {
-            logger.error(e.getMessage(), e);
-        } catch (InstantiationException e) {
-            logger.error(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            logger.error(e.getMessage(), e);
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
         return null;
@@ -414,6 +392,9 @@ public class Function extends OperationExpression {
 
             } else {
                 paramsValue.param = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
+                if (paramsValue.param == null) {
+                    paramsValue.param = originalType;
+                }
                 paramsValue.value = literalExpression.getValue();
 
             }

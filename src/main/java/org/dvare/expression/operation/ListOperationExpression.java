@@ -87,11 +87,7 @@ public class ListOperationExpression extends OperationExpression {
             if (op != null) {
                 op = op.copy();
 
-                if (dataTypes != null) {
-                    i = op.parse(values, i, localStack, selfTypes, dataTypes);
-                } else {
-                    i = op.parse(values, i, localStack, selfTypes);
-                }
+                i = op.parse(values, i, localStack, selfTypes, dataTypes);
 
                 expression = localStack.pop();
 
@@ -137,7 +133,7 @@ public class ListOperationExpression extends OperationExpression {
             if (expression instanceof OperationExpression) {
                 OperationExpression operationExpression = (OperationExpression) expression;
 
-                Object interpret = null;
+                Object interpret;
                 if (dataRow == null) {
                     interpret = operationExpression.interpret(selfRow);
 
@@ -219,18 +215,8 @@ public class ListOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        return null;
-    }
-
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-        return null;
-    }
-
-    @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-        return null;
+        return pos;
     }
 
     @Override

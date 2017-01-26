@@ -21,12 +21,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.arithmetic;
+package org.dvare.expression.operation.chain;
 
 import org.dvare.annotations.Operation;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.StringType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -34,18 +34,18 @@ import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
-@Operation(type = OperationType.ENDS_WITH, dataTypes = {DataType.StringType})
-public class EndsWith extends ChainOperationExpression {
-    public EndsWith() {
-        super(OperationType.ENDS_WITH);
+@Operation(type = OperationType.PREPEND, dataTypes = {DataType.StringType})
+public class Prepend extends ChainOperationExpression {
+    public Prepend() {
+        super(OperationType.PREPEND);
     }
 
-    public EndsWith copy() {
-        return new EndsWith();
+    public Prepend copy() {
+        return new Prepend();
     }
 
-    private Object endswith(Object selfRow, Object dataRow) throws InterpretException {
-        interpretOperand(selfRow, dataRow);
+    private Object contains(Object selfRow, Object dataRow) throws InterpretException {
+        leftValueOperand = super.interpretOperand(this.leftOperand, leftOperandType, selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
@@ -59,21 +59,18 @@ public class EndsWith extends ChainOperationExpression {
 
             LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
 
-            String end;
+            String prepend;
             if (startExpression.getValue() instanceof Integer) {
-                end = (String) startExpression.getValue();
+                prepend = (String) startExpression.getValue();
             } else {
-                end = startExpression.getValue().toString();
+                prepend = startExpression.getValue().toString();
             }
-
-            end = TrimString.trim(end);
-
-            Boolean result = value.endsWith(end);
-            try {
-                LiteralExpression returnExpression = LiteralType.getLiteralExpression(result.toString(), DataType.BooleanType);
-                return returnExpression;
-            } catch (IllegalValueException e) {
+            prepend = TrimString.trim(prepend);
+            if (prepend != null && !prepend.isEmpty()) {
+                value = new String(prepend + value);
             }
+            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, new StringType());
+            return returnExpression;
 
         }
 
@@ -84,14 +81,14 @@ public class EndsWith extends ChainOperationExpression {
     public Object interpret(Object dataRow) throws InterpretException {
 
 
-        return endswith(dataRow, null);
+        return contains(dataRow, null);
 
     }
 
     @Override
     public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
 
-        return endswith(selfRow, dataRow);
+        return contains(selfRow, dataRow);
     }
 
 }

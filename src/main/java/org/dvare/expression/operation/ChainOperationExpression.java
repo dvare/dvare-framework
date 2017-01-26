@@ -24,11 +24,9 @@ package org.dvare.expression.operation;
 
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
-import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.validation.RightPriority;
@@ -85,14 +83,10 @@ public abstract class ChainOperationExpression extends OperationExpression {
                     this.leftOperand = variableExpression;
                 } else {
 
-                    LiteralExpression literalExpression = null;
+                    Expression literalExpression = null;
                     if (token.equals("[")) {
-                        List<String> values = new ArrayList<>();
-                        while (!tokens[++pos].equals("]")) {
-                            String value = tokens[pos];
-                            values.add(value);
-                        }
-                        literalExpression = LiteralType.getLiteralExpression(values.toArray(new String[values.size()]), variableType);
+                        pos = new ListOperationExpression().parse(tokens, pos, stack, selfTypes, dataTypes);
+                        literalExpression = stack.pop();
                     } else {
                         literalExpression = LiteralType.getLiteralExpression(token);
                     }
@@ -104,15 +98,10 @@ public abstract class ChainOperationExpression extends OperationExpression {
 
         } else {
             this.leftOperand = stack.pop();
+
+
         }
 
-        return pos;
-    }
-
-
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-        pos = parse(tokens, pos, stack, selfTypes, null);
         return pos;
     }
 
@@ -122,34 +111,23 @@ public abstract class ChainOperationExpression extends OperationExpression {
         pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
         pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
 
-    /*    List<Expression> expressions = new ArrayList<>(stack);
-        stack.clear(); // arrayList fill with stack elements
 
-        List<Expression> parameters = new ArrayList<>();
-        for (Expression expression : expressions) {
-            parameters.add(expression);
-        }
-        this.rightOperand = parameters;*/
-
-     /*   if (this.rightOperand.isEmpty()) {
-
-            String error = String.format("Parameter Found of Operation %s not Found", this.getClass().getSimpleName());
-            logger.error(error);
-            throw new ExpressionParseException(error);
-        }
-*/
         logger.debug("Operation Expression Call Expression : {}", getClass().getSimpleName());
 
-        stack.push(this);
+  /*      if (this.leftOperand instanceof LogicalOperationExpression) {
+            LogicalOperationExpression logicalPart = (LogicalOperationExpression) this.leftOperand;
+            this.leftOperand = logicalPart.rightOperand;
+            logicalPart.rightOperand = this;;
+            stack.push(logicalPart);
+        } else*/
+        {
+            stack.push(this);
+        }
+
+
         return pos;
     }
 
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-
-        return findNextExpression(tokens, pos, stack, selfTypes, null);
-    }
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
@@ -165,7 +143,7 @@ public abstract class ChainOperationExpression extends OperationExpression {
                     return i;
                 }
             } else {
-                DataType type = LiteralDataType.computeDataType(token);
+                DataType type = LiteralType.computeDataType(token);
                 LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
                 rightOperand.add(literalExpression);
             }
@@ -174,54 +152,6 @@ public abstract class ChainOperationExpression extends OperationExpression {
     }
 
 
-    public void interpretOperand(final Object selfRow, final Object dataRow) throws InterpretException {
-
-
-        Object leftDataRow;
-        if (leftOperandType != null && leftOperandType.equals(SELF_ROW)) {
-            leftDataRow = selfRow;
-        } else if (leftOperandType != null && leftOperandType.equals(DATA_ROW)) {
-            leftDataRow = dataRow;
-        } else {
-            leftDataRow = selfRow;
-        }
-
-        Expression leftExpression = null;
-        Expression left = this.leftOperand;
-        if (left instanceof OperationExpression) {
-            OperationExpression operation = (OperationExpression) left;
-
-            LiteralExpression literalExpression = null;
-            if (selfRow != null && dataRow != null) {
-                literalExpression = (LiteralExpression) operation.interpret(selfRow, dataRow);
-            } else {
-                literalExpression = (LiteralExpression) operation.interpret(selfRow);
-            }
-
-            if (literalExpression != null) {
-                dataTypeExpression = literalExpression.getType();
-            }
-            leftExpression = literalExpression;
-
-        } else if (left instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) left;
-            variableExpression = VariableType.setVariableValue(variableExpression, leftDataRow);
-            if (variableExpression != null) {
-                dataTypeExpression = variableExpression.getType();
-            }
-            leftExpression = variableExpression;
-        } else if (left instanceof LiteralExpression) {
-            LiteralExpression literalExpression = (LiteralExpression) left;
-            if (literalExpression != null) {
-                dataTypeExpression = literalExpression.getType();
-            }
-            leftExpression = literalExpression;
-
-        }
-
-        this.leftValueOperand = leftExpression;
-
-    }
 
 
 }

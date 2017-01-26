@@ -32,7 +32,7 @@ import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.literal.LiteralDataType;
+import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
@@ -131,16 +131,12 @@ public class ExpressionParser {
                 if (op != null) {
                     op = op.copy();
 
-                    if (dataTypes != null) {
-                        i = op.parse(tokens, i, stack, selfTypes, dataTypes);
-                    } else {
-                        i = op.parse(tokens, i, stack, selfTypes);
-                    }
+                    i = op.parse(tokens, i, stack, selfTypes, dataTypes);
                 } else {
                     if (!token.matches(selfPatten) && !token.matches(dataPatten)) {
 
                         if (selfTypes == null || !selfTypes.getTypes().containsKey(token)) {
-                            DataType dataType = LiteralDataType.computeDataType(token);
+                            DataType dataType = LiteralType.computeDataType(token);
                             if (dataType == null) {
 
                                 String message = String.format("%s is not an OperationExpression or Variable near \"%s\"", token, ExpressionTokenizer.toString(tokens, i));

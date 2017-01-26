@@ -53,7 +53,7 @@ public class NullType extends DataTypeExpression {
             NotEquals.class
     })
     public boolean notEqual(LiteralExpression left, LiteralExpression right) {
-        if (!(right instanceof NullLiteral) && right instanceof NullLiteral) {
+        if (!(left instanceof NullLiteral) && right instanceof NullLiteral) {
             return true;
         }
         return false;

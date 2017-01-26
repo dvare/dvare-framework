@@ -21,12 +21,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.arithmetic;
+package org.dvare.expression.operation.chain;
 
 import org.dvare.annotations.Operation;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.literal.DateLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -34,39 +34,63 @@ import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
-@Operation(type = OperationType.TO_INTEGER, dataTypes = {DataType.StringType})
-public class ToInteger extends ChainOperationExpression {
+import java.util.Date;
 
+@Operation(type = OperationType.TO_DATE, dataTypes = {DataType.StringType})
+public class ToDate extends ChainOperationExpression {
 
-    public ToInteger() {
-        super(OperationType.TO_INTEGER);
+    public ToDate() {
+        super(OperationType.TO_DATE);
     }
 
-    public ToInteger copy() {
-        return new ToInteger();
+    public ToDate copy() {
+        return new ToDate();
     }
 
 
-    private Object toInteger(Object selfRow, Object dataRow) throws InterpretException {
-        interpretOperand(selfRow, dataRow);
+    private Object toDate(Object selfRow, Object dataRow) throws InterpretException {
+        leftValueOperand = super.interpretOperand(this.leftOperand, leftOperandType, selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+
 
             if (literalExpression.getValue() == null) {
                 return new NullLiteral();
             }
 
-            String value = literalExpression.getValue().toString();
-            value = TrimString.trim(value);
 
+            if (literalExpression instanceof DateLiteral) {
+                return literalExpression;
+            }
+
+
+            Object value = literalExpression.getValue();
             try {
-                LiteralExpression returnExpression = LiteralType.getLiteralExpression(Integer.parseInt(value), DataType.IntegerType);
-                return returnExpression;
-            } catch (IllegalValueException e) {
-                logger.error(e.getMessage(), e);
-            } catch (NumberFormatException e) {
+                Date date = null;
+                if (value instanceof Date) {
+                    date = (Date) value;
+
+
+                } else {
+                    String valueString = literalExpression.getValue().toString();
+                    valueString = TrimString.trim(valueString);
+
+                    if (valueString.matches(LiteralType.date)) {
+                        date = LiteralType.dateFormat.parse(valueString);
+
+                    }
+
+                }
+
+                if (date != null) {
+                    return LiteralType.getLiteralExpression(date, DataType.DateType);
+                }
+
+            } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
+
+
         }
 
         return new NullLiteral<>();
@@ -76,15 +100,14 @@ public class ToInteger extends ChainOperationExpression {
     public Object interpret(Object dataRow) throws InterpretException {
 
 
-        return toInteger(dataRow, null);
+        return toDate(dataRow, null);
 
     }
 
     @Override
     public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
 
-        return toInteger(selfRow, dataRow);
+        return toDate(selfRow, dataRow);
     }
-
 
 }

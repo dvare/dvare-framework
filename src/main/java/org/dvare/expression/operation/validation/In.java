@@ -24,11 +24,6 @@ public class In extends EqualityOperationExpression {
         return new In();
     }
 
-    @Override
-    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-        pos = parse(tokens, pos, stack, selfTypes, null);
-        return pos;
-    }
 
     @Override
     public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
@@ -68,13 +63,13 @@ public class In extends EqualityOperationExpression {
 
         }
 
-
+/*
         if (dataTypeExpression != null && !isLegalOperation(dataTypeExpression.getDataType())) {
 
             String message2 = String.format("OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), left.getClass().getSimpleName(), ExpressionTokenizer.toString(tokens, pos + 2));
             logger.error(message2);
             throw new IllegalOperationException(message2);
-        }
+        }*/
 
         logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 

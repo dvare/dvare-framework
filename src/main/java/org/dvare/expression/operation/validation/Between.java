@@ -36,12 +36,6 @@ public class Between extends EqualityOperationExpression {
         throw new ExpressionParseException("Cannot assign literal to variable");
     }
 
-    @Override
-    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-        pos = parse(tokens, pos, stack, selfTypes, null);
-        return pos;
-    }
-
 
     private void testBetweenOperation(String[] tokens, int pos) throws ExpressionParseException {
 
@@ -83,6 +77,7 @@ public class Between extends EqualityOperationExpression {
 
         }
 
+/*
 
         if (dataTypeExpression != null && !isLegalOperation(dataTypeExpression.getDataType())) {
 
@@ -90,6 +85,7 @@ public class Between extends EqualityOperationExpression {
             logger.error(message2);
             throw new IllegalOperationException(message2);
         }
+*/
 
         logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 

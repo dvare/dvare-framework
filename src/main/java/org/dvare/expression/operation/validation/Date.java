@@ -38,25 +38,18 @@ import org.dvare.expression.operation.OperationType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Stack;
 
-@Operation(type = OperationType.TO_DATE, dataTypes = {DataType.DateType, DataType.DateTimeType})
-public class ToDate extends OperationExpression {
+@Operation(type = OperationType.DATE, dataTypes = {DataType.DateType})
+public class Date extends OperationExpression {
 
 
-    public ToDate() {
-        super(OperationType.TO_DATE);
+    public Date() {
+        super(OperationType.DATE);
     }
 
-    public ToDate copy() {
-        return new ToDate();
-    }
-
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        int i = parse(tokens, pos, stack, typeBinding, null);
-        return i;
+    public Date copy() {
+        return new Date();
     }
 
 
@@ -64,7 +57,7 @@ public class ToDate extends OperationExpression {
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
         if (dataTypes == null) {
-            pos = findNextExpression(tokens, pos + 1, stack, selfTypes);
+            pos = findNextExpression(tokens, pos + 1, stack, selfTypes, null);
         } else {
             pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         }
@@ -102,8 +95,8 @@ public class ToDate extends OperationExpression {
 
         try {
             if (dateFormat != null && value != null) {
-                Date date = dateFormat.parse(value);
-                DateLiteral<Date> literal = new DateLiteral<>(date);
+                java.util.Date date = dateFormat.parse(value);
+                DateLiteral<java.util.Date> literal = new DateLiteral<>(date);
                 stack.push(literal);
             }
         } catch (ParseException e) {
@@ -115,12 +108,6 @@ public class ToDate extends OperationExpression {
         return pos;
     }
 
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-
-        return findNextExpression(tokens, pos, stack, typeBinding, null);
-    }
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {

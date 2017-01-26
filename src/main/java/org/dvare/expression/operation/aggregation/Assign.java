@@ -10,6 +10,7 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.AssignOperationExpression;
+import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -37,6 +38,10 @@ public class Assign extends AssignOperationExpression {
 
 
     protected boolean isLegalOperation(Expression expression, DataType dataType) {
+
+        if (expression instanceof ChainOperationExpression) {
+            return true;
+        }
 
         Annotation annotation = expression.getClass().getAnnotation(Operation.class);
         if (annotation != null && annotation instanceof Operation) {

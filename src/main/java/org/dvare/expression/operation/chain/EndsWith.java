@@ -21,10 +21,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.arithmetic;
+package org.dvare.expression.operation.chain;
 
 import org.dvare.annotations.Operation;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -33,24 +34,20 @@ import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
-@Operation(type = OperationType.SUBSTRING, dataTypes = {DataType.StringType})
-public class Substring extends ChainOperationExpression {
-
-
-    public Substring() {
-        super(OperationType.SUBSTRING);
+@Operation(type = OperationType.ENDS_WITH, dataTypes = {DataType.StringType})
+public class EndsWith extends ChainOperationExpression {
+    public EndsWith() {
+        super(OperationType.ENDS_WITH);
     }
 
-    public Substring copy() {
-        return new Substring();
+    public EndsWith copy() {
+        return new EndsWith();
     }
 
-
-    private Object substring(Object selfRow, Object dataRow) throws InterpretException {
-        interpretOperand(selfRow, dataRow);
+    private Object endswith(Object selfRow, Object dataRow) throws InterpretException {
+        leftValueOperand = super.interpretOperand(this.leftOperand, leftOperandType, selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
-
 
             if (literalExpression.getValue() == null) {
                 return new NullLiteral<>();
@@ -60,43 +57,23 @@ public class Substring extends ChainOperationExpression {
             value = TrimString.trim(value);
 
 
-            LiteralExpression indexExpression = (LiteralExpression) rightOperand.get(0);
-            LiteralExpression countExpression = (LiteralExpression) rightOperand.get(1);
+            LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
 
-            Integer index;
-            if (indexExpression.getValue() instanceof Integer) {
-                index = (Integer) indexExpression.getValue();
+            String end;
+            if (startExpression.getValue() instanceof Integer) {
+                end = (String) startExpression.getValue();
             } else {
-                index = Integer.parseInt(indexExpression.getValue().toString());
+                end = startExpression.getValue().toString();
             }
 
+            end = TrimString.trim(end);
 
-            Integer count;
-            if (countExpression.getValue() instanceof Integer) {
-                count = (Integer) countExpression.getValue();
-            } else {
-                count = Integer.parseInt(countExpression.getValue().toString());
-            }
-
-            if (value.length() < count) {
-                return new NullLiteral<>();
-            }
-
-            Integer start = index - 1;
-            Integer end = index - 1 + count;
-
-            if (start < 0 || end > value.length()) {
-                return new NullLiteral<>();
-            }
-
-
+            Boolean result = value.endsWith(end);
             try {
-                value = value.substring(start, end);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                value = value.substring(index, index + count);
+                LiteralExpression returnExpression = LiteralType.getLiteralExpression(result.toString(), DataType.BooleanType);
+                return returnExpression;
+            } catch (IllegalValueException e) {
             }
-            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataTypeExpression);
-            return returnExpression;
 
         }
 
@@ -107,15 +84,14 @@ public class Substring extends ChainOperationExpression {
     public Object interpret(Object dataRow) throws InterpretException {
 
 
-        return substring(dataRow, null);
+        return endswith(dataRow, null);
 
     }
 
     @Override
     public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
 
-        return substring(selfRow, dataRow);
+        return endswith(selfRow, dataRow);
     }
-
 
 }

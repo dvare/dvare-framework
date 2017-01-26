@@ -122,7 +122,7 @@ public class ChainOperationTest extends TestCase {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        String expr = "(Variable5->startswith('dva') = true or Variable5->startswith('dva') = true)";
+        String expr = "Variable5->startswith('dva') = true or Variable5->startswith('dva') = true";
         Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
 
         RuleBinding rule = new RuleBinding(expression);
@@ -240,4 +240,25 @@ public class ChainOperationTest extends TestCase {
         assertTrue(result);
     }
 
+
+    @Test
+    public void testApp81() throws ExpressionParseException, InterpretException {
+
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        String expr = "Variable5->substring(2,2)->toInteger() between [80,90] and Variable5->substring(3,2)->toInteger() between [30,50]";
+
+        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+        ArithmeticOperation ArithmeticOperation = new ArithmeticOperation();
+        ArithmeticOperation.setVariable5("9845");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
+        assertTrue(result);
+    }
 }

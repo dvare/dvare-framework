@@ -28,6 +28,7 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.literal.LiteralExpression;
 
 import java.util.Stack;
 
@@ -42,11 +43,6 @@ public abstract class ConditionOperationExpression extends OperationExpression {
         super(operationType);
     }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes) throws ExpressionParseException {
-        pos = parse(tokens, pos, stack, aTypes, null);
-        return pos;
-    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
@@ -54,11 +50,6 @@ public abstract class ConditionOperationExpression extends OperationExpression {
         return pos;
     }
 
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos + 1, stack, aTypes, null);
-        return pos;
-    }
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypes, TypeBinding vTypes) throws ExpressionParseException {
@@ -75,5 +66,14 @@ public abstract class ConditionOperationExpression extends OperationExpression {
         return null;
     }
 
+    protected Boolean toBoolean(Object interpret) {
+        Boolean result;
+        if (interpret instanceof LiteralExpression) {
+            result = (Boolean) ((LiteralExpression) interpret).getValue();
+        } else {
+            result = (Boolean) interpret;
+        }
+        return result;
+    }
 
 }

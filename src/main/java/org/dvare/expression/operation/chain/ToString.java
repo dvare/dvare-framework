@@ -21,60 +21,56 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.arithmetic;
+package org.dvare.expression.operation.chain;
 
 import org.dvare.annotations.Operation;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.exceptions.parser.IllegalValueException;
-import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.StringType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.util.TrimString;
+import org.dvare.expression.operation.validation.Date;
 
-@Operation(type = OperationType.CONTAINS, dataTypes = {DataType.StringType})
-public class Contains extends ChainOperationExpression {
-    public Contains() {
-        super(OperationType.CONTAINS);
+@Operation(type = OperationType.TO_STRING)
+public class ToString extends ChainOperationExpression {
+
+
+    public ToString() {
+        super(OperationType.TO_STRING);
     }
 
-    public Contains copy() {
-        return new Contains();
+    public ToString copy() {
+        return new ToString();
     }
 
-    private Object contains(Object selfRow, Object dataRow) throws InterpretException {
-        interpretOperand(selfRow, dataRow);
+
+    private Object toString(Object selfRow, Object dataRow) throws InterpretException {
+        leftValueOperand = super.interpretOperand(this.leftOperand, leftOperandType, selfRow, dataRow);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
+
             if (literalExpression.getValue() == null) {
-                return new NullLiteral<>();
+                return new NullLiteral();
             }
 
-            String value = literalExpression.getValue().toString();
-            value = TrimString.trim(value);
+            Object value = literalExpression.getValue();
+            String valueString;
 
 
-            LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
-
-            String start;
-            if (startExpression.getValue() instanceof Integer) {
-                start = (String) startExpression.getValue();
+            if (value instanceof Date) {
+                Date date = (Date) value;
+                valueString = LiteralType.dateFormat.format(date);
             } else {
-                start = startExpression.getValue().toString();
+                valueString = value.toString();
             }
 
-            start = TrimString.trim(start);
-
-            Boolean result = value.contains(start);
-
-            try {
-                LiteralExpression returnExpression = LiteralType.getLiteralExpression(result.toString(), DataType.BooleanType);
-                return returnExpression;
-            } catch (IllegalValueException e) {
+            if (valueString != null) {
+                return LiteralType.getLiteralExpression(valueString, new StringType());
             }
+
 
         }
 
@@ -85,14 +81,15 @@ public class Contains extends ChainOperationExpression {
     public Object interpret(Object dataRow) throws InterpretException {
 
 
-        return contains(dataRow, null);
+        return toString(dataRow, null);
 
     }
 
     @Override
     public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
 
-        return contains(selfRow, dataRow);
+        return toString(selfRow, dataRow);
     }
+
 
 }

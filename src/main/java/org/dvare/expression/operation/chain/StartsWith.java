@@ -21,10 +21,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.arithmetic;
+package org.dvare.expression.operation.chain;
 
 import org.dvare.annotations.Operation;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -33,25 +34,26 @@ import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
-@Operation(type = OperationType.CONCAT, dataTypes = {DataType.StringType})
-public class Concat extends ChainOperationExpression {
-    public Concat() {
-        super(OperationType.CONCAT);
+@Operation(type = OperationType.STARTS_WITH, dataTypes = {DataType.StringType})
+public class StartsWith extends ChainOperationExpression {
+    public StartsWith() {
+        super(OperationType.STARTS_WITH);
     }
 
-    public Concat copy() {
-        return new Concat();
+    public StartsWith copy() {
+        return new StartsWith();
     }
 
-    private Object contains(Object selfRow, Object dataRow) throws InterpretException {
-        interpretOperand(selfRow, dataRow);
+
+    private Object startswith(Object selfRow, Object dataRow) throws InterpretException {
+        leftValueOperand = super.interpretOperand(this.leftOperand, leftOperandType, selfRow, dataRow);
+
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
             if (literalExpression.getValue() == null) {
                 return new NullLiteral<>();
             }
-
             String value = literalExpression.getValue().toString();
             value = TrimString.trim(value);
 
@@ -67,10 +69,13 @@ public class Concat extends ChainOperationExpression {
 
             start = TrimString.trim(start);
 
-            value = value.concat(start);
+            Boolean result = value.startsWith(start);
 
-            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, dataTypeExpression);
-            return returnExpression;
+            try {
+                LiteralExpression returnExpression = LiteralType.getLiteralExpression(result.toString(), DataType.BooleanType);
+                return returnExpression;
+            } catch (IllegalValueException e) {
+            }
 
         }
 
@@ -81,14 +86,13 @@ public class Concat extends ChainOperationExpression {
     public Object interpret(Object dataRow) throws InterpretException {
 
 
-        return contains(dataRow, null);
+        return startswith(dataRow, null);
 
     }
 
     @Override
     public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
 
-        return contains(selfRow, dataRow);
+        return startswith(selfRow, dataRow);
     }
-
 }

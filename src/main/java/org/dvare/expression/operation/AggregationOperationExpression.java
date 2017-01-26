@@ -32,7 +32,6 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.literal.LiteralDataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -54,10 +53,6 @@ public abstract class AggregationOperationExpression extends OperationExpression
         super(operationType);
     }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        return 0;
-    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
@@ -70,10 +65,6 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return pos;
     }
 
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes) throws ExpressionParseException {
-        return pos;
-    }
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
@@ -154,7 +145,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
                 stack.add(variableExpression);
 
             } else if (!token.equals(",")) {
-                DataType type = LiteralDataType.computeDataType(token);
+                DataType type = LiteralType.computeDataType(token);
                 LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
                 stack.add(literalExpression);
             }

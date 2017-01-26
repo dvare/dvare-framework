@@ -28,6 +28,7 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.validation.RightPriority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,20 +42,12 @@ public abstract class LogicalOperationExpression extends OperationExpression {
         super(operationType);
     }
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-
-        pos = parse(tokens, pos, stack, typeBinding, null);
-
-
-        return pos;
-    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         Expression left = stack.pop();
         if (dataTypes == null) {
-            pos = findNextExpression(tokens, pos + 1, stack, selfTypes);
+            pos = findNextExpression(tokens, pos + 1, stack, selfTypes, null);
         } else {
             pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
         }
@@ -70,11 +63,6 @@ public abstract class LogicalOperationExpression extends OperationExpression {
         return pos;
     }
 
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding typeBinding) throws ExpressionParseException {
-        return findNextExpression(tokens, pos, stack, typeBinding, null);
-    }
-
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
@@ -88,17 +76,22 @@ public abstract class LogicalOperationExpression extends OperationExpression {
                 }
 
                 op = op.copy();
-                if (dataTypes == null) {
-                    pos = op.parse(tokens, pos, stack, selfTypes);
-                } else {
-                    pos = op.parse(tokens, pos, stack, selfTypes, dataTypes);
+                pos = op.parse(tokens, pos, stack, selfTypes, dataTypes);
+
+
+                if (pos + 1 < tokens.length) {
+                    OperationExpression testOp = configurationRegistry.getOperation(tokens[pos + 1]);
+                    if (testOp instanceof LogicalOperationExpression) {
+                        return pos;
+                    }
                 }
-                if (!stack.isEmpty() && stack.peek() instanceof ChainOperationExpression) {
+
+
+                /*if (!stack.isEmpty() && stack.peek() instanceof ChainOperationExpression) {
                     continue;
                 } else {
                     return pos;
-                }
-
+                }*/
 
             }
         }
@@ -106,10 +99,15 @@ public abstract class LogicalOperationExpression extends OperationExpression {
     }
 
     protected Boolean toBoolean(Object interpret) {
-        Boolean result;
+        Boolean result = false;
         if (interpret instanceof LiteralExpression) {
-            result = (Boolean) ((LiteralExpression) interpret).getValue();
-        } else {
+
+
+            if (!(interpret instanceof NullLiteral) && ((LiteralExpression) interpret).getValue() != null) {
+                result = (Boolean) ((LiteralExpression) interpret).getValue();
+            }
+
+        } else if (interpret != null) {
             result = (Boolean) interpret;
         }
         return result;

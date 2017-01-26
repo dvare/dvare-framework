@@ -45,10 +45,37 @@ public class ENDIF extends ConditionOperationExpression {
         return new ENDIF();
     }
 
+    @Override
+    public Object interpret(Object dataRow) throws InterpretException {
+
+        Boolean result = toBoolean(condition.interpret(dataRow));
+        if (result) {
+            return thenOperand.interpret(dataRow);
+        } else if (elseOperand != null) {
+            return elseOperand.interpret(dataRow);
+        } else {
+
+        }
+        return null;
+    }
+
+    @Override
+    public Object interpret(Object aggregation, Object dataRow) throws InterpretException {
+
+        Boolean result = toBoolean(condition.interpret(aggregation, dataRow));
+        if (result) {
+            return thenOperand.interpret(aggregation, dataRow);
+        } else if (elseOperand != null) {
+            return elseOperand.interpret(aggregation, dataRow);
+        } else {
+
+        }
+        return null;
+    }
 
     @Override
     public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
-        Boolean result = (Boolean) condition.interpret(aggregation);
+        Boolean result = toBoolean(condition.interpret(aggregation));
         if (result) {
             return thenOperand.interpret(aggregation, dataSet);
         } else {

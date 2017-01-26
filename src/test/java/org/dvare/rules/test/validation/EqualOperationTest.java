@@ -31,6 +31,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.rules.test.validation.dataobjects.EqualOperation;
+import org.dvare.rules.test.validation.dataobjects.Function;
 import org.junit.Test;
 
 import java.text.ParseException;
@@ -46,8 +47,8 @@ public class EqualOperationTest extends TestCase {
                 " And Variable1 = 'A' And Variable2 = 2" +
                 " And Variable3 = 3.2" +
                 " And Variable4 = false" +
-                " And Variable5 = toDate ( 12-05-2016 , dd-MM-yyyy )" +
-                " And Variable6 = toDate ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss )" +
+                " And Variable5 = date ( 12-05-2016 , dd-MM-yyyy )" +
+                " And Variable6 = dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss )" +
                 " And Variable7 = R'A1.*'";
 
         Expression expression = factory.getParser().fromString(exp, EqualOperation.class);
@@ -68,6 +69,23 @@ public class EqualOperationTest extends TestCase {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, equalOperation);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testApp1() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.rules.util"});
+
+        Expression expression = configuration.getParser().fromString("Variable3->toString() = Variable1->toString()", Function.class);
+        RuleBinding rule = new RuleBinding(expression);
+
+        Function function = new Function();
+        function.setVariable1(15);
+        function.setVariable3("15");
+
+        RuleEvaluator evaluator = configuration.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, function);
         assertTrue(result);
     }
 
