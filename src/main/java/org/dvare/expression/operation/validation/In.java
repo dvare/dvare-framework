@@ -20,6 +20,10 @@ public class In extends EqualityOperationExpression {
         super(OperationType.IN);
     }
 
+    public In(OperationType operationType) {
+        super(operationType);
+    }
+
     public In copy() {
         return new In();
     }

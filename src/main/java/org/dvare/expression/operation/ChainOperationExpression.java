@@ -83,13 +83,8 @@ public abstract class ChainOperationExpression extends OperationExpression {
                     this.leftOperand = variableExpression;
                 } else {
 
-                    Expression literalExpression = null;
-                    if (token.equals("[")) {
-                        pos = new ListOperationExpression().parse(tokens, pos, stack, selfTypes, dataTypes);
-                        literalExpression = stack.pop();
-                    } else {
-                        literalExpression = LiteralType.getLiteralExpression(token);
-                    }
+                    Expression literalExpression = LiteralType.getLiteralExpression(token);
+
 
                     this.leftOperand = literalExpression;
                 }
@@ -150,8 +145,6 @@ public abstract class ChainOperationExpression extends OperationExpression {
         }
         return null;
     }
-
-
 
 
 }

@@ -29,6 +29,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.validation.Equals;
 import org.dvare.expression.operation.validation.In;
 import org.dvare.expression.operation.validation.NotEquals;
+import org.dvare.expression.operation.validation.NotIn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,12 +64,17 @@ public class BooleanType extends DataTypeExpression {
     public boolean in(LiteralExpression left, LiteralExpression right) {
         Boolean leftValue = (Boolean) left.getValue();
         List<Boolean> rightValues = buildIntegerBoolean((List<Object>) right.getValue());
-        for (Boolean rightValue : rightValues) {
-            if (leftValue == rightValue) {
-                return true;
-            }
-        }
-        return false;
+        return rightValues.contains(leftValue);
+    }
+
+    @OperationMapping(operations = {
+            NotIn.class
+    })
+    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+
+        Boolean leftValue = (Boolean) left.getValue();
+        List<Boolean> rightValues = buildIntegerBoolean((List<Object>) right.getValue());
+        return !rightValues.contains(leftValue);
     }
 
     private List<Boolean> buildIntegerBoolean(List<Object> tempValues) {

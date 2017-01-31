@@ -124,12 +124,7 @@ public class Combination extends OperationExpression {
                 VariableExpression variableExpression = VariableType.getVariableType(token, type);
                 stack.add(variableExpression);
 
-            } else if (token.startsWith("[")) {
-
-                OperationExpression operationExpression = new ListOperationExpression();
-                pos = operationExpression.parse(tokens, pos, stack, selfTypes, dataTypes);
-
-            } else {
+            }  else {
 
                 LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
                 stack.add(literalExpression);

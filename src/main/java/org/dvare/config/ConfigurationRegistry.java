@@ -68,7 +68,11 @@ public enum ConfigurationRegistry {
 
 
     public FunctionBinding getFunction(String name) {
-        return this.functions.get(name);
+        FunctionBinding functionBinding = this.functions.get(name);
+        if (functionBinding != null) {
+            return functionBinding.copy();
+        }
+        return null;
     }
 
 

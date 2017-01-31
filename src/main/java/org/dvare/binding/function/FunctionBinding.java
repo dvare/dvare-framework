@@ -37,8 +37,8 @@ public class FunctionBinding {
     private List<DataType> parameters = new ArrayList<>();
     private boolean isList = false;
 
-    public FunctionBinding(String methodName, Class tableClass, DataTypeExpression returnType) {
-        this(methodName, tableClass, returnType, false, null);
+    public FunctionBinding(String methodName, Class functionClass, DataTypeExpression returnType) {
+        this(methodName, functionClass, returnType, false, null);
     }
 
 
@@ -48,6 +48,10 @@ public class FunctionBinding {
         this.returnType = returnType;
         this.isList = isList;
         this.parameters = parameters;
+    }
+
+    public FunctionBinding copy() {
+        return new FunctionBinding(methodName, functionClass, returnType, isList, parameters);
     }
 
     public String getMethodName() {

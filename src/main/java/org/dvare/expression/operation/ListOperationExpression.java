@@ -23,6 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation;
 
+import org.dvare.annotations.Operation;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -44,24 +45,30 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+@Operation(type = OperationType.List)
 public class ListOperationExpression extends OperationExpression {
     protected static Logger logger = LoggerFactory.getLogger(ListOperationExpression.class);
 
     List<Expression> expressions = new ArrayList<>();
 
     public ListOperationExpression() {
-        super(null);
+        super(OperationType.List);
     }
 
+@Override
+    public ListOperationExpression copy(){
+        return new ListOperationExpression();
+    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
 
         List<String> listPrams = new ArrayList<>();
-        while (!tokens[++pos].equals("]")) {
+        while (!tokens[pos].equals("]")) {
             String value = tokens[pos];
             listPrams.add(value);
+            pos++;
         }
 
 
@@ -98,15 +105,9 @@ public class ListOperationExpression extends OperationExpression {
                 DataType variableType = TypeFinder.findType(token, dataTypes);
                 expression = VariableType.getVariableType(token, variableType, operandType);
             } else {
-                if (token.equals("[")) {
 
-                    i = new ListOperationExpression().parse(values, i, localStack, selfTypes, dataTypes);
-                    expression = localStack.pop();
+                expression = LiteralType.getLiteralExpression(token);
 
-
-                } else {
-                    expression = LiteralType.getLiteralExpression(token);
-                }
             }
 
 
@@ -208,10 +209,6 @@ public class ListOperationExpression extends OperationExpression {
     }
 
 
-    @Override
-    public OperationExpression copy() {
-        return null;
-    }
 
 
     @Override

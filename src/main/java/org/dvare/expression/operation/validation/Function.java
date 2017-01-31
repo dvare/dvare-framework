@@ -13,7 +13,6 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -102,7 +101,9 @@ public class Function extends OperationExpression {
                         }
                     }
 
-                    functionExpression.setParameters(parameters);
+                    if (functionExpression!=null){
+                        functionExpression.setParameters(parameters);
+                    }
                     stack.push(functionExpression);
 
 
@@ -140,17 +141,11 @@ public class Function extends OperationExpression {
 
             } else {
 
-                if (token.equals("[")) {
-                    OperationExpression operationExpression = new ListOperationExpression();
-                    pos = operationExpression.parse(tokens, pos, localStack, selfTypes, dataTypes);
-                    Expression literalExpression = localStack.pop();
-                    localStack.add(literalExpression);
 
-                } else {
-                    DataType type = LiteralType.computeDataType(token);
-                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
-                    localStack.add(literalExpression);
-                }
+                DataType type = LiteralType.computeDataType(token);
+                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
+                localStack.add(literalExpression);
+
 
             }
         }

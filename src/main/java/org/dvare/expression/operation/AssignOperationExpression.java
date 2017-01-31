@@ -90,6 +90,7 @@ public abstract class AssignOperationExpression extends AggregationOperationExpr
                 OperationExpression testOp = configurationRegistry.getOperation(tokens[pos + 1]);
                 if (testOp instanceof ChainOperationExpression) {
                     stack.push(expression);
+                    testOp=testOp.copy();
                     pos = testOp.parse(tokens, pos + 1, stack, selfTypes, dataTypes);
                     expression = stack.pop();
                 }

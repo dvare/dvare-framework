@@ -107,6 +107,15 @@ public class FloatType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
+            NotIn.class
+    })
+    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+        Float leftValue = (Float) left.getValue();
+        List<Float> rightValues = buildFloatList((List<Object>) right.getValue());
+        return !rightValues.contains(leftValue);
+    }
+
+    @OperationMapping(operations = {
             Between.class
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {

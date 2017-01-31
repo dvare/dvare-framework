@@ -85,16 +85,8 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             expression = VariableType.getVariableType(token, variableType);
         } else {
 
-            if (token.equals("[")) {
 
-                OperationExpression operationExpression = new ListOperationExpression();
-                pos = operationExpression.parse(tokens, pos, stack, selfTypes, dataTypes);
-                expression = stack.pop();
-
-            } else {
-
-                expression = LiteralType.getLiteralExpression(token);
-            }
+            expression = LiteralType.getLiteralExpression(token);
 
 
         }
@@ -105,6 +97,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             OperationExpression testOp = configurationRegistry.getOperation(tokens[pos + 1]);
             if (testOp instanceof ChainOperationExpression) {
                 stack.push(expression);
+                testOp=testOp.copy();
                 pos = testOp.parse(tokens, pos + 1, stack, selfTypes, dataTypes);
                 expression = stack.pop();
             }
