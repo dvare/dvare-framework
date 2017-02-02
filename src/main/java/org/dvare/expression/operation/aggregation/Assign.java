@@ -16,6 +16,7 @@ import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.parser.ExpressionTokenizer;
+import org.dvare.util.TrimString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,37 +145,49 @@ public class Assign extends AssignOperationExpression {
     }
 
     private Object updateValue(Object aggregation, DataType dataType, String variableName, LiteralExpression<?> literalExpression) throws InterpretException {
-        switch (dataType) {
-            case IntegerType: {
-                if (literalExpression.getValue() instanceof Integer) {
-
-
-                    aggregation = setValue(aggregation, variableName, literalExpression.getValue());
-
-
-                } else {
-                    aggregation = setValue(aggregation, variableName, new Integer("" + literalExpression.getValue()));
-
-
+        Object value = literalExpression.getValue();
+        if (value != null) {
+            switch (dataType) {
+                case IntegerType: {
+                    if (value instanceof Integer) {
+                        aggregation = setValue(aggregation, variableName, value);
+                    } else {
+                        aggregation = setValue(aggregation, variableName, new Integer("" + value));
+                    }
+                    break;
                 }
-                break;
-            }
 
-            case FloatType: {
-                if (literalExpression.getValue() instanceof Float) {
+                case FloatType: {
+                    if (value instanceof Float) {
 
-                    aggregation = setValue(aggregation, variableName, literalExpression.getValue());
-                } else {
-                    aggregation = setValue(aggregation, variableName, new Float("" + literalExpression.getValue()));
+                        aggregation = setValue(aggregation, variableName, literalExpression.getValue());
+                    } else {
+                        aggregation = setValue(aggregation, variableName, new Float("" + value));
+                    }
+                    break;
                 }
-                break;
-            }
 
-            default: {
-                aggregation = setValue(aggregation, variableName, literalExpression.getValue());
+                case StringType: {
+                    if (value instanceof String) {
+
+                        value = TrimString.trim((String) value);
+                        aggregation = setValue(aggregation, variableName, value);
+                    } else {
+                        value = TrimString.trim(value.toString());
+                        aggregation = setValue(aggregation, variableName, value);
+                    }
+                    break;
+                }
+
+                default: {
+                    aggregation = setValue(aggregation, variableName, literalExpression.getValue());
+                }
             }
+        } else {
+            aggregation = setValue(aggregation, variableName, null);
         }
         return aggregation;
     }
+
 
 }
