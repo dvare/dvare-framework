@@ -38,9 +38,5 @@ public class THEN extends ConditionOperationExpression {
         super(OperationType.THEN);
     }
 
-    public THEN copy() {
-        return new THEN();
-    }
-
 
 }

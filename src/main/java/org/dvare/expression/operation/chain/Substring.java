@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.chain;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.StringType;
@@ -42,13 +43,10 @@ public class Substring extends ChainOperationExpression {
         super(OperationType.SUBSTRING);
     }
 
-    public Substring copy() {
-        return new Substring();
-    }
 
-
-    private Object substring(Object selfRow, Object dataRow) throws InterpretException {
-        leftValueOperand = super.interpretOperand(this.leftOperand, leftOperandType, selfRow, dataRow);
+    @Override
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
@@ -96,26 +94,10 @@ public class Substring extends ChainOperationExpression {
             } catch (ArrayIndexOutOfBoundsException e) {
                 value = value.substring(index, index + count);
             }
-            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, new StringType());
-            return returnExpression;
-
+            return LiteralType.getLiteralExpression(value, new StringType());
         }
 
         return new NullLiteral<>();
-    }
-
-    @Override
-    public Object interpret(Object dataRow) throws InterpretException {
-
-
-        return substring(dataRow, null);
-
-    }
-
-    @Override
-    public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
-
-        return substring(selfRow, dataRow);
     }
 
 

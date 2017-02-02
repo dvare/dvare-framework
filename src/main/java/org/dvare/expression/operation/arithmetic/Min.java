@@ -11,9 +11,5 @@ public class Min extends ArithmeticOperationExpression {
         super(OperationType.MIN);
     }
 
-    public Min copy() {
-        return new Min();
-    }
-
 
 }

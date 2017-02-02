@@ -1,7 +1,9 @@
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.function.FunctionBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -12,7 +14,6 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -34,15 +35,11 @@ public class Combination extends OperationExpression {
         super(OperationType.COMBINATION);
     }
 
-    public Combination copy() {
-        return new Combination();
-    }
-
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contextss) throws ExpressionParseException {
 
-        int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
+        int i = findNextExpression(tokens, pos + 1, stack, contextss);
         List<Expression> expressions = new ArrayList<Expression>(stack);
         stack.clear();
         computeParam(expressions);
@@ -90,7 +87,7 @@ public class Combination extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (; pos < tokens.length; pos++) {
@@ -98,7 +95,6 @@ public class Combination extends OperationExpression {
 
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
-                op = op.copy();
                 if (op.getClass().equals(RightPriority.class)) {
                     return pos;
                 }
@@ -107,32 +103,22 @@ public class Combination extends OperationExpression {
                 FunctionExpression tableExpression = new FunctionExpression(token, table);
                 stack.add(tableExpression);
 
-            } else if (token.matches(selfPatten) && selfTypes != null) {
-                String name = token.substring(5, token.length());
-                DataType type = TypeFinder.findType(name, selfTypes);
-                VariableExpression variableExpression = VariableType.getVariableType(token, type);
-                stack.add(variableExpression);
-
-            } else if (token.matches(dataPatten) && dataTypes != null) {
-                String name = token.substring(5, token.length());
-                DataType type = TypeFinder.findType(name, dataTypes);
-                VariableExpression variableExpression = VariableType.getVariableType(token, type);
-                stack.add(variableExpression);
-
-            } else if (selfTypes != null && selfTypes.getTypes().containsKey(token)) {
-                DataType type = TypeFinder.findType(token, selfTypes);
-                VariableExpression variableExpression = VariableType.getVariableType(token, type);
-                stack.add(variableExpression);
-
-            } else if (token.startsWith("[")) {
-
-                OperationExpression operationExpression = new ListOperationExpression();
-                pos = operationExpression.parse(tokens, pos, stack, selfTypes, dataTypes);
-
             } else {
 
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
-                stack.add(literalExpression);
+                TokenType tokenType = findDataObject(token, contexts);
+                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && contexts.getContext(tokenType.type).getDataType(tokenType.token) != null) {
+                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                    VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                    stack.add(variableExpression);
+
+                } else {
+
+                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
+                    stack.add(literalExpression);
+                }
+
+
             }
         }
         return null;
@@ -140,13 +126,24 @@ public class Combination extends OperationExpression {
 
 
     @Override
-    public Object interpret(List<Object> dataSet) throws InterpretException {
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+
 
         List<Expression> expressions = this.leftOperand;
         DataType dataType = null;
         List<Object> values = null;
         if (expressions.get(0) instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) expressions.get(0);
+
+            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+            List<Object> dataSet;
+            if (instance instanceof Collection) {
+                dataSet = (List) instance;
+            } else {
+                dataSet = new ArrayList<>();
+                dataSet.add(instance);
+            }
+
             values = new ArrayList<>();
             dataType = variableExpression.getType().getDataType();
             for (Object dataRow : dataSet) {

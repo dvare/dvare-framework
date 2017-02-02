@@ -38,8 +38,5 @@ public class ELSE extends ConditionOperationExpression {
         super(OperationType.ELSE);
     }
 
-    public ELSE copy() {
-        return new ELSE();
-    }
 
 }

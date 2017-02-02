@@ -23,7 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation;
 
-import org.dvare.binding.model.TypeBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -44,13 +44,11 @@ public abstract class LogicalOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         Expression left = stack.pop();
-        if (dataTypes == null) {
-            pos = findNextExpression(tokens, pos + 1, stack, selfTypes, null);
-        } else {
-            pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-        }
+
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
+
         Expression right = stack.pop();
 
         this.leftOperand = left;
@@ -65,7 +63,7 @@ public abstract class LogicalOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (; pos < tokens.length; pos++) {
             OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
@@ -75,8 +73,8 @@ public abstract class LogicalOperationExpression extends OperationExpression {
                     return pos - 1;
                 }
 
-                op = op.copy();
-                pos = op.parse(tokens, pos, stack, selfTypes, dataTypes);
+
+                pos = op.parse(tokens, pos, stack, contexts);
 
 
                 if (pos + 1 < tokens.length) {

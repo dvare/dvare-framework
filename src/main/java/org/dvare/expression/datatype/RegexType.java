@@ -29,6 +29,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.validation.Equals;
 import org.dvare.expression.operation.validation.In;
 import org.dvare.expression.operation.validation.NotEquals;
+import org.dvare.expression.operation.validation.NotIn;
 import org.dvare.util.TrimString;
 
 import java.util.ArrayList;
@@ -91,4 +92,10 @@ public class RegexType extends DataTypeExpression {
         return false;
     }
 
+    @OperationMapping(operations = {
+            NotIn.class
+    })
+    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+        return !in(left, right);
+    }
 }

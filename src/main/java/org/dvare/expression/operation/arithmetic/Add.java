@@ -11,8 +11,5 @@ public class Add extends ArithmeticOperationExpression {
         super(OperationType.ADD);
     }
 
-    public Add copy() {
-        return new Add();
-    }
 
 }

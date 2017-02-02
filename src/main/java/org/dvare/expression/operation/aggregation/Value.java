@@ -1,6 +1,7 @@
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
@@ -12,6 +13,7 @@ import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.List;
 
 @Operation(type = OperationType.VALUE)
@@ -23,54 +25,33 @@ public class Value extends AggregationOperationExpression {
         super(OperationType.VALUE);
     }
 
-    public Value copy() {
-        return new Value();
-    }
-
 
     @Override
-    public Object interpret(Object aggregation, Object dataSet) throws InterpretException {
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+
+
         Expression right = this.rightOperand;
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) right;
-            Object value = getValue(dataSet, variableExpression.getName());
-            LiteralExpression literalExpression = LiteralType.getLiteralExpression(value, variableExpression.getType());
-            return literalExpression;
+
+            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+            if (instance instanceof Collection) {
+                List dataSet = (List) instance;
+                Object value = getValue(dataSet.get(0), variableExpression.getName());
+                return LiteralType.getLiteralExpression(value, variableExpression.getType());
+            } else {
+                Object value = getValue(instance, variableExpression.getName());
+                return LiteralType.getLiteralExpression(value, variableExpression.getType());
+            }
+
+
         } else if (right instanceof LiteralExpression) {
-            LiteralExpression literalExpression = (LiteralExpression) right;
-            return literalExpression;
+            return right;
         } else if (right instanceof OperationExpression) {
             OperationExpression operation = (OperationExpression) right;
-            Object result = operation.interpret(aggregation, dataSet);
+            Object result = operation.interpret(instancesBinding);
             if (result instanceof LiteralExpression) {
-                LiteralExpression literalExpression = (LiteralExpression) result;
-                return literalExpression;
-            }
-        }
-
-        return null;
-    }
-
-
-    @Override
-    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
-
-
-        Expression right = this.rightOperand;
-        if (right instanceof VariableExpression && !dataSet.isEmpty()) {
-            VariableExpression variableExpression = (VariableExpression) right;
-            Object value = getValue(dataSet.get(0), variableExpression.getName());
-            LiteralExpression literalExpression = LiteralType.getLiteralExpression(value, variableExpression.getType());
-            return literalExpression;
-        } else if (right instanceof LiteralExpression) {
-            LiteralExpression literalExpression = (LiteralExpression) right;
-            return literalExpression;
-        } else if (right instanceof OperationExpression && !dataSet.isEmpty()) {
-            OperationExpression operation = (OperationExpression) right;
-            Object result = operation.interpret(aggregation, dataSet);
-            if (result instanceof LiteralExpression) {
-                LiteralExpression literalExpression = (LiteralExpression) result;
-                return literalExpression;
+                return result;
             }
         }
 

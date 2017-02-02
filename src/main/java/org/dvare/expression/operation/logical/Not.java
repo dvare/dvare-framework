@@ -24,7 +24,8 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.logical;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.model.TypeBinding;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -39,29 +40,19 @@ public class Not extends LogicalOperationExpression {
         super(OperationType.NOT);
     }
 
-    public Not copy() {
-        return new Not();
-    }
-
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-        int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-        Expression right = stack.pop();
-        this.rightOperand = right;
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+        int i = findNextExpression(tokens, pos + 1, stack, contexts);
+        this.rightOperand = stack.pop();
         stack.push(this);
         return i;
     }
 
-    @Override
-    public Object interpret(final Object object) throws InterpretException {
-        return !toBoolean(this.rightOperand.interpret(object));
-    }
-
 
     @Override
-    public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
-        return !toBoolean(this.rightOperand.interpret(selfRow, dataRow));
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        return !toBoolean(this.rightOperand.interpret(instancesBinding));
     }
 
 

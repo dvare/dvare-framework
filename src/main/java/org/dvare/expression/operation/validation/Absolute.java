@@ -11,8 +11,5 @@ public class Absolute extends ArithmeticOperationExpression {
         super(OperationType.ABSOLUTE);
     }
 
-    public Absolute copy() {
-        return new Absolute();
-    }
 
 }

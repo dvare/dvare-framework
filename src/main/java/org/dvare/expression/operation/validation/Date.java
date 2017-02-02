@@ -24,7 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.model.TypeBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalValueException;
@@ -48,19 +48,13 @@ public class Date extends OperationExpression {
         super(OperationType.DATE);
     }
 
-    public Date copy() {
-        return new Date();
-    }
-
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
-        if (dataTypes == null) {
-            pos = findNextExpression(tokens, pos + 1, stack, selfTypes, null);
-        } else {
-            pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-        }
+
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
+
 
         SimpleDateFormat dateFormat = null;
         String value = null;
@@ -110,7 +104,7 @@ public class Date extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (int i = pos; i < tokens.length; i++) {
@@ -118,7 +112,7 @@ public class Date extends OperationExpression {
 
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
-                op = op.copy();
+
 
                 if (op.getClass().equals(RightPriority.class)) {
                     return i;

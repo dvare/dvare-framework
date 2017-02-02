@@ -29,7 +29,7 @@ public class ModeTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
-        Expression aggregate = factory.getParser().fromString("A0 := mode ( V1 )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("self.A0 := mode ( data.V1 )", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);

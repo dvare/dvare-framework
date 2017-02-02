@@ -11,9 +11,5 @@ public class Less extends EqualityOperationExpression {
         super(OperationType.LESS);
     }
 
-    public Less copy() {
-        return new Less();
-    }
-
 
 }

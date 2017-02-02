@@ -21,18 +21,41 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.arithmetic;
+package org.dvare.binding.model;
 
-import org.dvare.annotations.Operation;
-import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.operation.ArithmeticOperationExpression;
-import org.dvare.expression.operation.OperationType;
 
-@Operation(type = OperationType.POWER, dataTypes = {DataType.FloatType, DataType.IntegerType})
-public class Power extends ArithmeticOperationExpression {
-    public Power() {
-        super(OperationType.POWER);
+import java.util.HashMap;
+import java.util.Map;
+
+public class ContextsBinding {
+    private Map<String, TypeBinding> contexts = new HashMap<>();
+
+
+    public ContextsBinding(Map<String, TypeBinding> contexts) {
+        if (contexts != null) {
+            this.contexts = contexts;
+        }
     }
 
+    public void addContext(String name, TypeBinding typeBinding) {
+        if (name != null) {
+            contexts.put(name, typeBinding);
+        }
 
+    }
+
+    public TypeBinding getContext(String name) {
+        if (contexts.containsKey(name)) {
+            return contexts.get(name);
+        }
+        return null;
+    }
+
+    public Map<String, TypeBinding> getContexts() {
+        return contexts;
+    }
+
+    public void setContexts(Map<String, TypeBinding> contexts) {
+        this.contexts = contexts;
+    }
 }

@@ -24,7 +24,8 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.condition;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.model.TypeBinding;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -35,7 +36,6 @@ import org.dvare.expression.operation.OperationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Stack;
 
 @Operation(type = OperationType.IF)
@@ -47,21 +47,17 @@ public class IF extends ConditionOperationExpression {
         super(OperationType.IF);
     }
 
-    public IF copy() {
-        return new IF();
-    }
-
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
         stack.push(this);
         return pos;
     }
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (; pos < tokens.length; pos++) {
@@ -71,21 +67,21 @@ public class IF extends ConditionOperationExpression {
 
 
                 if (operation instanceof IF || operation instanceof ELSE || operation instanceof THEN || operation instanceof ENDIF) {
-                    operation = operation.copy();
+
                     if (operation instanceof THEN) {
-                        pos = operation.parse(tokens, pos, stack, selfTypes, dataTypes);
+                        pos = operation.parse(tokens, pos, stack, contexts);
                         this.thenOperand = stack.pop();
                         continue;
                     }
 
                     if (operation instanceof ELSE) {
-                        pos = operation.parse(tokens, pos, stack, selfTypes, dataTypes);
+                        pos = operation.parse(tokens, pos, stack, contexts);
                         this.elseOperand = stack.pop();
                         continue;
                     }
 
                     if (operation instanceof IF) {
-                        pos = operation.parse(tokens, pos, stack, selfTypes, dataTypes);
+                        pos = operation.parse(tokens, pos, stack, contexts);
                         this.elseOperand = stack.pop();
                         return pos;
                     }
@@ -95,12 +91,12 @@ public class IF extends ConditionOperationExpression {
                     }
 
                 } else {
-                    operation = operation.copy();
+
 
                     if (condition != null) {
                         stack.push(condition);
                     }
-                    pos = operation.parse(tokens, pos, stack, selfTypes, dataTypes);
+                    pos = operation.parse(tokens, pos, stack, contexts);
                     this.condition = stack.pop();
                 }
             }
@@ -110,49 +106,16 @@ public class IF extends ConditionOperationExpression {
 
 
     @Override
-    public Object interpret(Object dataRow) throws InterpretException {
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        Boolean result = toBoolean(condition.interpret(dataRow));
+        Boolean result = toBoolean(condition.interpret(instancesBinding));
         if (result) {
-            return thenOperand.interpret(dataRow);
+            return thenOperand.interpret(instancesBinding);
         } else if (elseOperand != null) {
-            return elseOperand.interpret(dataRow);
+            return elseOperand.interpret(instancesBinding);
         }
         return result;
     }
 
-    @Override
-    public Object interpret(Object aggregation, Object dataRow) throws InterpretException {
-
-        Boolean result = toBoolean(condition.interpret(aggregation, dataRow));
-        if (result) {
-            return thenOperand.interpret(aggregation, dataRow);
-        } else if (elseOperand != null) {
-            return elseOperand.interpret(aggregation, dataRow);
-        }
-        return result;
-    }
-
-    @Override
-    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
-
-        List<Object> newDataSet = new java.util.ArrayList<>();
-
-        for (Object dataRow : dataSet) {
-            Boolean result = toBoolean(condition.interpret(aggregation, dataRow));
-            if (result) {
-                newDataSet.add(dataRow);
-            }
-        }
-
-        if (!newDataSet.isEmpty()) {
-            return thenOperand.interpret(aggregation, dataSet);
-        }
-        if (elseOperand != null) {
-            return elseOperand.interpret(aggregation, dataSet);
-        } else {
-            return aggregation;
-        }
-    }
 
 }

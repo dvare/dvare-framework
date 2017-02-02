@@ -11,8 +11,5 @@ public class Divide extends ArithmeticOperationExpression {
         super(OperationType.DIVIDE);
     }
 
-    public Divide copy() {
-        return new Divide();
-    }
 
 }

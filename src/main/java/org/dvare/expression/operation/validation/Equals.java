@@ -10,8 +10,5 @@ public class Equals extends EqualityOperationExpression {
         super(OperationType.EQUAL);
     }
 
-    public Equals copy() {
-        return new Equals();
-    }
 
 }

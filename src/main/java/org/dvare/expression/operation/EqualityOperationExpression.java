@@ -22,6 +22,8 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation;
 
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -42,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Stack;
 
 public abstract class EqualityOperationExpression extends OperationExpression {
@@ -67,36 +70,26 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     }
 
 
-    private int expression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes, String token, String type) throws ExpressionParseException {
+    private int expression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts, TokenType tokenType) throws ExpressionParseException {
         Expression expression;
-        OperationExpression op = ConfigurationRegistry.INSTANCE.getOperation(token);
+        OperationExpression op = ConfigurationRegistry.INSTANCE.getOperation(tokenType.token);
         if (op != null) {
-            op = op.copy();
 
-            pos = op.parse(tokens, pos + 1, stack, selfTypes, dataTypes);
+
+            pos = op.parse(tokens, pos + 1, stack, contexts);
 
             expression = stack.pop();
 
-        } else if (type != null && type.equals(SELF_ROW) && selfTypes.getTypes().containsKey(token)) {
-            DataType variableType = TypeFinder.findType(token, selfTypes);
-            expression = VariableType.getVariableType(token, variableType);
-        } else if (type != null && type.equals(DATA_ROW) && dataTypes.getTypes().containsKey(token)) {
-            DataType variableType = TypeFinder.findType(token, dataTypes);
-            expression = VariableType.getVariableType(token, variableType);
+
+        } else if (tokenType.type != null && contexts.getContext(tokenType.type) != null && contexts.getContext(tokenType.type).getDataType(tokenType.token) != null) {
+
+            TypeBinding typeBinding = contexts.getContext(tokenType.type);
+
+            DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+            expression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+
         } else {
-
-            if (token.equals("[")) {
-
-                OperationExpression operationExpression = new ListOperationExpression();
-                pos = operationExpression.parse(tokens, pos, stack, selfTypes, dataTypes);
-                expression = stack.pop();
-
-            } else {
-
-                expression = LiteralType.getLiteralExpression(token);
-            }
-
-
+            expression = LiteralType.getLiteralExpression(tokenType.token);
         }
 
 
@@ -105,7 +98,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             OperationExpression testOp = configurationRegistry.getOperation(tokens[pos + 1]);
             if (testOp instanceof ChainOperationExpression) {
                 stack.push(expression);
-                pos = testOp.parse(tokens, pos + 1, stack, selfTypes, dataTypes);
+                pos = testOp.parse(tokens, pos + 1, stack, contexts);
                 expression = stack.pop();
             }
 
@@ -117,23 +110,18 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     }
 
 
-    protected int parseOperands(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    protected int parseOperands(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         String leftString = tokens[pos - 1];
 
 
-        String typeString = findDataObject(leftString, selfTypes, dataTypes);
-        String typeStringTokens[] = typeString.split(":");
-        if (typeStringTokens.length == 2) {
-            leftString = typeStringTokens[0];
-            leftOperandType = typeStringTokens[1];
-        }
+        TokenType leftTokenType = findDataObject(leftString, contexts);
 
 
         // computing expression left side̵
 
         if (stack.isEmpty()) {
-            pos = expression(tokens, pos, stack, selfTypes, dataTypes, leftString, leftOperandType);
+            pos = expression(tokens, pos, stack, contexts, leftTokenType);
         }
 
         this.leftOperand = stack.pop();
@@ -143,15 +131,11 @@ public abstract class EqualityOperationExpression extends OperationExpression {
         String rightString = tokens[pos];
 
 
-        typeString = findDataObject(rightString, selfTypes, dataTypes);
-        typeStringTokens = typeString.split(":");
-        if (typeStringTokens.length == 2) {
-            rightString = typeStringTokens[0];
-            rightOperandType = typeStringTokens[1];
-        }
+        TokenType rightTokenType = findDataObject(rightString, contexts);
+
 
         // computing expression right side̵
-        pos = expression(tokens, pos, stack, selfTypes, dataTypes, rightString, rightOperandType);
+        pos = expression(tokens, pos, stack, contexts, rightTokenType);
         this.rightOperand = stack.pop();
 
 
@@ -229,11 +213,11 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
 
-            pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
+            pos = parseOperands(tokens, pos, stack, contexts);
 
             Expression left = this.leftOperand;
             Expression right = this.rightOperand;
@@ -250,13 +234,13 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (int i = pos; i < tokens.length; i++) {
             OperationExpression op = configurationRegistry.getOperation(tokens[i]);
             if (op != null) {
-                op = op.copy();
-                i = op.parse(tokens, i, stack, selfTypes, dataTypes);
+
+                i = op.parse(tokens, i, stack, contexts);
                 return i;
 
             }
@@ -265,38 +249,28 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     }
 
 
-    public void interpretOperand(final Object selfRow, final Object dataRow) throws InterpretException {
+    public void interpretOperand(InstancesBinding instancesBinding) throws InterpretException {
 
-
-        Expression leftExpression = super.interpretOperand(leftOperand, leftOperandType, selfRow, dataRow);
-
-        Object rightDataRow = null;
-        if (rightOperandType != null && rightOperandType.equals(SELF_ROW)) {
-            rightDataRow = selfRow;
-        } else if (rightOperandType != null && rightOperandType.equals(OperationExpression.DATA_ROW)) {
-            rightDataRow = dataRow;
-        } else {
-            rightDataRow = selfRow;
-        }
-
+        Expression leftExpression = super.interpretOperand(leftOperand, instancesBinding);
 
         Expression right = this.rightOperand;
         LiteralExpression<?> rightExpression = null;
         if (right instanceof OperationExpression) {
             OperationExpression operation = (OperationExpression) right;
-            if (selfRow != null && dataRow != null) {
-                rightExpression = (LiteralExpression) operation.interpret(selfRow, dataRow);
-            } else {
-                rightExpression = (LiteralExpression) operation.interpret(selfRow);
-            }
+            rightExpression = (LiteralExpression) operation.interpret(instancesBinding);
         } else if (right instanceof LiteralExpression) {
             rightExpression = (LiteralExpression<?>) right;
         } else if (right instanceof VariableExpression) {
+
             VariableExpression variableExpression = (VariableExpression) right;
-            variableExpression = VariableType.setVariableValue(variableExpression, rightDataRow);
+            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+
+            if (instance instanceof List) {
+                instance = ((List) instance).isEmpty() ? null : ((List) instance).get(0);
+            }
+            variableExpression = VariableType.setVariableValue(variableExpression, instance);
             rightExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
         }
-
 
         if (dataTypeExpression == null && rightExpression != null) {
             dataTypeExpression = rightExpression.getType();
@@ -309,27 +283,9 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
 
     @Override
-    public Object interpret(final Object selfRow, final Object dataRow) throws InterpretException {
-        interpretOperand(selfRow, dataRow);
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        if (leftValueOperand != null && rightValueOperand != null) {
-
-            LiteralExpression left = toLiteralExpression(leftValueOperand);
-            LiteralExpression right = toLiteralExpression(rightValueOperand);
-
-            if (left instanceof NullLiteral || right instanceof NullLiteral) {
-                dataTypeExpression = new NullType();
-            }
-
-            return dataTypeExpression.compare(this, left, right);
-
-        }
-        return false;
-    }
-
-    @Override
-    public Object interpret(Object dataRow) throws InterpretException {
-        interpretOperand(dataRow, null);
+        interpretOperand(instancesBinding);
 
         if (leftValueOperand != null && rightValueOperand != null) {
 

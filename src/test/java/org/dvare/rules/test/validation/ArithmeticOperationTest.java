@@ -24,14 +24,19 @@ THE SOFTWARE.*/
 package org.dvare.rules.test.validation;
 
 import junit.framework.TestCase;
+import org.dvare.binding.model.ContextsBinding;
+import org.dvare.binding.model.TypeBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.parser.ExpressionParser;
 import org.dvare.rules.test.validation.dataobjects.ArithmeticOperation;
 import org.junit.Test;
+
+import java.util.HashMap;
 
 public class ArithmeticOperationTest extends TestCase {
     @Test
@@ -46,7 +51,11 @@ public class ArithmeticOperationTest extends TestCase {
                 " And Variable1 = ( Variable1 min Variable2 )" +
                 " And Variable2 = ( Variable1 max Variable2 )";
 
-        Expression expression = factory.getParser().fromString(exp, ArithmeticOperation.class);
+        TypeBinding typeBinding = ExpressionParser.translate(ArithmeticOperation.class);
+        ContextsBinding contexts = new ContextsBinding(new HashMap<>());
+        contexts.addContext("self", typeBinding);
+
+        Expression expression = factory.getParser().fromString(exp, contexts);
         RuleBinding rule = new RuleBinding(expression);
 
 

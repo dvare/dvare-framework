@@ -24,7 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.model.TypeBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.operation.OperationExpression;
@@ -38,20 +38,14 @@ public class RightPriority extends OperationExpression {
         super(OperationType.RIGHT_PRIORITY);
     }
 
-    public RightPriority copy() {
-        return new RightPriority();
-    }
-
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         return pos;
     }
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         return pos;
     }
-
-
 }

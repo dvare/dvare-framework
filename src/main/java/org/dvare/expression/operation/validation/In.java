@@ -1,7 +1,7 @@
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.model.TypeBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.expression.Expression;
@@ -20,15 +20,15 @@ public class In extends EqualityOperationExpression {
         super(OperationType.IN);
     }
 
-    public In copy() {
-        return new In();
+
+    public In(OperationType operationType) {
+        super(operationType);
     }
 
-
     @Override
-    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(final String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
-            pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
+            pos = parseOperands(tokens, pos, stack, contexts);
             testInOperation(tokens, pos);
             stack.push(this);
             return pos;

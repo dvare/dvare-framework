@@ -24,9 +24,9 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationType;
@@ -45,12 +45,12 @@ public class Last extends AggregationOperationExpression {
         super(OperationType.LAST);
     }
 
-    public Last copy() {
-        return new Last();
-    }
 
     @Override
-    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+
+        Object aggregation = instancesBinding.getInstance("self");
+        List<Object> dataSet = (List) instancesBinding.getInstance("data");
 
 
         Expression right = this.rightOperand;
@@ -60,9 +60,7 @@ public class Last extends AggregationOperationExpression {
             Object row = dataSet.get(dataSet.size() - 1);
             Object value = getValue(row, variableExpression.getName());
 
-            LiteralExpression literalExpression = LiteralType.getLiteralExpression(value, variableExpression.getType());
-
-            return literalExpression;
+            return LiteralType.getLiteralExpression(value, variableExpression.getType());
 
         }
         return null;

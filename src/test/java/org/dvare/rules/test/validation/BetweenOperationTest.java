@@ -42,9 +42,9 @@ public class BetweenOperationTest extends TestCase {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        String exp = "Variable1 between [2,4]" +
+        String exp = "Variable1 between [2,4]"/* +
                 " And Variable2 between [3.1,3.3]" +
-                " And Variable3 between [12-05-2016,15-06-2016] ";
+                " And Variable3 between [12-05-2016,15-06-2016] "*/;
 
         Expression expression = factory.getParser().fromString(exp, BetweenOperation.class);
         RuleBinding rule = new RuleBinding(expression);

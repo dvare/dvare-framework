@@ -23,6 +23,9 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation;
 
+import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -44,24 +47,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+@Operation(type = OperationType.List)
 public class ListOperationExpression extends OperationExpression {
     protected static Logger logger = LoggerFactory.getLogger(ListOperationExpression.class);
 
     List<Expression> expressions = new ArrayList<>();
 
     public ListOperationExpression() {
-        super(null);
+        super(OperationType.List);
     }
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
 
         List<String> listPrams = new ArrayList<>();
-        while (!tokens[++pos].equals("]")) {
+        while (!tokens[pos].equals("]")) {
             String value = tokens[pos];
             listPrams.add(value);
+            pos++;
         }
 
 
@@ -74,39 +79,25 @@ public class ListOperationExpression extends OperationExpression {
             String token = values[i];
 
 
-            String typeString = findDataObject(token, selfTypes, dataTypes);
-            String typeStringTokens[] = typeString.split(":");
-            String operandType = null;
-            if (typeStringTokens.length == 2) {
-                token = typeStringTokens[0];
-                operandType = typeStringTokens[1];
-            }
+            TokenType tokenType = findDataObject(token, contexts);
+
 
             Expression expression = null;
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
-                op = op.copy();
 
-                i = op.parse(values, i, localStack, selfTypes, dataTypes);
+
+                i = op.parse(values, i, localStack, contexts);
 
                 expression = localStack.pop();
 
-            } else if (operandType != null && operandType.equals(SELF_ROW) && selfTypes.getTypes().containsKey(token)) {
-                DataType variableType = TypeFinder.findType(token, selfTypes);
-                expression = VariableType.getVariableType(token, variableType, operandType);
-            } else if (operandType != null && operandType.equals(DATA_ROW) && dataTypes.getTypes().containsKey(token)) {
-                DataType variableType = TypeFinder.findType(token, dataTypes);
-                expression = VariableType.getVariableType(token, variableType, operandType);
+            } else if (tokenType.type != null && contexts.getContext(tokenType.type) != null && contexts.getContext(tokenType.type).getDataType(tokenType.token) != null) {
+                TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                expression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
             } else {
-                if (token.equals("[")) {
+                expression = LiteralType.getLiteralExpression(tokenType.token);
 
-                    i = new ListOperationExpression().parse(values, i, localStack, selfTypes, dataTypes);
-                    expression = localStack.pop();
-
-
-                } else {
-                    expression = LiteralType.getLiteralExpression(token);
-                }
             }
 
 
@@ -124,8 +115,8 @@ public class ListOperationExpression extends OperationExpression {
     }
 
 
-    public Object interpretListExpression(final Object selfRow, final Object dataRow) throws InterpretException {
-
+    @Override
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
         DataTypeExpression dataType = null;
         List<Object> values = new ArrayList<>();
         for (Expression expression : expressions) {
@@ -133,13 +124,7 @@ public class ListOperationExpression extends OperationExpression {
             if (expression instanceof OperationExpression) {
                 OperationExpression operationExpression = (OperationExpression) expression;
 
-                Object interpret;
-                if (dataRow == null) {
-                    interpret = operationExpression.interpret(selfRow);
-
-                } else {
-                    interpret = operationExpression.interpret(selfRow, dataRow);
-                }
+                Object interpret = operationExpression.interpret(instancesBinding);
 
                 if (interpret instanceof LiteralExpression) {
                     LiteralExpression literalExpression = (LiteralExpression) interpret;
@@ -155,20 +140,11 @@ public class ListOperationExpression extends OperationExpression {
 
             } else if (expression instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) expression;
-
-                if (dataRow != null && variableExpression.getOperandType().equals(DATA_ROW)) {
-                    variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
-                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
-                    values.add(literalExpression.getValue());
-                    dataType = variableExpression.getType();
-                } else {
-                    variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
-                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
-                    values.add(literalExpression.getValue());
-                    dataType = variableExpression.getType();
-                }
-
-
+                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+                variableExpression = VariableType.setVariableValue(variableExpression, instance);
+                LiteralExpression literalExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
+                values.add(literalExpression.getValue());
+                dataType = variableExpression.getType();
             } else if (expression instanceof LiteralExpression) {
                 LiteralExpression literalExpression = (LiteralExpression) expression;
                 values.add(literalExpression.getValue());
@@ -188,17 +164,6 @@ public class ListOperationExpression extends OperationExpression {
         return listLiteral;
     }
 
-
-    @Override
-    public Object interpret(final Object selfRow) throws InterpretException {
-        return interpretListExpression(selfRow, null);
-    }
-
-    @Override
-    public Object interpret(final Object selfRow, final Object dataRow) throws InterpretException {
-        return interpretListExpression(selfRow, dataRow);
-    }
-
     public boolean isEmpty() {
         return expressions.isEmpty();
     }
@@ -209,13 +174,7 @@ public class ListOperationExpression extends OperationExpression {
 
 
     @Override
-    public OperationExpression copy() {
-        return null;
-    }
-
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         return pos;
     }
 

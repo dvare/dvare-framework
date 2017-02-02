@@ -11,8 +11,5 @@ public class Greater extends EqualityOperationExpression {
         super(OperationType.GREATER);
     }
 
-    public Greater copy() {
-        return new Greater();
-    }
 
 }

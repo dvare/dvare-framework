@@ -1,6 +1,7 @@
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
@@ -22,12 +23,12 @@ public class First extends AggregationOperationExpression {
         super(OperationType.FIRST);
     }
 
-    public First copy() {
-        return new First();
-    }
 
     @Override
-    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+
+        Object aggregation = instancesBinding.getInstance("self");
+        List<Object> dataSet = (List) instancesBinding.getInstance("data");
 
 
         Expression right = this.rightOperand;

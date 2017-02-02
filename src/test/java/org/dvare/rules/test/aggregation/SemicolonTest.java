@@ -30,7 +30,7 @@ public class SemicolonTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getParser().fromString("A0 := sum ( V1 ) ; A1 := maximum ( V1 )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("self.A0 := sum ( data.V1 ) ; self.A1 := maximum ( data.V1 )", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);

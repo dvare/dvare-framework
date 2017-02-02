@@ -107,6 +107,15 @@ public class DateTimeType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
+            NotIn.class
+    })
+    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+        Date leftValue = (Date) left.getValue();
+        List<Date> rightValues = buildDateList((List<Object>) right.getValue());
+        return !rightValues.contains(leftValue);
+    }
+
+    @OperationMapping(operations = {
             Between.class
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {

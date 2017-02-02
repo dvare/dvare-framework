@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.chain;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.DateLiteral;
@@ -43,13 +44,10 @@ public class ToDate extends ChainOperationExpression {
         super(OperationType.TO_DATE);
     }
 
-    public ToDate copy() {
-        return new ToDate();
-    }
 
-
-    private Object toDate(Object selfRow, Object dataRow) throws InterpretException {
-        leftValueOperand = super.interpretOperand(this.leftOperand, leftOperandType, selfRow, dataRow);
+    @Override
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
@@ -94,20 +92,6 @@ public class ToDate extends ChainOperationExpression {
         }
 
         return new NullLiteral<>();
-    }
-
-    @Override
-    public Object interpret(Object dataRow) throws InterpretException {
-
-
-        return toDate(dataRow, null);
-
-    }
-
-    @Override
-    public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
-
-        return toDate(selfRow, dataRow);
     }
 
 }

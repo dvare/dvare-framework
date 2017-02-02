@@ -34,8 +34,5 @@ public class Subtract extends ArithmeticOperationExpression {
         super(OperationType.SUBTRACT);
     }
 
-    public Subtract copy() {
-        return new Subtract();
-    }
 
 }

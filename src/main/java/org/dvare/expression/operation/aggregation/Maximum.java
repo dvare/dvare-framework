@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.IllegalOperationException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
@@ -35,8 +36,6 @@ import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 @Operation(type = OperationType.MAXIMUM, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Maximum extends AggregationOperationExpression {
     static Logger logger = LoggerFactory.getLogger(Maximum.class);
@@ -46,13 +45,9 @@ public class Maximum extends AggregationOperationExpression {
         super(OperationType.MAXIMUM);
     }
 
-    public Maximum copy() {
-        return new Maximum();
-    }
-
 
     @Override
-    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = this.rightOperand;
 
@@ -80,7 +75,7 @@ public class Maximum extends AggregationOperationExpression {
         }
 
 
-        return super.interpret(aggregation, dataSet);
+        return super.interpret(instancesBinding);
     }
 
 

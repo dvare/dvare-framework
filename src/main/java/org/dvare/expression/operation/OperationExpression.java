@@ -25,7 +25,8 @@ package org.dvare.expression.operation;
 
 
 import org.dvare.ast.Node;
-import org.dvare.binding.model.TypeBinding;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -44,36 +45,52 @@ import java.util.Stack;
 
 public abstract class OperationExpression extends Expression {
 
-    public static final String SELF_ROW = "SELF_ROW";
-    public static final String DATA_ROW = "DATA_ROW";
-    public static final String selfPatten = "self\\..{1,}";
-    public static final String dataPatten = "data\\..{1,}";
+
+    public static final String selfPatten = ".{1,}\\..{1,}";
+    public static final String otherPatten = "data\\..{1,}";
     protected static Logger logger = LoggerFactory.getLogger(OperationExpression.class);
     protected Expression leftOperand = null;
     protected Expression rightOperand = null;
     protected DataTypeExpression dataTypeExpression;
     protected Expression leftValueOperand;
     protected Expression rightValueOperand;
-    protected String leftOperandType;
-    protected String rightOperandType;
 
     protected OperationType operationType;
 
+
     public OperationExpression(OperationType operationType) {
         this.operationType = operationType;
+
+    }
+
+    public static TokenType findDataObject(String token, ContextsBinding contexts) {
+        TokenType tokenType = new TokenType();
+        if (!token.matches(selfPatten)) {
+            tokenType.token = token;
+            tokenType.type = "self";
+        } else {
+            tokenType.type = token.substring(0, token.indexOf("."));
+            tokenType.token = token.substring(token.indexOf(".") + 1, token.length());
+        }
+
+
+        if (contexts.getContext(tokenType.type) != null && contexts.getContext(tokenType.type).getDataType(tokenType.token) != null) {
+            return tokenType;
+        }
+
+        tokenType.type = null;
+        tokenType.token = token;
+
+        return tokenType;
     }
 
     public List<String> getSymbols() {
         return this.operationType.getSymbols();
     }
 
-    public abstract OperationExpression copy();
+    public abstract Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException;
 
-
-    public abstract Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException;
-
-    public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException;
-
+    public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException;
 
     protected Object getValue(Object object, String name) throws IllegalPropertyValueException {
         return ValueFinder.findValue(name, object);
@@ -82,7 +99,6 @@ public abstract class OperationExpression extends Expression {
     protected Object setValue(Object object, String name, Object value) throws IllegalPropertyValueException {
         return ValueFinder.updateValue(object, name, value);
     }
-
 
     protected LiteralExpression toLiteralExpression(Expression expression) {
 
@@ -97,7 +113,6 @@ public abstract class OperationExpression extends Expression {
         return leftExpression;
     }
 
-
     public Node<String> AST() {
 
         Node<String> root = new Node<String>(this.toString());
@@ -108,7 +123,6 @@ public abstract class OperationExpression extends Expression {
 
         return root;
     }
-
 
     @Override
     public String toString() {
@@ -130,23 +144,6 @@ public abstract class OperationExpression extends Expression {
         return toStringBuilder.toString();
     }
 
-
-    protected String findDataObject(String token, TypeBinding selfTypes, TypeBinding dataTypes) {
-
-        String type;
-        if (dataTypes != null && token.matches(dataPatten)) {
-            token = token.substring(5, token.length());
-            type = token + ":" + DATA_ROW;
-        } else {
-            if (token.matches(selfPatten)) {
-                token = token.substring(5, token.length());
-            }
-            type = token + ":" + SELF_ROW;
-        }
-        return type;
-    }
-
-
     public Expression getLeftOperand() {
         return leftOperand;
     }
@@ -163,18 +160,8 @@ public abstract class OperationExpression extends Expression {
         this.rightOperand = rightOperand;
     }
 
+    public Expression interpretOperand(Expression expression, InstancesBinding instancesBinding) throws InterpretException {
 
-    public Expression interpretOperand(Expression expression, String operandType, final Object selfRow, final Object dataRow) throws InterpretException {
-
-
-        Object leftDataRow;
-        if (operandType != null && operandType.equals(SELF_ROW)) {
-            leftDataRow = selfRow;
-        } else if (operandType != null && operandType.equals(DATA_ROW)) {
-            leftDataRow = dataRow;
-        } else {
-            leftDataRow = selfRow;
-        }
 
         Expression leftExpression = null;
 
@@ -182,11 +169,7 @@ public abstract class OperationExpression extends Expression {
             OperationExpression operation = (OperationExpression) expression;
 
             LiteralExpression literalExpression;
-            if (selfRow != null && dataRow != null) {
-                literalExpression = (LiteralExpression) operation.interpret(selfRow, dataRow);
-            } else {
-                literalExpression = (LiteralExpression) operation.interpret(selfRow);
-            }
+            literalExpression = (LiteralExpression) operation.interpret(instancesBinding);
 
             if (literalExpression != null) {
                 dataTypeExpression = literalExpression.getType();
@@ -195,7 +178,11 @@ public abstract class OperationExpression extends Expression {
 
         } else if (expression instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) expression;
-            variableExpression = VariableType.setVariableValue(variableExpression, leftDataRow);
+            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+            if (instance instanceof List) {
+                instance = ((List) instance).isEmpty() ? null : ((List) instance).get(0);
+            }
+            variableExpression = VariableType.setVariableValue(variableExpression, instance);
             if (variableExpression != null) {
                 dataTypeExpression = variableExpression.getType();
             }
@@ -209,6 +196,11 @@ public abstract class OperationExpression extends Expression {
 
         return leftExpression;
 
+    }
+
+    public static class TokenType {
+        public String type;
+        public String token;
     }
 
 

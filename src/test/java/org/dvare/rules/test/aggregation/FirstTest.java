@@ -30,7 +30,7 @@ public class FirstTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
         validationTypes.put("V2", "IntegerType");
 
-        Expression aggregate = factory.getParser().fromString("A0 := first ( V1 )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("self.A0 := first ( data.V1 )", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);

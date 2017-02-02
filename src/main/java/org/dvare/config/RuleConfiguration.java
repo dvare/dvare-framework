@@ -65,6 +65,26 @@ public class RuleConfiguration {
         }
     }
 
+
+    public RuleConfiguration(String[] functionBasePackages, boolean silentMode) {
+        this.functionBasePackages = functionBasePackages;
+        this.silentMode = silentMode;
+        if (silentMode) {
+            List<Logger> loggers = Collections.<Logger>list(LogManager.getCurrentLoggers());
+            loggers.add(LogManager.getRootLogger());
+            for (Logger logger : loggers) {
+                if (logger.getName().startsWith("org.dvare") || logger.getName().equals("root")) {
+                    logger.setLevel(Level.OFF);
+                }
+            }
+        }
+
+
+        if (configurationProvider == null) {
+            configurationProvider = new RuleConfigurationProvider(configurationRegistry, functionBasePackages);
+        }
+    }
+
     public RuleEvaluator getEvaluator() {
         return new RuleEvaluator();
     }

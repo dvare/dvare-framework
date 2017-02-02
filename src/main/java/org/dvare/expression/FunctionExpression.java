@@ -30,31 +30,19 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 
 public class FunctionExpression extends Expression {
-    static Logger logger = LoggerFactory.getLogger(FunctionExpression.class);
+    private static Logger logger = LoggerFactory.getLogger(FunctionExpression.class);
     public FunctionBinding binding;
     private String name;
     private List<Expression> parameters = new ArrayList<>();
 
-    public FunctionExpression(String name) {
-        this.name = name;
-        logger.debug("FunctionService Name  Expression :  [{}]", name);
-    }
 
     public FunctionExpression(String name, FunctionBinding binding) {
         this.name = name;
         this.binding = binding;
         logger.debug("FunctionService Name  Expression :  [{} {}]", name, binding.getReturnType().getDataType());
     }
-
-    public static FunctionExpression getFunctionExpression(String[] tokens, int pos, Stack<Expression> stack, Map<String, Class> types) {
-
-        return new FunctionExpression("");
-    }
-
 
     public void addParameter(Expression parameter) {
         this.parameters.add(parameter);

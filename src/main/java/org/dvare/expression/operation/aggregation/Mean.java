@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
@@ -51,12 +52,12 @@ public class Mean extends AggregationOperationExpression {
         super(OperationType.MEAN);
     }
 
-    public Mean copy() {
-        return new Mean();
-    }
 
     @Override
-    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+
+        Object aggregation = instancesBinding.getInstance("self");
+        List<Object> dataSet = (List) instancesBinding.getInstance("data");
 
         LiteralExpression leftExpression = null;
         if (leftOperand instanceof LiteralExpression) {

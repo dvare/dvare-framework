@@ -24,13 +24,12 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.condition;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.operation.ConditionOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 @Operation(type = OperationType.ENDIF)
 public class ENDIF extends ConditionOperationExpression {
@@ -41,47 +40,20 @@ public class ENDIF extends ConditionOperationExpression {
         super(OperationType.ENDIF);
     }
 
-    public ENDIF copy() {
-        return new ENDIF();
-    }
 
     @Override
-    public Object interpret(Object dataRow) throws InterpretException {
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        Boolean result = toBoolean(condition.interpret(dataRow));
+        Boolean result = toBoolean(condition.interpret(instancesBinding));
         if (result) {
-            return thenOperand.interpret(dataRow);
+            return thenOperand.interpret(instancesBinding);
         } else if (elseOperand != null) {
-            return elseOperand.interpret(dataRow);
+            return elseOperand.interpret(instancesBinding);
         } else {
 
         }
         return null;
     }
 
-    @Override
-    public Object interpret(Object aggregation, Object dataRow) throws InterpretException {
-
-        Boolean result = toBoolean(condition.interpret(aggregation, dataRow));
-        if (result) {
-            return thenOperand.interpret(aggregation, dataRow);
-        } else if (elseOperand != null) {
-            return elseOperand.interpret(aggregation, dataRow);
-        } else {
-
-        }
-        return null;
-    }
-
-    @Override
-    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
-        Boolean result = toBoolean(condition.interpret(aggregation));
-        if (result) {
-            return thenOperand.interpret(aggregation, dataSet);
-        } else {
-            return elseOperand.interpret(aggregation, dataSet);
-        }
-
-    }
 
 }
