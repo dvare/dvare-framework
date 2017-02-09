@@ -55,8 +55,8 @@ public class ListOperationExpression extends OperationExpression {
         super(OperationType.List);
     }
 
-@Override
-    public ListOperationExpression copy(){
+    @Override
+    public ListOperationExpression copy() {
         return new ListOperationExpression();
     }
 
@@ -67,8 +67,10 @@ public class ListOperationExpression extends OperationExpression {
         List<String> listPrams = new ArrayList<>();
         while (!tokens[pos].equals("]")) {
             String value = tokens[pos];
-            listPrams.add(value);
-            pos++;
+            if (!value.equals("[")) {
+                listPrams.add(value);
+                pos++;
+            }
         }
 
 
@@ -207,8 +209,6 @@ public class ListOperationExpression extends OperationExpression {
     public Integer getSize() {
         return expressions.size();
     }
-
-
 
 
     @Override

@@ -45,6 +45,13 @@ public class DataRow {
     public void addData(String name, Object value) {
         this.data.put(name, value);
     }
+
+
+    @Override
+    public String toString() {
+        return data != null ? data.toString() : "";
+    }
+
     /* Getter and Setters */
 
     public Map<String, Object> getData() {

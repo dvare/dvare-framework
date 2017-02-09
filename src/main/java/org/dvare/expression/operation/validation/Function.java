@@ -101,7 +101,7 @@ public class Function extends OperationExpression {
                         }
                     }
 
-                    if (functionExpression!=null){
+                    if (functionExpression != null) {
                         functionExpression.setParameters(parameters);
                     }
                     stack.push(functionExpression);
@@ -255,15 +255,20 @@ public class Function extends OperationExpression {
                     if (originalType.isArray()) {
 
 
-                        List listValues = new ArrayList<>();
+                        List<Object> listValues = new ArrayList<>();
 
                         for (Object dataRow : dataSet) {
                             variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
                             listValues.add(variableExpression.getValue());
                         }
 
+
+                        int size = listValues.size();
                         Class type = DataTypeMapping.getDataTypeMapping(variableDataType);
-                        Object[] typedArray = (Object[]) Array.newInstance(type, dataSet.size());
+                        Object[] typedArray = (Object[]) Array.newInstance(type, size);
+
+
+
                         Object value = listValues.toArray(typedArray);
                         params[counter] = originalType;
                         values[counter] = value;
@@ -271,19 +276,16 @@ public class Function extends OperationExpression {
                     } else {
 
 
-                        variableExpression = buildVariableParam(variableExpression, selfRow, dataSet.get(0));
-
-                        /*
-                            variableExpression = VariableType.setVariableValue(variableExpression, DATA_ROW);
-                        */
-
+                        if (!dataSet.isEmpty()) {
+                            variableExpression = buildVariableParam(variableExpression, selfRow, dataSet.get(0));
+                        }
                         Object value = variableExpression.getValue();
                         params[counter] = originalType;
                         values[counter] = value;
                     }
 
                 } catch (Exception e) {
-                    throw new InterpretException(e);
+                    throw new InterpretException(e.getMessage(), e);
                 }
 
 
@@ -305,7 +307,7 @@ public class Function extends OperationExpression {
     }
 
 
-    private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) {
+    private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) throws InterpretException {
 
         try {
             Class functionClass = functionExpression.getBinding().getFunctionClass();
@@ -323,8 +325,9 @@ public class Function extends OperationExpression {
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            throw new InterpretException(e);
         }
-        return null;
+
     }
 
 

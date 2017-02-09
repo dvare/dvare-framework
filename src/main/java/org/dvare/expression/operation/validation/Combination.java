@@ -1,18 +1,15 @@
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -42,10 +39,8 @@ public class Combination extends OperationExpression {
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
 
-        int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-        List<Expression> expressions = new ArrayList<Expression>(stack);
-        stack.clear();
-        computeParam(expressions);
+        int i = findNextExpression(tokens, pos + 2, stack, selfTypes, dataTypes); //+1 fro (
+
         stack.push(this);
         return i;
     }
@@ -58,19 +53,19 @@ public class Combination extends OperationExpression {
 
 
         if (expressions == null || expressions.isEmpty()) {
-            error = String.format("No Parameters Found Expression Found");
+            error = "No Parameters Found Expression Found";
 
         } else if (expressions.size() != 2) {
 
-            error = String.format("two param need in combination function ");
+            error = "two param need in combination function ";
         } else {
 
             if (!(expressions.get(0) instanceof VariableExpression)) {
-                error = String.format("First param of combination function must be variable");
+                error = "First param of combination function must be variable";
             }
 
             if (!(expressions.get(1) instanceof ListLiteral)) {
-                error = String.format("Second param of combination functio must be variable");
+                error = "Second param of combination functio must be variable";
             }
 
 
@@ -82,7 +77,7 @@ public class Combination extends OperationExpression {
             throw new ExpressionParseException(error);
         }
 
-        this.leftOperand = expressions;
+
 
         logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
@@ -92,7 +87,7 @@ public class Combination extends OperationExpression {
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-
+        Stack<Expression> localStack = new Stack<>();
         for (; pos < tokens.length; pos++) {
             String token = tokens[pos];
 
@@ -100,13 +95,12 @@ public class Combination extends OperationExpression {
             if (op != null) {
                 op = op.copy();
                 if (op.getClass().equals(RightPriority.class)) {
+                    List<Expression> expressions = new ArrayList<>(localStack);
+                    this.leftOperand = expressions;
                     return pos;
+                } else {
+                    pos = op.parse(tokens, pos, localStack, selfTypes, dataTypes);
                 }
-            } else if (configurationRegistry.getFunction(token) != null) {
-                FunctionBinding table = configurationRegistry.getFunction(token);
-                FunctionExpression tableExpression = new FunctionExpression(token, table);
-                stack.add(tableExpression);
-
             } else if (token.matches(selfPatten) && selfTypes != null) {
                 String name = token.substring(5, token.length());
                 DataType type = TypeFinder.findType(name, selfTypes);

@@ -53,6 +53,13 @@ public class TypeBinding {
         this.types.put(name, type);
     }
 
+    @Override
+    public String toString() {
+        return types != null ? types.toString() : "";
+    }
+
+    /*getter and setters*/
+
     public Map<String, Object> getTypes() {
         return types;
     }
@@ -60,4 +67,6 @@ public class TypeBinding {
     public void setTypes(Map<String, Object> types) {
         this.types = types;
     }
+
+
 }
