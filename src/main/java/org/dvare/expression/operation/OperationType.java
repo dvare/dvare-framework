@@ -43,7 +43,8 @@ public enum OperationType {
     TO_INTEGER("toInteger", "ToInteger"), TO_STRING("toString", "ToString"), TO_DATE("ToDate", "toDate"),//
     SUBSTRING("substring", "Substring"), APPEND("append", "Append"), PREPEND("prepend", "Prepend"), CONTAINS("contains", "Contains"),//
     STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
-    IF("IF", "if", "ELSEIF", "elseif"), THEN("THEN", "then"), ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
+    FOREACH("foreach", "forEach", "FOREACH"), END_FOREACH("endforeach", "endForEach", "ENDFOREACH"), ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
+    IF("IF", "if", "ELSEIF", "elseif"), THEN("THEN", "then"),//
     ASSIGN(":=", "assign", "update"), COUNT("Count", "count"), FIRST("First", "first"), LAST("Last", "last"),//
     MAXIMUM("Maximum", "maximum"), MINIMUM("Minimum", "minimum"),//
     MEAN("Mean", "mean", "Avg", "avg"), MEDIAN("Median", "median"), MODE("Mode", "mode"),//

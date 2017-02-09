@@ -27,6 +27,7 @@ package org.dvare.expression.operation;
 import org.dvare.ast.Node;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
+import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -47,15 +48,13 @@ public abstract class OperationExpression extends Expression {
 
 
     public static final String selfPatten = ".{1,}\\..{1,}";
-    public static final String otherPatten = "data\\..{1,}";
     protected static Logger logger = LoggerFactory.getLogger(OperationExpression.class);
+    public OperationType operationType;
     protected Expression leftOperand = null;
     protected Expression rightOperand = null;
     protected DataTypeExpression dataTypeExpression;
     protected Expression leftValueOperand;
     protected Expression rightValueOperand;
-
-    protected OperationType operationType;
 
 
     public OperationExpression(OperationType operationType) {
@@ -76,6 +75,27 @@ public abstract class OperationExpression extends Expression {
 
         if (contexts.getContext(tokenType.type) != null && contexts.getContext(tokenType.type).getDataType(tokenType.token) != null) {
             return tokenType;
+        } else {
+
+            for (String key : contexts.getContexts().keySet()) {
+
+                if (!key.equals("self")) {
+                    TypeBinding typeBinding = contexts.getContext(key);
+                    if (typeBinding != null && typeBinding.getDataType(token) != null) {
+
+
+                        tokenType.type = key;
+                        tokenType.token = token;
+
+                        return tokenType;
+
+                    }
+
+                }
+
+            }
+
+
         }
 
         tokenType.type = null;

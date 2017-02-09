@@ -24,14 +24,12 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation;
 
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -111,12 +109,6 @@ public abstract class AggregationOperationExpression extends OperationExpression
                 } else {
                     i = op.parse(tokens, i, stack, contexts);
                 }
-            } else if (configurationRegistry.getFunction(token) != null) {
-
-                FunctionBinding table = configurationRegistry.getFunction(token);
-                FunctionExpression tableExpression = new FunctionExpression(token, table);
-                stack.add(tableExpression);
-
             } else {
 
                 TokenType tokenType = findDataObject(token, contexts);

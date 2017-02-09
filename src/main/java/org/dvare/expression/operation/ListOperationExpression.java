@@ -65,7 +65,9 @@ public class ListOperationExpression extends OperationExpression {
         List<String> listPrams = new ArrayList<>();
         while (!tokens[pos].equals("]")) {
             String value = tokens[pos];
-            listPrams.add(value);
+            if (!value.equals("[")) {
+                listPrams.add(value);
+            }
             pos++;
         }
 

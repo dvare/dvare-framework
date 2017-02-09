@@ -23,7 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare.rules.test.validation;
 
-import junit.framework.TestCase;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.binding.rule.RuleBinding;
@@ -34,11 +34,12 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.rules.test.validation.dataobjects.ArithmeticOperation;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.HashMap;
 
-public class ArithmeticOperationTest extends TestCase {
+public class ArithmeticOperationTest {
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
@@ -64,10 +65,13 @@ public class ArithmeticOperationTest extends TestCase {
         arithmeticOperation.setVariable2(20);
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(rule, arithmeticOperation);
-        assertTrue(result);
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", arithmeticOperation);
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        Assert.assertTrue(result);
     }
 
+    @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -80,7 +84,10 @@ public class ArithmeticOperationTest extends TestCase {
                 " And Variable3 = ( Variable3 min Variable4 )" +
                 " And Variable4 = ( Variable3 max Variable4 )";
 
-        Expression expression = factory.getParser().fromString(exp, ArithmeticOperation.class);
+        TypeBinding typeBinding = ExpressionParser.translate(ArithmeticOperation.class);
+        ContextsBinding contexts = new ContextsBinding(new HashMap<>());
+        contexts.addContext("self", typeBinding);
+        Expression expression = factory.getParser().fromString(exp, contexts);
         RuleBinding rule = new RuleBinding(expression);
 
         ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
@@ -88,8 +95,10 @@ public class ArithmeticOperationTest extends TestCase {
         arithmeticOperation.setVariable4(20.0f);
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(rule, arithmeticOperation);
-        assertTrue(result);
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", arithmeticOperation);
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        Assert.assertTrue(result);
     }
 
 

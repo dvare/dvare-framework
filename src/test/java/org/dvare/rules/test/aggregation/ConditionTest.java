@@ -56,7 +56,7 @@ public class ConditionTest extends TestCase {
         dataSet.add(new DataRow(d3));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
+        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(70);
 
@@ -102,7 +102,7 @@ public class ConditionTest extends TestCase {
         dataSet.add(new DataRow(d3));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
+        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(40);
 
@@ -147,7 +147,7 @@ public class ConditionTest extends TestCase {
         dataSet.add(new DataRow(d3));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
+        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(10);
 

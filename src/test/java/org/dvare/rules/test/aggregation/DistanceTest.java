@@ -40,7 +40,7 @@ public class DistanceTest extends TestCase {
 
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.evaluate(rules, aggregation, data);
+        Object resultModel = evaluator.aggregate(rules, aggregation, data);
 
 
         System.out.println("network: " + ValueFinder.findValue("network", resultModel));

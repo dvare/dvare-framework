@@ -60,7 +60,7 @@ public class SemicolonTest extends TestCase {
         rules.add(rule);
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
+        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
 
 
         boolean result1 = ValueFinder.findValue("A0", resultModel).equals(70);

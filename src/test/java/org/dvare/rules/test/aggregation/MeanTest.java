@@ -59,7 +59,7 @@ public class MeanTest extends TestCase {
         dataSet.add(new DataRow(d4));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
+        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
 
 
         boolean result = ((Float) ValueFinder.findValue("A0", resultModel)).compareTo(new Float(31.00)) == 0;

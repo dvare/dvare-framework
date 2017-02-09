@@ -41,7 +41,7 @@ public class Assign extends AssignOperationExpression {
         }
 
         Annotation annotation = expression.getClass().getAnnotation(Operation.class);
-        if (annotation != null && annotation instanceof Operation) {
+        if (annotation != null) {
             Operation operation = (Operation) annotation;
             DataType dataTypes[] = operation.dataTypes();
             if (Arrays.asList(dataTypes).contains(dataType)) {
@@ -160,7 +160,7 @@ public class Assign extends AssignOperationExpression {
                 }
             }
         } else {
-            aggregation = setValue(aggregation, variableName, value);
+            aggregation = setValue(aggregation, variableName, null);
         }
         return aggregation;
     }

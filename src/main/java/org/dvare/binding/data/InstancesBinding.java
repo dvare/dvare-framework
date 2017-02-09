@@ -7,6 +7,9 @@ import java.util.Map;
 public class InstancesBinding {
     private Map<String, Object> instances = new HashMap<>();
 
+    public InstancesBinding() {
+
+    }
 
     public InstancesBinding(Map<String, Object> instances) {
         if (instances != null) {

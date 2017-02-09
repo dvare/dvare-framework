@@ -2,14 +2,12 @@ package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
@@ -40,9 +38,8 @@ public class Combination extends OperationExpression {
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contextss) throws ExpressionParseException {
 
         int i = findNextExpression(tokens, pos + 1, stack, contextss);
-        List<Expression> expressions = new ArrayList<Expression>(stack);
-        stack.clear();
-        computeParam(expressions);
+
+        computeParam(this.leftOperand);
         stack.push(this);
         return i;
     }
@@ -55,19 +52,19 @@ public class Combination extends OperationExpression {
 
 
         if (expressions == null || expressions.isEmpty()) {
-            error = String.format("No Parameters Found Expression Found");
+            error = "No Parameters Found Expression Found";
 
         } else if (expressions.size() != 2) {
 
-            error = String.format("two param need in combination function ");
+            error = "two param need in combination function ";
         } else {
 
             if (!(expressions.get(0) instanceof VariableExpression)) {
-                error = String.format("First param of combination function must be variable");
+                error = "First param of combination function must be variable";
             }
 
             if (!(expressions.get(1) instanceof ListLiteral)) {
-                error = String.format("Second param of combination functio must be variable");
+                error = "Second param of combination functio must be variable";
             }
 
 
@@ -79,7 +76,6 @@ public class Combination extends OperationExpression {
             throw new ExpressionParseException(error);
         }
 
-        this.leftOperand = expressions;
 
         logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
@@ -90,19 +86,18 @@ public class Combination extends OperationExpression {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
+        Stack<Expression> localStack = new Stack<>();
         for (; pos < tokens.length; pos++) {
             String token = tokens[pos];
 
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
                 if (op.getClass().equals(RightPriority.class)) {
+                    this.leftOperand = new ArrayList<>(localStack);
                     return pos;
+                } else {
+                    pos = op.parse(tokens, pos, localStack, contexts);
                 }
-            } else if (configurationRegistry.getFunction(token) != null) {
-                FunctionBinding table = configurationRegistry.getFunction(token);
-                FunctionExpression tableExpression = new FunctionExpression(token, table);
-                stack.add(tableExpression);
-
             } else {
 
                 TokenType tokenType = findDataObject(token, contexts);
@@ -110,18 +105,18 @@ public class Combination extends OperationExpression {
                     TypeBinding typeBinding = contexts.getContext(tokenType.type);
                     DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
                     VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
-                    stack.add(variableExpression);
+                    localStack.add(variableExpression);
 
                 } else {
 
                     LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
-                    stack.add(literalExpression);
+                    localStack.add(literalExpression);
                 }
 
 
             }
         }
-        return null;
+        return pos;
     }
 
 

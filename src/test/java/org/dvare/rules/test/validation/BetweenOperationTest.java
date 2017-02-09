@@ -24,17 +24,22 @@ THE SOFTWARE.*/
 package org.dvare.rules.test.validation;
 
 import junit.framework.TestCase;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
+import org.dvare.binding.model.TypeBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.parser.ExpressionParser;
 import org.dvare.rules.test.validation.dataobjects.BetweenOperation;
 import org.junit.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 
 public class BetweenOperationTest extends TestCase {
     @Test
@@ -42,11 +47,16 @@ public class BetweenOperationTest extends TestCase {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        String exp = "Variable1 between [2,4]"/* +
+        String exp = "Variable1 between [2,4]" +
                 " And Variable2 between [3.1,3.3]" +
-                " And Variable3 between [12-05-2016,15-06-2016] "*/;
+                " And Variable3 between [12-05-2016,15-06-2016] ";
 
-        Expression expression = factory.getParser().fromString(exp, BetweenOperation.class);
+
+        TypeBinding typeBinding = ExpressionParser.translate(BetweenOperation.class);
+        ContextsBinding contexts = new ContextsBinding(new HashMap<>());
+        contexts.addContext("self", typeBinding);
+
+        Expression expression = factory.getParser().fromString(exp, contexts);
         RuleBinding rule = new RuleBinding(expression);
 
 
@@ -59,7 +69,9 @@ public class BetweenOperationTest extends TestCase {
 
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(rule, betweenOperation);
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", betweenOperation);
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
         assertTrue(result);
     }
 

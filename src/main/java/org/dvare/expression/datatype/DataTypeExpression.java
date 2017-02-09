@@ -70,11 +70,11 @@ public abstract class DataTypeExpression extends Expression {
             switch (right.getType().getDataType()) {
 
                 case FloatType: {
-                    left = LiteralType.getLiteralExpression(Float.valueOf(0f), right.getType());
+                    left = LiteralType.getLiteralExpression(0f, right.getType());
                     break;
                 }
                 case IntegerType: {
-                    left = LiteralType.getLiteralExpression(Integer.valueOf(0), right.getType());
+                    left = LiteralType.getLiteralExpression(0, right.getType());
                     break;
                 }
                 case StringType: {
@@ -86,8 +86,7 @@ public abstract class DataTypeExpression extends Expression {
         }
 
         String methodName = getMethodName(operationExpression.getClass());
-        LiteralExpression resultExpression = evaluate(methodName, left, right);
-        return resultExpression;
+        return evaluate(methodName, left, right);
     }
 
 
@@ -115,6 +114,7 @@ public abstract class DataTypeExpression extends Expression {
         String methodName = getMethodName(operationExpression.getClass());
         try {
 
+
             Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
             return (Boolean) method.invoke(this, left, right);
 
@@ -128,7 +128,7 @@ public abstract class DataTypeExpression extends Expression {
     private String getMethodName(Class operation) {
         for (Method method : this.getClass().getMethods()) {
             Annotation annotation = method.getAnnotation(OperationMapping.class);
-            if (annotation != null && annotation instanceof OperationMapping) {
+            if (annotation != null) {
                 OperationMapping operationMapping = (OperationMapping) annotation;
                 if (Arrays.asList(operationMapping.operations()).contains(operation)) {
                     return method.getName();

@@ -6,7 +6,6 @@ import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
-import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -109,8 +108,8 @@ public class Function extends OperationExpression {
                     pos = op.parse(tokens, pos, localStack, contexts);
                 }
             } else if (configurationRegistry.getFunction(token) != null) {
-                FunctionBinding table = configurationRegistry.getFunction(token);
-                FunctionExpression tableExpression = new FunctionExpression(token, table);
+                FunctionBinding functionBinding = configurationRegistry.getFunction(token);
+                FunctionExpression tableExpression = new FunctionExpression(token, functionBinding);
                 localStack.add(tableExpression);
 
             } else {
@@ -249,7 +248,7 @@ public class Function extends OperationExpression {
     }
 
 
-    private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) {
+    private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) throws InterpretException {
 
         try {
             Class functionClass = functionExpression.getBinding().getFunctionClass();
@@ -267,26 +266,11 @@ public class Function extends OperationExpression {
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            throw new InterpretException(e);
         }
-        return null;
+
     }
 
-
-    private VariableExpression buildVariableParam(VariableExpression variableExpression, final Object selfRow, final Object dataRow) throws IllegalPropertyValueException {
-        String name = variableExpression.getName();
-        if (selfRow != null && name.matches(selfPatten)) {
-            name = name.substring(5, name.length());
-            variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
-            variableExpression.setName(name);
-        } else if (dataRow != null && name.matches(otherPatten)) {
-            name = name.substring(5, name.length());
-            variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
-            variableExpression.setName(name);
-        } else {
-            variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
-        }
-        return variableExpression;
-    }
 
     private ParamValue buildLiteralParam(Expression expression, Class originalType) throws InterpretException {
         ParamValue paramsValue = new ParamValue();
@@ -314,7 +298,7 @@ public class Function extends OperationExpression {
 
 
             } catch (Exception e) {
-                throw new InterpretException(e);
+                throw new InterpretException(e.getMessage(), e);
             }
 
 

@@ -60,7 +60,7 @@ public class MedianTest extends TestCase {
         dataSet.add(new DataRow(d4));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
+        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(30);
 

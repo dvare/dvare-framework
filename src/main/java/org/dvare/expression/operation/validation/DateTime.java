@@ -57,7 +57,6 @@ public class DateTime extends OperationExpression {
         pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
 
-
         SimpleDateFormat dateFormat = null;
         String value = null;
 
