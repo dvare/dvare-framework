@@ -22,12 +22,11 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation;
 
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.NullLiteral;
-
-import java.util.List;
 
 public abstract class ArithmeticOperationExpression extends EqualityOperationExpression {
 
@@ -36,20 +35,10 @@ public abstract class ArithmeticOperationExpression extends EqualityOperationExp
         super(operationType);
     }
 
-    @Override
-    public Object interpret(Object dataRow) throws InterpretException {
-        interpretOperand(dataRow, null);
-        Expression leftExpression = leftValueOperand;
-        if (leftExpression == null)
-            return new NullLiteral();
-        LiteralExpression<?> rightExpression = (LiteralExpression) rightValueOperand;
-        return dataTypeExpression.evaluate(this, leftExpression, rightExpression);
-
-    }
 
     @Override
-    public Object interpret(Object selfRow, List<Object> dataset) throws InterpretException {
-        interpretOperand(selfRow, dataset.get(0));
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        interpretOperand(instancesBinding);
         Expression leftExpression = leftValueOperand;
         if (leftExpression == null)
             return new NullLiteral();
@@ -57,14 +46,5 @@ public abstract class ArithmeticOperationExpression extends EqualityOperationExp
         return dataTypeExpression.evaluate(this, leftExpression, rightExpression);
     }
 
-    @Override
-    public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
-        interpretOperand(selfRow, dataRow);
-        Expression leftExpression = leftValueOperand;
-        if (leftExpression == null)
-            return new NullLiteral();
-        LiteralExpression<?> rightExpression = (LiteralExpression) rightValueOperand;
-        return dataTypeExpression.evaluate(this, leftExpression, rightExpression);
 
-    }
 }

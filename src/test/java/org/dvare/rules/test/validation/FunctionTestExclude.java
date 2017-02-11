@@ -186,11 +186,46 @@ public class FunctionTestExclude extends TestCase {
         dataSet.add(new DataRow(d2));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.evaluate(rules, new DataRow(bindings), dataSet);
+        Object resultModel = evaluator.aggregate(rules, new DataRow(bindings), dataSet);
 
         System.out.println(ValueFinder.findValue("A0", resultModel));
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(30);
+
+        assertTrue(result);
+    }
+
+
+    @Test
+    public void testApp5() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.rules.util"});
+
+        Expression expression = configuration.getParser().fromString("Variable2 := fun( addTenFunction , 5, data.Variable1 )", Function.class, Function.class);
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        Function function = new Function();
+
+
+        List<Object> dataSet = new ArrayList<>();
+        Function function1 = new Function();
+        function1.setVariable1(4);
+        dataSet.add(function1);
+
+
+        Function function2 = new Function();
+        function2.setVariable1(5);
+        dataSet.add(function2);
+
+
+        Function function3 = new Function();
+        function3.setVariable1(6);
+        dataSet.add(function3);
+
+        RuleEvaluator evaluator = configuration.getEvaluator();
+        Object resultModel = evaluator.aggregate(rule, function, dataSet);
+        boolean result = ValueFinder.findValue("Variable2", resultModel).equals(15);
 
         assertTrue(result);
     }

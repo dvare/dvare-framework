@@ -1,18 +1,17 @@
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.function.FunctionBinding;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -34,18 +33,13 @@ public class Combination extends OperationExpression {
         super(OperationType.COMBINATION);
     }
 
-    public Combination copy() {
-        return new Combination();
-    }
-
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contextss) throws ExpressionParseException {
 
-        int i = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-        List<Expression> expressions = new ArrayList<Expression>(stack);
-        stack.clear();
-        computeParam(expressions);
+        int i = findNextExpression(tokens, pos + 1, stack, contextss);
+
+        computeParam(this.leftOperand);
         stack.push(this);
         return i;
     }
@@ -58,19 +52,19 @@ public class Combination extends OperationExpression {
 
 
         if (expressions == null || expressions.isEmpty()) {
-            error = String.format("No Parameters Found Expression Found");
+            error = "No Parameters Found Expression Found";
 
         } else if (expressions.size() != 2) {
 
-            error = String.format("two param need in combination function ");
+            error = "two param need in combination function ";
         } else {
 
             if (!(expressions.get(0) instanceof VariableExpression)) {
-                error = String.format("First param of combination function must be variable");
+                error = "First param of combination function must be variable";
             }
 
             if (!(expressions.get(1) instanceof ListLiteral)) {
-                error = String.format("Second param of combination functio must be variable");
+                error = "Second param of combination functio must be variable";
             }
 
 
@@ -82,7 +76,6 @@ public class Combination extends OperationExpression {
             throw new ExpressionParseException(error);
         }
 
-        this.leftOperand = expressions;
 
         logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
@@ -90,63 +83,62 @@ public class Combination extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
+        Stack<Expression> localStack = new Stack<>();
         for (; pos < tokens.length; pos++) {
             String token = tokens[pos];
 
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
-                op = op.copy();
                 if (op.getClass().equals(RightPriority.class)) {
+                    this.leftOperand = new ArrayList<>(localStack);
                     return pos;
+                } else {
+                    pos = op.parse(tokens, pos, localStack, contexts);
                 }
-            } else if (configurationRegistry.getFunction(token) != null) {
-                FunctionBinding table = configurationRegistry.getFunction(token);
-                FunctionExpression tableExpression = new FunctionExpression(token, table);
-                stack.add(tableExpression);
-
-            } else if (token.matches(selfPatten) && selfTypes != null) {
-                String name = token.substring(5, token.length());
-                DataType type = TypeFinder.findType(name, selfTypes);
-                VariableExpression variableExpression = VariableType.getVariableType(token, type);
-                stack.add(variableExpression);
-
-            } else if (token.matches(dataPatten) && dataTypes != null) {
-                String name = token.substring(5, token.length());
-                DataType type = TypeFinder.findType(name, dataTypes);
-                VariableExpression variableExpression = VariableType.getVariableType(token, type);
-                stack.add(variableExpression);
-
-            } else if (selfTypes != null && selfTypes.getTypes().containsKey(token)) {
-                DataType type = TypeFinder.findType(token, selfTypes);
-                VariableExpression variableExpression = VariableType.getVariableType(token, type);
-                stack.add(variableExpression);
-
-            } else if (token.startsWith("[")) {
-
-                OperationExpression operationExpression = new ListOperationExpression();
-                pos = operationExpression.parse(tokens, pos, stack, selfTypes, dataTypes);
-
             } else {
 
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
-                stack.add(literalExpression);
+                TokenType tokenType = findDataObject(token, contexts);
+                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                    VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                    localStack.add(variableExpression);
+
+                } else {
+
+                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
+                    localStack.add(literalExpression);
+                }
+
+
             }
         }
-        return null;
+        return pos;
     }
 
 
     @Override
-    public Object interpret(List<Object> dataSet) throws InterpretException {
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+
 
         List<Expression> expressions = this.leftOperand;
         DataType dataType = null;
         List<Object> values = null;
         if (expressions.get(0) instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) expressions.get(0);
+
+            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+            List<Object> dataSet;
+            if (instance instanceof Collection) {
+                dataSet = (List) instance;
+            } else {
+                dataSet = new ArrayList<>();
+                dataSet.add(instance);
+            }
+
             values = new ArrayList<>();
             dataType = variableExpression.getType().getDataType();
             for (Object dataRow : dataSet) {

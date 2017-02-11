@@ -23,7 +23,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.model.TypeBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -38,18 +38,14 @@ public class LeftPriority extends OperationExpression {
         super(OperationType.LEFT_PRIORITY);
     }
 
-    public LeftPriority copy() {
-        return new LeftPriority();
-    }
-
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
-        pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
         while (!stack.peek().getClass().equals(RightPriority.class)) {
-            pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
+            pos = findNextExpression(tokens, pos + 1, stack, contexts);
         }
 
         if (stack.peek().getClass().equals(RightPriority.class)) {
@@ -61,21 +57,21 @@ public class LeftPriority extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (; pos < tokens.length; pos++) {
 
             OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
-                op = op.copy();
+
 
                 if (op.getClass().equals(RightPriority.class)) {
                     stack.push(op);
                     return pos;
 
                 } else {
-                    pos = op.parse(tokens, pos, stack, selfTypes, dataTypes);
+                    pos = op.parse(tokens, pos, stack, contexts);
                 }
 
 

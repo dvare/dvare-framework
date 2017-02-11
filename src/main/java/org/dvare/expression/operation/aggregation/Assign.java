@@ -1,7 +1,8 @@
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.model.TypeBinding;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalOperationException;
@@ -16,12 +17,12 @@ import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.parser.ExpressionTokenizer;
+import org.dvare.util.TrimString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Stack;
 
 @Operation(type = OperationType.ASSIGN)
@@ -32,10 +33,6 @@ public class Assign extends AssignOperationExpression {
         super(OperationType.ASSIGN);
     }
 
-    public Assign copy() {
-        return new Assign();
-    }
-
 
     protected boolean isLegalOperation(Expression expression, DataType dataType) {
 
@@ -44,7 +41,7 @@ public class Assign extends AssignOperationExpression {
         }
 
         Annotation annotation = expression.getClass().getAnnotation(Operation.class);
-        if (annotation != null && annotation instanceof Operation) {
+        if (annotation != null) {
             Operation operation = (Operation) annotation;
             DataType dataTypes[] = operation.dataTypes();
             if (Arrays.asList(dataTypes).contains(dataType)) {
@@ -55,9 +52,9 @@ public class Assign extends AssignOperationExpression {
     }
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding aTypeBinding, TypeBinding vTypeBinding) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
-            pos = parseOperands(tokens, pos, stack, aTypeBinding, vTypeBinding);
+            pos = super.parse(tokens, pos, stack, contexts);
 
             Expression left = this.leftOperand;
             Expression right = this.rightOperand;
@@ -79,8 +76,8 @@ public class Assign extends AssignOperationExpression {
 
 
             logger.debug("Aggregation OperationExpression Call Expression : {}", getClass().getSimpleName());
-
-            stack.push(this);
+/*
+            stack.push(this);*/
 
             return pos;
         }
@@ -89,90 +86,81 @@ public class Assign extends AssignOperationExpression {
         throw new ExpressionParseException("Cannot assign literal to variable");
     }
 
-    private VariableExpression updateOprand(Object aggregation) throws InterpretException {
+
+    @Override
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+
         VariableExpression variable = null;
         Expression left = this.leftOperand;
 
         if (left instanceof VariableExpression) {
             variable = (VariableExpression) left;
+
+            Object aggregation = instancesBinding.getInstance(variable.getOperandType());
+
             variable = VariableType.setVariableValue(variable, aggregation);
 
-        }
-        return variable;
-    }
 
-    @Override
-    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
-        VariableExpression variable = updateOprand(aggregation);
-        String variableName = variable.getName();
-
-        LiteralExpression<?> literalExpression = null;
-        Expression right = this.rightOperand;
-
-        if (right instanceof OperationExpression) {
-            OperationExpression operation = (OperationExpression) right;
-            literalExpression = (LiteralExpression) operation.interpret(aggregation, dataSet);
-        }
-
-        DataType dataType = variable.getType().getDataType();
-
-        aggregation = updateValue(aggregation, dataType, variableName, literalExpression);
-
-        return aggregation;
-    }
-
-    @Override
-    public Object interpret(Object aggregation, Object dataSet) throws InterpretException {
-
-        VariableExpression variable = updateOprand(aggregation);
-        String variableName = variable.getName();
+            Expression right = this.rightOperand;
+            LiteralExpression<?> literalExpression = null;
+            if (right instanceof OperationExpression) {
+                OperationExpression operation = (OperationExpression) right;
+                literalExpression = (LiteralExpression) operation.interpret(instancesBinding);
+            }
 
 
-        Expression right = this.rightOperand;
-        LiteralExpression<?> literalExpression = null;
-        if (right instanceof OperationExpression) {
-            OperationExpression operation = (OperationExpression) right;
-            literalExpression = (LiteralExpression) operation.interpret(aggregation, dataSet);
+            DataType dataType = variable.getType().getDataType();
+
+
+            aggregation = updateValue(aggregation, dataType, variable.getName(), literalExpression);
+            instancesBinding.addInstance(variable.getOperandType(), aggregation);
         }
 
 
-        DataType dataType = variable.getType().getDataType();
-
-        aggregation = updateValue(aggregation, dataType, variableName, literalExpression);
-
-        return aggregation;
+        return instancesBinding;
     }
 
     private Object updateValue(Object aggregation, DataType dataType, String variableName, LiteralExpression<?> literalExpression) throws InterpretException {
-        switch (dataType) {
-            case IntegerType: {
-                if (literalExpression.getValue() instanceof Integer) {
-
-
-                    aggregation = setValue(aggregation, variableName, literalExpression.getValue());
-
-
-                } else {
-                    aggregation = setValue(aggregation, variableName, new Integer("" + literalExpression.getValue()));
-
-
+        Object value = literalExpression.getValue();
+        if (value != null) {
+            switch (dataType) {
+                case IntegerType: {
+                    if (value instanceof Integer) {
+                        aggregation = setValue(aggregation, variableName, value);
+                    } else {
+                        aggregation = setValue(aggregation, variableName, new Integer("" + value));
+                    }
+                    break;
                 }
-                break;
-            }
 
-            case FloatType: {
-                if (literalExpression.getValue() instanceof Float) {
+                case FloatType: {
+                    if (value instanceof Float) {
 
-                    aggregation = setValue(aggregation, variableName, literalExpression.getValue());
-                } else {
-                    aggregation = setValue(aggregation, variableName, new Float("" + literalExpression.getValue()));
+                        aggregation = setValue(aggregation, variableName, literalExpression.getValue());
+                    } else {
+                        aggregation = setValue(aggregation, variableName, new Float("" + value));
+                    }
+                    break;
                 }
-                break;
-            }
 
-            default: {
-                aggregation = setValue(aggregation, variableName, literalExpression.getValue());
+                case StringType: {
+                    if (value instanceof String) {
+
+                        value = TrimString.trim((String) value);
+                        aggregation = setValue(aggregation, variableName, value);
+                    } else {
+                        value = TrimString.trim(value.toString());
+                        aggregation = setValue(aggregation, variableName, value);
+                    }
+                    break;
+                }
+
+                default: {
+                    aggregation = setValue(aggregation, variableName, literalExpression.getValue());
+                }
             }
+        } else {
+            aggregation = setValue(aggregation, variableName, null);
         }
         return aggregation;
     }

@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.IllegalOperationException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
@@ -35,8 +36,6 @@ import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 @Operation(type = OperationType.MINIMUM, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Minimum extends AggregationOperationExpression {
     static Logger logger = LoggerFactory.getLogger(Minimum.class);
@@ -46,12 +45,9 @@ public class Minimum extends AggregationOperationExpression {
         super(OperationType.MINIMUM);
     }
 
-    public Minimum copy() {
-        return new Minimum();
-    }
 
     @Override
-    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
         Expression right = this.rightOperand;
@@ -80,7 +76,7 @@ public class Minimum extends AggregationOperationExpression {
         }
 
 
-        return super.interpret(aggregation, dataSet);
+        return super.interpret(instancesBinding);
     }
 
 }

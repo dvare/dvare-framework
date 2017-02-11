@@ -24,12 +24,16 @@ THE SOFTWARE.*/
 package org.dvare.rules.test.validation;
 
 import junit.framework.TestCase;
+import org.dvare.binding.model.ContextsBinding;
+import org.dvare.binding.model.TypeBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.parser.ExpressionParser;
+import org.dvare.rules.test.validation.dataobjects.ArithmeticOperation;
 import org.dvare.rules.test.validation.dataobjects.EqualOperation;
 import org.dvare.rules.test.validation.dataobjects.Function;
 import org.junit.Test;
@@ -51,7 +55,12 @@ public class EqualOperationTest extends TestCase {
                 " And Variable6 = dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss )" +
                 " And Variable7 = R'A1.*'";
 
-        Expression expression = factory.getParser().fromString(exp, EqualOperation.class);
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+        Expression expression = factory.getParser().fromString(exp, contexts);
         RuleBinding rule = new RuleBinding(expression);
 
         SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
@@ -77,6 +86,7 @@ public class EqualOperationTest extends TestCase {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.rules.util"});
 
+
         Expression expression = configuration.getParser().fromString("Variable3->toString() = Variable1->toString()", Function.class);
         RuleBinding rule = new RuleBinding(expression);
 
@@ -88,5 +98,36 @@ public class EqualOperationTest extends TestCase {
         boolean result = (Boolean) evaluator.evaluate(rule, function);
         assertTrue(result);
     }
+
+    @Test
+    public void testApp12() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String exp = "self.Variable1 = self.Variable8.Variable1->toString()";
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+        Expression expression = factory.getParser().fromString(exp, contexts);
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        EqualOperation equalOperation = new EqualOperation();
+        equalOperation.setVariable1("'9'");
+
+        ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
+        arithmeticOperation.setVariable1(9);
+        equalOperation.setVariable8(arithmeticOperation);
+
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, equalOperation);
+        assertTrue(result);
+    }
+
+
 
 }

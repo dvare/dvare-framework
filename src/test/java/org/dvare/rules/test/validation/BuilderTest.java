@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.rules.test.validation;
 
 import junit.framework.TestCase;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.builder.ExpressionBuilder;
 import org.dvare.builder.LiteralBuilder;
@@ -51,6 +52,8 @@ public class BuilderTest extends TestCase {
     public void testApp() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
+
+        ContextsBinding contexts = new ContextsBinding();
 
         OperationExpression stringEqualExpression = new OperationBuilder().operation(OperationType.EQUAL)//
                 .leftOperand(new VariableBuilder().variableType(DataType.StringType).variableName("Variable1").build())//

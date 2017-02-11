@@ -34,8 +34,5 @@ public class Multiply extends ArithmeticOperationExpression {
         super(OperationType.MUL);
     }
 
-    public Multiply copy() {
-        return new Multiply();
-    }
 
 }

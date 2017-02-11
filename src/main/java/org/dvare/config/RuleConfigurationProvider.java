@@ -27,10 +27,10 @@ package org.dvare.config;
 import org.dvare.annotations.ClassFinder;
 import org.dvare.annotations.FunctionMethod;
 import org.dvare.annotations.FunctionService;
+import org.dvare.annotations.Operation;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
-import org.dvare.expression.operation.OperationExpression;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,18 +103,14 @@ public class RuleConfigurationProvider {
     private void operationInit() {
         List<Class<?>> classes = ClassFinder.findAnnotated(baseOperationPackage, org.dvare.annotations.Operation.class);
         for (Class _class : classes) {
-            try {
 
-                Annotation annotation = _class.getAnnotation(org.dvare.annotations.Operation.class);
-                if (annotation != null && annotation instanceof org.dvare.annotations.Operation) {
-                    configurationRegistry.registerOperation((OperationExpression) _class.newInstance());
-                }
 
-            } catch (InstantiationException e) {
-                logger.error(e.getMessage(), e);
-            } catch (IllegalAccessException e) {
-                logger.error(e.getMessage(), e);
+            Annotation annotation = _class.getAnnotation(org.dvare.annotations.Operation.class);
+            if (annotation != null && annotation instanceof org.dvare.annotations.Operation) {
+
+                configurationRegistry.registerOperation(_class, ((Operation) annotation).type().getSymbols());
             }
+
 
         }
 

@@ -11,8 +11,5 @@ public class Max extends ArithmeticOperationExpression {
         super(OperationType.MAX);
     }
 
-    public Max copy() {
-        return new Max();
-    }
 
 }

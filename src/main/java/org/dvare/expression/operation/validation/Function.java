@@ -1,10 +1,11 @@
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.function.FunctionBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
-import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -13,7 +14,6 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -32,22 +32,18 @@ import java.util.Stack;
 
 @Operation(type = OperationType.FUNCTION)
 public class Function extends OperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Function.class);
+    private static Logger logger = LoggerFactory.getLogger(Function.class);
 
 
     public Function() {
         super(OperationType.FUNCTION);
     }
 
-    public Function copy() {
-        return new Function();
-    }
-
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
-        pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
         FunctionExpression functionExpression = (FunctionExpression) stack.pop();
 
 
@@ -60,7 +56,7 @@ public class Function extends OperationExpression {
             if (!functionExpression.getParameters().isEmpty()) {
                 error = String.format("No Table Expression Found, %s is not  TableExpression", functionExpression.getParameters().get(functionExpression.getParameters().size() - 1).getClass().getSimpleName());
             } else {
-                error = String.format("No Table Expression Found");
+                error = "No Table Expression Found";
             }
 
             logger.error(error);
@@ -76,7 +72,7 @@ public class Function extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
@@ -87,7 +83,7 @@ public class Function extends OperationExpression {
 
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
-                op = op.copy();
+
                 if (op.getClass().equals(RightPriority.class)) {
 
 
@@ -102,82 +98,62 @@ public class Function extends OperationExpression {
                         }
                     }
 
-                    functionExpression.setParameters(parameters);
-                    stack.push(functionExpression);
-
+                    if (functionExpression != null) {
+                        functionExpression.setParameters(parameters);
+                        stack.push(functionExpression);
+                    }
 
                     return pos;
                 } else if (!op.getClass().equals(LeftPriority.class)) {
-                    pos = op.parse(tokens, pos, localStack, selfTypes, dataTypes);
+                    pos = op.parse(tokens, pos, localStack, contexts);
                 }
             } else if (configurationRegistry.getFunction(token) != null) {
-                String name = token;
-                FunctionBinding table = configurationRegistry.getFunction(token);
-                FunctionExpression tableExpression = new FunctionExpression(name, table);
+                FunctionBinding functionBinding = configurationRegistry.getFunction(token);
+                FunctionExpression tableExpression = new FunctionExpression(token, functionBinding);
                 localStack.add(tableExpression);
-
-            } else if (token.matches(selfPatten) && selfTypes != null) {
-                String name = token.substring(5, token.length());
-                DataType type = TypeFinder.findType(name, selfTypes);
-                VariableExpression variableExpression = VariableType.getVariableType(token, type);
-                localStack.add(variableExpression);
-
-            } else if (token.matches(dataPatten) && dataTypes != null) {
-                String name = token.substring(5, token.length());
-                DataType type = TypeFinder.findType(name, dataTypes);
-                VariableExpression variableExpression = VariableType.getVariableType(token, type);
-                localStack.add(variableExpression);
-
-            } else if (selfTypes != null && selfTypes.getTypes().containsKey(token)) {
-                DataType type = TypeFinder.findType(token, selfTypes);
-                VariableExpression variableExpression = VariableType.getVariableType(token, type);
-                localStack.add(variableExpression);
-
-            } else if (dataTypes != null && dataTypes.getTypes().containsKey(token)) {
-                DataType type = TypeFinder.findType(token, dataTypes);
-                VariableExpression variableExpression = VariableType.getVariableType(token, type);
-                localStack.add(variableExpression);
 
             } else {
 
-                if (token.equals("[")) {
-                    OperationExpression operationExpression = new ListOperationExpression();
-                    pos = operationExpression.parse(tokens, pos, localStack, selfTypes, dataTypes);
-                    Expression literalExpression = localStack.pop();
-                    localStack.add(literalExpression);
+
+                TokenType tokenType = findDataObject(token, contexts);
+                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                    VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                    localStack.add(variableExpression);
 
                 } else {
-                    DataType type = LiteralType.computeDataType(token);
-                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
+                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
                     localStack.add(literalExpression);
                 }
 
+
             }
         }
-        return null;
+
+        throw new ExpressionParseException("Function Closing Bracket Not Found");
     }
 
 
     @Override
-    public Object interpret(Object selfRow) throws InterpretException {
-        Object result = interpretFunction(selfRow, null);
-        return result;
-    }
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        return interpretFunction(instancesBinding);
 
-    @Override
-    public Object interpret(final Object selfRow, final Object dataRow) throws InterpretException {
-        Object result = interpretFunction(selfRow, dataRow);
-        return result;
     }
 
 
-    private Object interpretFunction(final Object selfRow, final Object dataRow) throws InterpretException {
+    private Object interpretFunction(InstancesBinding instancesBinding) throws InterpretException {
+
         FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
 
 
         Class<?> params[] = new Class[functionExpression.getParameters().size()];
         Object values[] = new Object[functionExpression.getParameters().size()];
+
+
         List<DataType> parameters = functionExpression.getBinding().getParameters();
+
+
         int counter = 0;
         for (Expression expression : functionExpression.getParameters()) {
             DataType dataType = parameters.get(counter);
@@ -186,11 +162,7 @@ public class Function extends OperationExpression {
             if (expression instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) expression;
                 LiteralExpression literalExpression;
-                if (selfRow != null && dataRow != null) {
-                    literalExpression = (LiteralExpression) operation.interpret(selfRow, dataRow);
-                } else {
-                    literalExpression = (LiteralExpression) operation.interpret(selfRow);
-                }
+                literalExpression = (LiteralExpression) operation.interpret(instancesBinding);
 
                 ParamValue paramsValue = buildLiteralParam(literalExpression, originalType);
                 params[counter] = paramsValue.param;
@@ -198,93 +170,60 @@ public class Function extends OperationExpression {
 
             } else if (expression instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) expression;
-                variableExpression = buildVariableParam(variableExpression, selfRow, dataRow);
-
-                values[counter] = variableExpression.getValue();
-                params[counter] = DataTypeMapping.getDataTypeMapping(variableExpression.getType().getDataType());
-
-            } else if (expression instanceof LiteralExpression) {
-
-                ParamValue paramsValue = buildLiteralParam(expression, originalType);
-                params[counter] = paramsValue.param;
-                values[counter] = paramsValue.value;
-            }
-
-            counter++;
-        }
-
-        Object result = invokeFunction(functionExpression, params, values);
-        return result;
-    }
-
-
-    @Override
-    public Object interpret(List<Object> dataSet) throws InterpretException {
-        Object result = interpretListFunction(null, dataSet);
-        return result;
-    }
-
-
-    @Override
-    public Object interpret(Object aggregation, List<Object> dataSet) throws InterpretException {
-
-        Object result = interpretListFunction(aggregation, dataSet);
-        return result;
-    }
-
-
-    private Object interpretListFunction(Object selfRow, List<Object> dataSet) throws InterpretException {
-
-        FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
-
-
-        Class<?> params[] = new Class[functionExpression.getParameters().size()];
-        Object values[] = new Object[functionExpression.getParameters().size()];
-
-
-        List<DataType> parameters = functionExpression.getBinding().getParameters();
-
-
-        int counter = 0;
-        for (Expression expression : functionExpression.getParameters()) {
-            DataType dataType = parameters.get(counter);
-            Class originalType = DataTypeMapping.getDataTypeMapping(dataType);
-
-            if (expression instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) expression;
-
+                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
 
                 try {
                     DataType variableDataType = variableExpression.getType().getDataType();
 
-                    if (originalType.isArray()) {
+                    if (originalType != null) {
+                        if (originalType.isArray()) {
 
 
-                        List listValues = new ArrayList<>();
+                            List<Object> listValues = new ArrayList<>();
 
-                        for (Object dataRow : dataSet) {
-                            variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
-                            listValues.add(variableExpression.getValue());
-                        }
+                            List dataSet;
+                            if (instance instanceof Collection) {
+                                dataSet = (List) instance;
+                            } else {
+                                dataSet = new ArrayList();
+                                dataSet.add(instance);
+                            }
 
-                        Class type = DataTypeMapping.getDataTypeMapping(variableDataType);
-                        Object[] typedArray = (Object[]) Array.newInstance(type, dataSet.size());
-                        Object value = listValues.toArray(typedArray);
-                        params[counter] = originalType;
-                        values[counter] = value;
+                            for (Object dataRow : dataSet) {
+                                variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
+                                listValues.add(variableExpression.getValue());
+                            }
 
-                    } else {
+                            Class type = DataTypeMapping.getDataTypeMapping(variableDataType);
+                            Object[] typedArray = (Object[]) Array.newInstance(type, dataSet.size());
+                            Object value = listValues.toArray(typedArray);
+                            params[counter] = originalType;
+                            values[counter] = value;
+
+                        } else {
 
 
-                        variableExpression = buildVariableParam(variableExpression, selfRow, dataSet.get(0));
+                            List dataSet;
+                            if (instance instanceof Collection) {
+                                dataSet = (List) instance;
+                                if (!dataSet.isEmpty()) {
+                                    variableExpression = VariableType.setVariableValue(variableExpression, dataSet.get(0));
+                                }
+                            } else {
+                                variableExpression = VariableType.setVariableValue(variableExpression, instance);
+                            }
+
+
 
                         /*
                             variableExpression = VariableType.setVariableValue(variableExpression, DATA_ROW);
                         */
 
-                        Object value = variableExpression.getValue();
-                        params[counter] = originalType;
-                        values[counter] = value;
+                            Object value = variableExpression.getValue();
+                            params[counter] = originalType;
+                            values[counter] = value;
+                        }
+
                     }
 
                 } catch (Exception e) {
@@ -304,20 +243,27 @@ public class Function extends OperationExpression {
         }
 
 
-        Object functionReturn = invokeFunction(functionExpression, params, values);
+        return invokeFunction(functionExpression, params, values);
 
-        return functionReturn;
     }
 
 
-    private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) {
+    private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) throws InterpretException {
 
         try {
-            Class functionClass = functionExpression.getBinding().getFunctionClass();
-            Object obj = functionClass.newInstance();
-
-            Method method = functionClass.getMethod(functionExpression.getName(), params);
-            Object value = method.invoke(obj, values);
+            FunctionBinding functionBinding = functionExpression.getBinding();
+            String functionName = functionExpression.getName();
+            Class<?> functionClass = functionBinding.getFunctionClass();
+            Object value;
+            if (functionClass != null) {
+                Object classInstance = functionClass.newInstance();
+                Method method = functionClass.getMethod(functionName, params);
+                value = method.invoke(classInstance, values);
+            } else {
+                Object classInstance = functionBinding.getFunctionInstance();
+                Method method = classInstance.getClass().getMethod(functionName, params);
+                value = method.invoke(classInstance, values);
+            }
 
             if (value instanceof Collection) {
                 Collection collection = (Collection) value;
@@ -328,26 +274,11 @@ public class Function extends OperationExpression {
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            throw new InterpretException(e);
         }
-        return null;
+
     }
 
-
-    private VariableExpression buildVariableParam(VariableExpression variableExpression, final Object selfRow, final Object dataRow) throws IllegalPropertyValueException {
-        String name = variableExpression.getName();
-        if (selfRow != null && name.matches(selfPatten)) {
-            name = name.substring(5, name.length());
-            variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
-            variableExpression.setName(name);
-        } else if (dataRow != null && name.matches(dataPatten)) {
-            name = name.substring(5, name.length());
-            variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
-            variableExpression.setName(name);
-        } else {
-            variableExpression = VariableType.setVariableValue(variableExpression, selfRow);
-        }
-        return variableExpression;
-    }
 
     private ParamValue buildLiteralParam(Expression expression, Class originalType) throws InterpretException {
         ParamValue paramsValue = new ParamValue();
@@ -375,14 +306,14 @@ public class Function extends OperationExpression {
 
 
             } catch (Exception e) {
-                throw new InterpretException(e);
+                throw new InterpretException(e.getMessage(), e);
             }
 
 
         } else {
             LiteralExpression literalExpression = (LiteralExpression) expression;
             if (originalType.isArray()) {
-                List listValues = new ArrayList<>();
+                List<Object> listValues = new ArrayList<>();
                 listValues.add(literalExpression.getValue());
                 Class type = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
                 Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, 1);

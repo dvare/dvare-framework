@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.chain;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.StringType;
@@ -40,12 +41,10 @@ public class Append extends ChainOperationExpression {
         super(OperationType.APPEND);
     }
 
-    public Append copy() {
-        return new Append();
-    }
 
-    private Object contains(Object selfRow, Object dataRow) throws InterpretException {
-        leftValueOperand = super.interpretOperand(this.leftOperand, leftOperandType, selfRow, dataRow);
+    @Override
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
@@ -78,18 +77,5 @@ public class Append extends ChainOperationExpression {
         return new NullLiteral<>();
     }
 
-    @Override
-    public Object interpret(Object dataRow) throws InterpretException {
-
-
-        return contains(dataRow, null);
-
-    }
-
-    @Override
-    public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
-
-        return contains(selfRow, dataRow);
-    }
 
 }

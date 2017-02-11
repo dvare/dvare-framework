@@ -37,7 +37,7 @@ public enum ConfigurationRegistry {
 
     private final Map<String, FunctionBinding> functions = new HashMap<String, FunctionBinding>();
 
-    private final Map<String, OperationExpression> operations = new HashMap<String, OperationExpression>();
+    private final Map<String, Class> operations = new HashMap<String, Class>();
 
 
     public List<String> tokens() {
@@ -49,10 +49,11 @@ public enum ConfigurationRegistry {
     }
 
 
-    public void registerOperation(OperationExpression op) {
-        for (String symbol : op.getSymbols()) {
-            if (!operations.containsKey(symbol))
+    public void registerOperation(Class op, List<String> symbols) {
+        for (String symbol : symbols) {
+            if (!operations.containsKey(symbol)) {
                 operations.put(symbol, op);
+            }
         }
     }
 
@@ -63,12 +64,25 @@ public enum ConfigurationRegistry {
     }
 
     public OperationExpression getOperation(String symbol) {
-        return this.operations.get(symbol);
+        Class aClass = operations.get(symbol);
+        OperationExpression operationExpression = null;
+        if (aClass != null) try {
+            operationExpression = (OperationExpression) aClass.newInstance();
+
+
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return operationExpression;
     }
 
 
     public FunctionBinding getFunction(String name) {
-        return this.functions.get(name);
+        FunctionBinding functionBinding = this.functions.get(name);
+        if (functionBinding != null) {
+            return functionBinding.copy();
+        }
+        return null;
     }
 
 

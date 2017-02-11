@@ -4,6 +4,7 @@ package org.dvare.util;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.parser.ExpressionParser;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ public class TypeFinder {
         DataType variableType = null;
         if (name.contains(".")) {
 
-            String fields[] = name.split(".");
+            String fields[] = name.split("\\.");
 
             Iterator<String> iterator = Arrays.asList(fields).iterator();
 
@@ -27,10 +28,15 @@ public class TypeFinder {
                     Object newType = childType.getDataType(field);
                     if (newType instanceof TypeBinding) {
                         childType = (TypeBinding) newType;
+                    } else if (newType instanceof Class) {
+
+                        childType = ExpressionParser.translate((Class) newType);
                     }
 
 
                 } else {
+
+
                     Object newType = childType.getDataType(field);
                     if (newType instanceof DataType) {
                         variableType = (DataType) newType;
@@ -51,7 +57,8 @@ public class TypeFinder {
         return variableType;
     }
 
-    public static DataType findType(String name, Class type) {
+
+    private static DataType findType(String name, Class type) {
         DataType variableType = null;
         if (name.contains(".")) {
 

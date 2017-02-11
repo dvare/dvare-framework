@@ -24,28 +24,30 @@ THE SOFTWARE.*/
 package org.dvare.parser;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.exceptions.parser.ExpressionParseException;
-import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
+import org.dvare.expression.veriable.VariableExpression;
+import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.DataTypeMapping;
+import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
 public class ExpressionParser {
-    protected static final String selfPatten = "self\\..{1,}";
-    protected static final String dataPatten = "data\\..{1,}";
     static Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
 
     private ConfigurationRegistry configurationRegistry = null;
@@ -65,8 +67,21 @@ public class ExpressionParser {
             if (dataType != null) {
                 typeBinding.addTypes(name, dataType);
             } else {
-                TypeBinding nustedType = translate(field.getType());
-                typeBinding.addTypes(name, nustedType);
+
+                Type genericType = field.getGenericType();
+                if (genericType != null && genericType instanceof ParameterizedType) {
+                    ParameterizedType parameterizedType = (ParameterizedType) genericType;
+                    Class<?> parameterizedClass = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+
+
+                    typeBinding.addTypes(name, parameterizedClass);
+
+                } else {
+
+                    typeBinding.addTypes(name, field.getType());
+                }
+
+
             }
 
         }
@@ -111,6 +126,13 @@ public class ExpressionParser {
     }
 
     public Expression fromString(String expr, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", selfTypes);
+        contexts.addContext("data", dataTypes);
+        return fromString(expr, contexts);
+    }
+
+    public Expression fromString(String expr, ContextsBinding contexts) throws ExpressionParseException {
 
         if (expr != null && !expr.isEmpty()) {
             Stack<Expression> stack = new Stack<>();
@@ -129,24 +151,19 @@ public class ExpressionParser {
                 String token = tokens[i];
                 OperationExpression op = configurationRegistry.getOperation(token);
                 if (op != null) {
-                    op = op.copy();
-
-                    i = op.parse(tokens, i, stack, selfTypes, dataTypes);
+                    i = op.parse(tokens, i, stack, contexts);
                 } else {
-                    if (!token.matches(selfPatten) && !token.matches(dataPatten)) {
-
-                        if (selfTypes == null || !selfTypes.getTypes().containsKey(token)) {
-                            DataType dataType = LiteralType.computeDataType(token);
-                            if (dataType == null) {
-
-                                String message = String.format("%s is not an OperationExpression or Variable near \"%s\"", token, ExpressionTokenizer.toString(tokens, i));
-                                logger.error(message);
-                                throw new IllegalOperationException(message);
 
 
-                            }
-                        }
+                    OperationExpression.TokenType tokenType = OperationExpression.findDataObject(token, contexts);
+                    if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+                        TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                        DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                        VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                        stack.add(variableExpression);
                     }
+
+
                 }
             }
             if (stack.empty()) {

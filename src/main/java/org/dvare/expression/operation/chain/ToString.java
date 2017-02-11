@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.chain;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.datatype.StringType;
 import org.dvare.expression.literal.LiteralExpression;
@@ -41,13 +42,10 @@ public class ToString extends ChainOperationExpression {
         super(OperationType.TO_STRING);
     }
 
-    public ToString copy() {
-        return new ToString();
-    }
 
-
-    private Object toString(Object selfRow, Object dataRow) throws InterpretException {
-        leftValueOperand = super.interpretOperand(this.leftOperand, leftOperandType, selfRow, dataRow);
+    @Override
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
@@ -76,20 +74,5 @@ public class ToString extends ChainOperationExpression {
 
         return new NullLiteral<>();
     }
-
-    @Override
-    public Object interpret(Object dataRow) throws InterpretException {
-
-
-        return toString(dataRow, null);
-
-    }
-
-    @Override
-    public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
-
-        return toString(selfRow, dataRow);
-    }
-
 
 }

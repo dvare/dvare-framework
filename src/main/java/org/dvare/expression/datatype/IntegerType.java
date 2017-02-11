@@ -106,6 +106,15 @@ public class IntegerType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
+            NotIn.class
+    })
+    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+        Integer leftValue = (Integer) left.getValue();
+        List<Integer> rightValues = buildIntegerList((List<Object>) right.getValue());
+        return !rightValues.contains(leftValue);
+    }
+
+    @OperationMapping(operations = {
             Between.class
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {

@@ -22,6 +22,7 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation;
 
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -30,7 +31,6 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.validation.RightPriority;
-import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
 
@@ -47,54 +47,28 @@ public abstract class ChainOperationExpression extends OperationExpression {
     }
 
 
-    private int parseOperands(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    private int parseOperands(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         String token = tokens[pos - 1];
         pos = pos + 1;
 
 
         if (stack.isEmpty()) {
-            DataType variableType = null;
 
 
-            if (token.matches(selfPatten) || token.matches(dataPatten)) {
+            TokenType tokenType = findDataObject(token, contexts);
 
-                if (dataTypes != null && token.matches(dataPatten)) {
-                    leftOperandType = DATA_ROW;
-                    token = token.substring(5, token.length());
-                    variableType = TypeFinder.findType(token, dataTypes);
+            if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
 
-                }
-                if (token.matches(selfPatten)) {
-                    leftOperandType = SELF_ROW;
-                    token = token.substring(5, token.length());
-                    variableType = TypeFinder.findType(token, selfTypes);
-                }
+                TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                this.leftOperand = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
 
-
-                VariableExpression variableExpression = VariableType.getVariableType(token, variableType);
-                this.leftOperand = variableExpression;
             } else {
 
-                if (selfTypes.getTypes().containsKey(token)) {
-                    leftOperandType = SELF_ROW;
-                    variableType = TypeFinder.findType(token, selfTypes);
-                    VariableExpression variableExpression = VariableType.getVariableType(token, variableType);
-                    this.leftOperand = variableExpression;
-                } else {
-
-                    Expression literalExpression = null;
-                    if (token.equals("[")) {
-                        pos = new ListOperationExpression().parse(tokens, pos, stack, selfTypes, dataTypes);
-                        literalExpression = stack.pop();
-                    } else {
-                        literalExpression = LiteralType.getLiteralExpression(token);
-                    }
-
-                    this.leftOperand = literalExpression;
-                }
-
+                this.leftOperand = LiteralType.getLiteralExpression(token);
             }
+
 
         } else {
             this.leftOperand = stack.pop();
@@ -107,30 +81,18 @@ public abstract class ChainOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-        pos = parseOperands(tokens, pos, stack, selfTypes, dataTypes);
-        pos = findNextExpression(tokens, pos + 1, stack, selfTypes, dataTypes);
-
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+        pos = parseOperands(tokens, pos, stack, contexts);
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
         logger.debug("Operation Expression Call Expression : {}", getClass().getSimpleName());
-
-  /*      if (this.leftOperand instanceof LogicalOperationExpression) {
-            LogicalOperationExpression logicalPart = (LogicalOperationExpression) this.leftOperand;
-            this.leftOperand = logicalPart.rightOperand;
-            logicalPart.rightOperand = this;;
-            stack.push(logicalPart);
-        } else*/
-        {
-            stack.push(this);
-        }
-
-
+        stack.push(this);
         return pos;
     }
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
@@ -138,7 +100,7 @@ public abstract class ChainOperationExpression extends OperationExpression {
             String token = tokens[i];
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
-                op = op.copy();
+
                 if (op.getClass().equals(RightPriority.class)) {
                     return i;
                 }
@@ -150,8 +112,6 @@ public abstract class ChainOperationExpression extends OperationExpression {
         }
         return null;
     }
-
-
 
 
 }

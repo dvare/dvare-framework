@@ -162,4 +162,10 @@ public class StringType extends DataTypeExpression {
     }
 
 
+    @OperationMapping(operations = {
+            NotIn.class
+    })
+    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+        return !in(left, right);
+    }
 }

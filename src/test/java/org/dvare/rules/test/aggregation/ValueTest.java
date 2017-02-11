@@ -47,7 +47,7 @@ public class ValueTest extends TestCase {
 
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), new DataRow(dataset));
+        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), new DataRow(dataset));
 
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(50);

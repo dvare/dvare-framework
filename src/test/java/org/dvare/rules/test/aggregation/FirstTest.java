@@ -30,7 +30,7 @@ public class FirstTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
         validationTypes.put("V2", "IntegerType");
 
-        Expression aggregate = factory.getParser().fromString("A0 := first ( V1 )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("self.A0 := first ( data.V1 )", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
@@ -57,7 +57,7 @@ public class FirstTest extends TestCase {
         dataSet.add(new DataRow(d3));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.evaluate(rules, new DataRow(aggregation), dataSet);
+        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(10);
 

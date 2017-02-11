@@ -21,39 +21,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.logical;
+package org.dvare.rules.test.validation;
 
-import org.dvare.annotations.Operation;
-import org.dvare.binding.data.InstancesBinding;
+import junit.framework.TestCase;
 import org.dvare.binding.model.ContextsBinding;
+import org.dvare.binding.model.TypeBinding;
+import org.dvare.binding.rule.RuleBinding;
+import org.dvare.config.RuleConfiguration;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.operation.LogicalOperationExpression;
-import org.dvare.expression.operation.OperationType;
+import org.dvare.parser.ExpressionParser;
+import org.dvare.rules.test.validation.dataobjects.ForEachOperation;
+import org.junit.Test;
 
-import java.util.Stack;
+import java.text.ParseException;
 
-@Operation(type = OperationType.NOT)
-public class Not extends LogicalOperationExpression {
-    public Not() {
-        super(OperationType.NOT);
+public class ForEachOperationTest extends TestCase {
+    @Test
+    public void testApp() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String exp = "self->forEach test test.Variable1->substring(2,2)->toInteger() between [80,90] endForEach";
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(ForEachOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+        Expression expression = factory.getParser().fromString(exp, contexts);
+        RuleBinding rule = new RuleBinding(expression);
+
+
     }
-
-
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
-        int i = findNextExpression(tokens, pos + 1, stack, contexts);
-        this.rightOperand = stack.pop();
-        stack.push(this);
-        return i;
-    }
-
-
-    @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
-        return !toBoolean(this.rightOperand.interpret(instancesBinding));
-    }
-
 
 }

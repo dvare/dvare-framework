@@ -120,6 +120,18 @@ public class DateType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
+            NotIn.class
+    })
+    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+        Date leftValue = setTimeToMidnight((Date) left.getValue());
+        List<Date> rightValues = new ArrayList<>();
+        for (Date rightValue : buildDateList((List<Object>) right.getValue())) {
+            rightValues.add(setTimeToMidnight(rightValue));
+        }
+        return !rightValues.contains(leftValue);
+    }
+
+    @OperationMapping(operations = {
             Between.class
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {

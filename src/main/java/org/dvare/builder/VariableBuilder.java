@@ -9,8 +9,8 @@ import org.dvare.expression.veriable.VariableType;
 public class VariableBuilder {
 
     private String name;
-
     private DataType type;
+    private String operandType = "self";
 
     public VariableBuilder() {
     }
@@ -32,7 +32,7 @@ public class VariableBuilder {
     }
 
     public VariableExpression build() throws IllegalPropertyException {
-        VariableExpression variableExpression = VariableType.getVariableType(name, type);
-        return variableExpression;
+        return VariableType.getVariableType(name, type, operandType);
+
     }
 }

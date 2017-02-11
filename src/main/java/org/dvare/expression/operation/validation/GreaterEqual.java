@@ -12,9 +12,5 @@ public class GreaterEqual extends EqualityOperationExpression {
         super(OperationType.GREATER_EQUAL);
     }
 
-    public GreaterEqual copy() {
-        return new GreaterEqual();
-    }
-
 
 }

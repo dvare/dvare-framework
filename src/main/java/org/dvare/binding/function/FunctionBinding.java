@@ -33,21 +33,29 @@ import java.util.List;
 public class FunctionBinding {
     private String methodName;
     private Class functionClass;
+    private Object functionInstance;
     private DataTypeExpression returnType;
     private List<DataType> parameters = new ArrayList<>();
-    private boolean isList = false;
 
-    public FunctionBinding(String methodName, Class tableClass, DataTypeExpression returnType) {
-        this(methodName, tableClass, returnType, false, null);
+
+    public FunctionBinding(String methodName, Class functionClass, DataTypeExpression returnType) {
+        this(methodName, functionClass, null, returnType, null);
+    }
+
+    public FunctionBinding(String methodName, Object functionInstance, DataTypeExpression returnType) {
+        this(methodName, null, functionInstance, returnType, null);
     }
 
 
-    public FunctionBinding(String methodName, Class functionClass, DataTypeExpression returnType, boolean isList, List<DataType> parameters) {
+    public FunctionBinding(String methodName, Class functionClass, Object functionInstance, DataTypeExpression returnType, List<DataType> parameters) {
         this.methodName = methodName;
         this.functionClass = functionClass;
         this.returnType = returnType;
-        this.isList = isList;
         this.parameters = parameters;
+    }
+
+    public FunctionBinding copy() {
+        return new FunctionBinding(methodName, functionClass, functionInstance, returnType, parameters);
     }
 
     public String getMethodName() {
@@ -75,13 +83,6 @@ public class FunctionBinding {
         this.returnType = returnType;
     }
 
-    public boolean isList() {
-        return isList;
-    }
-
-    public void setList(boolean list) {
-        isList = list;
-    }
 
     public List<DataType> getParameters() {
         return parameters;
@@ -89,5 +90,13 @@ public class FunctionBinding {
 
     public void setParameters(List<DataType> parameters) {
         this.parameters = parameters;
+    }
+
+    public Object getFunctionInstance() {
+        return functionInstance;
+    }
+
+    public void setFunctionInstance(Class functionInstance) {
+        this.functionInstance = functionInstance;
     }
 }

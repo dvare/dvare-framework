@@ -29,6 +29,7 @@ import java.util.List;
 
 public enum OperationType {
 
+    List("["),
     ABSOLUTE("Abs", "abs"), COMBINATION("Combination", "combination", "comb"), FUNCTION("Function", "function", "fun"),//
     LEFT_PRIORITY("("), RIGHT_PRIORITY(")"),//
     DATE("Date", "date"), DATE_TIME("DateTime", "dateTime"), TO_DAY("today", "ToDay"),//
@@ -36,13 +37,14 @@ public enum OperationType {
     NOT("not", "NOT", "Not", "!"), AND("and", "AND", "And", "&&"), OR("or", "OR", "||"), IMPLIES("implies", "Implies", "=>"),//
     EQUAL("=", "eq"), NOT_EQUAL("!=", "ne", "<>"),//
     LESS("<", "lt"), LESS_EQUAL("<=", "le"), GREATER(">", "gt"), GREATER_EQUAL(">=", "ge"),//
-    IN("in", "IN", "In"), BETWEEN("between", "Between"), //
+    IN("in", "IN", "In"), NOT_IN("notIn", "NOTIN", "NotIn"), BETWEEN("between", "Between"), //
     MUL("Mul", "mul", "*"), DIVIDE("Div", "div", "/"), ADD("Add", "add", "+"), SUBTRACT("Sub", "sub", "-"),//
     MAX("Max", "max"), MIN("Min", "min"),//
     TO_INTEGER("toInteger", "ToInteger"), TO_STRING("toString", "ToString"), TO_DATE("ToDate", "toDate"),//
     SUBSTRING("substring", "Substring"), APPEND("append", "Append"), PREPEND("prepend", "Prepend"), CONTAINS("contains", "Contains"),//
     STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
-    IF("IF", "if", "ELSEIF", "elseif"), THEN("THEN", "then"), ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
+    FOREACH("foreach", "forEach", "FOREACH"), END_FOREACH("endforeach", "endForEach", "ENDFOREACH"), ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
+    IF("IF", "if", "ELSEIF", "elseif"), THEN("THEN", "then"),//
     ASSIGN(":=", "assign", "update"), COUNT("Count", "count"), FIRST("First", "first"), LAST("Last", "last"),//
     MAXIMUM("Maximum", "maximum"), MINIMUM("Minimum", "minimum"),//
     MEAN("Mean", "mean", "Avg", "avg"), MEDIAN("Median", "median"), MODE("Mode", "mode"),//

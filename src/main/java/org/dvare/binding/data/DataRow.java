@@ -34,6 +34,7 @@ public class DataRow {
 
     }
 
+
     public DataRow(Map<String, Object> data) {
         this.data = data;
     }
@@ -44,6 +45,11 @@ public class DataRow {
 
     public void addData(String name, Object value) {
         this.data.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return data != null ? data.toString() : "";
     }
     /* Getter and Setters */
 

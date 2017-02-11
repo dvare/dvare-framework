@@ -33,9 +33,5 @@ public class NotEquals extends EqualityOperationExpression {
         super(OperationType.NOT_EQUAL);
     }
 
-    public NotEquals copy() {
-        return new NotEquals();
-    }
-
 
 }

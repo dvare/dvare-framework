@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.chain;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
@@ -40,12 +41,10 @@ public class EndsWith extends ChainOperationExpression {
         super(OperationType.ENDS_WITH);
     }
 
-    public EndsWith copy() {
-        return new EndsWith();
-    }
 
-    private Object endswith(Object selfRow, Object dataRow) throws InterpretException {
-        leftValueOperand = super.interpretOperand(this.leftOperand, leftOperandType, selfRow, dataRow);
+    @Override
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
@@ -70,28 +69,15 @@ public class EndsWith extends ChainOperationExpression {
 
             Boolean result = value.endsWith(end);
             try {
-                LiteralExpression returnExpression = LiteralType.getLiteralExpression(result.toString(), DataType.BooleanType);
-                return returnExpression;
+                return LiteralType.getLiteralExpression(result.toString(), DataType.BooleanType);
+
             } catch (IllegalValueException e) {
+
             }
 
         }
 
         return new NullLiteral<>();
-    }
-
-    @Override
-    public Object interpret(Object dataRow) throws InterpretException {
-
-
-        return endswith(dataRow, null);
-
-    }
-
-    @Override
-    public Object interpret(Object selfRow, Object dataRow) throws InterpretException {
-
-        return endswith(selfRow, dataRow);
     }
 
 }

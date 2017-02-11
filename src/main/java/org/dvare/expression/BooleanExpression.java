@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression;
 
 
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,13 +45,9 @@ public class BooleanExpression extends Expression {
         logger.debug("Boolean  Expression :  [{} , {}]", name, value);
     }
 
-    @Override
-    public Object interpret(final Object object) throws InterpretException {
-        return value;
-    }
 
     @Override
-    public Object interpret(final Object self, final Object data) throws InterpretException {
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
         return value;
     }
 

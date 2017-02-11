@@ -98,7 +98,6 @@ public class NullType extends DataTypeExpression {
             In.class
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
-
         if (right instanceof ListLiteral) {
             List<Object> tempValues = (List<Object>) right.getValue();
             if (tempValues.contains(null)) {
@@ -106,9 +105,14 @@ public class NullType extends DataTypeExpression {
             }
 
         }
-
-
         return false;
     }
 
+
+    @OperationMapping(operations = {
+            NotIn.class
+    })
+    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+        return !in(left, right);
+    }
 }
