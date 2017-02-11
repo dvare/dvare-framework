@@ -44,7 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
-import java.util.HashMap;
 
 public class BuilderTest extends TestCase {
     static Logger logger = LoggerFactory.getLogger(BuilderTest.class);
@@ -54,7 +53,7 @@ public class BuilderTest extends TestCase {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        ContextsBinding contexts = new ContextsBinding(new HashMap<>());
+        ContextsBinding contexts = new ContextsBinding();
 
         OperationExpression stringEqualExpression = new OperationBuilder().operation(OperationType.EQUAL)//
                 .leftOperand(new VariableBuilder().variableType(DataType.StringType).variableName("Variable1").build())//

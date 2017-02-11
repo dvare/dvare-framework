@@ -116,7 +116,7 @@ public class Function extends OperationExpression {
 
 
                 TokenType tokenType = findDataObject(token, contexts);
-                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && contexts.getContext(tokenType.type).getDataType(tokenType.token) != null) {
+                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
                     TypeBinding typeBinding = contexts.getContext(tokenType.type);
                     DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
                     VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
@@ -251,11 +251,19 @@ public class Function extends OperationExpression {
     private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) throws InterpretException {
 
         try {
-            Class functionClass = functionExpression.getBinding().getFunctionClass();
-            Object obj = functionClass.newInstance();
-
-            Method method = functionClass.getMethod(functionExpression.getName(), params);
-            Object value = method.invoke(obj, values);
+            FunctionBinding functionBinding = functionExpression.getBinding();
+            String functionName = functionExpression.getName();
+            Class<?> functionClass = functionBinding.getFunctionClass();
+            Object value;
+            if (functionClass != null) {
+                Object classInstance = functionClass.newInstance();
+                Method method = functionClass.getMethod(functionName, params);
+                value = method.invoke(classInstance, values);
+            } else {
+                Object classInstance = functionBinding.getFunctionInstance();
+                Method method = classInstance.getClass().getMethod(functionName, params);
+                value = method.invoke(classInstance, values);
+            }
 
             if (value instanceof Collection) {
                 Collection collection = (Collection) value;

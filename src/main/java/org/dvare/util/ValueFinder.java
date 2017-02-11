@@ -21,11 +21,12 @@ public class ValueFinder {
                 Class type = object.getClass();
                 if (name.contains(".")) {
 
-                    String fields[] = name.split(".");
+                    String fields[] = name.split("\\.");
 
                     Iterator<String> iterator = Arrays.asList(fields).iterator();
 
                     Class childType = type;
+                    Object chieldValue = object;
                     while (iterator.hasNext()) {
                         String field = iterator.next();
 
@@ -33,12 +34,12 @@ public class ValueFinder {
 
                             Field newType = FieldUtils.getDeclaredField(childType, field, true);
                             childType = newType.getType();
-
+                            chieldValue = FieldUtils.readField(newType, chieldValue, true);
                         } else {
                             Field newType = FieldUtils.getDeclaredField(childType, field, true);
                             if (newType != null) {
 
-                                return FieldUtils.readField(newType, object, true);
+                                return FieldUtils.readField(newType, chieldValue, true);
                             }
                         }
 

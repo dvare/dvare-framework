@@ -53,7 +53,7 @@ public class ArithmeticOperationTest {
                 " And Variable2 = ( Variable1 max Variable2 )";
 
         TypeBinding typeBinding = ExpressionParser.translate(ArithmeticOperation.class);
-        ContextsBinding contexts = new ContextsBinding(new HashMap<>());
+        ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
 
         Expression expression = factory.getParser().fromString(exp, contexts);
@@ -85,7 +85,7 @@ public class ArithmeticOperationTest {
                 " And Variable4 = ( Variable3 max Variable4 )";
 
         TypeBinding typeBinding = ExpressionParser.translate(ArithmeticOperation.class);
-        ContextsBinding contexts = new ContextsBinding(new HashMap<>());
+        ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
         Expression expression = factory.getParser().fromString(exp, contexts);
         RuleBinding rule = new RuleBinding(expression);

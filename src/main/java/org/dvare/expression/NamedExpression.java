@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NamedExpression extends Expression {
-    static Logger logger = LoggerFactory.getLogger(NamedExpression.class);
+    private static Logger logger = LoggerFactory.getLogger(NamedExpression.class);
     private String name;
 
     public NamedExpression(String name) {

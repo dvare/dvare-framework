@@ -41,6 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -65,8 +67,21 @@ public class ExpressionParser {
             if (dataType != null) {
                 typeBinding.addTypes(name, dataType);
             } else {
-                TypeBinding nustedType = translate(field.getType());
-                typeBinding.addTypes(name, nustedType);
+
+                Type genericType = field.getGenericType();
+                if (genericType != null && genericType instanceof ParameterizedType) {
+                    ParameterizedType parameterizedType = (ParameterizedType) genericType;
+                    Class<?> parameterizedClass = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+
+
+                    typeBinding.addTypes(name, parameterizedClass);
+
+                } else {
+
+                    typeBinding.addTypes(name, field.getType());
+                }
+
+
             }
 
         }
@@ -111,7 +126,7 @@ public class ExpressionParser {
     }
 
     public Expression fromString(String expr, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-        ContextsBinding contexts = new ContextsBinding(new HashMap<>());
+        ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", selfTypes);
         contexts.addContext("data", dataTypes);
         return fromString(expr, contexts);
@@ -141,7 +156,7 @@ public class ExpressionParser {
 
 
                     OperationExpression.TokenType tokenType = OperationExpression.findDataObject(token, contexts);
-                    if (tokenType.type != null && contexts.getContext(tokenType.type) != null && contexts.getContext(tokenType.type).getDataType(tokenType.token) != null) {
+                    if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
                         TypeBinding typeBinding = contexts.getContext(tokenType.type);
                         DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
                         VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);

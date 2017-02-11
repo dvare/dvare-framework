@@ -33,13 +33,13 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
+import org.dvare.rules.test.validation.dataobjects.ArithmeticOperation;
 import org.dvare.rules.test.validation.dataobjects.EqualOperation;
 import org.dvare.rules.test.validation.dataobjects.Function;
 import org.junit.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 
 public class EqualOperationTest extends TestCase {
     @Test
@@ -57,7 +57,7 @@ public class EqualOperationTest extends TestCase {
 
 
         TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
-        ContextsBinding contexts = new ContextsBinding(new HashMap<>());
+        ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
 
         Expression expression = factory.getParser().fromString(exp, contexts);
@@ -98,5 +98,36 @@ public class EqualOperationTest extends TestCase {
         boolean result = (Boolean) evaluator.evaluate(rule, function);
         assertTrue(result);
     }
+
+    @Test
+    public void testApp12() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String exp = "self.Variable1 = self.Variable8.Variable1->toString()";
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+        Expression expression = factory.getParser().fromString(exp, contexts);
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        EqualOperation equalOperation = new EqualOperation();
+        equalOperation.setVariable1("'9'");
+
+        ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
+        arithmeticOperation.setVariable1(9);
+        equalOperation.setVariable8(arithmeticOperation);
+
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, equalOperation);
+        assertTrue(result);
+    }
+
+
 
 }

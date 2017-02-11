@@ -58,7 +58,7 @@ public abstract class ChainOperationExpression extends OperationExpression {
 
             TokenType tokenType = findDataObject(token, contexts);
 
-            if (tokenType.type != null && contexts.getContext(tokenType.type) != null && contexts.getContext(tokenType.type).getDataType(tokenType.token) != null) {
+            if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
 
                 TypeBinding typeBinding = contexts.getContext(tokenType.type);
                 DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);

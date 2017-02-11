@@ -12,6 +12,7 @@ public class EqualOperation {
     public Date Variable5;
     public Date Variable6;
     public String Variable7;
+    public ArithmeticOperation Variable8;
 
     public String getVariable1() {
         return Variable1;
@@ -67,5 +68,13 @@ public class EqualOperation {
 
     public void setVariable7(String variable7) {
         Variable7 = variable7;
+    }
+
+    public ArithmeticOperation getVariable8() {
+        return Variable8;
+    }
+
+    public void setVariable8(ArithmeticOperation variable8) {
+        Variable8 = variable8;
     }
 }

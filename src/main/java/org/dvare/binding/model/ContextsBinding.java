@@ -24,25 +24,21 @@ THE SOFTWARE.*/
 package org.dvare.binding.model;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ContextsBinding {
     private Map<String, TypeBinding> contexts = new HashMap<>();
 
 
-    public ContextsBinding(Map<String, TypeBinding> contexts) {
-        if (contexts != null) {
-            this.contexts = contexts;
-        }
-    }
-
     public void addContext(String name, TypeBinding typeBinding) {
         if (name != null) {
             contexts.put(name, typeBinding);
         }
-
     }
+
 
     public TypeBinding getContext(String name) {
         if (contexts.containsKey(name)) {
@@ -51,11 +47,18 @@ public class ContextsBinding {
         return null;
     }
 
-    public Map<String, TypeBinding> getContexts() {
-        return contexts;
+
+    public List<String> getContextNames() {
+        return new ArrayList<>(contexts.keySet());
+
     }
 
-    public void setContexts(Map<String, TypeBinding> contexts) {
-        this.contexts = contexts;
+    public void removeContext(String name) {
+        if (contexts.containsKey(name)) {
+            contexts.remove(name);
+        }
+
     }
+
+
 }

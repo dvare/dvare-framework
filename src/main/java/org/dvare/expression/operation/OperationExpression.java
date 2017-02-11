@@ -37,6 +37,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
+import org.dvare.util.TypeFinder;
 import org.dvare.util.ValueFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,11 +74,11 @@ public abstract class OperationExpression extends Expression {
         }
 
 
-        if (contexts.getContext(tokenType.type) != null && contexts.getContext(tokenType.type).getDataType(tokenType.token) != null) {
+        if (contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
             return tokenType;
         } else {
 
-            for (String key : contexts.getContexts().keySet()) {
+            for (String key : contexts.getContextNames()) {
 
                 if (!key.equals("self")) {
                     TypeBinding typeBinding = contexts.getContext(key);

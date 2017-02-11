@@ -6,6 +6,7 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -17,8 +18,6 @@ import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 @Operation(type = OperationType.FOREACH)
@@ -34,11 +33,51 @@ public class ForEach extends OperationExpression {
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
-        pos = findNextExpression(tokens, pos + 1, stack, contexts);
-        Expression expression = stack.pop();
+
+        String refrenceValueToken = tokens[pos - 1];
+        pos = pos + 1;
+        String driveContexttToken = tokens[pos];
+        pos = pos + 1;
 
 
-        this.leftOperand = expression;
+        Expression valueExpression = null;
+
+        if (stack.isEmpty()) {
+
+
+            TokenType tokenType = findDataObject(refrenceValueToken, contexts);
+
+            if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+
+                TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                valueExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+
+            } else {
+
+
+                TypeBinding typeBinding = contexts.getContext(refrenceValueToken);
+                if (contexts.getContext(refrenceValueToken) != null) {
+                    contexts.addContext(driveContexttToken, typeBinding);
+                    this.leftOperand = new NamedExpression(refrenceValueToken);
+                }
+            }
+        } else {
+            valueExpression = stack.pop();
+        }
+
+
+        if (valueExpression instanceof VariableExpression) {
+
+            this.leftOperand = valueExpression;
+            // thing not sure at this time
+        }
+
+
+        pos = findNextExpression(tokens, pos, stack, contexts);
+
+        this.rightOperand = stack.pop();
+        contexts.removeContext(driveContexttToken);
 
 
         logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
@@ -54,37 +93,30 @@ public class ForEach extends OperationExpression {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
-        Stack<Expression> localStack = new Stack<>();
 
         for (; pos < tokens.length; pos++) {
             String token = tokens[pos];
 
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
-
-                if (op.getClass().equals(RightPriority.class)) {
-
-
-                    List<Expression> expressions = new ArrayList<>(localStack);
-
-
+                if (op.getClass().equals(EndForEach.class)) {
                     return pos;
                 } else if (!op.getClass().equals(LeftPriority.class)) {
-                    pos = op.parse(tokens, pos, localStack, contexts);
+                    pos = op.parse(tokens, pos, stack, contexts);
                 }
             } else {
 
 
                 TokenType tokenType = findDataObject(token, contexts);
-                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && contexts.getContext(tokenType.type).getDataType(tokenType.token) != null) {
+                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
                     TypeBinding typeBinding = contexts.getContext(tokenType.type);
                     DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
                     VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
-                    localStack.add(variableExpression);
+                    stack.add(variableExpression);
 
                 } else {
                     LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
-                    localStack.add(literalExpression);
+                    stack.add(literalExpression);
                 }
 
 
