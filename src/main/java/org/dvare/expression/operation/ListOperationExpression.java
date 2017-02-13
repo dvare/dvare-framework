@@ -119,7 +119,7 @@ public class ListOperationExpression extends OperationExpression {
 
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
-        DataTypeExpression dataType = null;
+        Class<? extends DataTypeExpression> dataType = null;
         List<Object> values = new ArrayList<>();
         for (Expression expression : expressions) {
 
@@ -132,7 +132,7 @@ public class ListOperationExpression extends OperationExpression {
                     LiteralExpression literalExpression = (LiteralExpression) interpret;
                     values.add(literalExpression.getValue());
 
-                    if (dataType == null || dataType.getDataType().equals(DataType.NullType)) {
+                    if (dataType == null || toDataType(dataType).equals(DataType.NullType)) {
                         dataType = literalExpression.getType();
                     }
                 } else {
@@ -150,7 +150,7 @@ public class ListOperationExpression extends OperationExpression {
             } else if (expression instanceof LiteralExpression) {
                 LiteralExpression literalExpression = (LiteralExpression) expression;
                 values.add(literalExpression.getValue());
-                if (dataType == null || dataType.getDataType().equals(DataType.NullType)) {
+                if (dataType == null || toDataType(dataType).equals(DataType.NullType)) {
                     dataType = literalExpression.getType();
                 }
             }
@@ -159,9 +159,9 @@ public class ListOperationExpression extends OperationExpression {
         }
 
 
-        ListLiteral listLiteral = new ListLiteral<List>(values, dataType, values.size());
+        ListLiteral listLiteral = new ListLiteral(values, dataType, values.size());
 
-        logger.debug("List Literal Expression : {} [{}]", listLiteral.getType().getDataType(), listLiteral.getValue());
+        logger.debug("List Literal Expression : {} [{}]", toDataType(listLiteral.getType()), listLiteral.getValue());
 
         return listLiteral;
     }

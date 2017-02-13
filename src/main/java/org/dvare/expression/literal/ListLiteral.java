@@ -26,13 +26,19 @@ package org.dvare.expression.literal;
 
 import org.dvare.expression.datatype.DataTypeExpression;
 
-public class ListLiteral<T> extends LiteralExpression {
+import java.util.List;
+
+public class ListLiteral extends LiteralExpression<List> {
 
     protected Integer size;
 
-    public ListLiteral(T value, DataTypeExpression type, Integer size) {
+    public ListLiteral(List value, Class<? extends DataTypeExpression> type, Integer size) {
         super(value, type);
         this.setSize(size);
+    }
+
+    public boolean isEmpty() {
+        return size < 1;
     }
 
     public Integer getSize() {

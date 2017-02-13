@@ -26,7 +26,7 @@ package org.dvare.expression.veriable;
 
 import org.dvare.expression.datatype.BooleanType;
 
-public class BooleanVariable extends VariableExpression {
+public class BooleanVariable extends VariableExpression<Boolean> {
 
     public BooleanVariable(String name) {
         this(name, null);
@@ -37,23 +37,14 @@ public class BooleanVariable extends VariableExpression {
         this(name, null, list, 0);
     }
 
-    public BooleanVariable(String name, Object value) {
+    public BooleanVariable(String name, Boolean value) {
         this(name, value, false, 0);
     }
 
-    public BooleanVariable(String name, Object value, boolean list, Integer size) {
-        super(name, new BooleanType(), value, list, size);
+    public BooleanVariable(String name, Boolean value, boolean list, Integer size) {
+        super(name, BooleanType.class, value, list, size);
 
     }
 
-    @Override
-    public Boolean getValue() {
-        return (Boolean) value;
-    }
-
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-    }
 
 }

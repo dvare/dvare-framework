@@ -26,6 +26,7 @@ package org.dvare.expression.literal;
 import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
+import org.dvare.util.TrimString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,18 +73,18 @@ public class LiteralType {
 
             case BooleanType: {
                 if (value instanceof Boolean) {
-                    literalExpression = new BooleanLiteral<>(value);
+                    literalExpression = new BooleanLiteral((Boolean) value);
                 } else {
-                    literalExpression = new BooleanLiteral<>(Boolean.parseBoolean(valueString));
+                    literalExpression = new BooleanLiteral(Boolean.parseBoolean(valueString));
                 }
                 break;
             }
             case FloatType: {
                 try {
                     if (value instanceof Float) {
-                        literalExpression = new FloatLiteral<>(value);
+                        literalExpression = new FloatLiteral((Float) value);
                     } else {
-                        literalExpression = new FloatLiteral<>(Float.parseFloat(valueString));
+                        literalExpression = new FloatLiteral(Float.parseFloat(valueString));
                     }
                 } catch (NumberFormatException e) {
                     String message = String.format("Unable to Parse literal %s to Float", valueString);
@@ -96,9 +97,9 @@ public class LiteralType {
 
                 try {
                     if (value instanceof Integer) {
-                        literalExpression = new IntegerLiteral<>(value);
+                        literalExpression = new IntegerLiteral((Integer) value);
                     } else {
-                        literalExpression = new IntegerLiteral<>(Integer.parseInt(valueString));
+                        literalExpression = new IntegerLiteral(Integer.parseInt(valueString));
                     }
                 } catch (NumberFormatException e) {
                     String message = String.format("Unable to Parse literal %s to Integer", valueString);
@@ -108,13 +109,13 @@ public class LiteralType {
                 break;
             }
             case StringType: {
-
-                literalExpression = new StringLiteral<>(valueString);
+                valueString = TrimString.trim(valueString);
+                literalExpression = new StringLiteral(valueString);
                 break;
             }
             case RegexType: {
                 valueString = valueString.substring(1, valueString.length()).trim();
-                literalExpression = new RegexLiteral<>(valueString);
+                literalExpression = new RegexLiteral(valueString);
                 break;
             }
 
@@ -133,7 +134,7 @@ public class LiteralType {
                     logger.error(message);
                     throw new IllegalValueException(message, e);
                 }
-                literalExpression = new DateTimeLiteral<>(date);
+                literalExpression = new DateTimeLiteral(date);
                 break;
             }
 
@@ -152,7 +153,7 @@ public class LiteralType {
                     throw new IllegalValueException(message, e);
 
                 }
-                literalExpression = new DateLiteral<>(date);
+                literalExpression = new DateLiteral(date);
                 break;
             }
             case NullType: {
@@ -161,10 +162,24 @@ public class LiteralType {
             }
 
 
+            case IntegerListType:
+                break;
+            case FloatListType:
+                break;
+            case StringListType:
+                break;
+            case BooleanListType:
+                break;
+            case DateTimeListType:
+                break;
+            case DateListType:
+                break;
+            case ListType:
+                break;
         }
 
         if (literalExpression != null) {
-            logger.debug("{} Expression : {} [{}]", literalExpression.getClass().getSimpleName(), literalExpression.getType().getDataType(), literalExpression.getValue());
+            logger.debug("{} Expression : {} [{}]", literalExpression.getClass().getSimpleName(), literalExpression.getType().getClass().getSimpleName(), literalExpression.getValue());
             return literalExpression;
         } else {
             throw new IllegalValueException("Literal Expression is Null");
@@ -172,7 +187,7 @@ public class LiteralType {
     }
 
 
-    public static LiteralExpression<?> getLiteralExpression(Object value, DataTypeExpression type) {
+    public static LiteralExpression<?> getLiteralExpression(Object value, Class<? extends DataTypeExpression> type) {
 
         if (value == null) {
             return new NullLiteral();

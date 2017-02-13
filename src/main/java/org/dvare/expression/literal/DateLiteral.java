@@ -3,9 +3,11 @@ package org.dvare.expression.literal;
 
 import org.dvare.expression.datatype.DateType;
 
-public class DateLiteral<T> extends LiteralExpression {
+import java.util.Date;
 
-    public DateLiteral(T value) {
-        super(value, new DateType());
+public class DateLiteral extends LiteralExpression<Date> {
+
+    public DateLiteral(Date value) {
+        super(value, DateType.class);
     }
 }

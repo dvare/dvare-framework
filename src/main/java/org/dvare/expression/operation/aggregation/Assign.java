@@ -1,6 +1,7 @@
 package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
+import org.dvare.annotations.Type;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -62,8 +63,16 @@ public class Assign extends AssignOperationExpression {
             if (left instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) left;
 
-                if (variableExpression.getType() != null && !isLegalOperation(right, variableExpression.getType().getDataType())) {
-                    String message = String.format("Aggregation OperationExpression %s not possible on type %s at %s", this.getClass().getSimpleName(), variableExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos));
+                DataType dataType = null;
+
+                if (variableExpression.getType().isAnnotationPresent(Type.class)) {
+                    Type type = (Type) variableExpression.getType().getAnnotation(Type.class);
+                    dataType = type.dataType();
+                }
+
+
+                if (dataType != null && !isLegalOperation(right, dataType)) {
+                    String message = String.format("Aggregation OperationExpression %s not possible on type %s at %s", this.getClass().getSimpleName(), dataType, ExpressionTokenizer.toString(tokens, pos));
                     logger.error(message);
                     throw new IllegalOperationException(message);
                 }
@@ -109,13 +118,17 @@ public class Assign extends AssignOperationExpression {
             }
 
 
-            DataType dataType = variable.getType().getDataType();
+            if (variable.getType().isAnnotationPresent(Type.class)) {
+                Type type = (Type) variable.getType().getAnnotation(Type.class);
 
 
-            aggregation = updateValue(aggregation, dataType, variable.getName(), literalExpression);
-            instancesBinding.addInstance(variable.getOperandType(), aggregation);
+                DataType dataType = type.dataType();
+
+
+                aggregation = updateValue(aggregation, dataType, variable.getName(), literalExpression);
+                instancesBinding.addInstance(variable.getOperandType(), aggregation);
+            }
         }
-
 
         return instancesBinding;
     }

@@ -29,21 +29,21 @@ import org.dvare.expression.datatype.DataTypeExpression;
 public abstract class VariableExpression<T> extends Expression {
 
     protected String name;
-    protected DataTypeExpression type;
+    protected Class<? extends DataTypeExpression> type;
     protected String operandType;
     protected T value;
     protected boolean list;
     protected Integer listSize;
 
-    VariableExpression(String name, DataTypeExpression type) {
+    VariableExpression(String name, Class<? extends DataTypeExpression> type) {
         this(name, type, null);
     }
 
-    VariableExpression(String name, DataTypeExpression type, T value) {
+    VariableExpression(String name, Class<? extends DataTypeExpression> type, T value) {
         this(name, type, value, false, 0);
     }
 
-    VariableExpression(String name, DataTypeExpression type, T value, boolean list, Integer listSize) {
+    VariableExpression(String name, Class<? extends DataTypeExpression> type, T value, boolean list, Integer listSize) {
         this.name = name;
         this.type = type;
         this.value = value;
@@ -64,7 +64,7 @@ public abstract class VariableExpression<T> extends Expression {
         this.name = name;
     }
 
-    public DataTypeExpression getType() {
+    public Class<? extends DataTypeExpression> getType() {
         return type;
     }
 
@@ -84,9 +84,13 @@ public abstract class VariableExpression<T> extends Expression {
         this.list = list;
     }
 
-    public abstract T getValue();
+    public T getValue() {
+        return value;
+    }
 
-    public abstract void setValue(T value);
+    public void setValue(T value) {
+        this.value = value;
+    }
 
 
     public String getOperandType() {

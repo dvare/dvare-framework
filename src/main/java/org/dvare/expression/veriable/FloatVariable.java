@@ -26,13 +26,13 @@ package org.dvare.expression.veriable;
 
 import org.dvare.expression.datatype.FloatType;
 
-public class FloatVariable extends VariableExpression {
+public class FloatVariable extends VariableExpression<Float> {
 
     public FloatVariable(String name) {
         this(name, null);
     }
 
-    public FloatVariable(String name, Object value) {
+    public FloatVariable(String name, Float value) {
         this(name, value, false, 0);
     }
 
@@ -40,22 +40,10 @@ public class FloatVariable extends VariableExpression {
         this(name, null, list, 0);
     }
 
-    public FloatVariable(String name, Object value, boolean list, Integer size) {
-        super(name, new FloatType(), value, list, size);
+    public FloatVariable(String name, Float value, boolean list, Integer size) {
+        super(name, FloatType.class, value, list, size);
 
 
     }
-
-
-    @Override
-    public Float getValue() {
-        return (Float) value;
-    }
-
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
 
 }

@@ -1,14 +1,38 @@
-## DVARE FRAMEWORK [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework)
+## DVARE FRAMEWORK 
 Java lightweight expression evaluator that enables perform Arithmetic, Comparison operations.
 [http://dvare.org/v1.4](http://dvare.org/v1.4)
+
+
+## Example
+
+##### Arithmetic Operation..
+
+```java
+public class ArithmeticOperationTest {
+
+    @Test
+    public void testApp8() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+        String expr = "Variable5->substring(2,2)->toInteger() between [80,90] and Variable5->substring(3,2)->toInteger() in [45,46]";
+        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
+        RuleBinding rule = new RuleBinding(expression);
+        ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
+        arithmeticOperation.setVariable5("D845");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, arithmeticOperation);
+        assertTrue(result);
+    }
+ }
+```
 
 ## Current version
 
 * The current stable version is `1.4` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|1.4|)
+* The current snapshot version is `2.0` : [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework)
 
  Maven dependency:
-
-
 ```xml
 <dependencies>
         <dependency>
@@ -16,7 +40,7 @@ Java lightweight expression evaluator that enables perform Arithmetic, Compariso
             <artifactId>dvare-framework</artifactId>
             <version>1.4</version>
         </dependency>         
-<dependencies>
+</dependencies>
 ```
 
 ## License

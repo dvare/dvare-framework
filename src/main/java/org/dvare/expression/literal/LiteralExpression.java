@@ -24,16 +24,17 @@ THE SOFTWARE.*/
 package org.dvare.expression.literal;
 
 import org.dvare.expression.Expression;
-import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
+import org.dvare.expression.datatype.RegexType;
+import org.dvare.expression.datatype.StringType;
 import org.dvare.util.TrimString;
 
 public class LiteralExpression<T> extends Expression {
 
     protected T value;
-    protected DataTypeExpression type;
+    protected Class<? extends DataTypeExpression> type;
 
-    LiteralExpression(T value, DataTypeExpression type) {
+    LiteralExpression(T value, Class<? extends DataTypeExpression> type) {
         this.value = value;
         this.type = type;
     }
@@ -42,7 +43,7 @@ public class LiteralExpression<T> extends Expression {
         return this.value;
     }
 
-    public DataTypeExpression getType() {
+    public Class<? extends DataTypeExpression> getType() {
         return this.type;
     }
 
@@ -53,7 +54,7 @@ public class LiteralExpression<T> extends Expression {
             return "null";
         }
 
-        if (type.getDataType().equals(DataType.StringType) || type.getDataType().equals(DataType.RegexType)) {
+        if (type.equals(StringType.class) || type.equals(RegexType.class)) {
             return "'" + TrimString.trim(value.toString()) + "'";
         } else {
             return value.toString();

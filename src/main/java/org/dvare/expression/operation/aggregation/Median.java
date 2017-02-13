@@ -72,7 +72,7 @@ public class Median extends AggregationOperationExpression {
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = ((VariableExpression) right);
             String name = variableExpression.getName();
-            DataType type = variableExpression.getType().getDataType();
+            DataType type = toDataType(variableExpression.getType());
 
             switch (type) {
 
@@ -99,7 +99,7 @@ public class Median extends AggregationOperationExpression {
                     }
 
 
-                    leftExpression = LiteralType.getLiteralExpression(result, new IntegerType());
+                    leftExpression = LiteralType.getLiteralExpression(result, IntegerType.class);
 
                     break;
                 }
@@ -125,7 +125,7 @@ public class Median extends AggregationOperationExpression {
                     }
 
 
-                    leftExpression = LiteralType.getLiteralExpression(result, new IntegerType());
+                    leftExpression = LiteralType.getLiteralExpression(result, IntegerType.class);
                     break;
                 }
             }

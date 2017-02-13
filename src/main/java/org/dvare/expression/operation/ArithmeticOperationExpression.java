@@ -43,7 +43,12 @@ public abstract class ArithmeticOperationExpression extends EqualityOperationExp
         if (leftExpression == null)
             return new NullLiteral();
         LiteralExpression<?> rightExpression = (LiteralExpression) rightValueOperand;
-        return dataTypeExpression.evaluate(this, leftExpression, rightExpression);
+        try {
+            return dataTypeExpression.newInstance().evaluate(this, leftExpression, rightExpression);
+        } catch (InstantiationException | IllegalAccessException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return null;
     }
 
 

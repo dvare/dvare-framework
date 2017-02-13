@@ -3,10 +3,10 @@ package org.dvare.expression.literal;
 
 import org.dvare.expression.datatype.FloatType;
 
-public class FloatLiteral<T> extends LiteralExpression {
+public class FloatLiteral extends LiteralExpression<Float> {
 
 
-    public FloatLiteral(T value) {
-        super(value, new FloatType());
+    public FloatLiteral(Float value) {
+        super(value, FloatType.class);
     }
 }

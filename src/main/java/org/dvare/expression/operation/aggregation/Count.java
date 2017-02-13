@@ -29,7 +29,7 @@ public class Count extends AggregationOperationExpression {
         Object aggregation = instancesBinding.getInstance("self");
         List<Object> dataSet = (List) instancesBinding.getInstance("data");
 
-        LiteralExpression literalExpression = LiteralType.getLiteralExpression(dataSet.size(), new IntegerType());
+        LiteralExpression literalExpression = LiteralType.getLiteralExpression(dataSet.size(), IntegerType.class);
 
         return literalExpression;
     }

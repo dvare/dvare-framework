@@ -11,14 +11,17 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.StringType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.DataTypeMapping;
+import org.dvare.util.TrimString;
 import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,7 +176,7 @@ public class Function extends OperationExpression {
                 Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
 
                 try {
-                    DataType variableDataType = variableExpression.getType().getDataType();
+                    DataType variableDataType = toDataType(variableExpression.getType());
 
                     if (originalType != null) {
                         if (originalType.isArray()) {
@@ -267,9 +270,9 @@ public class Function extends OperationExpression {
 
             if (value instanceof Collection) {
                 Collection collection = (Collection) value;
-                return new ListLiteral<>(collection, functionExpression.binding.getReturnType(), collection.size());
+//                return new ListLiteral<>(collection, functionExpression.binding.getReturnType(), collection.size());
             } else {
-                return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType());
+                return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType().getClass());
             }
 
         } catch (Exception e) {
@@ -277,6 +280,7 @@ public class Function extends OperationExpression {
             throw new InterpretException(e);
         }
 
+        return new NullLiteral();
     }
 
 
@@ -287,19 +291,24 @@ public class Function extends OperationExpression {
 
             try {
 
-                DataType literalDataType = listLiteral.getType().getDataType();
+                DataType literalDataType = toDataType(listLiteral.getType());
 
                 if (originalType.isArray()) {
 
                     Class type = DataTypeMapping.getDataTypeMapping(literalDataType);
                     Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, listLiteral.getSize());
-                    Object value = ((List) listLiteral.getValue()).toArray(typedArray);
+                    Object value = listLiteral.getValue().toArray(typedArray);
 
                     paramsValue.param = originalType;
                     paramsValue.value = value;
 
                 } else {
-                    Object value = ((List) listLiteral.getValue()).get(0);
+                    Object value = null;
+                    if (!listLiteral.isEmpty()) {
+                        value = listLiteral.getValue().get(0);
+                    }
+
+
                     paramsValue.param = originalType;
                     paramsValue.value = value;
                 }
@@ -311,22 +320,47 @@ public class Function extends OperationExpression {
 
 
         } else {
+
+
             LiteralExpression literalExpression = (LiteralExpression) expression;
+
+
             if (originalType.isArray()) {
                 List<Object> listValues = new ArrayList<>();
-                listValues.add(literalExpression.getValue());
-                Class type = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
+
+                if (literalExpression.getType().equals(StringType.class)) {
+                    Object value = literalExpression.getValue();
+                    if (value != null) {
+                        listValues.add(TrimString.trim(value.toString()));
+                    }
+
+                } else {
+                    listValues.add(literalExpression.getValue());
+                }
+
+
+                Class type = DataTypeMapping.getDataTypeMapping(toDataType(literalExpression.getType()));
                 Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, 1);
                 Object value = listValues.toArray(typedArray);
                 paramsValue.param = originalType;
                 paramsValue.value = value;
 
             } else {
-                paramsValue.param = DataTypeMapping.getDataTypeMapping(literalExpression.getType().getDataType());
+                paramsValue.param = DataTypeMapping.getDataTypeMapping(toDataType(literalExpression.getType()));
                 if (paramsValue.param == null) {
                     paramsValue.param = originalType;
                 }
-                paramsValue.value = literalExpression.getValue();
+
+                if (literalExpression.getType().equals(StringType.class)) {
+                    Object value = literalExpression.getValue();
+                    if (value != null) {
+                        paramsValue.value = TrimString.trim(value.toString());
+                    }
+
+                } else {
+                    paramsValue.value = literalExpression.getValue();
+                }
+
 
             }
 

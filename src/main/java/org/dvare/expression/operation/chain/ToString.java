@@ -66,7 +66,7 @@ public class ToString extends ChainOperationExpression {
             }
 
             if (valueString != null) {
-                return LiteralType.getLiteralExpression(valueString, new StringType());
+                return LiteralType.getLiteralExpression(valueString, StringType.class);
             }
 
 

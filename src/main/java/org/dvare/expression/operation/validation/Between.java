@@ -44,7 +44,7 @@ public class Between extends EqualityOperationExpression {
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) right;
             if (!variableExpression.isList()) {
-                message = String.format("Between OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), variableExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
+                message = String.format("Between OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), toDataType(variableExpression.getType()), ExpressionTokenizer.toString(tokens, pos + 2));
 
             } else {
                 if (variableExpression.getListSize() != 2) {
@@ -56,7 +56,7 @@ public class Between extends EqualityOperationExpression {
         } else if (right instanceof LiteralExpression) {
             LiteralExpression literalExpression = (LiteralExpression) right;
             if (!(literalExpression instanceof ListLiteral)) {
-                message = String.format("List OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), literalExpression.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos + 2));
+                message = String.format("List OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), toDataType(literalExpression.getType()), ExpressionTokenizer.toString(tokens, pos + 2));
 
             } else {
                 ListLiteral listLiteral = (ListLiteral) right;

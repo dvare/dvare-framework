@@ -69,7 +69,7 @@ public class Append extends ChainOperationExpression {
 
             value = value.concat(start);
 
-            return LiteralType.getLiteralExpression(value, new StringType());
+            return LiteralType.getLiteralExpression(value, StringType.class);
 
 
         }

@@ -26,13 +26,13 @@ package org.dvare.expression.veriable;
 
 import org.dvare.expression.datatype.StringType;
 
-public class StringVariable extends VariableExpression {
+public class StringVariable extends VariableExpression<String> {
 
     public StringVariable(String name) {
         this(name, null);
     }
 
-    public StringVariable(String name, Object value) {
+    public StringVariable(String name, String value) {
         this(name, value, false, 0);
     }
 
@@ -40,20 +40,16 @@ public class StringVariable extends VariableExpression {
         this(name, null, list, 0);
     }
 
-    public StringVariable(String name, Object value, boolean list, Integer size) {
-        super(name, new StringType(), value, list, size);
+    public StringVariable(String name, String value, boolean list, Integer size) {
+        super(name, StringType.class, value, list, size);
 
     }
 
     @Override
     public String getValue() {
-        return (String) value;
+        return value;
     }
 
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-    }
 
 
 }

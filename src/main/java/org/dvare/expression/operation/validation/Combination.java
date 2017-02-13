@@ -140,7 +140,7 @@ public class Combination extends OperationExpression {
             }
 
             values = new ArrayList<>();
-            dataType = variableExpression.getType().getDataType();
+            dataType = toDataType(variableExpression.getType());
             for (Object dataRow : dataSet) {
                 variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
                 if (variableExpression.getValue() != null) {
@@ -155,7 +155,7 @@ public class Combination extends OperationExpression {
         if (expressions.get(1) instanceof ListLiteral) {
             ListLiteral listLiteral = (ListLiteral) expressions.get(1);
             if (dataType == null) {
-                listLiteral.getType().getDataType();
+                dataType = toDataType(listLiteral.getType());
             }
 
             if (listLiteral.getValue() instanceof Collection) {

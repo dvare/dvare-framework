@@ -70,7 +70,7 @@ public class Mode extends AggregationOperationExpression {
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = ((VariableExpression) right);
             String name = variableExpression.getName();
-            DataType type = variableExpression.getType().getDataType();
+            DataType type = toDataType(variableExpression.getType());
 
             switch (type) {
 
@@ -100,7 +100,7 @@ public class Mode extends AggregationOperationExpression {
                         }
                     }
 
-                    leftExpression = LiteralType.getLiteralExpression(maxValue, new FloatType());
+                    leftExpression = LiteralType.getLiteralExpression(maxValue, FloatType.class);
 
                     break;
 
@@ -128,7 +128,7 @@ public class Mode extends AggregationOperationExpression {
                             maxValue = values.get(i);
                         }
                     }
-                    leftExpression = LiteralType.getLiteralExpression(maxValue, new IntegerType());
+                    leftExpression = LiteralType.getLiteralExpression(maxValue, IntegerType.class);
 
                     break;
                 }

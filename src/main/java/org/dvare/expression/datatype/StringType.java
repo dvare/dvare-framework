@@ -49,11 +49,11 @@ public class StringType extends DataTypeExpression {
         leftValue = TrimString.trim(leftValue);
         rightValue = TrimString.trim(rightValue);
 
-        if (right.getType().getClass().equals(StringType.class)) {
+        if (right.getType().equals(StringType.class)) {
             if (leftValue.equals(rightValue)) {
                 return true;
             }
-        } else if (right.getType().getClass().equals(RegexType.class)) {
+        } else if (right.getType().equals(RegexType.class)) {
             if (leftValue.matches(rightValue)) {
                 return true;
             }
@@ -73,11 +73,11 @@ public class StringType extends DataTypeExpression {
         leftValue = TrimString.trim(leftValue);
         rightValue = TrimString.trim(rightValue);
 
-        if (right.getType().getClass().equals(StringType.class)) {
+        if (right.getType().equals(StringType.class)) {
             if (!leftValue.equals(rightValue)) {
                 return true;
             }
-        } else if (right.getType().getClass().equals(RegexType.class)) {
+        } else if (right.getType().equals(RegexType.class)) {
             if (!leftValue.matches(rightValue)) {
                 return true;
             }
@@ -148,11 +148,11 @@ public class StringType extends DataTypeExpression {
 
             if (right == null && left == null) {
                 return true;
-            } else if (right.getType().getClass().equals(StringType.class)) {
+            } else if (right.getType().equals(StringType.class)) {
                 if (leftValue.equals(rightValue)) {
                     return true;
                 }
-            } else if (right.getType().getClass().equals(RegexType.class)) {
+            } else if (right.getType().equals(RegexType.class)) {
                 if (leftValue.matches(rightValue)) {
                     return true;
                 }

@@ -25,6 +25,7 @@ package org.dvare.expression.datatype;
 
 
 import org.dvare.annotations.OperationMapping;
+import org.dvare.annotations.Type;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
@@ -67,21 +68,26 @@ public abstract class DataTypeExpression extends Expression {
 
 
         if (left instanceof NullLiteral) {
-            switch (right.getType().getDataType()) {
 
-                case FloatType: {
-                    left = LiteralType.getLiteralExpression(0f, right.getType());
-                    break;
-                }
-                case IntegerType: {
-                    left = LiteralType.getLiteralExpression(0, right.getType());
-                    break;
-                }
-                case StringType: {
-                    left = LiteralType.getLiteralExpression("", right.getType());
-                    break;
-                }
+            if (right.getType().isAnnotationPresent(Type.class)) {
+                Type type = (Type) right.getType().getAnnotation(Type.class);
 
+                switch (type.dataType()) {
+
+                    case FloatType: {
+                        left = LiteralType.getLiteralExpression(0f, right.getType());
+                        break;
+                    }
+                    case IntegerType: {
+                        left = LiteralType.getLiteralExpression(0, right.getType());
+                        break;
+                    }
+                    case StringType: {
+                        left = LiteralType.getLiteralExpression("", right.getType());
+                        break;
+                    }
+
+                }
             }
         }
 

@@ -81,6 +81,25 @@ public class EqualOperationTest extends TestCase {
         assertTrue(result);
     }
 
+
+    @Test
+    public void testApp01() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.rules.util"});
+
+
+        Expression expression = configuration.getParser().fromString("Variable3='15'", Function.class);
+        RuleBinding rule = new RuleBinding(expression);
+
+        Function function = new Function();
+        function.setVariable1(15);
+        function.setVariable3("15");
+
+        RuleEvaluator evaluator = configuration.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, function);
+        assertTrue(result);
+    }
+
     @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
 
@@ -127,7 +146,6 @@ public class EqualOperationTest extends TestCase {
         boolean result = (Boolean) evaluator.evaluate(rule, equalOperation);
         assertTrue(result);
     }
-
 
 
 }

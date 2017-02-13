@@ -94,7 +94,7 @@ public class Substring extends ChainOperationExpression {
             } catch (ArrayIndexOutOfBoundsException e) {
                 value = value.substring(index, index + count);
             }
-            return LiteralType.getLiteralExpression(value, new StringType());
+            return LiteralType.getLiteralExpression(value, StringType.class);
         }
 
         return new NullLiteral<>();

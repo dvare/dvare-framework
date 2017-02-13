@@ -28,13 +28,13 @@ import org.dvare.expression.datatype.DateTimeType;
 
 import java.util.Date;
 
-public class DateTimeVariable extends VariableExpression {
+public class DateTimeVariable extends VariableExpression<Date> {
 
     public DateTimeVariable(String name) {
         this(name, null);
     }
 
-    public DateTimeVariable(String name, Object value) {
+    public DateTimeVariable(String name, Date value) {
         this(name, value, false, 0);
     }
 
@@ -42,20 +42,11 @@ public class DateTimeVariable extends VariableExpression {
         this(name, null, list, 0);
     }
 
-    public DateTimeVariable(String name, Object value, boolean list, Integer size) {
-        super(name, new DateTimeType(), value, list, size);
+    public DateTimeVariable(String name, Date value, boolean list, Integer size) {
+        super(name, DateTimeType.class, value, list, size);
     }
 
 
-    @Override
-    public Date getValue() {
-        return (Date) value;
-    }
-
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-    }
 
 
 }

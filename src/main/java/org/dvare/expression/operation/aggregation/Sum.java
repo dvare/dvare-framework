@@ -55,7 +55,7 @@ public class Sum extends AggregationOperationExpression {
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = ((VariableExpression) right);
             String name = variableExpression.getName();
-            DataType type = variableExpression.getType().getDataType();
+            DataType type = toDataType(variableExpression.getType());
 
             switch (type) {
 

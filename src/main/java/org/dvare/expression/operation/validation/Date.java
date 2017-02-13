@@ -90,7 +90,7 @@ public class Date extends OperationExpression {
         try {
             if (dateFormat != null && value != null) {
                 java.util.Date date = dateFormat.parse(value);
-                DateLiteral<java.util.Date> literal = new DateLiteral<>(date);
+                DateLiteral literal = new DateLiteral(date);
                 stack.push(literal);
             }
         } catch (ParseException e) {

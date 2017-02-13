@@ -26,27 +26,18 @@ package org.dvare.expression.veriable;
 
 import org.dvare.expression.datatype.RegexType;
 
-public class RegexVariable extends VariableExpression {
+public class RegexVariable extends VariableExpression<String> {
 
     public RegexVariable(String name) {
         this(name, null);
     }
 
-    public RegexVariable(String name, Object value) {
+    public RegexVariable(String name, String value) {
         this(name, value, false, 0);
     }
 
-    public RegexVariable(String name, Object value, boolean list, Integer size) {
-        super(name, new RegexType(), value, list, size);
+    public RegexVariable(String name, String value, boolean list, Integer size) {
+        super(name, RegexType.class, value, list, size);
     }
 
-    @Override
-    public String getValue() {
-        return (String) value;
-    }
-
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-    }
 }

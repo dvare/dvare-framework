@@ -158,7 +158,11 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
             if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
-                leftExpression = literalExpression.getType().evaluate(this, leftExpression, literalExpression);
+                try {
+                    leftExpression = literalExpression.getType().newInstance().evaluate(this, leftExpression, literalExpression);
+                } catch (InstantiationException | IllegalAccessException e) {
+                    logger.error(e.getMessage(), e);
+                }
                 logger.debug("Updating value of  by " + leftExpression.getValue());
 
             } else {

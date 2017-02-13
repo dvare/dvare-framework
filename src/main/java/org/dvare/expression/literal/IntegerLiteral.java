@@ -3,11 +3,11 @@ package org.dvare.expression.literal;
 
 import org.dvare.expression.datatype.IntegerType;
 
-public class IntegerLiteral<T> extends LiteralExpression {
+public class IntegerLiteral extends LiteralExpression<Integer> {
 
 
-    public IntegerLiteral(T value) {
-        super(value, new IntegerType());
+    public IntegerLiteral(Integer value) {
+        super(value, IntegerType.class);
     }
 
 

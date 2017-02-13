@@ -67,7 +67,7 @@ public class Prepend extends ChainOperationExpression {
             if (prepend != null && !prepend.isEmpty()) {
                 value = new String(prepend + value);
             }
-            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, new StringType());
+            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, StringType.class);
             return returnExpression;
 
         }

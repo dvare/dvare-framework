@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation;
 
 
+import org.dvare.annotations.Type;
 import org.dvare.ast.Node;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
@@ -32,6 +33,7 @@ import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -53,7 +55,7 @@ public abstract class OperationExpression extends Expression {
     public OperationType operationType;
     protected Expression leftOperand = null;
     protected Expression rightOperand = null;
-    protected DataTypeExpression dataTypeExpression;
+    protected Class<? extends DataTypeExpression> dataTypeExpression;
     protected Expression leftValueOperand;
     protected Expression rightValueOperand;
 
@@ -119,6 +121,15 @@ public abstract class OperationExpression extends Expression {
 
     protected Object setValue(Object object, String name, Object value) throws IllegalPropertyValueException {
         return ValueFinder.updateValue(object, name, value);
+    }
+
+
+    protected DataType toDataType(Class<? extends DataTypeExpression> dataTypeExpression) {
+        if (dataTypeExpression.isAnnotationPresent(Type.class)) {
+            Type type = dataTypeExpression.getAnnotation(Type.class);
+            return type.dataType();
+        }
+        return null;
     }
 
     protected LiteralExpression toLiteralExpression(Expression expression) {

@@ -38,7 +38,6 @@ import org.dvare.expression.operation.OperationType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Stack;
 
 @Operation(type = OperationType.DATE_TIME, dataTypes = {DataType.DateTimeType})
@@ -91,7 +90,7 @@ public class DateTime extends OperationExpression {
         try {
             if (dateFormat != null && value != null) {
                 java.util.Date date = dateFormat.parse(value);
-                DateTimeLiteral<Date> literal = new DateTimeLiteral<>(date);
+                DateTimeLiteral literal = new DateTimeLiteral(date);
                 stack.push(literal);
             }
         } catch (ParseException e) {

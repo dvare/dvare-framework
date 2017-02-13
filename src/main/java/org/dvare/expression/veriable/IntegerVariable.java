@@ -25,13 +25,13 @@ package org.dvare.expression.veriable;
 
 import org.dvare.expression.datatype.IntegerType;
 
-public class IntegerVariable extends VariableExpression {
+public class IntegerVariable extends VariableExpression<Integer> {
 
     public IntegerVariable(String name) {
         this(name, null);
     }
 
-    public IntegerVariable(String name, Object value) {
+    public IntegerVariable(String name, Integer value) {
         this(name, value, false, 0);
     }
 
@@ -39,18 +39,9 @@ public class IntegerVariable extends VariableExpression {
         this(name, null, list, 0);
     }
 
-    public IntegerVariable(String name, Object value, boolean list, Integer size) {
-        super(name, new IntegerType(), value, list, size);
+    public IntegerVariable(String name, Integer value, boolean list, Integer size) {
+        super(name, IntegerType.class, value, list, size);
     }
 
-    @Override
-    public Integer getValue() {
-        return (Integer) value;
-    }
-
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-    }
 
 }

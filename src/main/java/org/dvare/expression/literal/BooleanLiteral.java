@@ -3,9 +3,9 @@ package org.dvare.expression.literal;
 
 import org.dvare.expression.datatype.BooleanType;
 
-public class BooleanLiteral<T> extends LiteralExpression {
+public class BooleanLiteral extends LiteralExpression<Boolean> {
 
-    public BooleanLiteral(T value) {
-        super(value, new BooleanType());
+    public BooleanLiteral(Boolean value) {
+        super(value, BooleanType.class);
     }
 }

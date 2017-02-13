@@ -26,10 +26,10 @@ package org.dvare.expression.literal;
 
 import org.dvare.expression.datatype.StringType;
 
-public class StringLiteral<T> extends LiteralExpression {
+public class StringLiteral extends LiteralExpression<String> {
 
 
-    public StringLiteral(T value) {
-        super(value, new StringType());
+    public StringLiteral(String value) {
+        super(value, StringType.class);
     }
 }

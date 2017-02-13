@@ -147,8 +147,8 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             VariableExpression vL = (VariableExpression) left;
             VariableExpression vR = (VariableExpression) right;
 
-            if (!vL.getType().getDataType().equals(vR.getType().getDataType())) {
-                String message = String.format("%s OperationExpression  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), vL.getType().getDataType(), vR.getType().getDataType(), ExpressionTokenizer.toString(tokens, pos));
+            if (!toDataType(vL.getType()).equals(toDataType(vR.getType()))) {
+                String message = String.format("%s OperationExpression  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), toDataType(vL.getType()), toDataType(vR.getType()), ExpressionTokenizer.toString(tokens, pos));
                 logger.error(message);
                 throw new IllegalOperationException(message);
             }
@@ -162,17 +162,17 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             DataType rightDataType = null;
             if (left instanceof VariableExpression) {
 
-                leftDataType = ((VariableExpression) left).getType().getDataType();
+                leftDataType = toDataType(((VariableExpression) left).getType());
 
             } else if (left instanceof LiteralExpression) {
-                leftDataType = ((LiteralExpression) left).getType().getDataType();
+                leftDataType = toDataType(((LiteralExpression) left).getType());
             }
 
 
             if (right instanceof VariableExpression) {
-                rightDataType = ((VariableExpression) right).getType().getDataType();
+                rightDataType = toDataType(((VariableExpression) right).getType());
             } else if (right instanceof LiteralExpression) {
-                rightDataType = ((LiteralExpression) right).getType().getDataType();
+                rightDataType = toDataType(((LiteralExpression) right).getType());
             }
 
 
@@ -293,10 +293,16 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             LiteralExpression right = toLiteralExpression(rightValueOperand);
 
             if (left instanceof NullLiteral || right instanceof NullLiteral) {
-                dataTypeExpression = new NullType();
+                dataTypeExpression = NullType.class;
             }
 
-            return dataTypeExpression.compare(this, left, right);
+
+            try {
+                return dataTypeExpression.newInstance().compare(this, left, right);
+            } catch (InstantiationException | IllegalAccessException e) {
+                logger.error(e.getMessage(), e);
+            }
+
 
         }
         return false;

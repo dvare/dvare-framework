@@ -50,7 +50,7 @@ public class Today extends OperationExpression {
         pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
         Date date = new Date();
-        DateLiteral<Date> literal = new DateLiteral<>(date);
+        DateLiteral literal = new DateLiteral(date);
         stack.push(literal);
 
 

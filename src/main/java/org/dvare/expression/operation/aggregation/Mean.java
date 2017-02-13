@@ -71,7 +71,7 @@ public class Mean extends AggregationOperationExpression {
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = ((VariableExpression) right);
             String name = variableExpression.getName();
-            DataType type = variableExpression.getType().getDataType();
+            DataType type = toDataType(variableExpression.getType());
 
             switch (type) {
 
@@ -93,7 +93,7 @@ public class Mean extends AggregationOperationExpression {
                     }
 
                     Float result = sum / values.size();
-                    leftExpression = LiteralType.getLiteralExpression(result, new FloatType());
+                    leftExpression = LiteralType.getLiteralExpression(result, FloatType.class);
 
 
                     break;
@@ -116,7 +116,7 @@ public class Mean extends AggregationOperationExpression {
                     }
 
                     Integer result = sum / values.size();
-                    leftExpression = LiteralType.getLiteralExpression(result, new IntegerType());
+                    leftExpression = LiteralType.getLiteralExpression(result, IntegerType.class);
 
 
                     break;

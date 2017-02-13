@@ -25,8 +25,8 @@ package org.dvare.expression.literal;
 
 import org.dvare.expression.datatype.NullType;
 
-public class NullLiteral<T> extends LiteralExpression {
+public class NullLiteral<T> extends LiteralExpression<T> {
     public NullLiteral() {
-        super(null, new NullType());
+        super(null, NullType.class);
     }
 }
