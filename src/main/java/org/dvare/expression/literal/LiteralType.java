@@ -23,6 +23,8 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.literal;
 
+import org.dvare.annotations.Type;
+import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
@@ -42,32 +44,55 @@ public class LiteralType {
     private static Logger logger = LoggerFactory.getLogger(LiteralType.class);
 
 
+    public static LiteralExpression<?> getLiteralExpression(Object value, Class<? extends DataTypeExpression> dataTypeExpression) throws InterpretException {
+
+        if (value == null) {
+            return new NullLiteral();
+        }
+
+        DataType dataType = null;
+        if (dataTypeExpression.isAnnotationPresent(Type.class)) {
+            Type type = dataTypeExpression.getAnnotation(Type.class);
+            dataType = type.dataType();
+        }
+
+        try {
+            return buildLiteralExpression(value, dataType);
+        } catch (IllegalValueException e) {
+            throw new InterpretException(e.getMessage(), e);
+        }
+
+    }
+
     public static LiteralExpression<?> getLiteralExpression(String value) throws IllegalValueException {
         DataType type = computeDataType(value);
         return getLiteralExpression(value, type);
     }
+
 
     public static LiteralExpression<?> getLiteralExpression(Object value, DataType type) throws IllegalValueException {
         if (value == null) {
             throw new IllegalValueException("The Literal Expression is null");
         }
 
-        String valueString = value.toString();
 
-
-        DataType rightType = computeDataType(valueString);
+        DataType rightType = computeDataType(value.toString());
         if (type != null && (rightType == DataType.RegexType)) {
             type = rightType;
         }
 
-        LiteralExpression literalExpression = null;
 
-      /*  if (type == null) {
-            type = DataType.NullType;
-        }*/
-        if (type == null) {
-            throw new IllegalValueException("Unable to parse Literal " + value + ". type is null");
+        if (type == null || type.equals(DataType.UnknownType)) {
+            throw new IllegalValueException("Unable to parse Literal " + value + " of type is Unknown Type");
         }
+
+
+        return buildLiteralExpression(value, type);
+    }
+
+    private static LiteralExpression<?> buildLiteralExpression(Object value, DataType type) throws IllegalValueException {
+        LiteralExpression literalExpression = null;
+        String valueString = value.toString();
         switch (type) {
 
 
@@ -187,15 +212,6 @@ public class LiteralType {
     }
 
 
-    public static LiteralExpression<?> getLiteralExpression(Object value, Class<? extends DataTypeExpression> type) {
-
-        if (value == null) {
-            return new NullLiteral();
-        }
-        return new LiteralExpression<>(value, type);
-    }
-
-
     public static DataType computeDataType(String value) {
 
         if ("null".equals(value) || "NULL".equals(value)) {
@@ -234,8 +250,6 @@ public class LiteralType {
         } catch (NumberFormatException e) {
         }
 
-
-      /*  return DataType.NullType;*/
-        return null;
+        return DataType.UnknownType;
     }
 }

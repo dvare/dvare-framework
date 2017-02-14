@@ -145,7 +145,7 @@ public abstract class DataTypeExpression extends Expression {
         return null;
     }
 
-    private LiteralExpression toLiteralExpression(Expression expression) {
+    private LiteralExpression toLiteralExpression(Expression expression) throws InterpretException {
 
         LiteralExpression leftExpression = null;
         if (expression instanceof LiteralExpression) {

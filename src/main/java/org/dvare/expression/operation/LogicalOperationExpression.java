@@ -27,8 +27,8 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.condition.ENDIF;
+import org.dvare.expression.operation.validation.EndForEach;
 import org.dvare.expression.operation.validation.RightPriority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +69,7 @@ public abstract class LogicalOperationExpression extends OperationExpression {
             OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
 
-                if (op instanceof RightPriority) {
+                if (op instanceof RightPriority || op instanceof EndForEach || op instanceof ENDIF) {
                     return pos - 1;
                 }
 
@@ -85,30 +85,12 @@ public abstract class LogicalOperationExpression extends OperationExpression {
                 }
 
 
-                /*if (!stack.isEmpty() && stack.peek() instanceof ChainOperationExpression) {
-                    continue;
-                } else {
-                    return pos;
-                }*/
-
             }
         }
         return pos;
     }
 
-    protected Boolean toBoolean(Object interpret) {
-        Boolean result = false;
-        if (interpret instanceof LiteralExpression) {
 
 
-            if (!(interpret instanceof NullLiteral) && ((LiteralExpression) interpret).getValue() != null) {
-                result = (Boolean) ((LiteralExpression) interpret).getValue();
-            }
-
-        } else if (interpret != null) {
-            result = (Boolean) interpret;
-        }
-        return result;
-    }
 
 }

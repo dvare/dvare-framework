@@ -24,18 +24,23 @@ THE SOFTWARE.*/
 package org.dvare.rules.test.validation;
 
 import junit.framework.TestCase;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
+import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.rules.test.validation.dataobjects.ForEachOperation;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ForEachOperationTest extends TestCase {
     @Test
@@ -43,7 +48,7 @@ public class ForEachOperationTest extends TestCase {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        String exp = "self->forEach test test.Variable1->substring(2,2)->toInteger() between [80,90] endForEach";
+        String exp = "self->forEach selfInstance selfInstance.Variable1->substring(2,2)->toInteger() between [80,90] endForEach";
 
 
         TypeBinding typeBinding = ExpressionParser.translate(ForEachOperation.class);
@@ -54,6 +59,73 @@ public class ForEachOperationTest extends TestCase {
         RuleBinding rule = new RuleBinding(expression);
 
 
+        List<ForEachOperation> dataset = new ArrayList<>();
+
+
+        ForEachOperation eachOperation1 = new ForEachOperation();
+        eachOperation1.setVariable1("D81");
+        dataset.add(eachOperation1);
+
+        ForEachOperation eachOperation2 = new ForEachOperation();
+        eachOperation2.setVariable1("D85");
+        dataset.add(eachOperation2);
+
+        ForEachOperation eachOperation3 = new ForEachOperation();
+        eachOperation3.setVariable1("D89");
+        dataset.add(eachOperation3);
+
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataset);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        Assert.assertTrue(result);
+
     }
 
+
+    @Test
+    public void testApp01() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String exp = "not self->forEach selfInstance  selfInstance.Variable1->substring(2,2)->toInteger() between [80,90] endForEach";
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(ForEachOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+        Expression expression = factory.getParser().fromString(exp, contexts);
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        List<ForEachOperation> dataSet = new ArrayList<>();
+
+
+        ForEachOperation eachOperation1 = new ForEachOperation();
+        eachOperation1.setVariable1("D81");
+        dataSet.add(eachOperation1);
+
+        ForEachOperation eachOperation2 = new ForEachOperation();
+        eachOperation2.setVariable1("D45F");
+        dataSet.add(eachOperation2);
+
+        ForEachOperation eachOperation3 = new ForEachOperation();
+        eachOperation3.setVariable1("D89");
+        dataSet.add(eachOperation3);
+
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        Assert.assertTrue(result);
+
+    }
+
+
 }
+

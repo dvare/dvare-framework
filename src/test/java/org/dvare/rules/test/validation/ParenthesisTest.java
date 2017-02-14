@@ -25,14 +25,22 @@ package org.dvare.rules.test.validation;
 
 
 import junit.framework.TestCase;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
+import org.dvare.binding.model.TypeBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.parser.ExpressionParser;
+import org.dvare.rules.test.validation.dataobjects.ForEachOperation;
 import org.dvare.rules.test.validation.dataobjects.Parenthesis;
+import org.junit.Assert;
 import org.junit.Test;
+
+import java.text.ParseException;
 
 public class ParenthesisTest extends TestCase {
     @Test
@@ -63,5 +71,34 @@ public class ParenthesisTest extends TestCase {
         assertTrue(result);
     }
 
+
+    @Test
+    public void testApp03() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String exp = "not self.Variable1->substring(2,2)->toInteger() between [80,90] and not self.Variable1->substring(2,2)->toInteger() between [40,50] and  not self.Variable1->substring(2,2)->toInteger() between [30,40]";
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(ForEachOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+        Expression expression = factory.getParser().fromString(exp, contexts);
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        ForEachOperation eachOperation1 = new ForEachOperation();
+        eachOperation1.setVariable1("D74F");
+
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", eachOperation1);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        Assert.assertTrue(result);
+
+    }
 
 }

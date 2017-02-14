@@ -9,9 +9,11 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.literal.BooleanLiteral;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -63,8 +65,8 @@ public class Combination extends OperationExpression {
                 error = "First param of combination function must be variable";
             }
 
-            if (!(expressions.get(1) instanceof ListLiteral)) {
-                error = "Second param of combination functio must be variable";
+            if (!(expressions.get(1) instanceof ListLiteral) && !(expressions.get(1) instanceof ListOperationExpression)) {
+                error = "Second param of combination function must be variable";
             }
 
 
@@ -92,9 +94,11 @@ public class Combination extends OperationExpression {
 
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
-                if (op.getClass().equals(RightPriority.class)) {
+                if (op instanceof RightPriority) {
                     this.leftOperand = new ArrayList<>(localStack);
                     return pos;
+                } else if (op instanceof LeftPriority) {
+
                 } else {
                     pos = op.parse(tokens, pos, localStack, contexts);
                 }
@@ -126,7 +130,7 @@ public class Combination extends OperationExpression {
 
         List<Expression> expressions = this.leftOperand;
         DataType dataType = null;
-        List<Object> values = null;
+        List values = new ArrayList<>();
         if (expressions.get(0) instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) expressions.get(0);
 
@@ -139,7 +143,7 @@ public class Combination extends OperationExpression {
                 dataSet.add(instance);
             }
 
-            values = new ArrayList<>();
+
             dataType = toDataType(variableExpression.getType());
             for (Object dataRow : dataSet) {
                 variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
@@ -151,41 +155,68 @@ public class Combination extends OperationExpression {
         }
 
 
-        List<Object> comb = null;
+        List comb = null;
         if (expressions.get(1) instanceof ListLiteral) {
             ListLiteral listLiteral = (ListLiteral) expressions.get(1);
-            if (dataType == null) {
-                dataType = toDataType(listLiteral.getType());
-            }
 
-            if (listLiteral.getValue() instanceof Collection) {
-                comb = (List) listLiteral.getValue();
+            if (listLiteral.getValue() != null) {
+                comb = listLiteral.getValue();
+            }
+        } else if (expressions.get(1) instanceof OperationExpression) {
+            OperationExpression operationExpression = (OperationExpression) expressions.get(1);
+
+            LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(instancesBinding);
+            if (literalExpression instanceof ListLiteral) {
+                ListLiteral listLiteral = (ListLiteral) literalExpression;
+                if (listLiteral.getValue() != null) {
+                    comb = listLiteral.getValue();
+                }
             }
         }
 
 
-        if (comb != null && values != null) {
+        Boolean anyMatch = false;
+        if (expressions.size() > 2) {
+
+            if (expressions.get(2) instanceof BooleanLiteral) {
+                anyMatch = ((BooleanLiteral) expressions.get(2)).getValue();
+            }
+        }
+
+
+        if (comb != null && !comb.isEmpty() && !values.isEmpty()) {
 
 
             switch (dataType) {
                 case StringType: {
-                    List<String> valueSet = (List<String>) (List<?>) values;
-                    TreeSet<String> treeSet = new TreeSet<>();
-                    for (String value : valueSet) {
-                        treeSet.add(TrimString.trim(value));
+                    List<String> valueStringList = (List<String>) values;
+                    TreeSet<String> valuesSet = new TreeSet<>();
+                    for (String value : valueStringList) {
+                        valuesSet.add(TrimString.trim(value));
                     }
 
 
                     try {
-                        List<String> testValues = (List<String>) (List<?>) comb;
+                        List<String> combStringList = (List<String>) comb;
 
 
-                        List<String> testSet = new ArrayList<>();
-                        for (String value : testValues) {
-                            testSet.add(TrimString.trim(value));
+                        List<String> combSet = new ArrayList<>();
+                        for (String value : combStringList) {
+                            combSet.add(TrimString.trim(value));
                         }
 
-                        return treeSet.containsAll(testSet);
+                        if (anyMatch) {
+
+                            for (String value : valuesSet) {
+                                if (!combStringList.contains(value)) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        } else {
+                            return valuesSet.containsAll(combSet);
+                        }
+
 
                     } catch (ClassCastException e) {
                         logger.error(e.getMessage(), e);
@@ -194,39 +225,62 @@ public class Combination extends OperationExpression {
                 }
 
                 case IntegerType: {
-                    List<Integer> valueSet = (List<Integer>) (List<?>) values;
-                    TreeSet<Integer> treeSet = new TreeSet<>();
-                    treeSet.addAll(valueSet);
+                    List<Integer> valueStringList = (List<Integer>) values;
+                    TreeSet<Integer> valuesSet = new TreeSet<>();
+                    valuesSet.addAll(valueStringList);
 
                     try {
-                        List<Integer> testSet = (List<Integer>) (List<?>) comb;
-                        return treeSet.containsAll(testSet);
+                        List<Integer> combList = (List<Integer>) comb;
+
+                        if (anyMatch) {
+                            for (Integer value : valuesSet) {
+                                if (!combList.contains(value)) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        } else {
+                            return valueStringList.containsAll(combList);
+                        }
+
 
                     } catch (ClassCastException e) {
-                        List<Float> testSet = (List<Float>) (List<?>) comb;
-                        return treeSet.containsAll(testSet);
+                        List<Float> combList = (List<Float>) comb;
+
+                        return valuesSet.containsAll(combList);
                     }
 
                 }
 
                 case FloatType: {
-                    List<Float> valueSet = (List<Float>) (List<?>) values;
+                    List<Float> valueStringList = (List<Float>) values;
 
 
-                    TreeSet<Float> treeSet = new TreeSet<>();
-                    treeSet.addAll(valueSet);
+                    TreeSet<Float> valuesSet = new TreeSet<>();
+                    valuesSet.addAll(valueStringList);
 
                     try {
-                        List<Float> testSet = (List<Float>) (List<?>) comb;
-                        return treeSet.containsAll(testSet);
+                        List<Float> combList = (List<Float>) comb;
+
+
+                        if (anyMatch) {
+                            for (Float value : valuesSet) {
+                                if (!combList.contains(value)) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        } else {
+                            return valuesSet.containsAll(combList);
+                        }
+
+
                     } catch (ClassCastException e) {
-                        List<Integer> testSet = (List<Integer>) (List<?>) comb;
-                        return treeSet.containsAll(testSet);
+                        List<Integer> combList = (List<Integer>) comb;
+                        return valuesSet.containsAll(combList);
                     }
                 }
-                default: {
-                    return false;
-                }
+
             }
 
 

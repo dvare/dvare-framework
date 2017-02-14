@@ -1,9 +1,11 @@
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
+import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.NamedExpression;
@@ -18,12 +20,16 @@ import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 @Operation(type = OperationType.FOREACH)
 public class ForEach extends OperationExpression {
     private static Logger logger = LoggerFactory.getLogger(ForEach.class);
 
+    String refrenceValueToken;
+    String driveContexttToken;
 
     public ForEach() {
         super(OperationType.FOREACH);
@@ -34,9 +40,9 @@ public class ForEach extends OperationExpression {
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
 
-        String refrenceValueToken = tokens[pos - 1];
+        refrenceValueToken = tokens[pos - 1];
         pos = pos + 1;
-        String driveContexttToken = tokens[pos];
+        driveContexttToken = tokens[pos];
         pos = pos + 1;
 
 
@@ -55,7 +61,6 @@ public class ForEach extends OperationExpression {
 
             } else {
 
-
                 TypeBinding typeBinding = contexts.getContext(refrenceValueToken);
                 if (contexts.getContext(refrenceValueToken) != null) {
                     contexts.addContext(driveContexttToken, typeBinding);
@@ -66,12 +71,12 @@ public class ForEach extends OperationExpression {
             valueExpression = stack.pop();
         }
 
-
+/*
         if (valueExpression instanceof VariableExpression) {
 
             this.leftOperand = valueExpression;
             // thing not sure at this time
-        }
+        }*/
 
 
         pos = findNextExpression(tokens, pos, stack, contexts);
@@ -126,5 +131,32 @@ public class ForEach extends OperationExpression {
         throw new ExpressionParseException("Function Closing Bracket Not Found");
     }
 
+
+    @Override
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        Object object = instancesBinding.getInstance(refrenceValueToken);
+        if (object instanceof List) {
+            List instances = (List) object;
+
+            List<Boolean> results = new ArrayList<>();
+
+            for (Object instance : instances) {
+                instancesBinding.addInstance(driveContexttToken, instance);
+
+                Object result = rightOperand.interpret(instancesBinding);
+                results.add(toBoolean(result));
+
+
+            }
+
+            instancesBinding.removeInstance(refrenceValueToken);
+
+
+            return results.stream().allMatch(Boolean::booleanValue);
+
+        }
+
+        return false;
+    }
 
 }

@@ -37,6 +37,7 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
@@ -107,9 +108,6 @@ public abstract class OperationExpression extends Expression {
         return tokenType;
     }
 
-    public List<String> getSymbols() {
-        return this.operationType.getSymbols();
-    }
 
     public abstract Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException;
 
@@ -132,65 +130,6 @@ public abstract class OperationExpression extends Expression {
         return null;
     }
 
-    protected LiteralExpression toLiteralExpression(Expression expression) {
-
-
-        LiteralExpression leftExpression = null;
-        if (expression instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) expression;
-            leftExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
-        } else if (expression instanceof LiteralExpression) {
-            leftExpression = (LiteralExpression) expression;
-        }
-        return leftExpression;
-    }
-
-    public Node<String> AST() {
-
-        Node<String> root = new Node<String>(this.toString());
-
-        root.left = new Node<String>(this.leftOperand.toString());
-
-        root.right = new Node<String>(this.rightOperand.toString());
-
-        return root;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder toStringBuilder = new StringBuilder();
-
-        if (leftOperand != null) {
-            toStringBuilder.append(leftOperand.toString());
-            toStringBuilder.append(" ");
-        }
-
-        toStringBuilder.append(operationType.getSymbols().get(0));
-        toStringBuilder.append(" ");
-
-        if (rightOperand != null) {
-            toStringBuilder.append(rightOperand.toString());
-            toStringBuilder.append(" ");
-        }
-
-        return toStringBuilder.toString();
-    }
-
-    public Expression getLeftOperand() {
-        return leftOperand;
-    }
-
-    public void setLeftOperand(Expression leftOperand) {
-        this.leftOperand = leftOperand;
-    }
-
-    public Expression getRightOperand() {
-        return rightOperand;
-    }
-
-    public void setRightOperand(Expression rightOperand) {
-        this.rightOperand = rightOperand;
-    }
 
     public Expression interpretOperand(Expression expression, InstancesBinding instancesBinding) throws InterpretException {
 
@@ -230,10 +169,92 @@ public abstract class OperationExpression extends Expression {
 
     }
 
+    protected LiteralExpression toLiteralExpression(Expression expression) throws InterpretException {
+
+
+        LiteralExpression leftExpression = null;
+        if (expression instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) expression;
+            leftExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
+        } else if (expression instanceof LiteralExpression) {
+            leftExpression = (LiteralExpression) expression;
+        }
+        return leftExpression;
+    }
+
+    protected Boolean toBoolean(Object interpret) {
+        Boolean result = false;
+        if (interpret instanceof LiteralExpression) {
+
+
+            if (!(interpret instanceof NullLiteral) && ((LiteralExpression) interpret).getValue() != null) {
+                result = (Boolean) ((LiteralExpression) interpret).getValue();
+            }
+
+        } else if (interpret != null && interpret instanceof Boolean) {
+            result = (Boolean) interpret;
+        }
+        return result;
+    }
+
+    public Node<String> AST() {
+
+        Node<String> root = new Node<String>(this.toString());
+
+        root.left = new Node<String>(this.leftOperand.toString());
+
+        root.right = new Node<String>(this.rightOperand.toString());
+
+        return root;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+
+        if (leftOperand != null) {
+            toStringBuilder.append(leftOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(" ");
+
+        if (rightOperand != null) {
+            toStringBuilder.append(rightOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        return toStringBuilder.toString();
+    }
+
+    public Expression getLeftOperand() {
+        return leftOperand;
+    }
+
+
+
+    /*Getyter and Setters*/
+
+    public void setLeftOperand(Expression leftOperand) {
+        this.leftOperand = leftOperand;
+    }
+
+    public Expression getRightOperand() {
+        return rightOperand;
+    }
+
+    public void setRightOperand(Expression rightOperand) {
+        this.rightOperand = rightOperand;
+    }
+
+    public List<String> getSymbols() {
+        return this.operationType.getSymbols();
+    }
+
     public static class TokenType {
         public String type;
         public String token;
     }
-
 
 }

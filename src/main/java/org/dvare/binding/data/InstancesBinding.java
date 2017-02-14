@@ -31,6 +31,13 @@ public class InstancesBinding {
         return null;
     }
 
+    public void removeInstance(String name) {
+        if (instances.containsKey(name)) {
+            instances.remove(name);
+        }
+    }
+
+
     public Map<String, Object> getInstances() {
         return instances;
     }
@@ -38,4 +45,6 @@ public class InstancesBinding {
     public void setInstances(Map<String, Object> instances) {
         this.instances = instances;
     }
+
+
 }
