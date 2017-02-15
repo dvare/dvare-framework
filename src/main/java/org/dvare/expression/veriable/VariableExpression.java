@@ -32,23 +32,17 @@ public abstract class VariableExpression<T> extends Expression {
     protected Class<? extends DataTypeExpression> type;
     protected String operandType;
     protected T value;
-    protected boolean list;
-    protected Integer listSize;
+
 
     VariableExpression(String name, Class<? extends DataTypeExpression> type) {
         this(name, type, null);
     }
 
     VariableExpression(String name, Class<? extends DataTypeExpression> type, T value) {
-        this(name, type, value, false, 0);
-    }
-
-    VariableExpression(String name, Class<? extends DataTypeExpression> type, T value, boolean list, Integer listSize) {
         this.name = name;
         this.type = type;
         this.value = value;
-        this.list = list;
-        this.listSize = listSize;
+
     }
 
     @Override
@@ -68,21 +62,6 @@ public abstract class VariableExpression<T> extends Expression {
         return type;
     }
 
-    public Integer getListSize() {
-        return listSize;
-    }
-
-    public void setListSize(Integer listSize) {
-        this.listSize = listSize;
-    }
-
-    public boolean isList() {
-        return list;
-    }
-
-    public void setList(boolean list) {
-        this.list = list;
-    }
 
     public T getValue() {
         return value;

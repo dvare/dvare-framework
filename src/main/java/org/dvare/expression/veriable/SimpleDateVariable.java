@@ -24,15 +24,22 @@ THE SOFTWARE.*/
 package org.dvare.expression.veriable;
 
 
-import org.dvare.expression.datatype.RegexType;
+import org.dvare.expression.datatype.SimpleDateType;
 
-public class RegexVariable extends VariableExpression<String> {
+import java.util.Date;
 
-    public RegexVariable(String name) {
+public class SimpleDateVariable extends VariableExpression<Date> {
+
+
+    public SimpleDateVariable(String name) {
         this(name, null);
+
     }
 
-    public RegexVariable(String name, String value) {
-        super(name, RegexType.class, value);
+    public SimpleDateVariable(String name, Date date) {
+        super(name, SimpleDateType.class, date);
+
     }
+
+
 }

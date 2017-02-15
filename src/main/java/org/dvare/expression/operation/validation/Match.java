@@ -25,14 +25,14 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-@Operation(type = OperationType.COMBINATION)
-public class Combination extends OperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Combination.class);
+@Operation(type = OperationType.Match)
+public class Match extends OperationExpression {
+    static Logger logger = LoggerFactory.getLogger(Match.class);
 
     protected List<Expression> leftOperand;
 
-    public Combination() {
-        super(OperationType.COMBINATION);
+    public Match() {
+        super(OperationType.Match);
     }
 
 
@@ -56,9 +56,6 @@ public class Combination extends OperationExpression {
         if (expressions == null || expressions.isEmpty()) {
             error = "No Parameters Found Expression Found";
 
-        } else if (expressions.size() != 2) {
-
-            error = "two param need in combination function ";
         } else {
 
             if (!(expressions.get(0) instanceof VariableExpression)) {
@@ -155,12 +152,12 @@ public class Combination extends OperationExpression {
         }
 
 
-        List comb = null;
+        List matchParams = null;
         if (expressions.get(1) instanceof ListLiteral) {
             ListLiteral listLiteral = (ListLiteral) expressions.get(1);
 
             if (listLiteral.getValue() != null) {
-                comb = listLiteral.getValue();
+                matchParams = listLiteral.getValue();
             }
         } else if (expressions.get(1) instanceof OperationExpression) {
             OperationExpression operationExpression = (OperationExpression) expressions.get(1);
@@ -169,7 +166,7 @@ public class Combination extends OperationExpression {
             if (literalExpression instanceof ListLiteral) {
                 ListLiteral listLiteral = (ListLiteral) literalExpression;
                 if (listLiteral.getValue() != null) {
-                    comb = listLiteral.getValue();
+                    matchParams = listLiteral.getValue();
                 }
             }
         }
@@ -184,7 +181,7 @@ public class Combination extends OperationExpression {
         }
 
 
-        if (comb != null && !comb.isEmpty() && !values.isEmpty()) {
+        if (dataType != null && matchParams != null && !matchParams.isEmpty() && !values.isEmpty()) {
 
 
             switch (dataType) {
@@ -197,7 +194,7 @@ public class Combination extends OperationExpression {
 
 
                     try {
-                        List<String> combStringList = (List<String>) comb;
+                        List<String> combStringList = (List<String>) matchParams;
 
 
                         List<String> combSet = new ArrayList<>();
@@ -230,7 +227,7 @@ public class Combination extends OperationExpression {
                     valuesSet.addAll(valueStringList);
 
                     try {
-                        List<Integer> combList = (List<Integer>) comb;
+                        List<Integer> combList = (List<Integer>) matchParams;
 
                         if (anyMatch) {
                             for (Integer value : valuesSet) {
@@ -245,7 +242,7 @@ public class Combination extends OperationExpression {
 
 
                     } catch (ClassCastException e) {
-                        List<Float> combList = (List<Float>) comb;
+                        List<Float> combList = (List<Float>) matchParams;
 
                         return valuesSet.containsAll(combList);
                     }
@@ -260,7 +257,7 @@ public class Combination extends OperationExpression {
                     valuesSet.addAll(valueStringList);
 
                     try {
-                        List<Float> combList = (List<Float>) comb;
+                        List<Float> combList = (List<Float>) matchParams;
 
 
                         if (anyMatch) {
@@ -276,7 +273,7 @@ public class Combination extends OperationExpression {
 
 
                     } catch (ClassCastException e) {
-                        List<Integer> combList = (List<Integer>) comb;
+                        List<Integer> combList = (List<Integer>) matchParams;
                         return valuesSet.containsAll(combList);
                     }
                 }

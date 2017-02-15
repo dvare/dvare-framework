@@ -9,6 +9,7 @@ import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.EqualityOperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.parser.ExpressionTokenizer;
 
@@ -43,12 +44,12 @@ public class In extends EqualityOperationExpression {
 
         String message = null;
 
-        if (right instanceof VariableExpression) {
+        if (right instanceof VariableExpression && !(right instanceof ListVariable)) {
             VariableExpression variableExpression = (VariableExpression) right;
-            if (!variableExpression.isList()) {
-                message = String.format("List OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), toDataType(variableExpression.getType()), ExpressionTokenizer.toString(tokens, pos + 2));
 
-            }
+            message = String.format("List OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), toDataType(variableExpression.getType()), ExpressionTokenizer.toString(tokens, pos + 2));
+
+
         } else if (right instanceof LiteralExpression) {
             LiteralExpression literalExpression = (LiteralExpression) right;
             if (!(literalExpression instanceof ListLiteral)) {

@@ -188,7 +188,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
                     }
                 } else {
 
-                    if (!leftDataType.equals(rightDataType) && (leftDataType != DataType.DateType && rightDataType != DataType.DateTimeType)) {
+                    if (!leftDataType.equals(rightDataType) && (leftDataType != DataType.SimpleDateType && leftDataType != DataType.DateType && rightDataType != DataType.DateTimeType)) {
                         String message = String.format("%s OperationExpression not possible between  type %s and %s near %s", this.getClass().getSimpleName(), leftDataType, rightDataType, ExpressionTokenizer.toString(tokens, pos));
                         logger.error(message);
                         throw new IllegalOperationException(message);

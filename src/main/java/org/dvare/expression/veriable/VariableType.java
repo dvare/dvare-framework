@@ -27,20 +27,20 @@ package org.dvare.expression.veriable;
 import org.dvare.annotations.Type;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.parser.IllegalPropertyException;
-import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.*;
+import org.dvare.expression.literal.LiteralType;
 import org.dvare.util.ValueFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class VariableType {
-    static Logger logger = LoggerFactory.getLogger(VariableType.class);
-    static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    static SimpleDateFormat datTimeFormat = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
-    static SimpleDateFormat defaultFormate = new SimpleDateFormat("E MMM dd hh:mm:ss Z yyyy");
+    private static Logger logger = LoggerFactory.getLogger(VariableType.class);
 
 
     public static VariableExpression getVariableType(String name, DataType type, String operandType) throws IllegalPropertyException {
@@ -51,7 +51,7 @@ public class VariableType {
 
 
     public static VariableExpression getVariableType(String name, DataType type) throws IllegalPropertyException {
-        VariableExpression variableExpression = null;
+        VariableExpression variableExpression;
 
         if (name == null)
             throw new IllegalPropertyException("The provided string must not be null");
@@ -67,7 +67,7 @@ public class VariableType {
                 break;
             }
             case BooleanListType: {
-                variableExpression = new BooleanVariable(name, true);
+                variableExpression = new ListVariable(name, BooleanType.class);
                 break;
             }
             case FloatType: {
@@ -75,7 +75,7 @@ public class VariableType {
                 break;
             }
             case FloatListType: {
-                variableExpression = new FloatVariable(name, true);
+                variableExpression = new ListVariable(name, FloatType.class);
                 break;
             }
             case IntegerType: {
@@ -83,7 +83,7 @@ public class VariableType {
                 break;
             }
             case IntegerListType: {
-                variableExpression = new IntegerVariable(name, true);
+                variableExpression = new ListVariable(name, IntegerType.class);
                 break;
             }
             case StringType: {
@@ -91,7 +91,7 @@ public class VariableType {
                 break;
             }
             case StringListType: {
-                variableExpression = new StringVariable(name, true);
+                variableExpression = new ListVariable(name, StringType.class);
                 break;
             }
             case DateTimeType: {
@@ -99,7 +99,7 @@ public class VariableType {
                 break;
             }
             case DateTimeListType: {
-                variableExpression = new DateTimeVariable(name, true);
+                variableExpression = new ListVariable(name, DateTimeType.class);
                 break;
             }
             case DateType: {
@@ -107,7 +107,15 @@ public class VariableType {
                 break;
             }
             case DateListType: {
-                variableExpression = new DateVariable(name, true);
+                variableExpression = new ListVariable(name, DateType.class);
+                break;
+            }
+            case SimpleDateType: {
+                variableExpression = new SimpleDateVariable(name);
+                break;
+            }
+            case SimpleDateListType: {
+                variableExpression = new ListVariable(name, SimpleDateType.class);
                 break;
             }
             case RegexType: {
@@ -146,19 +154,198 @@ public class VariableType {
             DataType dataType = type.dataType();
             switch (dataType) {
                 case BooleanType: {
-                    if (value instanceof Boolean) {
-                        variable.setValue((Boolean) value);
-                    } else {
-                        if (value.toString().equals("")) {
-                            variable.setValue(Boolean.valueOf(false));
+                    if (variable instanceof BooleanVariable) {
+                        BooleanVariable booleanVariable = (BooleanVariable) variable;
+                        if (value instanceof Boolean) {
+                            booleanVariable.setValue((Boolean) value);
                         } else {
-                            variable.setValue(Boolean.parseBoolean((String) value));
+                            if (value.toString().equals("")) {
+                                booleanVariable.setValue(false);
+                            } else {
+                                booleanVariable.setValue(Boolean.parseBoolean((String) value));
+                            }
                         }
+                    }
+                    break;
+                }
+
+                case FloatType: {
+                    if (variable instanceof FloatVariable) {
+                        FloatVariable floatVariable = (FloatVariable) variable;
+                        try {
+                            if (value instanceof Float) {
+                                floatVariable.setValue((Float) value);
+                            } else {
+
+                                if (value.toString().equals("")) {
+                                    floatVariable.setValue(0f);
+                                } else {
+                                    floatVariable.setValue(Float.parseFloat(value.toString()));
+                                }
+
+                            }
+
+                        } catch (NumberFormatException e) {
+                            String message = String.format("Unable to Parse literal %s to Float", value);
+                            logger.error(message);
+                            throw new IllegalPropertyValueException(message);
+                        }
+                    }
+                    break;
+                }
+                case IntegerType: {
+                    if (variable instanceof IntegerVariable) {
+                        IntegerVariable integerVariable = (IntegerVariable) variable;
+                        try {
+                            if (value instanceof Integer) {
+                                integerVariable.setValue((Integer) value);
+                            } else {
+
+                                if (value.toString().equals("")) {
+                                    integerVariable.setValue(0);
+                                } else {
+                                    integerVariable.setValue(Integer.parseInt((String) value));
+                                }
+                            }
+
+                        } catch (NumberFormatException e) {
+                            String message = String.format("Unable to Parse literal %s to Integer", value);
+                            logger.error(message);
+                            throw new IllegalPropertyValueException(message);
+                        }
+                    }
+                    break;
+                }
+                case StringType: {
+                    if (variable instanceof StringVariable) {
+                        StringVariable stringVariable = (StringVariable) variable;
+                        if (value instanceof String) {
+                            stringVariable.setValue((String) value);
+                        } else {
+                            stringVariable.setValue(value.toString());
+                        }
+                    }
+                    break;
+                }
+                case DateTimeType: {
+                    if (variable instanceof DateTimeVariable) {
+                        DateTimeVariable dateTimeVariable = (DateTimeVariable) variable;
+                        LocalDateTime localDateTime = null;
+                        if (value instanceof LocalDateTime) {
+                            localDateTime = (LocalDateTime) value;
+
+                        } else if (value instanceof Date) {
+                            Date date = (Date) value;
+                            localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+                        } else {
+                            String newValue = (String) value;
+                            if (!newValue.isEmpty()) {
+                                try {
+                                    localDateTime = LocalDateTime.parse(newValue, LiteralType.dateTimeFormat);
+                                } catch (Exception e) {
+                                    try {
+                                        localDateTime = LocalDateTime.parse(newValue, LiteralType.defaultFormat);
+                                    } catch (Exception ex) {
+                                        String message = String.format("Unable to Parse literal %s to DateTime", newValue);
+                                        logger.error(message);
+                                        throw new IllegalPropertyValueException(message);
+                                    }
+                                }
+
+                            }
+                        }
+                        dateTimeVariable.setValue(localDateTime);
                     }
 
                     break;
                 }
-                case BooleanListType: {
+                case DateType: {
+
+                    if (variable instanceof DateVariable) {
+                        DateVariable dateVariable = (DateVariable) variable;
+
+                        LocalDate localDate = null;
+                        if (value instanceof LocalDate) {
+                            localDate = (LocalDate) value;
+                        } else if (value instanceof Date) {
+                            Date date = (Date) value;
+                            localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                        } else {
+                            String newValue = (String) value;
+                            if (!newValue.isEmpty()) {
+                                try {
+                                    localDate = LocalDate.parse(newValue, LiteralType.dateFormat);
+                                } catch (Exception e) {
+
+
+                                    try {
+                                        localDate = LocalDate.parse(newValue, LiteralType.defaultFormat);
+                                    } catch (Exception ex) {
+                                        String message = String.format("Unable to Parse literal %s to Date", newValue);
+                                        logger.error(message);
+                                        throw new IllegalPropertyValueException(message);
+                                    }
+
+
+                                }
+
+                            }
+                        }
+                        dateVariable.setValue(localDate);
+                    }
+                    break;
+                }
+
+                case SimpleDateType: {
+
+                    if (variable instanceof SimpleDateVariable) {
+                        SimpleDateVariable dateVariable = (SimpleDateVariable) variable;
+
+                        Date date = null;
+                        if (value instanceof LocalDate) {
+                            LocalDate localDate = (LocalDate) value;
+                            date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                        } else if (value instanceof LocalDateTime) {
+                            LocalDateTime localDateTime = (LocalDateTime) value;
+                            date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                        } else if (value instanceof Date) {
+                            date = (Date) value;
+
+                        } else {
+                            String newValue = (String) value;
+                            if (!newValue.isEmpty()) {
+                                try {
+                                    date = SimpleDateType.dateFormat.parse(newValue);
+                                } catch (Exception e) {
+
+
+                                    try {
+                                        date = SimpleDateType.dateTimeFormat.parse(newValue);
+                                    } catch (ParseException ex) {
+                                        String message = String.format("Unable to Parse literal %s to Date", newValue);
+                                        logger.error(message);
+                                        throw new IllegalPropertyValueException(message);
+                                    }
+
+
+                                }
+
+                            }
+                        }
+                        dateVariable.setValue(date);
+                    }
+                    break;
+                }
+                case RegexType: {
+                    if (variable instanceof RegexVariable) {
+                        RegexVariable regexVariable = (RegexVariable) variable;
+                        regexVariable.setValue(value.toString());
+                    }
+                    break;
+                }
+
+                /*case BooleanListType: {
                     if (value instanceof Boolean[]) {
                         variable.setValue((Boolean[]) value);
                     } else {
@@ -176,119 +363,7 @@ public class VariableType {
                         }
                     }
                     break;
-                }
-                case FloatType: {
-                    try {
-                        if (value instanceof Float) {
-                            variable.setValue((Float) value);
-                        } else {
-
-                            if (value.toString().equals("")) {
-                                variable.setValue(0f);
-                            } else {
-                                variable.setValue(Float.parseFloat(value.toString()));
-                            }
-
-                        }
-
-                    } catch (NumberFormatException e) {
-                        String message = String.format("Unable to Parse literal %s to Float", value);
-                        logger.error(message);
-                        throw new IllegalPropertyValueException(message);
-                    }
-                    break;
-                }
-                case IntegerType: {
-                    try {
-                        if (value instanceof Integer) {
-                            variable.setValue((Integer) value);
-                        } else {
-
-                            if (value.toString().equals("")) {
-                                variable.setValue(0);
-                            } else {
-                                variable.setValue(Integer.parseInt((String) value));
-                            }
-                        }
-
-                    } catch (NumberFormatException e) {
-                        String message = String.format("Unable to Parse literal %s to Integer", value);
-                        logger.error(message);
-                        throw new IllegalPropertyValueException(message);
-                    }
-                    break;
-                }
-                case StringType: {
-
-                    if (value instanceof String) {
-                        variable.setValue((String) value);
-                    } else {
-                        variable.setValue(value.toString());
-                    }
-                    break;
-                }
-                case DateTimeType: {
-
-                    Date date = null;
-                    if (value instanceof Date) {
-                        date = (Date) value;
-                        variable.setValue(date);
-                    } else {
-                        String newValue = (String) value;
-                        if (!newValue.isEmpty()) {
-                            try {
-                                date = datTimeFormat.parse(newValue);
-                            } catch (ParseException e) {
-                                try {
-                                    date = defaultFormate.parse(newValue);
-                                } catch (ParseException ex) {
-                                    String message = String.format("Unable to Parse literal %s to DateTime", newValue);
-                                    logger.error(message);
-                                    throw new IllegalPropertyValueException(message);
-                                }
-                            }
-                            variable.setValue(date);
-                        }
-                    }
-
-
-                    break;
-                }
-                case DateType: {
-
-
-                    Date date = null;
-                    if (value instanceof Date) {
-                        date = (Date) value;
-                        variable.setValue(date);
-                    } else {
-                        String newValue = (String) value;
-                        if (!newValue.isEmpty()) {
-                            try {
-                                date = dateFormat.parse(newValue);
-                            } catch (ParseException e) {
-
-
-                                try {
-                                    date = defaultFormate.parse(newValue);
-                                } catch (ParseException ex) {
-                                    String message = String.format("Unable to Parse literal %s to Date", newValue);
-                                    logger.error(message);
-                                    throw new IllegalPropertyValueException(message);
-                                }
-
-
-                            }
-                            variable.setValue(date);
-                        }
-                    }
-
-                    break;
-                }
-                case RegexType: {
-                    variable.setValue((String) value);
-                    break;
-                }
+                }*/
             }
 
         }

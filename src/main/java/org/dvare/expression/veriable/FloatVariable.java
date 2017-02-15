@@ -28,22 +28,13 @@ import org.dvare.expression.datatype.FloatType;
 
 public class FloatVariable extends VariableExpression<Float> {
 
+
     public FloatVariable(String name) {
         this(name, null);
     }
 
+
     public FloatVariable(String name, Float value) {
-        this(name, value, false, 0);
+        super(name, FloatType.class, value);
     }
-
-    public FloatVariable(String name, boolean list) {
-        this(name, null, list, 0);
-    }
-
-    public FloatVariable(String name, Float value, boolean list, Integer size) {
-        super(name, FloatType.class, value, list, size);
-
-
-    }
-
 }

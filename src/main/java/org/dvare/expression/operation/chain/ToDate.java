@@ -35,6 +35,8 @@ import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Operation(type = OperationType.TO_DATE, dataTypes = {DataType.StringType})
@@ -64,24 +66,25 @@ public class ToDate extends ChainOperationExpression {
 
             Object value = literalExpression.getValue();
             try {
-                Date date = null;
-                if (value instanceof Date) {
-                    date = (Date) value;
-
-
+                LocalDate localDate = null;
+                if (value instanceof LocalDate) {
+                    localDate = (LocalDate) value;
+                } else if (value instanceof Date) {
+                    Date date = (Date) value;
+                    localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 } else {
                     String valueString = literalExpression.getValue().toString();
                     valueString = TrimString.trim(valueString);
 
                     if (valueString.matches(LiteralType.date)) {
-                        date = LiteralType.dateFormat.parse(valueString);
+                        localDate = LocalDate.parse(valueString, LiteralType.dateFormat);
 
                     }
 
                 }
 
-                if (date != null) {
-                    return LiteralType.getLiteralExpression(date, DataType.DateType);
+                if (localDate != null) {
+                    return LiteralType.getLiteralExpression(localDate, DataType.DateType);
                 }
 
             } catch (Exception e) {

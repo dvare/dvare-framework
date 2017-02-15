@@ -10,12 +10,13 @@ import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.EqualityOperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.parser.ExpressionTokenizer;
 
 import java.util.Stack;
 
-@Operation(type = OperationType.BETWEEN, dataTypes = {DataType.FloatType, DataType.IntegerType, DataType.DateTimeType, DataType.DateType})
+@Operation(type = OperationType.BETWEEN, dataTypes = {DataType.FloatType, DataType.IntegerType, DataType.DateTimeType, DataType.DateType, DataType.SimpleDateType})
 public class Between extends EqualityOperationExpression {
     public Between() {
         super(OperationType.BETWEEN);
@@ -41,18 +42,9 @@ public class Between extends EqualityOperationExpression {
 
         String message = null;
 
-        if (right instanceof VariableExpression) {
+        if (right instanceof VariableExpression && !(right instanceof ListVariable)) {
             VariableExpression variableExpression = (VariableExpression) right;
-            if (!variableExpression.isList()) {
-                message = String.format("Between OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), toDataType(variableExpression.getType()), ExpressionTokenizer.toString(tokens, pos + 2));
-
-            } else {
-                if (variableExpression.getListSize() != 2) {
-                    message = String.format("OperationExpression %s required 2 values", this.getClass().getSimpleName());
-                    logger.error(message);
-                    throw new IllegalOperationException(message);
-                }
-            }
+            message = String.format("Between OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), toDataType(variableExpression.getType()), ExpressionTokenizer.toString(tokens, pos + 2));
         } else if (right instanceof LiteralExpression) {
             LiteralExpression literalExpression = (LiteralExpression) right;
             if (!(literalExpression instanceof ListLiteral)) {

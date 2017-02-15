@@ -30,7 +30,7 @@ import java.util.List;
 public enum OperationType {
 
     List("["),
-    ABSOLUTE("Abs", "abs"), COMBINATION("Combination", "combination", "comb"), FUNCTION("Function", "function", "fun"),//
+    ABSOLUTE("Abs", "abs"), Match("Match", "match"), FUNCTION("Function", "function", "fun"),//
     LEFT_PRIORITY("("), RIGHT_PRIORITY(")"),//
     DATE("Date", "date"), DATE_TIME("DateTime", "dateTime"), TO_DAY("today", "ToDay"),//
     FOUND("Found", "found"), POWER("Pow", "pow", "^"),//

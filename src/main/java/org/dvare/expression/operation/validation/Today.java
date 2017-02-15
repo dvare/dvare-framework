@@ -24,15 +24,17 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
+import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.DateLiteral;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Stack;
 
 @Operation(type = OperationType.TO_DAY)
@@ -49,9 +51,7 @@ public class Today extends OperationExpression {
 
         pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
-        Date date = new Date();
-        DateLiteral literal = new DateLiteral(date);
-        stack.push(literal);
+        stack.push(this);
 
 
         return pos;
@@ -72,6 +72,12 @@ public class Today extends OperationExpression {
             }
         }
         return null;
+    }
+
+
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        LocalDate date = LocalDate.now();
+        return new DateLiteral(date);
     }
 
 

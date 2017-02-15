@@ -3,11 +3,11 @@ package org.dvare.expression.literal;
 
 import org.dvare.expression.datatype.DateType;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-public class DateLiteral extends LiteralExpression<Date> {
+public class DateLiteral extends LiteralExpression<LocalDate> {
 
-    public DateLiteral(Date value) {
+    public DateLiteral(LocalDate value) {
         super(value, DateType.class);
     }
 }

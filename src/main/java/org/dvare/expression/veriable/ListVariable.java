@@ -24,15 +24,20 @@ THE SOFTWARE.*/
 package org.dvare.expression.veriable;
 
 
-import org.dvare.expression.datatype.RegexType;
+import org.dvare.expression.datatype.DataTypeExpression;
+import org.dvare.expression.datatype.FloatType;
 
-public class RegexVariable extends VariableExpression<String> {
+import java.util.List;
 
-    public RegexVariable(String name) {
-        this(name, null);
+public class ListVariable extends VariableExpression<List> {
+
+    public ListVariable(String name, Class<? extends DataTypeExpression> type) {
+        super(name, FloatType.class);
     }
 
-    public RegexVariable(String name, String value) {
-        super(name, RegexType.class, value);
+
+    public Integer getListSize() {
+        return value != null ? value.size() : 0;
     }
+
 }

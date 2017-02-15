@@ -25,6 +25,8 @@ package org.dvare.util;
 
 import org.dvare.expression.datatype.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class DataTypeMapping {
@@ -116,10 +118,16 @@ public class DataTypeMapping {
             }
 
             case "Date": {
+                return DataType.SimpleDateType;
+            }
+
+            case "LocalDate": {
                 return DataType.DateType;
             }
 
-
+            case "LocalDateTime": {
+                return DataType.DateTimeType;
+            }
         }
         return null;
 
@@ -166,20 +174,29 @@ public class DataTypeMapping {
             }
             case DateTimeType: {
 
-                return Date.class;
+                return LocalDateTime.class;
             }
             case DateTimeListType: {
 
-                return Date[].class;
+                return LocalDateTime[].class;
             }
             case DateType: {
-                return Date.class;
+                return LocalDate.class;
 
             }
             case DateListType: {
+                return LocalDate[].class;
+
+            }
+            case SimpleDateType: {
+                return Date.class;
+
+            }
+            case SimpleDateListType: {
                 return Date[].class;
 
             }
+
             case RegexType: {
 
                 return String.class;

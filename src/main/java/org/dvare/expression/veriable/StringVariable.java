@@ -28,28 +28,14 @@ import org.dvare.expression.datatype.StringType;
 
 public class StringVariable extends VariableExpression<String> {
 
+
     public StringVariable(String name) {
         this(name, null);
     }
 
     public StringVariable(String name, String value) {
-        this(name, value, false, 0);
+        super(name, StringType.class, value);
     }
-
-    public StringVariable(String name, boolean list) {
-        this(name, null, list, 0);
-    }
-
-    public StringVariable(String name, String value, boolean list, Integer size) {
-        super(name, StringType.class, value, list, size);
-
-    }
-
-    @Override
-    public String getValue() {
-        return value;
-    }
-
 
 
 }

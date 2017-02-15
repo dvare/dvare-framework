@@ -33,16 +33,8 @@ public class BooleanVariable extends VariableExpression<Boolean> {
 
     }
 
-    public BooleanVariable(String name, boolean list) {
-        this(name, null, list, 0);
-    }
-
     public BooleanVariable(String name, Boolean value) {
-        this(name, value, false, 0);
-    }
-
-    public BooleanVariable(String name, Boolean value, boolean list, Integer size) {
-        super(name, BooleanType.class, value, list, size);
+        super(name, BooleanType.class, value);
 
     }
 

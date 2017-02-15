@@ -32,7 +32,8 @@ import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.validation.Date;
+
+import java.time.LocalDate;
 
 @Operation(type = OperationType.TO_STRING)
 public class ToString extends ChainOperationExpression {
@@ -58,9 +59,9 @@ public class ToString extends ChainOperationExpression {
             String valueString;
 
 
-            if (value instanceof Date) {
-                Date date = (Date) value;
-                valueString = LiteralType.dateFormat.format(date);
+            if (value instanceof LocalDate) {
+                LocalDate localDate = (LocalDate) value;
+                valueString = LiteralType.dateFormat.format(localDate);
             } else {
                 valueString = value.toString();
             }

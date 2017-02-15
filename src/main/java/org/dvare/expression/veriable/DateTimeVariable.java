@@ -26,27 +26,17 @@ package org.dvare.expression.veriable;
 
 import org.dvare.expression.datatype.DateTimeType;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
-public class DateTimeVariable extends VariableExpression<Date> {
+public class DateTimeVariable extends VariableExpression<LocalDateTime> {
 
     public DateTimeVariable(String name) {
         this(name, null);
     }
 
-    public DateTimeVariable(String name, Date value) {
-        this(name, value, false, 0);
+    public DateTimeVariable(String name, LocalDateTime localDateTime) {
+        super(name, DateTimeType.class, localDateTime);
     }
-
-    public DateTimeVariable(String name, boolean list) {
-        this(name, null, list, 0);
-    }
-
-    public DateTimeVariable(String name, Date value, boolean list, Integer size) {
-        super(name, DateTimeType.class, value, list, size);
-    }
-
-
 
 
 }

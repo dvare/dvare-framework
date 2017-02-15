@@ -28,17 +28,22 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
+import org.dvare.expression.datatype.SimpleDateType;
 import org.dvare.util.TrimString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class LiteralType {
-    public final static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
-    public final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    public final static DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH:mm:ss");
+    public final static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    public final static DateTimeFormatter defaultFormat = DateTimeFormatter.ofPattern("E MMM dd hh:mm:ss Z yyyy");
     public static String date = "\\s*(0[1-9]|1[0-9]|2[0-9]|3[0-1])-(0[1-9]|1[0-2])-([1-9][0-9][0-9][0-9])\\s*";
     public static String dateTime = "\\s*(0[1-9]|1[0-9]|2[0-9]|3[0-1])-(0[1-9]|1[0-2])-([1-9][0-9][0-9][0-9])\\-{1}(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])\\s*";
     private static Logger logger = LoggerFactory.getLogger(LiteralType.class);
@@ -145,32 +150,58 @@ public class LiteralType {
             }
 
             case DateTimeType: {
-                Date date;
+                LocalDateTime localDateTime = null;
                 try {
 
-                    if (value instanceof Date) {
-                        date = (Date) value;
+                    if (value instanceof LocalDateTime) {
+                        localDateTime = (LocalDateTime) value;
+                    } else if (value instanceof Date) {
+                        Date date = (Date) value;
+                        localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                     } else {
-                        date = dateTimeFormat.parse(valueString);
+                        localDateTime = LocalDateTime.parse(valueString, dateTimeFormat);
                     }
 
-                } catch (ParseException e) {
+                } catch (Exception e) {
                     String message = String.format("Unable to Parse literal %s to Date Time", valueString);
                     logger.error(message);
                     throw new IllegalValueException(message, e);
                 }
-                literalExpression = new DateTimeLiteral(date);
+                literalExpression = new DateTimeLiteral(localDateTime);
                 break;
             }
 
             case DateType: {
 
+                LocalDate localDate;
+                try {
+                    if (value instanceof LocalDate) {
+                        localDate = (LocalDate) value;
+                    } else if (value instanceof Date) {
+
+                        Date date = (Date) value;
+                        localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    } else {
+                        localDate = LocalDate.parse(valueString, dateFormat);
+                    }
+                } catch (Exception e) {
+                    String message = String.format("Unable to Parse literal %s to Date", valueString);
+                    logger.error(message);
+                    throw new IllegalValueException(message, e);
+
+                }
+                literalExpression = new DateLiteral(localDate);
+                break;
+            }
+
+            case SimpleDateType: {
+
                 Date date;
                 try {
                     if (value instanceof Date) {
                         date = (Date) value;
                     } else {
-                        date = dateFormat.parse(valueString);
+                        date = SimpleDateType.dateFormat.parse(valueString);
                     }
                 } catch (ParseException e) {
                     String message = String.format("Unable to Parse literal %s to Date", valueString);
@@ -178,9 +209,10 @@ public class LiteralType {
                     throw new IllegalValueException(message, e);
 
                 }
-                literalExpression = new DateLiteral(date);
+                literalExpression = new SimpleDateLiteral(date);
                 break;
             }
+
             case NullType: {
                 literalExpression = new NullLiteral();
                 break;
@@ -204,7 +236,7 @@ public class LiteralType {
         }
 
         if (literalExpression != null) {
-            logger.debug("{} Expression : {} [{}]", literalExpression.getClass().getSimpleName(), literalExpression.getType().getClass().getSimpleName(), literalExpression.getValue());
+            logger.debug("{} Expression : {} [{}]", literalExpression.getClass().getSimpleName(), literalExpression.getType().getSimpleName(), literalExpression.getValue());
             return literalExpression;
         } else {
             throw new IllegalValueException("Literal Expression is Null");

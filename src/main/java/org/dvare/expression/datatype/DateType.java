@@ -29,10 +29,11 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.validation.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -43,79 +44,73 @@ public class DateType extends DataTypeExpression {
 
     }
 
-    private static Date setTimeToMidnight(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
 
     @OperationMapping(operations = {
             Equals.class
     })
     public boolean equal(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = setTimeToMidnight((Date) left.getValue());
-        Date rightValue = setTimeToMidnight((Date) right.getValue());
-        return leftValue.compareTo(rightValue) == 0;
+
+        LocalDate leftValue = toLocalDate(left.getValue());
+        LocalDate rightValue = toLocalDate(right.getValue());
+        return (leftValue != null && rightValue != null) && leftValue.compareTo(rightValue) == 0;
     }
 
     @OperationMapping(operations = {
             NotEquals.class
     })
     public boolean notEqual(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = setTimeToMidnight((Date) left.getValue());
-        Date rightValue = setTimeToMidnight((Date) right.getValue());
-        return leftValue.compareTo(rightValue) != 0;
+        LocalDate leftValue = toLocalDate(left.getValue());
+        LocalDate rightValue = toLocalDate(right.getValue());
+        return (leftValue != null && rightValue != null) && leftValue.compareTo(rightValue) != 0;
     }
 
     @OperationMapping(operations = {
             Less.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = setTimeToMidnight((Date) left.getValue());
-        Date rightValue = setTimeToMidnight((Date) right.getValue());
-        return leftValue.compareTo(rightValue) < 0;
+        LocalDate leftValue = toLocalDate(left.getValue());
+        LocalDate rightValue = toLocalDate(right.getValue());
+        return (leftValue != null && rightValue != null) && leftValue.compareTo(rightValue) < 0;
     }
 
     @OperationMapping(operations = {
             LessEqual.class
     })
     public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = setTimeToMidnight((Date) left.getValue());
-        Date rightValue = setTimeToMidnight((Date) right.getValue());
-        return leftValue.compareTo(rightValue) <= 0;
+        LocalDate leftValue = toLocalDate(left.getValue());
+        LocalDate rightValue = toLocalDate(right.getValue());
+        return (leftValue != null && rightValue != null) && leftValue.compareTo(rightValue) <= 0;
     }
 
     @OperationMapping(operations = {
             Greater.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = setTimeToMidnight((Date) left.getValue());
-        Date rightValue = setTimeToMidnight((Date) right.getValue());
-        return leftValue.compareTo(rightValue) > 0;
+        LocalDate leftValue = toLocalDate(left.getValue());
+        LocalDate rightValue = toLocalDate(right.getValue());
+        return (leftValue != null && rightValue != null) && leftValue.compareTo(rightValue) > 0;
     }
 
     @OperationMapping(operations = {
             GreaterEqual.class
     })
     public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = setTimeToMidnight((Date) left.getValue());
-        Date rightValue = setTimeToMidnight((Date) right.getValue());
-        return leftValue.compareTo(rightValue) >= 0;
+        LocalDate leftValue = toLocalDate(left.getValue());
+        LocalDate rightValue = toLocalDate(right.getValue());
+        return (leftValue != null && rightValue != null) && leftValue.compareTo(rightValue) >= 0;
     }
 
     @OperationMapping(operations = {
             In.class
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = setTimeToMidnight((Date) left.getValue());
-        List<Date> rightValues = new ArrayList<>();
-        for (Date rightValue : buildDateList((List<Object>) right.getValue())) {
-            rightValues.add(setTimeToMidnight(rightValue));
+        LocalDate leftValue = toLocalDate(left.getValue());
+        List<LocalDate> rightValues = new ArrayList<>();
+
+        for (LocalDate rightValue : buildLocalDateList((List<?>) right.getValue())) {
+            rightValues.add(rightValue);
         }
+
         return rightValues.contains(leftValue);
     }
 
@@ -123,10 +118,10 @@ public class DateType extends DataTypeExpression {
             NotIn.class
     })
     public boolean notIn(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = setTimeToMidnight((Date) left.getValue());
-        List<Date> rightValues = new ArrayList<>();
-        for (Date rightValue : buildDateList((List<Object>) right.getValue())) {
-            rightValues.add(setTimeToMidnight(rightValue));
+        LocalDate leftValue = toLocalDate(left.getValue());
+        List<LocalDate> rightValues = new ArrayList<>();
+        for (LocalDate rightValue : buildLocalDateList((List<?>) right.getValue())) {
+            rightValues.add(rightValue);
         }
         return !rightValues.contains(leftValue);
     }
@@ -135,48 +130,62 @@ public class DateType extends DataTypeExpression {
             Between.class
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {
-        Date leftValue = setTimeToMidnight((Date) left.getValue());
-        List<Date> values = buildDateList((List<Object>) right.getValue());
-        Date lower = setTimeToMidnight(values.get(0));
-        Date upper = setTimeToMidnight(values.get(1));
-        if (lower.compareTo(leftValue) <= 0 && leftValue.compareTo(upper) <= 0) {
-            return true;
-        }
-        return false;
+        LocalDate leftValue = toLocalDate(left.getValue());
+        List<LocalDate> values = buildLocalDateList((List<?>) right.getValue());
+        LocalDate lower = values.get(0);
+        LocalDate upper = values.get(1);
+        return lower.compareTo(leftValue) <= 0 && leftValue.compareTo(upper) <= 0;
     }
 
-    private List<Date> buildDateList(List<Object> tempValues) {
-        List<Date> values = new ArrayList<>();
-        for (Object tempValue : tempValues) {
 
-            if (tempValue instanceof Date) {
-                values.add((Date) tempValue);
+    private LocalDate toLocalDate(Object value) {
+        if (value instanceof LocalDateTime) {
+            LocalDateTime localDateTime = (LocalDateTime) value;
+            return localDateTime.toLocalDate();
+
+        } else if (value instanceof LocalDate) {
+            return (LocalDate) value;
+        }
+        return null;
+    }
+
+    private List<LocalDate> buildLocalDateList(List<?> objectsList) {
+        List<LocalDate> localDateList = new ArrayList<>();
+        for (Object object : objectsList) {
+
+            if (object == null) {
+                localDateList.add(null);
+
+            } else if (object instanceof LocalDate) {
+                localDateList.add((LocalDate) object);
+            } else if (object instanceof Date) {
+                Date date = (Date) object;
+                LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                localDateList.add(localDate);
             } else {
                 try {
-
-                    Date value = LiteralType.dateFormat.parse(tempValue.toString());
-                    values.add(value);
-                } catch (ParseException e) {
+                    LocalDate localDate = LocalDate.parse(object.toString(), LiteralType.dateFormat);
+                    localDateList.add(localDate);
+                } catch (Exception e) {
                     try {
-                        Date value = LiteralType.dateTimeFormat.parse(tempValue.toString());
-                        values.add(value);
-                    } catch (ParseException e2) {
+
+                        LocalDate localDate = LocalDate.parse(object.toString(), LiteralType.dateTimeFormat);
+                        localDateList.add(localDate);
+
+
+                    } catch (Exception e2) {
                         try {
-                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E MMM dd hh:mm:ss Z yyyy");
-                            Date value = simpleDateFormat.parse(tempValue.toString());
-                            values.add(value);
-                        } catch (ParseException e3) {
-                            values.add(null);
+                            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("E MMM dd hh:mm:ss Z yyyy");
+                            LocalDate localDate = LocalDate.parse(object.toString(), dateTimeFormatter);
+                            localDateList.add(localDate);
+                        } catch (Exception e3) {
+                            localDateList.add(null);
                         }
                     }
 
-                } catch (NumberFormatException e) {
-                    values.add(null);
-                } catch (NullPointerException e) {
-                    values.add(null);
                 }
             }
         }
-        return values;
+        return localDateList;
     }
 }
