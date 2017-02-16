@@ -14,8 +14,8 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.ChainOperationExpression;
+import org.dvare.expression.operation.ConditionOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -130,11 +130,11 @@ public class Assign extends OperationExpression {
             if (op != null) {
 
 
-                pos = op.parse(tokens, pos, stack, contexts);
-
-                if (op instanceof AggregationOperationExpression) {
-                    return pos;
+                if (/*op instanceof AggregationOperationExpression ||*/ op instanceof Semicolon || op instanceof ConditionOperationExpression) {
+                    return pos - 1;
                 }
+
+                pos = op.parse(tokens, pos, stack, contexts);
 
 
             } else {
@@ -154,7 +154,8 @@ public class Assign extends OperationExpression {
 
         }
 
-        throw new ExpressionParseException("Aggregation Operation Not Found");
+        return pos;
+        // throw new ExpressionParseException("Aggregation Operation Not Found");
     }
 
 

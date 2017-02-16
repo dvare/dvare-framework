@@ -2,12 +2,14 @@ package org.dvare.rules.test.aggregation;
 
 import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
+import org.dvare.binding.model.TypeBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.DataType;
 import org.dvare.util.ValueFinder;
 import org.junit.Test;
 
@@ -16,7 +18,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LengthTest extends TestCase {
+public class ConditionChainTest extends TestCase {
+
+    @Test
+    public void testApp0() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        Map<String, Object> validationTypes = new HashMap<>();
+        validationTypes.put("V1", DataType.IntegerType);
+
+
+        Expression expression = factory.getParser().fromString("self.V1 -> values()->hasItem(20)", new TypeBinding(validationTypes));
+
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        List<Object> dataSet = new ArrayList<>();
+        Map<String, Object> d1 = new HashMap<>();
+        d1.put("V1", 10);
+        dataSet.add(new DataRow(d1));
+
+
+        Map<String, Object> d2 = new HashMap<>();
+        d2.put("V1", 20);
+        dataSet.add(new DataRow(d2));
+
+        Map<String, Object> d3 = new HashMap<>();
+        d3.put("V1", 40);
+        dataSet.add(new DataRow(d3));
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, dataSet);
+        assertTrue(result);
+    }
+
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
@@ -24,21 +60,17 @@ public class LengthTest extends TestCase {
 
         Map<String, String> aggregationTypes = new HashMap<>();
         aggregationTypes.put("A0", "IntegerType");
-
+        aggregationTypes.put("A1", "IntegerType");
 
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
 
-//        Expression aggregate = factory.getParser().fromString("A0 := value(data.V1->values()->length())", aggregationTypes, validationTypes);
-        Expression aggregate = factory.getParser().fromString("A0 := data.V1->values()->length()", aggregationTypes, validationTypes);
-
+        Expression aggregate = factory.getParser().fromString("IF data.V1 -> values()->hasItem(20) THEN self.A1 := data.V1->sum () ENDIF", aggregationTypes, validationTypes);
 
         RuleBinding rule = new RuleBinding(aggregate);
-
-
-        Map<String, Object> aggregation = new HashMap<>();
-        aggregation.put("A0", 0);
+        List<RuleBinding> rules = new ArrayList<>();
+        rules.add(rule);
 
 
         List<Object> dataSet = new ArrayList<>();
@@ -46,75 +78,22 @@ public class LengthTest extends TestCase {
         d1.put("V1", 10);
         dataSet.add(new DataRow(d1));
 
-        Map<String, Object> d2 = new HashMap<>();
-        d2.put("V1", 20);
-        dataSet.add(new DataRow(d2));
-
-        Map<String, Object> d3 = new HashMap<>();
-        d3.put("V1", 30);
-        dataSet.add(new DataRow(d3));
-
-        Map<String, Object> d4 = new HashMap<>();
-        d4.put("V1", 40);
-        dataSet.add(new DataRow(d4));
-
-        RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rule, new DataRow(aggregation), dataSet);
-
-
-        System.out.println(ValueFinder.findValue("A0", resultModel));
-
-        boolean result = ValueFinder.findValue("A0", resultModel).equals(4);
-        assertTrue(result);
-    }
-
-    @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
-
-        RuleConfiguration factory = new RuleConfiguration();
-
-        Map<String, String> aggregationTypes = new HashMap<>();
-        aggregationTypes.put("A0", "IntegerType");
-
-
-        Map<String, String> validationTypes = new HashMap<>();
-        validationTypes.put("V1", "IntegerType");
-
-
-        Expression aggregate = factory.getParser().fromString("A0 := data.V1->length()", aggregationTypes, validationTypes);
-
-
-        RuleBinding rule = new RuleBinding(aggregate);
-
-
-        Map<String, Object> aggregation = new HashMap<>();
-        aggregation.put("A0", 0);
-
-
-        List<Object> dataSet = new ArrayList<>();
-        Map<String, Object> d1 = new HashMap<>();
-        d1.put("V1", 10);
-        dataSet.add(new DataRow(d1));
 
         Map<String, Object> d2 = new HashMap<>();
         d2.put("V1", 20);
         dataSet.add(new DataRow(d2));
 
         Map<String, Object> d3 = new HashMap<>();
-        d3.put("V1", 30);
+        d3.put("V1", 40);
         dataSet.add(new DataRow(d3));
 
-        Map<String, Object> d4 = new HashMap<>();
-        d4.put("V1", 40);
-        dataSet.add(new DataRow(d4));
-
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rule, new DataRow(aggregation), dataSet);
+        Object resultModel = evaluator.aggregate(rules, new DataRow(new HashMap<>()), dataSet);
 
+        boolean result = ValueFinder.findValue("A1", resultModel).equals(70);
 
-        System.out.println(ValueFinder.findValue("A0", resultModel));
-
-        boolean result = ValueFinder.findValue("A0", resultModel).equals(4);
         assertTrue(result);
     }
 }
+
+

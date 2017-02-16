@@ -28,7 +28,6 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.literal.LiteralExpression;
 
 import java.util.Stack;
 
@@ -66,14 +65,5 @@ public abstract class ConditionOperationExpression extends OperationExpression {
         return null;
     }
 
-    protected Boolean toBoolean(Object interpret) {
-        Boolean result;
-        if (interpret instanceof LiteralExpression) {
-            result = (Boolean) ((LiteralExpression) interpret).getValue();
-        } else {
-            result = (Boolean) interpret;
-        }
-        return result;
-    }
 
 }

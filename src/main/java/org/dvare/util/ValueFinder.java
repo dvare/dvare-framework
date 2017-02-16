@@ -110,6 +110,7 @@ public class ValueFinder {
             } catch (IllegalAccessException e) {
                 throw new IllegalPropertyValueException("Variable value not found ", e);
             }
+
             return null;
         }
 

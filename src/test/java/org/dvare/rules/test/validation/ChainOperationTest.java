@@ -280,4 +280,6 @@ public class ChainOperationTest extends TestCase {
         boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
         assertTrue(result);
     }
+
+
 }

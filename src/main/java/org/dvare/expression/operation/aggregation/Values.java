@@ -17,28 +17,34 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Operation(type = OperationType.VALUE)
+@Operation(type = OperationType.VALUES)
 public class Values extends AggregationOperationExpression {
     private static Logger logger = LoggerFactory.getLogger(Values.class);
 
 
     public Values() {
-        super(OperationType.VALUE);
+        super(OperationType.VALUES);
     }
 
 
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        Object aggregation = instancesBinding.getInstance("self");
-        List<Object> dataSet = (List) instancesBinding.getInstance("data");
-
 
         Expression right = this.leftOperand;
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) right;
+            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+            List dataSet;
+            if (instance instanceof List) {
+                dataSet = (List) instance;
+            } else {
+                dataSet = new ArrayList<>();
+                dataSet.add(instance);
+            }
 
             List<Object> values = new ArrayList<>();
+
             for (Object object : dataSet) {
                 Object value = getValue(object, variableExpression.getName());
                 LiteralExpression literalExpression = LiteralType.getLiteralExpression(value, variableExpression.getType());

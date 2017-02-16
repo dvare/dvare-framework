@@ -85,7 +85,7 @@ public class RuleEvaluator {
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", aggregate);
         instancesBinding.addInstance("data", dataset);
-        instancesBinding = (InstancesBinding) rule.getExpression().interpret(instancesBinding);
+        rule.getExpression().interpret(instancesBinding);
         return instancesBinding.getInstance("self");
     }
 

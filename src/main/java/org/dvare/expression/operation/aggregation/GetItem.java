@@ -16,22 +16,18 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Operation(type = OperationType.AT)
-public class At extends AggregationOperationExpression {
-    private static Logger logger = LoggerFactory.getLogger(At.class);
+@Operation(type = OperationType.GET_ITEM)
+public class GetItem extends AggregationOperationExpression {
+    private static Logger logger = LoggerFactory.getLogger(GetItem.class);
 
 
-    public At() {
-        super(OperationType.AT);
+    public GetItem() {
+        super(OperationType.GET_ITEM);
     }
 
 
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
-
-        Object aggregation = instancesBinding.getInstance("self");
-        List<Object> dataSet = (List) instancesBinding.getInstance("data");
-
 
         Expression right = leftOperand;
         if (right instanceof Values) {

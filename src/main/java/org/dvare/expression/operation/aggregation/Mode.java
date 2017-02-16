@@ -53,15 +53,21 @@ public class Mode extends AggregationOperationExpression {
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        Object aggregation = instancesBinding.getInstance("self");
-        List<Object> dataSet = (List) instancesBinding.getInstance("data");
-
-
         Expression right = this.leftOperand;
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = ((VariableExpression) right);
             String name = variableExpression.getName();
             DataType type = toDataType(variableExpression.getType());
+
+            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+            List dataSet;
+            if (instance instanceof List) {
+                dataSet = (List) instance;
+            } else {
+                dataSet = new ArrayList<>();
+                dataSet.add(instance);
+            }
+
 
             switch (type) {
 

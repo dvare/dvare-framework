@@ -98,6 +98,7 @@ public abstract class AggregationOperationExpression extends ChainOperationExpre
 
             Expression right = this.leftOperand;
             LiteralExpression<?> literalExpression = null;
+
             if (right instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) right;
                 literalExpression = (LiteralExpression) operation.interpret(instancesBinding);
