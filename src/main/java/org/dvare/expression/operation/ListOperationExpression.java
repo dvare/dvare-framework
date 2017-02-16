@@ -159,7 +159,7 @@ public class ListOperationExpression extends OperationExpression {
         }
 
 
-        ListLiteral listLiteral = new ListLiteral(values, dataType, values.size());
+        ListLiteral listLiteral = new ListLiteral(values, dataType);
 
         logger.debug("List Literal Expression : {} [{}]", toDataType(listLiteral.getType()), listLiteral.getValue());
 

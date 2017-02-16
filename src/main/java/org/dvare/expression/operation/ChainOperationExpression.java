@@ -31,6 +31,7 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.validation.RightPriority;
+import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
 
@@ -95,22 +96,58 @@ public abstract class ChainOperationExpression extends OperationExpression {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-
-        for (int i = pos; i < tokens.length; i++) {
-            String token = tokens[i];
+        Stack<Expression> localStack = new Stack<>();
+        for (; pos < tokens.length; pos++) {
+            String token = tokens[pos];
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
 
                 if (op.getClass().equals(RightPriority.class)) {
-                    return i;
+                    this.rightOperand = new ArrayList<>(localStack);
+                    return pos;
+                } else {
+
+                    pos = op.parse(tokens, pos, localStack, contexts);
                 }
+
+
             } else {
-                DataType type = LiteralType.computeDataType(token);
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(token, type);
-                rightOperand.add(literalExpression);
+
+                TokenType tokenType = findDataObject(token, contexts);
+                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                    VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                    localStack.add(variableExpression);
+                } else {
+                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
+                    localStack.add(literalExpression);
+                }
+
+
             }
         }
-        return null;
+        return pos;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+
+        if (leftOperand != null) {
+            toStringBuilder.append(leftOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(" ");
+
+        if (rightOperand != null) {
+            toStringBuilder.append(rightOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        return toStringBuilder.toString();
     }
 
 

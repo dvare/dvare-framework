@@ -26,7 +26,6 @@ package org.dvare.expression.operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
-import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -34,8 +33,6 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.validation.LeftPriority;
-import org.dvare.expression.operation.validation.RightPriority;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
@@ -45,8 +42,10 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class AggregationOperationExpression extends OperationExpression {
+public abstract class AggregationOperationExpression extends ChainOperationExpression {
     private static Logger logger = LoggerFactory.getLogger(AggregationOperationExpression.class);
+
+    protected LiteralExpression leftExpression;
 
     public AggregationOperationExpression(OperationType operationType) {
         super(operationType);
@@ -55,95 +54,49 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos + 1, stack, contexts);
-        if (!stack.isEmpty()) {
-            this.rightOperand = stack.pop();
+
+
+        String token = tokens[pos - 1];
+        pos = pos + 1;
+
+
+        if (stack.isEmpty()) {
+
+
+            TokenType tokenType = findDataObject(token, contexts);
+
+            if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+
+                TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                this.leftOperand = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+
+            }
+
+
+        } else {
+            this.leftOperand = stack.pop();
+
+
         }
+
+
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
+
+        logger.debug("Operation Expression Call Expression : {}", getClass().getSimpleName());
         stack.push(this);
         return pos;
     }
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
-        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-        for (; pos < tokens.length; pos++) {
-            OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
-            if (op != null) {
-                if (op instanceof LeftPriority) {
-
-                    pos = parseArguments(tokens, pos + 1, stack, contexts);
-
-                    while (!stack.peek().getClass().equals(RightPriority.class)) {
-                        pos = parseArguments(tokens, pos, stack, contexts);
-                    }
-
-                    if (stack.peek().getClass().equals(RightPriority.class)) {
-                        stack.pop();
-                    }
-
-                    return pos;
-                } else {
-
-                    pos = op.parse(tokens, pos, stack, contexts);
-                    return pos;
-                }
-            }
-        }
-        return pos;
-    }
-
-
-    private Integer parseArguments(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
-        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-
-        for (int i = pos; i < tokens.length; i++) {
-            String token = tokens[i];
-
-            OperationExpression op = configurationRegistry.getOperation(token);
-            if (op != null) {
-
-                if (op.getClass().equals(RightPriority.class)) {
-                    stack.push(op);
-                    return i;
-                } else {
-                    i = op.parse(tokens, i, stack, contexts);
-                }
-            } else {
-
-                TokenType tokenType = findDataObject(token, contexts);
-                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
-                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
-                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                    VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
-                    stack.add(variableExpression);
-                } else {
-                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
-                    stack.add(literalExpression);
-                }
-            }
-
-
-        }
-
-        throw new ExpressionParseException("Operation Closing Bracket Not Found");
-    }
-
-    @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-
-        LiteralExpression leftExpression = null;
-        if (leftOperand instanceof LiteralExpression) {
-            leftExpression = (LiteralExpression) leftOperand;
-        } else {
-            leftExpression = new NullLiteral();
-        }
 
         List dataSet = (List) instancesBinding.getInstance("data");
         for (Object bindings : dataSet) {
 
-            Expression right = this.rightOperand;
+            Expression right = this.leftOperand;
             LiteralExpression<?> literalExpression = null;
             if (right instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) right;

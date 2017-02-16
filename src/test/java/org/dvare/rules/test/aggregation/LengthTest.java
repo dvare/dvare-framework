@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CountTest extends TestCase {
+public class LengthTest extends TestCase {
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
@@ -30,7 +30,7 @@ public class CountTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getParser().fromString("A0 := count()", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("A0 := length()", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);

@@ -74,7 +74,7 @@ public class RuleEvaluator {
         instancesBinding.addInstance("data", dataset);
 
         for (RuleBinding rule : rules) {
-            instancesBinding = (InstancesBinding) rule.getExpression().interpret(instancesBinding);
+            rule.getExpression().interpret(instancesBinding);
         }
 
         return instancesBinding.getInstance("self");

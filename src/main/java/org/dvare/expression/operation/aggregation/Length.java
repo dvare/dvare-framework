@@ -13,20 +13,19 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Operation(type = OperationType.COUNT)
-public class Count extends AggregationOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Count.class);
+@Operation(type = OperationType.LENGTH)
+public class Length extends AggregationOperationExpression {
+    static Logger logger = LoggerFactory.getLogger(Length.class);
 
 
-    public Count() {
-        super(OperationType.COUNT);
+    public Length() {
+        super(OperationType.LENGTH);
     }
 
 
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        Object aggregation = instancesBinding.getInstance("self");
         List<Object> dataSet = (List) instancesBinding.getInstance("data");
 
         LiteralExpression literalExpression = LiteralType.getLiteralExpression(dataSet.size(), IntegerType.class);

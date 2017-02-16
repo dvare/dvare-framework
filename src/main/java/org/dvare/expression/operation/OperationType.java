@@ -45,10 +45,11 @@ public enum OperationType {
     STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
     FOREACH("foreach", "forEach", "FOREACH"), END_FOREACH("endforeach", "endForEach", "ENDFOREACH"), ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
     IF("IF", "if", "ELSEIF", "elseif"), THEN("THEN", "then"),//
-    ASSIGN(":=", "assign", "update"), COUNT("Count", "count"), FIRST("First", "first"), LAST("Last", "last"),//
+    ASSIGN(":=", "assign", "update"), LENGTH("Length", "length"), FIRST("First", "first"), LAST("Last", "last"),//
     MAXIMUM("Maximum", "maximum"), MINIMUM("Minimum", "minimum"),//
     MEAN("Mean", "mean", "Avg", "avg"), MEDIAN("Median", "median"), MODE("Mode", "mode"),//
-    SUM("Sum", "sum"), VALUE("Value", "value"), COLON(";");
+    SUM("Sum", "sum"), VALUE("Value", "value"), COLON(";"),//
+    VALUES("Values", "values"), AT("At", "at"), HAS_ITEM("HasItem", "hasItem", "hasitem");
 
     private List<String> symbols = new ArrayList<>();
 

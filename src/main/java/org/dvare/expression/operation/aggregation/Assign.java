@@ -4,6 +4,8 @@ import org.dvare.annotations.Operation;
 import org.dvare.annotations.Type;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
+import org.dvare.binding.model.TypeBinding;
+import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalOperationException;
@@ -11,7 +13,8 @@ import org.dvare.exceptions.parser.IllegalPropertyException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.operation.AssignOperationExpression;
+import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
@@ -19,6 +22,7 @@ import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.parser.ExpressionTokenizer;
 import org.dvare.util.TrimString;
+import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +31,7 @@ import java.util.Arrays;
 import java.util.Stack;
 
 @Operation(type = OperationType.ASSIGN)
-public class Assign extends AssignOperationExpression {
+public class Assign extends OperationExpression {
     static Logger logger = LoggerFactory.getLogger(Assign.class);
 
     public Assign() {
@@ -55,7 +59,26 @@ public class Assign extends AssignOperationExpression {
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
-            pos = super.parse(tokens, pos, stack, contexts);
+
+            String leftString = tokens[pos - 1];
+
+            if (stack.isEmpty()) {
+                TokenType tokenType = findDataObject(leftString, contexts);
+                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                    this.leftOperand = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+
+                }
+            } else {
+                this.leftOperand = stack.pop();
+            }
+
+            pos = findNextExpression(tokens, pos + 1, stack, contexts);
+            if (!stack.isEmpty()) {
+                this.rightOperand = stack.pop();
+            }
+
 
             Expression left = this.leftOperand;
             Expression right = this.rightOperand;
@@ -85,14 +108,53 @@ public class Assign extends AssignOperationExpression {
 
 
             logger.debug("Aggregation OperationExpression Call Expression : {}", getClass().getSimpleName());
-/*
-            stack.push(this);*/
+
+            stack.push(this);
 
             return pos;
         }
 
 
         throw new ExpressionParseException("Cannot assign literal to variable");
+    }
+
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+
+        for (; pos < tokens.length; pos++) {
+            String token = tokens[pos];
+
+            OperationExpression op = configurationRegistry.getOperation(token);
+            if (op != null) {
+
+
+                pos = op.parse(tokens, pos, stack, contexts);
+
+                if (op instanceof AggregationOperationExpression) {
+                    return pos;
+                }
+
+
+            } else {
+
+                TokenType tokenType = findDataObject(token, contexts);
+                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                    VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                    stack.add(variableExpression);
+                } else {
+                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
+                    stack.add(literalExpression);
+                }
+            }
+
+
+        }
+
+        throw new ExpressionParseException("Aggregation Operation Not Found");
     }
 
 

@@ -30,9 +30,7 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.FloatType;
 import org.dvare.expression.datatype.IntegerType;
-import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -59,15 +57,8 @@ public class Mean extends AggregationOperationExpression {
         Object aggregation = instancesBinding.getInstance("self");
         List<Object> dataSet = (List) instancesBinding.getInstance("data");
 
-        LiteralExpression leftExpression = null;
-        if (leftOperand instanceof LiteralExpression) {
-            leftExpression = (LiteralExpression) leftOperand;
-        } else {
-            leftExpression = new NullLiteral();
-        }
 
-
-        Expression right = this.rightOperand;
+        Expression right = this.leftOperand;
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = ((VariableExpression) right);
             String name = variableExpression.getName();

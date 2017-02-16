@@ -29,7 +29,7 @@ import org.dvare.expression.datatype.RegexType;
 import org.dvare.expression.datatype.StringType;
 import org.dvare.util.TrimString;
 
-public class LiteralExpression<T> extends Expression {
+public abstract class LiteralExpression<T> extends Expression {
 
     protected T value;
     protected Class<? extends DataTypeExpression> type;

@@ -236,12 +236,11 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-        for (int i = pos; i < tokens.length; i++) {
-            OperationExpression op = configurationRegistry.getOperation(tokens[i]);
+        for (; pos < tokens.length; pos++) {
+            OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
-
-                i = op.parse(tokens, i, stack, contexts);
-                return i;
+                pos = op.parse(tokens, pos, stack, contexts);
+                return pos;
 
             }
         }

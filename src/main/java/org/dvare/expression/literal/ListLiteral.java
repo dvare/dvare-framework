@@ -30,22 +30,19 @@ import java.util.List;
 
 public class ListLiteral extends LiteralExpression<List> {
 
-    protected Integer size;
 
-    public ListLiteral(List value, Class<? extends DataTypeExpression> type, Integer size) {
+    public ListLiteral(List value, Class<? extends DataTypeExpression> type) {
         super(value, type);
-        this.setSize(size);
+
     }
 
     public boolean isEmpty() {
-        return size < 1;
+        return getSize() < 1;
     }
 
     public Integer getSize() {
-        return size;
+        return value != null ? value.size() : 0;
     }
 
-    public void setSize(Integer size) {
-        this.size = size;
-    }
+
 }

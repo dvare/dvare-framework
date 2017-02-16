@@ -18,7 +18,7 @@ import org.junit.runners.Suite;
         MedianTest.class,
         SemicolonTest.class,
         ConditionTest.class,
-        CountTest.class,
+        LengthTest.class,
 
         DistanceTest.class})
 public class AggregationTest {

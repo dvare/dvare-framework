@@ -28,6 +28,7 @@ import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -53,7 +54,7 @@ public class Last extends AggregationOperationExpression {
         List<Object> dataSet = (List) instancesBinding.getInstance("data");
 
 
-        Expression right = this.rightOperand;
+        Expression right = this.leftOperand;
         if (right instanceof VariableExpression && !dataSet.isEmpty()) {
             VariableExpression variableExpression = (VariableExpression) right;
 
@@ -63,7 +64,7 @@ public class Last extends AggregationOperationExpression {
             return LiteralType.getLiteralExpression(value, variableExpression.getType());
 
         }
-        return null;
+        return new NullLiteral<>();
     }
 
 

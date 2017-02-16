@@ -6,6 +6,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
@@ -29,33 +30,33 @@ public class Value extends AggregationOperationExpression {
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
+        if (!this.rightOperand.isEmpty()) {
+            Expression right = this.rightOperand.get(0);
+            if (right instanceof VariableExpression) {
+                VariableExpression variableExpression = (VariableExpression) right;
 
-        Expression right = this.rightOperand;
-        if (right instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) right;
-
-            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-            if (instance instanceof Collection) {
-                List dataSet = (List) instance;
-                Object value = getValue(dataSet.get(0), variableExpression.getName());
-                return LiteralType.getLiteralExpression(value, variableExpression.getType());
-            } else {
-                Object value = getValue(instance, variableExpression.getName());
-                return LiteralType.getLiteralExpression(value, variableExpression.getType());
-            }
+                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+                if (instance instanceof Collection) {
+                    List dataSet = (List) instance;
+                    Object value = getValue(dataSet.get(0), variableExpression.getName());
+                    return LiteralType.getLiteralExpression(value, variableExpression.getType());
+                } else {
+                    Object value = getValue(instance, variableExpression.getName());
+                    return LiteralType.getLiteralExpression(value, variableExpression.getType());
+                }
 
 
-        } else if (right instanceof LiteralExpression) {
-            return right;
-        } else if (right instanceof OperationExpression) {
-            OperationExpression operation = (OperationExpression) right;
-            Object result = operation.interpret(instancesBinding);
-            if (result instanceof LiteralExpression) {
-                return result;
+            } else if (right instanceof LiteralExpression) {
+                return right;
+            } else if (right instanceof OperationExpression) {
+                OperationExpression operation = (OperationExpression) right;
+                Object result = operation.interpret(instancesBinding);
+                if (result instanceof LiteralExpression) {
+                    return result;
+                }
             }
         }
-
-        return null;
+        return new NullLiteral();
     }
 
 }

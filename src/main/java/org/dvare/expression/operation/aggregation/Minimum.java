@@ -25,11 +25,11 @@ package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.exceptions.interpreter.IllegalOperationException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -49,27 +49,25 @@ public class Minimum extends AggregationOperationExpression {
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-
-        Expression right = this.rightOperand;
-
+        Expression right = this.leftOperand;
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = ((VariableExpression) right);
-            String name = variableExpression.getName();
             DataType type = toDataType(variableExpression.getType());
 
             switch (type) {
 
                 case FloatType: {
-                    leftOperand = LiteralType.getLiteralExpression(Float.MAX_VALUE, variableExpression.getType());
+                    leftExpression = LiteralType.getLiteralExpression(Float.MAX_VALUE, variableExpression.getType());
                     break;
                 }
                 case IntegerType: {
-                    leftOperand = LiteralType.getLiteralExpression(Integer.MAX_VALUE, variableExpression.getType());
+                    leftExpression = LiteralType.getLiteralExpression(Integer.MAX_VALUE, variableExpression.getType());
                     break;
                 }
 
                 default: {
-                    throw new IllegalOperationException("Min OperationExpression Not Allowed");
+                    leftExpression = new NullLiteral();
+                    //throw new IllegalOperationException("Min OperationExpression Not Allowed");
                 }
 
             }

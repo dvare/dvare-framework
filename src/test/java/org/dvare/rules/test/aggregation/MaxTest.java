@@ -30,7 +30,7 @@ public class MaxTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getParser().fromString("self.A0 := maximum ( data.V1 )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1 -> maximum ()", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);

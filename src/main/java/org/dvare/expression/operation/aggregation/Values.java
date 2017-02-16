@@ -4,23 +4,26 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Operation(type = OperationType.FIRST)
-public class First extends AggregationOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(First.class);
+@Operation(type = OperationType.VALUE)
+public class Values extends AggregationOperationExpression {
+    private static Logger logger = LoggerFactory.getLogger(Values.class);
 
 
-    public First() {
-        super(OperationType.FIRST);
+    public Values() {
+        super(OperationType.VALUE);
     }
 
 
@@ -32,20 +35,23 @@ public class First extends AggregationOperationExpression {
 
 
         Expression right = this.leftOperand;
-        if (right instanceof VariableExpression && !dataSet.isEmpty()) {
+        if (right instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) right;
 
+            List<Object> values = new ArrayList<>();
+            for (Object object : dataSet) {
+                Object value = getValue(object, variableExpression.getName());
+                LiteralExpression literalExpression = LiteralType.getLiteralExpression(value, variableExpression.getType());
+                values.add(literalExpression.getValue());
+            }
 
-            Object row = dataSet.get(0);
-            Object value = getValue(row, variableExpression.getName());
 
-            LiteralExpression literalExpression = LiteralType.getLiteralExpression(value, variableExpression.getType());
+            return new ListLiteral(values, variableExpression.getType());
 
-            return literalExpression;
 
         }
 
-        return null;
+        return new NullLiteral();
     }
 
 }
