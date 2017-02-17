@@ -36,22 +36,27 @@ public class FuntionProvider {
 
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.IntegerType})
     public Integer addFunction(Integer variable, Integer variable2) {
-        logger.debug("inside addFunction with arguments : " + variable + " and " + variable2);
+        if (logger.isDebugEnabled()) {
+            logger.debug("inside addFunction with arguments : " + variable + " and " + variable2);
+        }
         return variable + variable2;
     }
 
 
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.StringType})
     public Integer addFiveFunction(Integer variable, String variable2) {
-        logger.debug("inside addFiveFuntion with arguments : " + variable + " and " + variable2);
+        if (logger.isDebugEnabled()) {
+            logger.debug("inside addFiveFuntion with arguments : " + variable + " and " + variable2);
+        }
         return variable + 5;
     }
 
 
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerListType})
     public Integer addRowsFunction(Integer[] rows) {
-        logger.debug("inside addRowsFunction with rows : " + rows.length);
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("inside addRowsFunction with rows : " + rows.length);
+        }
         Integer result = 0;
         for (Object row : rows) {
 
@@ -66,7 +71,9 @@ public class FuntionProvider {
 
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.IntegerListType})
     public Integer addTenFunction(Integer variable, Integer[] values) {
-        logger.debug("inside addFiveFuntion with arguments : " + variable + " and " + values.length + " list arguments");
+        if (logger.isDebugEnabled()) {
+            logger.debug("inside addFiveFuntion with arguments : " + variable + " and " + values.length + " list arguments");
+        }
         return variable + 10;
     }
 

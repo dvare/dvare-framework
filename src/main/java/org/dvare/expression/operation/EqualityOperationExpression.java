@@ -223,9 +223,9 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             Expression right = this.rightOperand;
 
             validate(left, right, tokens, pos);
-
-            logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
-
+            if (logger.isDebugEnabled()) {
+                logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
+            }
             stack.push(this);
             return pos;
         }

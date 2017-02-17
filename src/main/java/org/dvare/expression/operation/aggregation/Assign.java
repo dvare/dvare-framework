@@ -14,7 +14,6 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.ConditionOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
@@ -41,9 +40,9 @@ public class Assign extends OperationExpression {
 
     protected boolean isLegalOperation(Expression expression, DataType dataType) {
 
-        if (expression instanceof ChainOperationExpression) {
+        /*if (expression instanceof ChainOperationExpression) {
             return true;
-        }
+        }*/
 
         Annotation annotation = expression.getClass().getAnnotation(Operation.class);
         if (annotation != null) {
@@ -106,9 +105,9 @@ public class Assign extends OperationExpression {
                 throw new IllegalPropertyException(message);
             }
 
-
-            logger.debug("Aggregation OperationExpression Call Expression : {}", getClass().getSimpleName());
-
+            if (logger.isDebugEnabled()) {
+                logger.debug("Aggregation OperationExpression Call Expression : {}", getClass().getSimpleName());
+            }
             stack.push(this);
 
             return pos;

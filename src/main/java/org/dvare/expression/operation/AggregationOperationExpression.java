@@ -82,8 +82,9 @@ public abstract class AggregationOperationExpression extends ChainOperationExpre
 
 
         pos = findNextExpression(tokens, pos + 1, stack, contexts);
-
-        logger.debug("Operation Expression Call Expression : {}", getClass().getSimpleName());
+        if (logger.isDebugEnabled()) {
+            logger.debug("Operation Expression Call Expression : {}", getClass().getSimpleName());
+        }
         stack.push(this);
         return pos;
     }
@@ -117,8 +118,9 @@ public abstract class AggregationOperationExpression extends ChainOperationExpre
                 } catch (InstantiationException | IllegalAccessException e) {
                     logger.error(e.getMessage(), e);
                 }
-                logger.debug("Updating value of  by " + leftExpression.getValue());
-
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Updating value of  by " + leftExpression.getValue());
+                }
             } else {
                 throw new InterpretException("Literal Expression is null");
             }

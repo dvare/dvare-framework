@@ -160,9 +160,9 @@ public class ListOperationExpression extends OperationExpression {
 
 
         ListLiteral listLiteral = new ListLiteral(values, dataType);
-
-        logger.debug("List Literal Expression : {} [{}]", toDataType(listLiteral.getType()), listLiteral.getValue());
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("List Literal Expression : {} [{}]", toDataType(listLiteral.getType()), listLiteral.getValue());
+        }
         return listLiteral;
     }
 

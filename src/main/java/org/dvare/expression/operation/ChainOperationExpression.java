@@ -85,8 +85,9 @@ public abstract class ChainOperationExpression extends OperationExpression {
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         pos = parseOperands(tokens, pos, stack, contexts);
         pos = findNextExpression(tokens, pos + 1, stack, contexts);
-
-        logger.debug("Operation Expression Call Expression : {}", getClass().getSimpleName());
+        if (logger.isDebugEnabled()) {
+            logger.debug("Operation Expression Call Expression : {}", getClass().getSimpleName());
+        }
         stack.push(this);
         return pos;
     }

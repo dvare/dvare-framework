@@ -129,8 +129,9 @@ public class VariableType {
             }
         }
 
-
-        logger.debug("Variable  Expression Veriable: {} [{}]", variableExpression.getClass().getSimpleName(), variableExpression.getName());
+        if (logger.isDebugEnabled()) {
+            logger.debug("Variable  Expression Veriable: {} [{}]", variableExpression.getClass().getSimpleName(), variableExpression.getName());
+        }
         return variableExpression;
     }
 

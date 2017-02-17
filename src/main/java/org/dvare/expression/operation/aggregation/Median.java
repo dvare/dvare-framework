@@ -28,6 +28,7 @@ import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.FloatType;
 import org.dvare.expression.datatype.IntegerType;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.AggregationOperationExpression;
@@ -97,7 +98,7 @@ public class Median extends AggregationOperationExpression {
                     }
 
 
-                    leftExpression = LiteralType.getLiteralExpression(result, IntegerType.class);
+                    leftExpression = LiteralType.getLiteralExpression(result, FloatType.class);
 
                     break;
                 }

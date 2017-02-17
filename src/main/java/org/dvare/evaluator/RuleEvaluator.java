@@ -68,6 +68,24 @@ public class RuleEvaluator {
     }
 
 
+    public InstancesBinding aggregate(List<RuleBinding> rules, InstancesBinding instancesBinding) throws InterpretException {
+
+
+        for (RuleBinding rule : rules) {
+            rule.getExpression().interpret(instancesBinding);
+        }
+
+        return instancesBinding;
+    }
+
+
+    public Object aggregate(RuleBinding rule, InstancesBinding instancesBinding) throws InterpretException {
+
+        rule.getExpression().interpret(instancesBinding);
+        return instancesBinding;
+    }
+
+
     public Object aggregate(List<RuleBinding> rules, Object aggregate, Object dataset) throws InterpretException {
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", aggregate);

@@ -65,10 +65,11 @@ public class Function extends OperationExpression {
             logger.error(error);
             throw new ExpressionParseException(error);
         }
+        if (logger.isDebugEnabled()) {
 
-        logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
+            logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
-
+        }
         stack.push(this);
         return pos;
     }

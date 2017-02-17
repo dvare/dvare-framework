@@ -53,9 +53,9 @@ public abstract class LogicalOperationExpression extends OperationExpression {
 
         this.leftOperand = left;
         this.rightOperand = right;
-
-        logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
+        }
         stack.push(this);
 
         return pos;

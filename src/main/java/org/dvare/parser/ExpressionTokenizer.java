@@ -73,13 +73,15 @@ public class ExpressionTokenizer {
             regex = regex.substring(0, regex.length() - 1);
         }
 
-        logger.debug(regex);
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("Token Pattern: {}", regex);
+        }
         if (expr != null && !expr.isEmpty()) {
             expr = expr.replaceAll("  ", " ");
             expr = expr.trim();
-            logger.debug("Parsing the expression : {}", expr);
-
+            if (logger.isDebugEnabled()) {
+                logger.debug("Parsing the expression : {}", expr);
+            }
 
             List<String> tokenArray = new ArrayList<>();
             Iterator<String> tokenizer = Arrays.asList(expr.split(regex)).iterator();
@@ -100,8 +102,9 @@ public class ExpressionTokenizer {
 
             }
 
-
-            logger.debug("tokens: {}", tokenArray);
+            if (logger.isDebugEnabled()) {
+                logger.debug("tokens: {}", tokenArray);
+            }
             String[] tokens = tokenArray.toArray(new String[tokenArray.size()]);
             return tokens;
         }

@@ -71,8 +71,9 @@ public class BuilderTest extends TestCase {
 
         Expression expression = new ExpressionBuilder().expression(andExpression).build();
 
-        logger.debug(expression.toString());
-
+        if (logger.isDebugEnabled()) {
+            logger.debug(expression.toString());
+        }
         RuleBinding rule = new RuleBinding(expression);
 
 

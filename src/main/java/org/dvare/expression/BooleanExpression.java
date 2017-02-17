@@ -36,13 +36,17 @@ public class BooleanExpression extends Expression {
 
     public BooleanExpression(String name) {
         this.name = name;
-        logger.debug("Boolean  Expression :  [{}]", name);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Boolean  Expression :  [{}]", name);
+        }
     }
 
     public BooleanExpression(String name, boolean value) {
         this.name = name;
         this.value = value;
-        logger.debug("Boolean  Expression :  [{} , {}]", name, value);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Boolean  Expression :  [{} , {}]", name, value);
+        }
     }
 
 

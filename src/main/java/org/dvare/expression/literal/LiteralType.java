@@ -236,7 +236,9 @@ public class LiteralType {
         }
 
         if (literalExpression != null) {
-            logger.debug("{} Expression : {} [{}]", literalExpression.getClass().getSimpleName(), literalExpression.getType().getSimpleName(), literalExpression.getValue());
+            if (logger.isDebugEnabled()) {
+                logger.debug("{} Expression : {} [{}]", literalExpression.getClass().getSimpleName(), literalExpression.getType().getSimpleName(), literalExpression.getValue());
+            }
             return literalExpression;
         } else {
             throw new IllegalValueException("Literal Expression is Null");

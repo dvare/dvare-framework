@@ -84,10 +84,10 @@ public class ForEach extends OperationExpression {
         this.rightOperand = stack.pop();
         contexts.removeContext(driveContexttToken);
 
+        if (logger.isDebugEnabled()) {
+            logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
-        logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
-
-
+        }
         stack.push(this);
         return pos;
     }

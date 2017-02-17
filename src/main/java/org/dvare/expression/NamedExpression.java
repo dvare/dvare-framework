@@ -33,7 +33,9 @@ public class NamedExpression extends Expression {
 
     public NamedExpression(String name) {
         this.name = name;
-        logger.debug("Named  Expression :  [{}]", name);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Named  Expression :  [{}]", name);
+        }
     }
 
     public String getName() {

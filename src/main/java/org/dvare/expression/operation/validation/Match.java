@@ -75,9 +75,9 @@ public class Match extends OperationExpression {
             throw new ExpressionParseException(error);
         }
 
-
-        logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
+        }
     }
 
 

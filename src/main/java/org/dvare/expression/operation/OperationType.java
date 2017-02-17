@@ -49,7 +49,7 @@ public enum OperationType {
     MAXIMUM("Maximum", "maximum"), MINIMUM("Minimum", "minimum"),//
     MEAN("Mean", "mean", "Avg", "avg"), MEDIAN("Median", "median"), MODE("Mode", "mode"),//
     SUM("Sum", "sum"), VALUE("Value", "value"), COLON(";"),//
-    VALUES("Values", "values"), GET_ITEM("GetItem", "getItems"), HAS_ITEM("HasItem", "hasItem"),//
+    VALUES("Values", "values"), GET_ITEM("GetItem", "getItem"), HAS_ITEM("HasItem", "hasItem"),//
     ITEM_POSITION("ItemPosition", "itemPosition");
 
     private List<String> symbols = new ArrayList<>();

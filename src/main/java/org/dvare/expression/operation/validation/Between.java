@@ -75,9 +75,9 @@ public class Between extends EqualityOperationExpression {
             throw new IllegalOperationException(message2);
         }
 */
-
-        logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
+        }
 
     }
 
