@@ -1,6 +1,6 @@
-## DVARE FRAMEWORK 
-Java lightweight expression evaluator that enables perform Arithmetic, Comparison operations.
-[http://dvare.org/v1.4](http://dvare.org/v1.4)
+## Dvare Framework
+Java lightweight expression language that enables perform Arithmetic, Comparison operations.
+[http://dvare.org](http://dvare.org)
 
 
 ## Example
@@ -32,6 +32,16 @@ public class ArithmeticOperationTest {
 * The current stable version is `1.4` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|1.4|)
 * The current snapshot version is `2.0` : [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework)
 
+In order to use snapshot versions, you need to add the following maven repository in your `pom.xml`:
+
+```xml
+<repository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+```
+
+
  Maven dependency:
 ```xml
 <dependencies>
@@ -44,12 +54,12 @@ public class ArithmeticOperationTest {
 ```
 
 ## License
-DVARE is released under the [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT).
+Dvare Framework  is released under the [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT).
 
 ```
 The MIT License (MIT)
 
-Copyright (c) 2016 Muhammad Hammad
+Copyright (c) 2016-2017 Muhammad Hammad
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
