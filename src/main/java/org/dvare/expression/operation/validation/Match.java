@@ -13,7 +13,6 @@ import org.dvare.expression.literal.BooleanLiteral;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -53,17 +52,13 @@ public class Match extends OperationExpression {
         String error = null;
 
 
-        if (expressions == null || expressions.isEmpty()) {
-            error = "No Parameters Found Expression Found";
+        if (expressions == null || expressions.size() < 2) {
+            error = "Match Operation minimum two parameter";
 
         } else {
 
             if (!(expressions.get(0) instanceof VariableExpression)) {
-                error = "First param of combination function must be variable";
-            }
-
-            if (!(expressions.get(1) instanceof ListLiteral) && !(expressions.get(1) instanceof ListOperationExpression)) {
-                error = "Second param of combination function must be variable";
+                error = "First param of match function must be variable";
             }
 
 
@@ -129,6 +124,7 @@ public class Match extends OperationExpression {
         DataType dataType = null;
         List values = new ArrayList<>();
         if (expressions.get(0) instanceof VariableExpression) {
+
             VariableExpression variableExpression = (VariableExpression) expressions.get(0);
 
             Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
@@ -153,22 +149,41 @@ public class Match extends OperationExpression {
 
 
         List matchParams = null;
-        if (expressions.get(1) instanceof ListLiteral) {
-            ListLiteral listLiteral = (ListLiteral) expressions.get(1);
+        Expression paramsExpression = expressions.get(1);
+        if (paramsExpression instanceof LiteralExpression) {
 
-            if (listLiteral.getValue() != null) {
-                matchParams = listLiteral.getValue();
-            }
-        } else if (expressions.get(1) instanceof OperationExpression) {
-            OperationExpression operationExpression = (OperationExpression) expressions.get(1);
-
-            LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(instancesBinding);
+            LiteralExpression literalExpression = (LiteralExpression) paramsExpression;
             if (literalExpression instanceof ListLiteral) {
                 ListLiteral listLiteral = (ListLiteral) literalExpression;
                 if (listLiteral.getValue() != null) {
                     matchParams = listLiteral.getValue();
                 }
+            } else {
+                matchParams = new ArrayList();
+                matchParams.add(literalExpression.getValue());
             }
+
+
+        } else if (paramsExpression instanceof OperationExpression) {
+            OperationExpression operationExpression = (OperationExpression) expressions.get(1);
+            Object interpret = operationExpression.interpret(instancesBinding);
+            if (interpret instanceof LiteralExpression) {
+                LiteralExpression literalExpression = (LiteralExpression) interpret;
+                if (literalExpression instanceof ListLiteral) {
+                    ListLiteral listLiteral = (ListLiteral) literalExpression;
+                    if (listLiteral.getValue() != null) {
+                        matchParams = listLiteral.getValue();
+                    }
+                } else {
+                    matchParams = new ArrayList();
+                    matchParams.add(literalExpression.getValue());
+                }
+            }
+        } else if (paramsExpression instanceof VariableExpression) {
+          /*  VariableExpression variableExpression= (VariableExpression) paramsExpression;
+            variableExpression = VariableType.setVariableValue(variableExpression, dataRow);*/
+
+
         }
 
 

@@ -45,6 +45,7 @@ public class FunctionExpression extends Expression {
             logger.debug("FunctionService Name  Expression :  [{} {}]", name, binding.getReturnType().getDataType());
         }
     }
+
     public void addParameter(Expression parameter) {
         this.parameters.add(parameter);
     }

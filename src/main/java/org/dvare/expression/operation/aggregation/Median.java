@@ -54,7 +54,6 @@ public class Median extends AggregationOperationExpression {
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
-
         Expression right = this.leftOperand;
         if (right instanceof VariableExpression) {
             VariableExpression variableExpression = ((VariableExpression) right);

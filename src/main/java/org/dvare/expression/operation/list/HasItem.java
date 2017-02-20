@@ -1,6 +1,7 @@
 package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
@@ -10,8 +11,10 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
+import org.dvare.expression.operation.EqualityOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +34,6 @@ public class HasItem extends AggregationOperationExpression {
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
-
-
         Expression right = leftOperand;
         if (right instanceof Values) {
             OperationExpression valuesOperation = (OperationExpression) right;
@@ -47,43 +48,85 @@ public class HasItem extends AggregationOperationExpression {
                 dataTypeExpress = listLiteral.getType();
             }
 
-
-            Object item = null;
-            Class itemDataTypeExpress = null;
-            if (!rightOperand.isEmpty()) {
-                Expression expression = rightOperand.get(0);
-                if (expression instanceof OperationExpression) {
-                    OperationExpression operationExpression = (OperationExpression) expression;
-                    Object result = operationExpression.interpret(instancesBinding);
-
-                    if (result instanceof LiteralExpression) {
-                        LiteralExpression literalExpression = (LiteralExpression) result;
-                        item = literalExpression.getValue();
-                        itemDataTypeExpress = literalExpression.getType();
-                    }
-
-                } else if (expression instanceof LiteralExpression) {
-                    LiteralExpression literalExpression = (LiteralExpression) expression;
-                    item = literalExpression.getValue();
-                    itemDataTypeExpress = literalExpression.getType();
-                }
-            }
+            if (values != null) {
+                if (!rightOperand.isEmpty()) {
+                    Expression expression = rightOperand.get(0);
+                    if (expression instanceof EqualityOperationExpression) {
+                        OperationExpression operationExpression = (OperationExpression) expression;
 
 
-            if (item != null && values != null) {
-                if (!values.isEmpty() && (dataTypeExpress.equals(itemDataTypeExpress))) {
+                        Expression leftExpression = operationExpression.getLeftOperand();
 
-                    for (Object value : values) {
-                        if (value.equals(item)) {
-                            return LiteralType.getLiteralExpression(true, BooleanType.class);
+                        while (leftExpression instanceof OperationExpression) {
+                            leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+                        }
+
+
+                        if (leftExpression instanceof VariableExpression) {
+                            VariableExpression variableExpression = (VariableExpression) leftExpression;
+                            String name = variableExpression.getName();
+                            String operandType = variableExpression.getOperandType();
+
+
+                            for (Object value : values) {
+
+
+                                Object instance = instancesBinding.getInstance(operandType);
+
+                                if (instance == null || !(instance instanceof DataRow)) {
+                                    DataRow dataRow = new DataRow();
+                                    dataRow.addData(name, value);
+                                    instancesBinding.addInstance(operandType, dataRow);
+                                } else {
+
+                                    DataRow dataRow = (DataRow) instance;
+                                    dataRow.addData(name, value);
+                                    instancesBinding.addInstance(operandType, dataRow);
+                                }
+
+
+                                Object interpret = operationExpression.interpret(instancesBinding);
+
+                                Boolean result = toBoolean(interpret);
+
+                                if (result) {
+
+
+                                    return LiteralType.getLiteralExpression(true, BooleanType.class);
+
+                                }
+
+                            }
+
+                        }
+
+
+                    } else if (expression instanceof LiteralExpression) {
+
+
+                        LiteralExpression literalExpression = (LiteralExpression) expression;
+                        Object item = literalExpression.getValue();
+                        Class itemDataTypeExpress = literalExpression.getType();
+
+
+                        if (item != null) {
+                            if (!values.isEmpty() && (dataTypeExpress.equals(itemDataTypeExpress))) {
+
+                                for (Object value : values) {
+                                    if (value.equals(item)) {
+                                        return LiteralType.getLiteralExpression(true, BooleanType.class);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
+
         }
 
 
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
 }

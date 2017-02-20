@@ -21,52 +21,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.binding.model;
+package org.dvare;
+
+import org.dvare.test.validation.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 
-import org.dvare.expression.datatype.DataType;
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class TypeBinding {
-    private Map<String, Object> types = new HashMap<>();
-
-    public TypeBinding() {
-        types = new HashMap<>();
-    }
-
-    public TypeBinding(Map<String, Object> types) {
-        if (types != null) {
-            this.types = types;
-        }
-    }
-
-    public Object getDataType(String name) {
-        if (types.get(name) instanceof String) {
-            return DataType.valueOf((String) types.get(name));
-        }
-        return types.get(name);
-    }
-
-    public void addTypes(String name, Object type) {
-        this.types.put(name, type);
-    }
-
-    @Override
-    public String toString() {
-        return types != null ? types.toString() : "";
-    }
-
-/*Getter and Setters*/
-
-    public Map<String, Object> getTypes() {
-        return types;
-    }
-
-    public void setTypes(Map<String, Object> types) {
-        this.types = types;
-    }
-
+        EqualOperationTest.class,
+        NotEqualOperationTest.class,
+        InOperationTest.class,
+        BetweenOperationTest.class,
+        ParenthesisTest.class,
+        ChainOperationTest.class,
+        BuilderTest.class,
+      /*  FunctionTestExclude.class,*/
+        ArithmeticOperationTest.class})
+public class ValidationTest {
 
 }

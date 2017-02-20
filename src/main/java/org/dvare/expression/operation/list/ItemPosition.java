@@ -1,14 +1,17 @@
 package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.IntegerType;
 import org.dvare.expression.literal.*;
 import org.dvare.expression.operation.AggregationOperationExpression;
+import org.dvare.expression.operation.EqualityOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,34 +37,73 @@ public class ItemPosition extends AggregationOperationExpression {
             Object valuesResult = valuesOperation.interpret(instancesBinding);
 
             List<Object> values = null;
-            Class dataTypeExpress = null;
             if (valuesResult instanceof ListLiteral) {
                 ListLiteral listLiteral = (ListLiteral) valuesResult;
                 values = listLiteral.getValue();
-                dataTypeExpress = listLiteral.getType();
             }
 
 
-            Object item = null;
             if (!rightOperand.isEmpty()) {
                 Expression expression = rightOperand.get(0);
-                if (expression instanceof OperationExpression) {
-                    OperationExpression operationExpression = (OperationExpression) expression;
-                    Object result = operationExpression.interpret(instancesBinding);
+                if (expression instanceof EqualityOperationExpression) {
 
-                    if (result instanceof LiteralExpression) {
-                        item = ((LiteralExpression) result).getValue();
+
+                    OperationExpression operationExpression = (OperationExpression) expression;
+
+
+                    Expression leftExpression = operationExpression.getLeftOperand();
+
+                    while (leftExpression instanceof OperationExpression) {
+                        leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+                    }
+
+
+                    if (leftExpression instanceof VariableExpression) {
+                        VariableExpression variableExpression = (VariableExpression) leftExpression;
+                        String name = variableExpression.getName();
+                        String operandType = variableExpression.getOperandType();
+
+
+                        for (Object value : values) {
+
+
+                            Object instance = instancesBinding.getInstance(operandType);
+
+                            if (instance == null || !(instance instanceof DataRow)) {
+                                DataRow dataRow = new DataRow();
+                                dataRow.addData(name, value);
+                                instancesBinding.addInstance(operandType, dataRow);
+                            } else {
+
+                                DataRow dataRow = (DataRow) instance;
+                                dataRow.addData(name, value);
+                                instancesBinding.addInstance(operandType, dataRow);
+                            }
+
+
+                            Object interpret = operationExpression.interpret(instancesBinding);
+
+                            Boolean result = toBoolean(interpret);
+
+                            if (result) {
+
+
+                                return LiteralType.getLiteralExpression(values.indexOf(value), IntegerType.class);
+
+                            }
+
+                        }
+
                     }
 
                 } else if (expression instanceof IntegerLiteral) {
-                    item = ((LiteralExpression) expression).getValue();
+                    Object item = ((LiteralExpression) expression).getValue();
+                    if (item != null && values != null) {
+
+                        return LiteralType.getLiteralExpression(values.indexOf(item), IntegerType.class);
+                    }
+
                 }
-            }
-
-
-            if (item != null && values != null) {
-
-                return LiteralType.getLiteralExpression(values.indexOf(instancesBinding), IntegerType.class);
             }
 
 
