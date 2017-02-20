@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016 Muhammad Hammad
+Copyright (c) 2016-2017 Muhammad Hammad
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -62,7 +62,7 @@ public class FloatType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
-            Less.class
+            LessThen.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();
@@ -80,7 +80,7 @@ public class FloatType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
-            Greater.class
+            GreaterThen.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();

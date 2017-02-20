@@ -30,7 +30,7 @@ public class ArithmeticOperationTest {
 ## Current version
 
 * The current stable version is `1.4` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|1.4|)
-* The current snapshot version is `2.0` : [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework)
+* The current snapshot version is `2.0` : [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework) [![Coverage Status](https://coveralls.io/repos/github/dvare/dvare-framework/badge.svg?branch=master)](https://coveralls.io/github/dvare/dvare-framework?branch=master)
 
 In order to use snapshot versions, you need to add the following maven repository in your `pom.xml`:
 
@@ -59,7 +59,7 @@ Dvare Framework  is released under the [![MIT license](http://img.shields.io/bad
 ```
 The MIT License (MIT)
 
-Copyright (c) 2016-2017 Muhammad Hammad
+Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

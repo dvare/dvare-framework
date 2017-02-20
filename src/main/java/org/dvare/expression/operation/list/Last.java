@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016 Muhammad Hammad
+Copyright (c) 2016-2017 Muhammad Hammad
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -55,7 +55,7 @@ public class Last extends AggregationOperationExpression {
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
-        if (right instanceof Values) {
+        if (right instanceof ValuesOperation) {
             OperationExpression valuesOperation = (OperationExpression) right;
             Object valuesResult = valuesOperation.interpret(instancesBinding);
             if (valuesResult instanceof ListLiteral) {

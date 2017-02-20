@@ -31,7 +31,7 @@ public class First extends AggregationOperationExpression {
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
-        if (right instanceof Values) {
+        if (right instanceof ValuesOperation) {
             OperationExpression valuesOperation = (OperationExpression) right;
             Object valuesResult = valuesOperation.interpret(instancesBinding);
             if (valuesResult instanceof ListLiteral) {

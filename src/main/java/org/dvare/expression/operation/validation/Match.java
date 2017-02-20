@@ -15,6 +15,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.list.ValuesOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TrimString;
@@ -123,7 +124,8 @@ public class Match extends OperationExpression {
         List<Expression> expressions = this.leftOperand;
         DataType dataType = null;
         List values = new ArrayList<>();
-        if (expressions.get(0) instanceof VariableExpression) {
+        Expression valueParam = expressions.get(0);
+        if (valueParam instanceof VariableExpression) {
 
             VariableExpression variableExpression = (VariableExpression) expressions.get(0);
 
@@ -145,8 +147,55 @@ public class Match extends OperationExpression {
                 }
             }
 
-        }
+        } else if (valueParam instanceof ValuesOperation) {
 
+            Object interpret = valueParam.interpret(instancesBinding);
+            if (interpret instanceof LiteralExpression) {
+                LiteralExpression literalExpression = (LiteralExpression) interpret;
+                if (literalExpression instanceof ListLiteral) {
+                    ListLiteral listLiteral = (ListLiteral) literalExpression;
+                    if (listLiteral.getValue() != null) {
+                        values = listLiteral.getValue();
+                    }
+                }
+            }
+        }/*else if (valueParam instanceof ChainOperationExpression) {
+
+            ChainOperationExpression operationExpression = (ChainOperationExpression) valueParam;
+
+            Expression expression = operationExpression.getLeftOperand();
+
+            while (expression instanceof ChainOperationExpression) {
+                expression = ((ChainOperationExpression) expression).getLeftOperand();
+            }
+
+
+            if (expression instanceof VariableExpression) {
+
+
+                VariableExpression variableExpression = (VariableExpression) expression;
+                String operandType = variableExpression.getOperandType();
+                Object instance = instancesBinding.getInstance(operandType);
+
+
+                List dataSet;
+                if (instance instanceof List) {
+                    dataSet = (List) instance;
+                } else {
+                    dataSet = new ArrayList<>();
+                    dataSet.add(instance);
+                }
+
+                for (Object object : dataSet) {
+                    instancesBinding.addInstance(operandType, object);
+                    LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(instancesBinding);
+                    values.add(literalExpression.getValue());
+                }
+                instancesBinding.addInstance(operandType, instance);
+
+
+            }
+        }*/
 
         List matchParams = null;
         Expression paramsExpression = expressions.get(1);

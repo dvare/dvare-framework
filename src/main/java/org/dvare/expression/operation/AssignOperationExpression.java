@@ -1,4 +1,4 @@
-package org.dvare.expression.operation.aggregation;
+package org.dvare.expression.operation;
 
 import org.dvare.annotations.Operation;
 import org.dvare.annotations.Type;
@@ -14,9 +14,7 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.ConditionOperationExpression;
-import org.dvare.expression.operation.OperationExpression;
-import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.aggregation.Semicolon;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.parser.ExpressionTokenizer;
@@ -30,10 +28,10 @@ import java.util.Arrays;
 import java.util.Stack;
 
 @Operation(type = OperationType.ASSIGN)
-public class Assign extends OperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Assign.class);
+public class AssignOperationExpression extends OperationExpression {
+    static Logger logger = LoggerFactory.getLogger(AssignOperationExpression.class);
 
-    public Assign() {
+    public AssignOperationExpression() {
         super(OperationType.ASSIGN);
     }
 

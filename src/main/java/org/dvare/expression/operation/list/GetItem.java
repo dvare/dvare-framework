@@ -5,14 +5,8 @@ import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.literal.IntegerLiteral;
-import org.dvare.expression.literal.ListLiteral;
-import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.AggregationOperationExpression;
-import org.dvare.expression.operation.EqualityOperationExpression;
-import org.dvare.expression.operation.OperationExpression;
-import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.literal.*;
+import org.dvare.expression.operation.*;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +27,7 @@ public class GetItem extends AggregationOperationExpression {
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
-        if (right instanceof Values) {
+        if (right instanceof ValuesOperation) {
             OperationExpression valuesOperation = (OperationExpression) right;
 
             Object valuesResult = valuesOperation.interpret(instancesBinding);
@@ -49,7 +43,17 @@ public class GetItem extends AggregationOperationExpression {
 
             if (!rightOperand.isEmpty()) {
                 Expression expression = rightOperand.get(0);
-                if (expression instanceof EqualityOperationExpression) {
+
+                if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
+
+                    OperationExpression operationExpression = (OperationExpression) expression;
+                    Object interpret = operationExpression.interpret(instancesBinding);
+                    if (interpret instanceof IntegerLiteral) {
+                        return buildItem(values, (IntegerLiteral) interpret, dataTypeExpress);
+                    }
+
+
+                } else if (expression instanceof EqualityOperationExpression) {
 
 
                     OperationExpression operationExpression = (OperationExpression) expression;
@@ -103,17 +107,8 @@ public class GetItem extends AggregationOperationExpression {
 
                 } else if (expression instanceof IntegerLiteral) {
 
-                    Integer index = ((IntegerLiteral) expression).getValue();
-                    if (index != null && values != null) {
-                        index--; // start index from 1
-                        if (index < values.size()) {
+                    return buildItem(values, (IntegerLiteral) expression, dataTypeExpress);
 
-                            Object value = values.get(index);
-                            return LiteralType.getLiteralExpression(value, dataTypeExpress);
-
-
-                        }
-                    }
                 }
             }
 
@@ -123,5 +118,21 @@ public class GetItem extends AggregationOperationExpression {
 
         return new NullLiteral();
     }
+
+    private LiteralExpression buildItem(List<Object> values, IntegerLiteral integerLiteral, Class dataTypeExpress) throws InterpretException {
+        Integer index = integerLiteral.getValue();
+        if (index != null && values != null) {
+            index--; // start index from 1
+            if (index < values.size()) {
+
+                Object value = values.get(index);
+                return LiteralType.getLiteralExpression(value, dataTypeExpress);
+
+
+            }
+        }
+        return new NullLiteral();
+    }
+
 
 }

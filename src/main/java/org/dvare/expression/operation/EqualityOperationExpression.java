@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016 Muhammad Hammad
+Copyright (c) 2016-2017 Muhammad Hammad
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -297,7 +297,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
 
             try {
-                return dataTypeExpression.newInstance().compare(this, left, right);
+                return dataTypeExpression.newInstance().evaluate(this, left, right);
             } catch (InstantiationException | IllegalAccessException e) {
                 logger.error(e.getMessage(), e);
             }

@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016 Muhammad Hammad
+Copyright (c) 2016-2017 Muhammad Hammad
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,10 +22,12 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation;
 
+import org.dvare.annotations.Type;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 
 public abstract class ArithmeticOperationExpression extends EqualityOperationExpression {
@@ -43,8 +45,40 @@ public abstract class ArithmeticOperationExpression extends EqualityOperationExp
         if (leftExpression == null)
             return new NullLiteral();
         LiteralExpression<?> rightExpression = (LiteralExpression) rightValueOperand;
+
+        LiteralExpression left = toLiteralExpression(leftExpression);
+        LiteralExpression right = toLiteralExpression(rightExpression);
+
+        if (left instanceof NullLiteral && right instanceof NullLiteral) {
+            return new NullLiteral();
+        }
+
+        if (left instanceof NullLiteral) {
+
+            if (right.getType().isAnnotationPresent(Type.class)) {
+                Type type = (Type) right.getType().getAnnotation(Type.class);
+
+                switch (type.dataType()) {
+
+                    case FloatType: {
+                        left = LiteralType.getLiteralExpression(0f, right.getType());
+                        break;
+                    }
+                    case IntegerType: {
+                        left = LiteralType.getLiteralExpression(0, right.getType());
+                        break;
+                    }
+                    case StringType: {
+                        left = LiteralType.getLiteralExpression("", right.getType());
+                        break;
+                    }
+
+                }
+            }
+        }
+
         try {
-            return dataTypeExpression.newInstance().evaluate(this, leftExpression, rightExpression);
+            return dataTypeExpression.newInstance().evaluate(this, left, right);
         } catch (InstantiationException | IllegalAccessException e) {
             logger.error(e.getMessage(), e);
         }

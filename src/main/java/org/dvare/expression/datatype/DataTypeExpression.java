@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016 Muhammad Hammad
+Copyright (c) 2016-2017 Muhammad Hammad
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,14 +25,11 @@ package org.dvare.expression.datatype;
 
 
 import org.dvare.annotations.OperationMapping;
-import org.dvare.annotations.Type;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
-import org.dvare.expression.veriable.VariableExpression;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -57,46 +54,10 @@ public abstract class DataTypeExpression extends Expression {
     }
 
 
-    public LiteralExpression evaluate(OperationExpression operationExpression, Expression leftExpression, Expression rightExpression) throws InterpretException {
-
-        LiteralExpression left = toLiteralExpression(leftExpression);
-        LiteralExpression right = toLiteralExpression(rightExpression);
-
-        if (left instanceof NullLiteral && right instanceof NullLiteral) {
-            return new NullLiteral();
-        }
-
-
-        if (left instanceof NullLiteral) {
-
-            if (right.getType().isAnnotationPresent(Type.class)) {
-                Type type = (Type) right.getType().getAnnotation(Type.class);
-
-                switch (type.dataType()) {
-
-                    case FloatType: {
-                        left = LiteralType.getLiteralExpression(0f, right.getType());
-                        break;
-                    }
-                    case IntegerType: {
-                        left = LiteralType.getLiteralExpression(0, right.getType());
-                        break;
-                    }
-                    case StringType: {
-                        left = LiteralType.getLiteralExpression("", right.getType());
-                        break;
-                    }
-
-                }
-            }
-        }
+    public LiteralExpression evaluate(OperationExpression operationExpression, LiteralExpression left, LiteralExpression right) throws InterpretException {
 
         String methodName = getMethodName(operationExpression.getClass());
-        return evaluate(methodName, left, right);
-    }
 
-
-    private LiteralExpression evaluate(String methodName, Expression left, Expression right) throws InterpretException {
         try {
 
             Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
@@ -115,22 +76,6 @@ public abstract class DataTypeExpression extends Expression {
     }
 
 
-    public Boolean compare(OperationExpression operationExpression, LiteralExpression left, LiteralExpression right) throws InterpretException {
-
-        String methodName = getMethodName(operationExpression.getClass());
-        try {
-
-
-            Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
-            return (Boolean) method.invoke(this, left, right);
-
-        } catch (Exception m) {
-            throw new InterpretException(m);
-        }
-
-    }
-
-
     private String getMethodName(Class operation) {
         for (Method method : this.getClass().getMethods()) {
             Annotation annotation = method.getAnnotation(OperationMapping.class);
@@ -145,17 +90,7 @@ public abstract class DataTypeExpression extends Expression {
         return null;
     }
 
-    private LiteralExpression toLiteralExpression(Expression expression) throws InterpretException {
 
-        LiteralExpression leftExpression = null;
-        if (expression instanceof LiteralExpression) {
-            leftExpression = (LiteralExpression) expression;
-        } else if (expression instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) expression;
-            leftExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
-        }
-        return leftExpression;
-    }
 
 
 }

@@ -10,10 +10,7 @@ import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.AggregationOperationExpression;
-import org.dvare.expression.operation.EqualityOperationExpression;
-import org.dvare.expression.operation.OperationExpression;
-import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.*;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +32,7 @@ public class HasItem extends AggregationOperationExpression {
 
 
         Expression right = leftOperand;
-        if (right instanceof Values) {
+        if (right instanceof ValuesOperation) {
             OperationExpression valuesOperation = (OperationExpression) right;
 
             Object valuesResult = valuesOperation.interpret(instancesBinding);
@@ -51,7 +48,32 @@ public class HasItem extends AggregationOperationExpression {
             if (values != null) {
                 if (!rightOperand.isEmpty()) {
                     Expression expression = rightOperand.get(0);
-                    if (expression instanceof EqualityOperationExpression) {
+
+                    if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
+
+                        OperationExpression operationExpression = (OperationExpression) expression;
+                        Object interpret = operationExpression.interpret(instancesBinding);
+                        if (interpret instanceof LiteralExpression) {
+
+                            LiteralExpression literalExpression = (LiteralExpression) interpret;
+                            Object item = literalExpression.getValue();
+                            if (item != null) {
+                                if (!values.isEmpty() && (dataTypeExpress.equals(literalExpression.getType()))) {
+
+                                    for (Object value : values) {
+                                        if (value.equals(item)) {
+                                            return LiteralType.getLiteralExpression(true, BooleanType.class);
+                                        }
+                                    }
+                                }
+
+
+                            }
+
+                        }
+
+
+                    } else if (expression instanceof EqualityOperationExpression) {
                         OperationExpression operationExpression = (OperationExpression) expression;
 
 
@@ -78,7 +100,6 @@ public class HasItem extends AggregationOperationExpression {
                                     dataRow.addData(name, value);
                                     instancesBinding.addInstance(operandType, dataRow);
                                 } else {
-
                                     DataRow dataRow = (DataRow) instance;
                                     dataRow.addData(name, value);
                                     instancesBinding.addInstance(operandType, dataRow);

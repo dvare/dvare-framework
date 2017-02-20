@@ -7,10 +7,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.IntegerType;
 import org.dvare.expression.literal.*;
-import org.dvare.expression.operation.AggregationOperationExpression;
-import org.dvare.expression.operation.EqualityOperationExpression;
-import org.dvare.expression.operation.OperationExpression;
-import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.*;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +28,7 @@ public class ItemPosition extends AggregationOperationExpression {
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
-        if (right instanceof Values) {
+        if (right instanceof ValuesOperation) {
             OperationExpression valuesOperation = (OperationExpression) right;
 
             Object valuesResult = valuesOperation.interpret(instancesBinding);
@@ -45,7 +42,23 @@ public class ItemPosition extends AggregationOperationExpression {
 
             if (!rightOperand.isEmpty()) {
                 Expression expression = rightOperand.get(0);
-                if (expression instanceof EqualityOperationExpression) {
+                if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
+
+                    OperationExpression operationExpression = (OperationExpression) expression;
+                    Object interpret = operationExpression.interpret(instancesBinding);
+                    if (interpret instanceof LiteralExpression) {
+
+
+                        Object item = ((LiteralExpression) interpret).getValue();
+                        if (item != null && values != null) {
+
+                            return LiteralType.getLiteralExpression(values.indexOf(item), IntegerType.class);
+                        }
+
+                    }
+
+
+                } else if (expression instanceof EqualityOperationExpression) {
 
 
                     OperationExpression operationExpression = (OperationExpression) expression;

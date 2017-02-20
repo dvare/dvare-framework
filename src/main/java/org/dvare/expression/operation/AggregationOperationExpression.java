@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016 Muhammad Hammad
+Copyright (c) 2016-2017 Muhammad Hammad
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@ package org.dvare.expression.operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
+import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -33,18 +34,20 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.validation.RightPriority;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class AggregationOperationExpression extends ChainOperationExpression {
+public abstract class AggregationOperationExpression extends OperationExpression {
     private static Logger logger = LoggerFactory.getLogger(AggregationOperationExpression.class);
-
+    protected List<Expression> rightOperand = new ArrayList<>();
     protected LiteralExpression leftExpression;
 
     public AggregationOperationExpression(OperationType operationType) {
@@ -61,7 +64,6 @@ public abstract class AggregationOperationExpression extends ChainOperationExpre
 
 
         if (stack.isEmpty()) {
-
 
             TokenType tokenType = findDataObject(token, contexts);
 
@@ -89,6 +91,64 @@ public abstract class AggregationOperationExpression extends ChainOperationExpre
         return pos;
     }
 
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+
+        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+        Stack<Expression> localStack = new Stack<>();
+        for (; pos < tokens.length; pos++) {
+            String token = tokens[pos];
+            OperationExpression op = configurationRegistry.getOperation(token);
+            if (op != null) {
+
+                if (op.getClass().equals(RightPriority.class)) {
+                    this.rightOperand = new ArrayList<>(localStack);
+                    return pos;
+                } else {
+
+                    pos = op.parse(tokens, pos, localStack, contexts);
+                }
+
+
+            } else {
+
+                TokenType tokenType = findDataObject(token, contexts);
+                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                    VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                    localStack.add(variableExpression);
+                } else {
+                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
+                    localStack.add(literalExpression);
+                }
+
+
+            }
+        }
+        return pos;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+
+        if (leftOperand != null) {
+            toStringBuilder.append(leftOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(" ");
+
+        if (rightOperand != null) {
+            toStringBuilder.append(rightOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        return toStringBuilder.toString();
+    }
 
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {

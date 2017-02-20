@@ -1,4 +1,4 @@
-package org.dvare.expression.operation.aggregation;
+package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
@@ -14,15 +14,14 @@ import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.List;
 
 @Operation(type = OperationType.VALUE)
-public class Value extends AggregationOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Value.class);
+public class ValueOperation extends AggregationOperationExpression {
+    static Logger logger = LoggerFactory.getLogger(ValueOperation.class);
 
 
-    public Value() {
+    public ValueOperation() {
         super(OperationType.VALUE);
     }
 
@@ -36,7 +35,7 @@ public class Value extends AggregationOperationExpression {
                 VariableExpression variableExpression = (VariableExpression) right;
 
                 Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-                if (instance instanceof Collection) {
+                if (instance instanceof List) {
                     List dataSet = (List) instance;
                     Object value = getValue(dataSet.get(0), variableExpression.getName());
                     return LiteralType.getLiteralExpression(value, variableExpression.getType());

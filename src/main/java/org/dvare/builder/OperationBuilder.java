@@ -93,7 +93,7 @@ public class OperationBuilder {
             }
 
             case GREATER: {
-                operationExpression = new Greater();
+                operationExpression = new GreaterThen();
                 operationExpression.setLeftOperand(leftOperand);
                 operationExpression.setRightOperand(rightOperand);
                 break;
@@ -108,7 +108,7 @@ public class OperationBuilder {
             }
 
             case LESS: {
-                operationExpression = new Less();
+                operationExpression = new LessThen();
                 operationExpression.setLeftOperand(leftOperand);
                 operationExpression.setRightOperand(rightOperand);
                 break;

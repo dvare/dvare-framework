@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Operation(type = OperationType.VALUES)
-public class Values extends AggregationOperationExpression {
-    private static Logger logger = LoggerFactory.getLogger(Values.class);
+public class ValuesOperation extends AggregationOperationExpression {
+    private static Logger logger = LoggerFactory.getLogger(ValuesOperation.class);
 
 
-    public Values() {
+    public ValuesOperation() {
         super(OperationType.VALUES);
     }
 

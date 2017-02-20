@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016 Muhammad Hammad
+Copyright (c) 2016-2017 Muhammad Hammad
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation.validation;
+package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.model.ContextsBinding;
@@ -35,6 +35,7 @@ import org.dvare.expression.literal.DateLiteral;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.validation.RightPriority;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
