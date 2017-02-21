@@ -3,7 +3,6 @@ package org.dvare.expression.operation.validation;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
-import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -12,22 +11,23 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.BooleanLiteral;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.list.ValuesOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TrimString;
-import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import java.util.TreeSet;
 
 @Operation(type = OperationType.Match)
 public class Match extends OperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Match.class);
+    private static Logger logger = LoggerFactory.getLogger(Match.class);
 
     protected List<Expression> leftOperand;
 
@@ -83,26 +83,12 @@ public class Match extends OperationExpression {
                 if (op instanceof RightPriority) {
                     this.leftOperand = new ArrayList<>(localStack);
                     return pos;
-                } else if (op instanceof LeftPriority) {
-
-                } else {
+                } else if (!(op instanceof LeftPriority)) {
                     pos = op.parse(tokens, pos, localStack, contexts);
                 }
             } else {
 
-                TokenType tokenType = findDataObject(token, contexts);
-                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
-                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
-                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                    VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
-                    localStack.add(variableExpression);
-
-                } else {
-
-                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
-                    localStack.add(literalExpression);
-                }
-
+                localStack.add(buildExpression(token, contexts));
 
             }
         }
@@ -117,14 +103,17 @@ public class Match extends OperationExpression {
         List<Expression> expressions = this.leftOperand;
         DataType dataType = null;
         List values = new ArrayList<>();
+
+        /* values to match */
+
         Expression valueParam = expressions.get(0);
         if (valueParam instanceof VariableExpression) {
 
-            VariableExpression variableExpression = (VariableExpression) expressions.get(0);
+            VariableExpression variableExpression = (VariableExpression) valueParam;
 
             Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-            List<Object> dataSet;
-            if (instance instanceof Collection) {
+            List dataSet;
+            if (instance instanceof List) {
                 dataSet = (List) instance;
             } else {
                 dataSet = new ArrayList<>();
@@ -153,79 +142,33 @@ public class Match extends OperationExpression {
                     }
                 }
             }
-        }/*else if (valueParam instanceof ChainOperationExpression) {
+        }
+        
+        
+        
+        
+        
+        /*match params*/
 
-            ChainOperationExpression operationExpression = (ChainOperationExpression) valueParam;
-
-            Expression expression = operationExpression.getLeftOperand();
-
-            while (expression instanceof ChainOperationExpression) {
-                expression = ((ChainOperationExpression) expression).getLeftOperand();
-            }
-
-
-            if (expression instanceof VariableExpression) {
-
-
-                VariableExpression variableExpression = (VariableExpression) expression;
-                String operandType = variableExpression.getOperandType();
-                Object instance = instancesBinding.getInstance(operandType);
-
-
-                List dataSet;
-                if (instance instanceof List) {
-                    dataSet = (List) instance;
-                } else {
-                    dataSet = new ArrayList<>();
-                    dataSet.add(instance);
-                }
-
-                for (Object object : dataSet) {
-                    instancesBinding.addInstance(operandType, object);
-                    LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(instancesBinding);
-                    values.add(literalExpression.getValue());
-                }
-                instancesBinding.addInstance(operandType, instance);
-
-
-            }
-        }*/
 
         List matchParams = null;
         Expression paramsExpression = expressions.get(1);
         if (paramsExpression instanceof LiteralExpression) {
-
-            LiteralExpression literalExpression = (LiteralExpression) paramsExpression;
-            if (literalExpression instanceof ListLiteral) {
-                ListLiteral listLiteral = (ListLiteral) literalExpression;
-                if (listLiteral.getValue() != null) {
-                    matchParams = listLiteral.getValue();
-                }
-            } else {
-                matchParams = new ArrayList();
-                matchParams.add(literalExpression.getValue());
-            }
+            matchParams = buildMatchParams((LiteralExpression) paramsExpression);
 
 
         } else if (paramsExpression instanceof OperationExpression) {
             OperationExpression operationExpression = (OperationExpression) expressions.get(1);
             Object interpret = operationExpression.interpret(instancesBinding);
             if (interpret instanceof LiteralExpression) {
-                LiteralExpression literalExpression = (LiteralExpression) interpret;
-                if (literalExpression instanceof ListLiteral) {
-                    ListLiteral listLiteral = (ListLiteral) literalExpression;
-                    if (listLiteral.getValue() != null) {
-                        matchParams = listLiteral.getValue();
-                    }
-                } else {
-                    matchParams = new ArrayList();
-                    matchParams.add(literalExpression.getValue());
-                }
+                matchParams = buildMatchParams((LiteralExpression) interpret);
             }
         } else if (paramsExpression instanceof VariableExpression) {
-          /*  VariableExpression variableExpression= (VariableExpression) paramsExpression;
-            variableExpression = VariableType.setVariableValue(variableExpression, dataRow);*/
-
+            VariableExpression variableExpression = (VariableExpression) paramsExpression;
+            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+            variableExpression = VariableType.setVariableValue(variableExpression, instance);
+            matchParams = new ArrayList();
+            matchParams.add(variableExpression);
 
         }
 
@@ -342,4 +285,20 @@ public class Match extends OperationExpression {
         }
         return false;
     }
+
+
+    private List buildMatchParams(LiteralExpression literalExpression) {
+        List matchParams = null;
+        if (literalExpression instanceof ListLiteral) {
+            ListLiteral listLiteral = (ListLiteral) literalExpression;
+            if (listLiteral.getValue() != null) {
+                matchParams = listLiteral.getValue();
+            }
+        } else {
+            matchParams = new ArrayList();
+            matchParams.add(literalExpression.getValue());
+        }
+        return matchParams;
+    }
+
 }

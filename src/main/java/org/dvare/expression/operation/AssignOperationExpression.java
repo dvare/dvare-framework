@@ -12,7 +12,6 @@ import org.dvare.exceptions.parser.IllegalPropertyException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.aggregation.Semicolon;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
@@ -22,35 +21,16 @@ import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.Stack;
 
 @Operation(type = OperationType.ASSIGN)
 public class AssignOperationExpression extends OperationExpression {
-    static Logger logger = LoggerFactory.getLogger(AssignOperationExpression.class);
+    private static Logger logger = LoggerFactory.getLogger(AssignOperationExpression.class);
 
     public AssignOperationExpression() {
         super(OperationType.ASSIGN);
     }
 
-
-    protected boolean isLegalOperation(Expression expression, DataType dataType) {
-
-        /*if (expression instanceof ChainOperationExpression) {
-            return true;
-        }*/
-
-        Annotation annotation = expression.getClass().getAnnotation(Operation.class);
-        if (annotation != null) {
-            Operation operation = (Operation) annotation;
-            DataType dataTypes[] = operation.dataTypes();
-            if (Arrays.asList(dataTypes).contains(dataType)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
@@ -77,28 +57,9 @@ public class AssignOperationExpression extends OperationExpression {
 
 
             Expression left = this.leftOperand;
-            Expression right = this.rightOperand;
 
-            if (left instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) left;
 
-                DataType dataType = null;
-
-                if (variableExpression.getType().isAnnotationPresent(Type.class)) {
-                    Type type = (Type) variableExpression.getType().getAnnotation(Type.class);
-                    dataType = type.dataType();
-                }
-
-/*
-
-                if (dataType != null && !isLegalOperation(right, dataType)) {
-                    String message = String.format("Aggregation OperationExpression %s not possible on type %s at %s", this.getClass().getSimpleName(), dataType, ExpressionTokenizer.toString(tokens, pos));
-                    logger.error(message);
-                    throw new IllegalOperationException(message);
-                }
-*/
-
-            } else {
+            if (!(left instanceof VariableExpression)) {
                 String message = String.format("Left operand of aggregation operation is not variable  near %s", ExpressionTokenizer.toString(tokens, pos));
                 logger.error(message);
                 throw new IllegalPropertyException(message);
@@ -107,13 +68,13 @@ public class AssignOperationExpression extends OperationExpression {
             if (logger.isDebugEnabled()) {
                 logger.debug("Aggregation OperationExpression Call Expression : {}", getClass().getSimpleName());
             }
-            stack.push(this);
 
-            return pos;
+
+            stack.push(this);
         }
 
 
-        throw new ExpressionParseException("Cannot assign literal to variable");
+        return pos;
     }
 
 
@@ -137,16 +98,8 @@ public class AssignOperationExpression extends OperationExpression {
 
             } else {
 
-                TokenType tokenType = findDataObject(token, contexts);
-                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
-                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
-                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                    VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
-                    stack.add(variableExpression);
-                } else {
-                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
-                    stack.add(literalExpression);
-                }
+                stack.add(buildExpression(token, contexts));
+
             }
 
 
@@ -160,7 +113,7 @@ public class AssignOperationExpression extends OperationExpression {
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        VariableExpression variable = null;
+        VariableExpression variable;
         Expression left = this.leftOperand;
 
         if (left instanceof VariableExpression) {

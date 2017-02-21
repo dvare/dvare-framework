@@ -24,26 +24,19 @@ THE SOFTWARE.*/
 package org.dvare.binding.rule;
 
 
-import org.dvare.action.ActionDispatcher;
-import org.dvare.action.NullActionDispatcher;
 import org.dvare.expression.Expression;
 
 public class RuleBinding {
     private String name;
     private String rawExpression;
     private Expression expression;
-    private ActionDispatcher dispatcher = new NullActionDispatcher();
 
     public RuleBinding(Expression expression) {
         this.expression = expression;
     }
 
 
-    public RuleBinding(Expression expression, ActionDispatcher dispatcher) {
-        this.expression = expression;
-        this.dispatcher = dispatcher;
 
-    }
 
         /* Getter and Setter */
 
@@ -61,14 +54,6 @@ public class RuleBinding {
 
     public void setExpression(Expression expression) {
         this.expression = expression;
-    }
-
-    public ActionDispatcher getDispatcher() {
-        return dispatcher;
-    }
-
-    public void setDispatcher(ActionDispatcher dispatcher) {
-        this.dispatcher = dispatcher;
     }
 
     public String getRawExpression() {

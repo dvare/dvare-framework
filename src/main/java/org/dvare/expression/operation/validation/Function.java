@@ -4,7 +4,6 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.ContextsBinding;
-import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -22,7 +21,6 @@ import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.DataTypeMapping;
 import org.dvare.util.TrimString;
-import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,18 +117,7 @@ public class Function extends OperationExpression {
             } else {
 
 
-                TokenType tokenType = findDataObject(token, contexts);
-                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
-                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
-                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                    VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
-                    localStack.add(variableExpression);
-
-                } else {
-                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
-                    localStack.add(literalExpression);
-                }
-
+                localStack.add(buildExpression(token, contexts));
 
             }
         }

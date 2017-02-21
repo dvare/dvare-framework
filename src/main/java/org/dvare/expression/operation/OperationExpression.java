@@ -25,13 +25,14 @@ package org.dvare.expression.operation;
 
 
 import org.dvare.annotations.Type;
-import org.dvare.ast.Node;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
+import org.dvare.exceptions.parser.IllegalPropertyException;
+import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
@@ -49,11 +50,8 @@ import java.util.List;
 import java.util.Stack;
 
 public abstract class OperationExpression extends Expression {
-
-
-    public static final String selfPatten = ".{1,}\\..{1,}";
     protected static Logger logger = LoggerFactory.getLogger(OperationExpression.class);
-    public OperationType operationType;
+    protected OperationType operationType;
     protected Expression leftOperand = null;
     protected Expression rightOperand = null;
     protected Class<? extends DataTypeExpression> dataTypeExpression;
@@ -68,6 +66,7 @@ public abstract class OperationExpression extends Expression {
 
     public static TokenType findDataObject(String token, ContextsBinding contexts) {
         TokenType tokenType = new TokenType();
+        final String selfPatten = ".{1,}\\..{1,}";
         if (!token.matches(selfPatten)) {
             tokenType.token = token;
             tokenType.type = "self";
@@ -108,10 +107,23 @@ public abstract class OperationExpression extends Expression {
         return tokenType;
     }
 
-
     public abstract Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException;
 
     public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException;
+
+    protected Expression buildExpression(String token, ContextsBinding contextsBinding) throws IllegalPropertyException, IllegalValueException {
+        TokenType tokenType = findDataObject(token, contextsBinding);
+        if (tokenType.type != null && contextsBinding.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contextsBinding.getContext(tokenType.type)) != null) {
+            TypeBinding typeBinding = contextsBinding.getContext(tokenType.type);
+            DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+            return VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+
+
+        } else {
+            return LiteralType.getLiteralExpression(token);
+        }
+    }
+
 
     protected Object getValue(Object object, String name) throws IllegalPropertyValueException {
         return ValueFinder.findValue(name, object);
@@ -197,16 +209,6 @@ public abstract class OperationExpression extends Expression {
         return result;
     }
 
-    public Node<String> AST() {
-
-        Node<String> root = new Node<String>(this.toString());
-
-        root.left = new Node<String>(this.leftOperand.toString());
-
-        root.right = new Node<String>(this.rightOperand.toString());
-
-        return root;
-    }
 
     @Override
     public String toString() {
@@ -228,13 +230,14 @@ public abstract class OperationExpression extends Expression {
         return toStringBuilder.toString();
     }
 
+
+
+
+    /*Getter and Setters*/
+
     public Expression getLeftOperand() {
         return leftOperand;
     }
-
-
-
-    /*Getyter and Setters*/
 
     public void setLeftOperand(Expression leftOperand) {
         this.leftOperand = leftOperand;

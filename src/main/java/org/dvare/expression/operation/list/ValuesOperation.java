@@ -1,17 +1,16 @@
 package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.AggregationOperationExpression;
-import org.dvare.expression.operation.ChainOperationExpression;
-import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.*;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +31,13 @@ public class ValuesOperation extends AggregationOperationExpression {
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
+        List<Object> values = null;
+        Class<? extends DataTypeExpression> dataTypeExpression = null;
 
-        Expression right = this.leftOperand;
-        if (right instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) right;
+        Expression left = this.leftOperand;
+        if (left instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) left;
+            dataTypeExpression = variableExpression.getType();
             Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
             List dataSet;
             if (instance instanceof List) {
@@ -44,39 +46,23 @@ public class ValuesOperation extends AggregationOperationExpression {
                 dataSet = new ArrayList<>();
                 dataSet.add(instance);
             }
-
-            List<Object> values = new ArrayList<>();
-
+            values = new ArrayList<>();
             for (Object object : dataSet) {
                 Object value = getValue(object, variableExpression.getName());
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(value, variableExpression.getType());
-                values.add(literalExpression.getValue());
+                values.add(value);
             }
 
-
-            return new ListLiteral(values, variableExpression.getType());
-
-
-        } else if (right instanceof ChainOperationExpression) {
-
-            ChainOperationExpression operationExpression = (ChainOperationExpression) right;
-
+        } else if (left instanceof ChainOperationExpression) {
+            ChainOperationExpression operationExpression = (ChainOperationExpression) left;
             Expression expression = operationExpression.getLeftOperand();
-
             while (expression instanceof ChainOperationExpression) {
                 expression = ((ChainOperationExpression) expression).getLeftOperand();
             }
-
-
             if (expression instanceof VariableExpression) {
-
-
                 VariableExpression variableExpression = (VariableExpression) expression;
                 String operandType = variableExpression.getOperandType();
-                Class dataTypeExpression = variableExpression.getType();
+                dataTypeExpression = variableExpression.getType();
                 Object instance = instancesBinding.getInstance(operandType);
-
-
                 List dataSet;
                 if (instance instanceof List) {
                     dataSet = (List) instance;
@@ -84,37 +70,81 @@ public class ValuesOperation extends AggregationOperationExpression {
                     dataSet = new ArrayList<>();
                     dataSet.add(instance);
                 }
-
-                List<Object> values = new ArrayList<>();
-
+                values = new ArrayList<>();
                 for (Object object : dataSet) {
-
-
                     instancesBinding.addInstance(operandType, object);
-
                     LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(instancesBinding);
-
-
                     if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
                         dataTypeExpression = literalExpression.getType();
                     }
-
-
                     values.add(literalExpression.getValue());
+                }
+                instancesBinding.addInstance(operandType, instance);
+            }
+        }
+
+        if (values != null) {
+            if (!rightOperand.isEmpty()) {
+                Expression filterParam = rightOperand.get(0);
+                if (filterParam instanceof EqualityOperationExpression) {
+
+
+                    OperationExpression operationExpression = (OperationExpression) filterParam;
+
+
+                    Expression leftExpression = operationExpression.getLeftOperand();
+
+                    while (leftExpression instanceof OperationExpression) {
+                        leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+                    }
+
+
+                    if (leftExpression instanceof VariableExpression) {
+                        VariableExpression variableExpression = (VariableExpression) leftExpression;
+                        String name = variableExpression.getName();
+                        String operandType = variableExpression.getOperandType();
+
+                        List filterValues = new ArrayList();
+
+                        for (Object value : values) {
+
+
+                            Object instance = instancesBinding.getInstance(operandType);
+
+                            if (instance == null || !(instance instanceof DataRow)) {
+                                DataRow dataRow = new DataRow();
+                                dataRow.addData(name, value);
+                                instancesBinding.addInstance(operandType, dataRow);
+                            } else {
+                                DataRow dataRow = (DataRow) instance;
+                                dataRow.addData(name, value);
+                                instancesBinding.addInstance(operandType, dataRow);
+                            }
+
+
+                            Object interpret = operationExpression.interpret(instancesBinding);
+
+                            Boolean result = toBoolean(interpret);
+
+                            if (result) {
+                                filterValues.add(value);
+
+                            }
+
+                        }
+
+                        return new ListLiteral(filterValues, dataTypeExpression);
+
+                    }
+
+
                 }
 
 
-                instancesBinding.addInstance(operandType, instance);
-
-
+            } else {
                 return new ListLiteral(values, dataTypeExpression);
-
-
             }
-
-
         }
-
         return new NullLiteral();
     }
 

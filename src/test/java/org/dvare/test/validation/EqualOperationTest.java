@@ -84,9 +84,9 @@ public class EqualOperationTest extends TestCase {
 
 
     @Test
-    public void testApp01() throws ExpressionParseException, InterpretException {
+    public void testApp1() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.rules.util"});
+        RuleConfiguration configuration = new RuleConfiguration();
 
 
         Expression expression = configuration.getParser().fromString("Variable3='15'", Function.class);
@@ -102,9 +102,9 @@ public class EqualOperationTest extends TestCase {
     }
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void testApp2() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.rules.util"});
+        RuleConfiguration configuration = new RuleConfiguration();
 
 
         Expression expression = configuration.getParser().fromString("Variable3->toString() = Variable1->toString()", Function.class);
@@ -120,7 +120,7 @@ public class EqualOperationTest extends TestCase {
     }
 
     @Test
-    public void testApp12() throws ExpressionParseException, InterpretException, ParseException {
+    public void testApp3() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -145,6 +145,25 @@ public class EqualOperationTest extends TestCase {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, equalOperation);
+        assertTrue(result);
+    }
+
+
+    @Test
+    public void testApp4() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration configuration = new RuleConfiguration();
+
+
+        Expression expression = configuration.getParser().fromString("Variable1 < 20 implies Variable2 >= 30 ", Function.class);
+        RuleBinding rule = new RuleBinding(expression);
+
+        Function function = new Function();
+        function.setVariable1(15);
+        function.setVariable2(30);
+
+        RuleEvaluator evaluator = configuration.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, function);
         assertTrue(result);
     }
 

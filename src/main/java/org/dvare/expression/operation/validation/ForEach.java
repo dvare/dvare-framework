@@ -10,11 +10,8 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
@@ -112,18 +109,7 @@ public class ForEach extends OperationExpression {
             } else {
 
 
-                TokenType tokenType = findDataObject(token, contexts);
-                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
-                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
-                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                    VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
-                    stack.add(variableExpression);
-
-                } else {
-                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
-                    stack.add(literalExpression);
-                }
-
+                stack.add(buildExpression(token, contexts));
 
             }
         }

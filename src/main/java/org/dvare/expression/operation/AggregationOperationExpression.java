@@ -62,24 +62,28 @@ public abstract class AggregationOperationExpression extends OperationExpression
         String token = tokens[pos - 1];
         pos = pos + 1;
 
-
         if (stack.isEmpty()) {
+            ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+            OperationExpression operationExpression = configurationRegistry.getOperation(token);
 
-            TokenType tokenType = findDataObject(token, contexts);
-
-            if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
-
-                TypeBinding typeBinding = contexts.getContext(tokenType.type);
-                DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                this.leftOperand = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
-
+            if (operationExpression != null) {
+                if (operationExpression instanceof ListOperationExpression) {
+                    pos = operationExpression.parse(tokens, pos, stack, contexts);
+                    this.leftOperand = stack.pop();
+                }
+            } else {
+                TokenType tokenType = findDataObject(token, contexts);
+                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+                    this.leftOperand = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                } else {
+                    throw new ExpressionParseException("Left Operand of Aggregation Operation must be List or Variable ");
+                }
             }
-
 
         } else {
             this.leftOperand = stack.pop();
-
-
         }
 
 
@@ -113,17 +117,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
             } else {
 
-                TokenType tokenType = findDataObject(token, contexts);
-                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
-                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
-                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                    VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
-                    localStack.add(variableExpression);
-                } else {
-                    LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
-                    localStack.add(literalExpression);
-                }
-
+                localStack.add(buildExpression(token, contexts));
 
             }
         }
