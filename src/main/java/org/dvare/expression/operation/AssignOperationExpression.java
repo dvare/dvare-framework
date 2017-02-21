@@ -8,7 +8,6 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
-import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.exceptions.parser.IllegalPropertyException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
@@ -90,12 +89,14 @@ public class AssignOperationExpression extends OperationExpression {
                     dataType = type.dataType();
                 }
 
+/*
 
                 if (dataType != null && !isLegalOperation(right, dataType)) {
                     String message = String.format("Aggregation OperationExpression %s not possible on type %s at %s", this.getClass().getSimpleName(), dataType, ExpressionTokenizer.toString(tokens, pos));
                     logger.error(message);
                     throw new IllegalOperationException(message);
                 }
+*/
 
             } else {
                 String message = String.format("Left operand of aggregation operation is not variable  near %s", ExpressionTokenizer.toString(tokens, pos));
@@ -171,10 +172,12 @@ public class AssignOperationExpression extends OperationExpression {
 
 
             Expression right = this.rightOperand;
-            LiteralExpression<?> literalExpression = null;
+            LiteralExpression literalExpression = null;
             if (right instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) right;
                 literalExpression = (LiteralExpression) operation.interpret(instancesBinding);
+            } else if (right instanceof LiteralExpression) {
+                literalExpression = (LiteralExpression) right;
             }
 
 

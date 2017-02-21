@@ -56,13 +56,6 @@ public class Match extends OperationExpression {
         if (expressions == null || expressions.size() < 2) {
             error = "Match Operation minimum two parameter";
 
-        } else {
-
-            if (!(expressions.get(0) instanceof VariableExpression)) {
-                error = "First param of match function must be variable";
-            }
-
-
         }
 
 
@@ -156,6 +149,7 @@ public class Match extends OperationExpression {
                     ListLiteral listLiteral = (ListLiteral) literalExpression;
                     if (listLiteral.getValue() != null) {
                         values = listLiteral.getValue();
+                        dataType = toDataType(listLiteral.getType());
                     }
                 }
             }
