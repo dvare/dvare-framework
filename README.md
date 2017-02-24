@@ -1,13 +1,10 @@
-## What is DVARE FRAMEWORK [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework)
-DVARE is lightweight expression evaluator for Java, that allows evaluating Arithmetic and boolean Comparison expressions.
-[https://dvare.org/](https://dvare.org/)
+## Dvare Framework
+A Lightweight Java business rule expression language.
+[http://dvare.org](http://dvare.org)
 
-## Current version
+## Dependency
 
-* The current  version is `1.3` 
-
- you need to add the following maven repository in your `pom.xml`:
-
+ Maven dependency:
 ```xml
 <dependencies>
         <dependency>
@@ -15,16 +12,16 @@ DVARE is lightweight expression evaluator for Java, that allows evaluating Arith
             <artifactId>dvare-framework</artifactId>
             <version>1.3</version>
         </dependency>         
-<dependencies>
+</dependencies>
 ```
 
 ## License
-DVARE is released under the [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT).
+Dvare Framework  is released under the [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT).
 
 ```
 The MIT License (MIT)
 
-Copyright (c) 2016 Muhammad Hammad
+Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -44,5 +41,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
+
 
 
