@@ -1,14 +1,37 @@
-## DVARE FRAMEWORK [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework)
-Java lightweight expression evaluator that enables perform Arithmetic, Comparison expressions.
-[http://dvare.org/v1.4](http://dvare.org/v1.4)
+## Dvare Framework
+A Lightweight Java business rule expression language.
+[http://dvare.org](http://dvare.org)
+
+
+## Example
+
+##### Arithmetic Operation..
+
+```java
+public class ArithmeticOperationTest {
+
+    @Test
+    public void testApp8() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+        String expr = "Variable5->substring(2,2)->toInteger() between [80,90] and Variable5->substring(3,2)->toInteger() in [45,46]";
+        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
+        RuleBinding rule = new RuleBinding(expression);
+        ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
+        arithmeticOperation.setVariable5("D845");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, arithmeticOperation);
+        assertTrue(result);
+    }
+ }
+```
 
 ## Current version
 
 * The current stable version is `1.4` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|1.4|)
 
  Maven dependency:
-
-
 ```xml
 <dependencies>
         <dependency>
@@ -16,16 +39,16 @@ Java lightweight expression evaluator that enables perform Arithmetic, Compariso
             <artifactId>dvare-framework</artifactId>
             <version>1.4</version>
         </dependency>         
-<dependencies>
+</dependencies>
 ```
 
 ## License
-DVARE is released under the [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT).
+Dvare Framework  is released under the [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT).
 
 ```
 The MIT License (MIT)
 
-Copyright (c) 2016 Muhammad Hammad
+Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,5 +68,4 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
-
 
