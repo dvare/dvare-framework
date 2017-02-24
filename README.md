@@ -1,5 +1,5 @@
 ## Dvare Framework
-Java lightweight expression language that enables perform Arithmetic, Comparison operations.
+A Lightweight Java business rule expression language.
 [http://dvare.org](http://dvare.org)
 
 
