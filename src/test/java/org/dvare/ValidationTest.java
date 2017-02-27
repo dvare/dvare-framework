@@ -39,7 +39,7 @@ import org.junit.runners.Suite;
         ChainOperationTest.class,
         BuilderTest.class,
         BooleanOperationTest.class,
-      /*  FunctionTestExclude.class,*/
+        FunctionTest.class,
         ArithmeticOperationTest.class})
 public class ValidationTest {
 

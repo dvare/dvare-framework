@@ -42,7 +42,7 @@ public class DvareConfigFactoryBean implements FactoryBean<RuleConfiguration>, A
     }
 
     public DvareConfigFactoryBean(String[] functionBasePackages) {
-        this.functionPackages = functionPackages;
+        this.functionPackages = functionBasePackages;
     }
 
     public DvareConfigFactoryBean() {
@@ -57,9 +57,7 @@ public class DvareConfigFactoryBean implements FactoryBean<RuleConfiguration>, A
 
     @Override
     public RuleConfiguration getObject() throws Exception {
-        RuleConfiguration ruleConfiguration = new RuleConfiguration();
-        ruleConfiguration.setFunctionBasePackages(functionPackages);
-        ruleConfiguration.setSilentMode(silentMode);
+        RuleConfiguration ruleConfiguration = new RuleConfiguration(functionPackages, silentMode);
         return ruleConfiguration;
     }
 

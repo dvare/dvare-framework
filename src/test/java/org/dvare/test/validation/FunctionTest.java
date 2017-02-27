@@ -44,8 +44,8 @@ import java.util.List;
 import java.util.Map;
 
 
-public class FunctionTestExclude extends TestCase {
-    static Logger logger = LoggerFactory.getLogger(FunctionTestExclude.class);
+public class FunctionTest extends TestCase {
+    private static Logger logger = LoggerFactory.getLogger(FunctionTest.class);
 
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {

@@ -43,8 +43,8 @@ public class StringType extends DataTypeExpression {
             Equals.class
     })
     public boolean equal(LiteralExpression left, LiteralExpression right) {
-        String leftValue = (String) left.getValue().toString();
-        String rightValue = (String) right.getValue().toString();
+        String leftValue = left.getValue().toString();
+        String rightValue = right.getValue().toString();
 
         leftValue = TrimString.trim(leftValue);
         rightValue = TrimString.trim(rightValue);
@@ -67,8 +67,8 @@ public class StringType extends DataTypeExpression {
             NotEquals.class
     })
     public boolean notEqual(LiteralExpression left, LiteralExpression right) {
-        String leftValue = (String) left.getValue().toString();
-        String rightValue = (String) right.getValue().toString();
+        String leftValue = left.getValue().toString();
+        String rightValue = right.getValue().toString();
 
         leftValue = TrimString.trim(leftValue);
         rightValue = TrimString.trim(rightValue);
@@ -77,10 +77,10 @@ public class StringType extends DataTypeExpression {
             if (!leftValue.equals(rightValue)) {
                 return true;
             }
-        } else if (right.getType().equals(RegexType.class)) {
-            if (!leftValue.matches(rightValue)) {
-                return true;
-            }
+        } else if (right.getType().equals(RegexType.class) && !leftValue.matches(rightValue)) {
+
+            return true;
+
         }
 
         return false;
@@ -91,8 +91,8 @@ public class StringType extends DataTypeExpression {
             LessThen.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
-        String leftValue = (String) left.getValue().toString();
-        String rightValue = (String) right.getValue().toString();
+        String leftValue = left.getValue().toString();
+        String rightValue = right.getValue().toString();
         return leftValue.length() < rightValue.length();
     }
 
@@ -100,8 +100,8 @@ public class StringType extends DataTypeExpression {
             LessEqual.class
     })
     public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
-        String leftValue = (String) left.getValue().toString();
-        String rightValue = (String) right.getValue().toString();
+        String leftValue = left.getValue().toString();
+        String rightValue = right.getValue().toString();
         return leftValue.length() <= rightValue.length();
     }
 
@@ -109,8 +109,8 @@ public class StringType extends DataTypeExpression {
             GreaterThen.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
-        String leftValue = (String) left.getValue().toString();
-        String rightValue = (String) right.getValue().toString();
+        String leftValue = left.getValue().toString();
+        String rightValue = right.getValue().toString();
         return leftValue.length() > rightValue.length();
     }
 
@@ -128,9 +128,9 @@ public class StringType extends DataTypeExpression {
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
 
-        String leftValue = (String) left.getValue().toString();
+        String leftValue = left.getValue().toString();
 
-        List<Object> tempValues = (List<Object>) right.getValue();
+        List<?> tempValues = (List<?>) right.getValue();
         List<String> values = new ArrayList<>();
         for (Object tempValue : tempValues) {
             if (tempValue == null) {
@@ -146,16 +146,12 @@ public class StringType extends DataTypeExpression {
         for (String rightValue : values) {
             rightValue = TrimString.trim(rightValue);
 
-            if (right == null && left == null) {
+            if (right.getType().equals(StringType.class) && leftValue.equals(rightValue)) {
                 return true;
-            } else if (right.getType().equals(StringType.class)) {
-                if (leftValue.equals(rightValue)) {
-                    return true;
-                }
-            } else if (right.getType().equals(RegexType.class)) {
-                if (leftValue.matches(rightValue)) {
-                    return true;
-                }
+            } else if (right.getType().equals(RegexType.class) && leftValue.matches(rightValue)) {
+
+                return true;
+
             }
         }
         return false;

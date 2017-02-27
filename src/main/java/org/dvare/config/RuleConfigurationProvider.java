@@ -41,7 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RuleConfigurationProvider {
-    static Logger logger = LoggerFactory.getLogger(RuleConfigurationProvider.class);
+    private static Logger logger = LoggerFactory.getLogger(RuleConfigurationProvider.class);
     private final String baseOperationPackage = "org.dvare.expression.operation";
     public ConfigurationRegistry configurationRegistry;
     private String[] functionBasePackages;
@@ -49,6 +49,9 @@ public class RuleConfigurationProvider {
     public RuleConfigurationProvider(ConfigurationRegistry configurationRegistry, String[] functionBasePackages) {
         this.configurationRegistry = configurationRegistry;
         this.functionBasePackages = functionBasePackages;
+    }
+
+    public void init() {
         operationInit();
         functionInit();
     }
@@ -66,10 +69,8 @@ public class RuleConfigurationProvider {
                         for (Method method : _class.getMethods()) {
 
                             if (method.isAnnotationPresent(FunctionMethod.class)) {
-
                                 String functionName = method.getName();
-
-                                FunctionMethod functionMethod = (FunctionMethod) method.getAnnotation(FunctionMethod.class);
+                                FunctionMethod functionMethod = method.getAnnotation(FunctionMethod.class);
                                 DataType returnType = functionMethod.returnType();
                                 DataType[] parameters = functionMethod.parameters();
 
@@ -77,20 +78,14 @@ public class RuleConfigurationProvider {
                                 DataTypeExpression returnTypeInstance = (DataTypeExpression) returnTypeExpression.newInstance();
 
                                 FunctionBinding functionBinding = new FunctionBinding(functionName, _class, returnTypeInstance);
-
-                                if (parameters != null) {
-
-                                    functionBinding.setParameters(Arrays.asList(parameters));
-                                }
+                                functionBinding.setParameters(Arrays.asList(parameters));
 
                                 configurationRegistry.registerFunction(functionBinding);
                             }
                         }
 
-                    } catch (InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        logger.error(e.getMessage(), e);
                     }
 
                 }

@@ -4,6 +4,7 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.NullType;
@@ -85,11 +86,14 @@ public class ValuesOperation extends AggregationOperationExpression {
 
         if (values != null) {
             if (!rightOperand.isEmpty()) {
-                Expression filterParam = rightOperand.get(0);
-                if (filterParam instanceof EqualityOperationExpression) {
+
+                List filterValues = new ArrayList();
+
+                Expression includeParam = rightOperand.get(0);
+                if (includeParam instanceof EqualityOperationExpression) {
 
 
-                    OperationExpression operationExpression = (OperationExpression) filterParam;
+                    OperationExpression operationExpression = (OperationExpression) includeParam;
 
 
                     Expression leftExpression = operationExpression.getLeftOperand();
@@ -104,7 +108,6 @@ public class ValuesOperation extends AggregationOperationExpression {
                         String name = variableExpression.getName();
                         String operandType = variableExpression.getOperandType();
 
-                        List filterValues = new ArrayList();
 
                         for (Object value : values) {
 
@@ -133,7 +136,79 @@ public class ValuesOperation extends AggregationOperationExpression {
 
                         }
 
-                        return new ListLiteral(filterValues, dataTypeExpression);
+
+                    }
+
+
+                } else if (includeParam instanceof BooleanExpression) {
+
+                    BooleanExpression booleanExpression = (BooleanExpression) includeParam;
+
+                    Boolean result = toBoolean(booleanExpression.interpret(instancesBinding));
+
+                    if (result) {
+                        filterValues = values;
+                    }
+
+
+                }
+
+
+                if (rightOperand.size() == 2 && !filterValues.isEmpty()) {
+
+
+                    Expression exculdeParam = rightOperand.get(1);
+                    if (exculdeParam instanceof EqualityOperationExpression) {
+
+
+                        OperationExpression operationExpression = (OperationExpression) exculdeParam;
+
+
+                        Expression leftExpression = operationExpression.getLeftOperand();
+
+                        while (leftExpression instanceof OperationExpression) {
+                            leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+                        }
+
+
+                        if (leftExpression instanceof VariableExpression) {
+                            VariableExpression variableExpression = (VariableExpression) leftExpression;
+                            String name = variableExpression.getName();
+                            String operandType = variableExpression.getOperandType();
+
+                            List exculdeValues = new ArrayList();
+
+                            for (Object value : filterValues) {
+
+
+                                Object instance = instancesBinding.getInstance(operandType);
+
+                                if (instance == null || !(instance instanceof DataRow)) {
+                                    DataRow dataRow = new DataRow();
+                                    dataRow.addData(name, value);
+                                    instancesBinding.addInstance(operandType, dataRow);
+                                } else {
+                                    DataRow dataRow = (DataRow) instance;
+                                    dataRow.addData(name, value);
+                                    instancesBinding.addInstance(operandType, dataRow);
+                                }
+
+
+                                Object interpret = operationExpression.interpret(instancesBinding);
+
+                                Boolean result = toBoolean(interpret);
+
+                                if (!result) {
+                                    exculdeValues.add(value);
+
+                                }
+
+                            }
+
+                            filterValues = exculdeValues;
+
+                        }
+
 
                     }
 
@@ -141,11 +216,14 @@ public class ValuesOperation extends AggregationOperationExpression {
                 }
 
 
+                return new ListLiteral(filterValues, dataTypeExpression);
+
             } else {
                 return new ListLiteral(values, dataTypeExpression);
             }
         }
         return new NullLiteral();
     }
+
 
 }

@@ -36,7 +36,7 @@ import java.util.List;
 
 public class RuleConfiguration {
 
-    private static RuleConfigurationProvider configurationProvider;
+    private RuleConfigurationProvider configurationProvider;
     private String[] functionBasePackages;
     private ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
     private ExpressionParser expressionParser;
@@ -48,21 +48,7 @@ public class RuleConfiguration {
 
 
     public RuleConfiguration(String[] functionBasePackages) {
-
-        if (silentMode) {
-            List<Logger> loggers = Collections.<Logger>list(LogManager.getCurrentLoggers());
-            loggers.add(LogManager.getRootLogger());
-            for (Logger logger : loggers) {
-                if (logger.getName().startsWith("org.dvare") || logger.getName().equals("root")) {
-                    logger.setLevel(Level.OFF);
-                }
-            }
-        }
-
-        this.functionBasePackages = functionBasePackages;
-        if (configurationProvider == null) {
-            configurationProvider = new RuleConfigurationProvider(configurationRegistry, functionBasePackages);
-        }
+        this(functionBasePackages, false);
     }
 
 
@@ -80,9 +66,8 @@ public class RuleConfiguration {
         }
 
 
-        if (configurationProvider == null) {
-            configurationProvider = new RuleConfigurationProvider(configurationRegistry, functionBasePackages);
-        }
+        new RuleConfigurationProvider(configurationRegistry, functionBasePackages).init();
+
     }
 
     public RuleEvaluator getEvaluator() {
@@ -92,11 +77,13 @@ public class RuleConfiguration {
 
     public ExpressionParser getParser() {
         if (expressionParser == null) {
-            expressionParser = new ExpressionParser(this);
+            expressionParser = new ExpressionParser();
         }
         return expressionParser;
     }
 
+
+    /*Getter and Setters */
 
     public ConfigurationRegistry getConfigurationRegistry() {
         return configurationRegistry;
@@ -104,21 +91,5 @@ public class RuleConfiguration {
 
     public void registerFunction(FunctionBinding binding) {
         configurationRegistry.registerFunction(binding);
-    }
-
-    public String[] getFunctionBasePackages() {
-        return functionBasePackages;
-    }
-
-    public void setFunctionBasePackages(String[] functionBasePackages) {
-        this.functionBasePackages = functionBasePackages;
-    }
-
-    public boolean isSilentMode() {
-        return silentMode;
-    }
-
-    public void setSilentMode(boolean silentMode) {
-        this.silentMode = silentMode;
     }
 }

@@ -30,8 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @FunctionService
-public class FuntionProvider {
-    static Logger logger = LoggerFactory.getLogger(FuntionProvider.class);
+public class FunctionProvider {
+    static Logger logger = LoggerFactory.getLogger(FunctionProvider.class);
 
 
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.IntegerType})

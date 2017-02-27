@@ -27,7 +27,6 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
-import org.dvare.config.RuleConfiguration;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
@@ -48,12 +47,12 @@ import java.util.Map;
 import java.util.Stack;
 
 public class ExpressionParser {
-    static Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
+    private static Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
 
-    private ConfigurationRegistry configurationRegistry = null;
+    private ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
-    public ExpressionParser(RuleConfiguration ruleConfiguration) {
-        configurationRegistry = ruleConfiguration.getConfigurationRegistry();
+    public ExpressionParser() {
+
     }
 
     public static TypeBinding translate(Class types) {

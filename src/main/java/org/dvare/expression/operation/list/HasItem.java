@@ -45,103 +45,100 @@ public class HasItem extends AggregationOperationExpression {
                 dataTypeExpress = listLiteral.getType();
             }
 
-            if (values != null) {
-                if (!rightOperand.isEmpty()) {
-                    Expression expression = rightOperand.get(0);
+            if (values != null && !rightOperand.isEmpty()) {
 
-                    if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
+                Expression expression = rightOperand.get(0);
 
-                        OperationExpression operationExpression = (OperationExpression) expression;
-                        Object interpret = operationExpression.interpret(instancesBinding);
-                        if (interpret instanceof LiteralExpression) {
+                if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
 
-                            LiteralExpression literalExpression = (LiteralExpression) interpret;
-                            Object item = literalExpression.getValue();
-                            if (item != null) {
-                                if (!values.isEmpty() && (dataTypeExpress.equals(literalExpression.getType()))) {
+                    OperationExpression operationExpression = (OperationExpression) expression;
+                    Object interpret = operationExpression.interpret(instancesBinding);
+                    if (interpret instanceof LiteralExpression) {
 
-                                    for (Object value : values) {
-                                        if (value.equals(item)) {
-                                            return LiteralType.getLiteralExpression(true, BooleanType.class);
-                                        }
-                                    }
-                                }
+                        LiteralExpression literalExpression = (LiteralExpression) interpret;
+                        Object item = literalExpression.getValue();
 
-
-                            }
-
-                        }
-
-
-                    } else if (expression instanceof EqualityOperationExpression) {
-                        OperationExpression operationExpression = (OperationExpression) expression;
-
-
-                        Expression leftExpression = operationExpression.getLeftOperand();
-
-                        while (leftExpression instanceof OperationExpression) {
-                            leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
-                        }
-
-
-                        if (leftExpression instanceof VariableExpression) {
-                            VariableExpression variableExpression = (VariableExpression) leftExpression;
-                            String name = variableExpression.getName();
-                            String operandType = variableExpression.getOperandType();
-
+                        if (item != null && !values.isEmpty() && (dataTypeExpress.equals(literalExpression.getType()))) {
 
                             for (Object value : values) {
-
-
-                                Object instance = instancesBinding.getInstance(operandType);
-
-                                if (instance == null || !(instance instanceof DataRow)) {
-                                    DataRow dataRow = new DataRow();
-                                    dataRow.addData(name, value);
-                                    instancesBinding.addInstance(operandType, dataRow);
-                                } else {
-                                    DataRow dataRow = (DataRow) instance;
-                                    dataRow.addData(name, value);
-                                    instancesBinding.addInstance(operandType, dataRow);
-                                }
-
-
-                                Object interpret = operationExpression.interpret(instancesBinding);
-
-                                Boolean result = toBoolean(interpret);
-
-                                if (result) {
-
-
+                                if (value.equals(item)) {
                                     return LiteralType.getLiteralExpression(true, BooleanType.class);
-
                                 }
+                            }
+                        }
+
+                    }
+
+
+                } else if (expression instanceof EqualityOperationExpression) {
+                    OperationExpression operationExpression = (OperationExpression) expression;
+
+
+                    Expression leftExpression = operationExpression.getLeftOperand();
+
+                    while (leftExpression instanceof OperationExpression) {
+                        leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+                    }
+
+
+                    if (leftExpression instanceof VariableExpression) {
+                        VariableExpression variableExpression = (VariableExpression) leftExpression;
+                        String name = variableExpression.getName();
+                        String operandType = variableExpression.getOperandType();
+
+
+                        for (Object value : values) {
+
+
+                            Object instance = instancesBinding.getInstance(operandType);
+
+                            if (instance == null || !(instance instanceof DataRow)) {
+                                DataRow dataRow = new DataRow();
+                                dataRow.addData(name, value);
+                                instancesBinding.addInstance(operandType, dataRow);
+                            } else {
+                                DataRow dataRow = (DataRow) instance;
+                                dataRow.addData(name, value);
+                                instancesBinding.addInstance(operandType, dataRow);
+                            }
+
+
+                            Object interpret = operationExpression.interpret(instancesBinding);
+
+                            Boolean result = toBoolean(interpret);
+
+                            if (result) {
+
+
+                                return LiteralType.getLiteralExpression(true, BooleanType.class);
 
                             }
 
                         }
 
-
-                    } else if (expression instanceof LiteralExpression) {
-
-
-                        LiteralExpression literalExpression = (LiteralExpression) expression;
-                        Object item = literalExpression.getValue();
-                        Class itemDataTypeExpress = literalExpression.getType();
+                    }
 
 
-                        if (item != null) {
-                            if (!values.isEmpty() && (dataTypeExpress.equals(itemDataTypeExpress))) {
+                } else if (expression instanceof LiteralExpression) {
 
-                                for (Object value : values) {
-                                    if (value.equals(item)) {
-                                        return LiteralType.getLiteralExpression(true, BooleanType.class);
-                                    }
+
+                    LiteralExpression literalExpression = (LiteralExpression) expression;
+                    Object item = literalExpression.getValue();
+                    Class itemDataTypeExpress = literalExpression.getType();
+
+
+                    if (item != null) {
+                        if (!values.isEmpty() && (dataTypeExpress.equals(itemDataTypeExpress))) {
+
+                            for (Object value : values) {
+                                if (value.equals(item)) {
+                                    return LiteralType.getLiteralExpression(true, BooleanType.class);
                                 }
                             }
                         }
                     }
                 }
+
             }
 
         }

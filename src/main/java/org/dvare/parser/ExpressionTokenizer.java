@@ -34,7 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ExpressionTokenizer {
-    static Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
+    private static Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
 
 
     public static void main(String args[]) throws IOException {
@@ -77,14 +77,16 @@ public class ExpressionTokenizer {
             logger.debug("Token Pattern: {}", regex);
         }
         if (expr != null && !expr.isEmpty()) {
-            expr = expr.replaceAll("  ", " ");
-            expr = expr.trim();
+
+            String expression = expr.replaceAll("  ", " ");
+            expression = expression.trim();
+
             if (logger.isDebugEnabled()) {
-                logger.debug("Parsing the expression : {}", expr);
+                logger.debug("Parsing the expression : {}", expression);
             }
 
             List<String> tokenArray = new ArrayList<>();
-            Iterator<String> tokenizer = Arrays.asList(expr.split(regex)).iterator();
+            Iterator<String> tokenizer = Arrays.asList(expression.split(regex)).iterator();
 
 
             while (tokenizer.hasNext()) {
@@ -105,8 +107,7 @@ public class ExpressionTokenizer {
             if (logger.isDebugEnabled()) {
                 logger.debug("tokens: {}", tokenArray);
             }
-            String[] tokens = tokenArray.toArray(new String[tokenArray.size()]);
-            return tokens;
+            return tokenArray.toArray(new String[tokenArray.size()]);
         }
 
         return null;
@@ -117,7 +118,6 @@ public class ExpressionTokenizer {
         if (token.length() < 1) {
             return false;
         }
-
 
         if (token.contains("[")) {
             return true;
@@ -274,7 +274,8 @@ public class ExpressionTokenizer {
         }
 
         for (int i = 0; i < pos; i++) {
-            stringBuilder.append(tokens[i] + " ");
+            stringBuilder.append(tokens[i]);
+            stringBuilder.append(" ");
         }
         return stringBuilder.toString().trim();
     }
@@ -283,7 +284,8 @@ public class ExpressionTokenizer {
         StringBuilder stringBuilder = new StringBuilder("");
 
         for (String token : tokens) {
-            stringBuilder.append(token + " ");
+            stringBuilder.append(token);
+            stringBuilder.append(" ");
         }
         return stringBuilder.toString().trim();
     }
