@@ -43,11 +43,10 @@ import java.util.List;
 public class RuleConfigurationProvider {
     private static Logger logger = LoggerFactory.getLogger(RuleConfigurationProvider.class);
     private final String baseOperationPackage = "org.dvare.expression.operation";
-    public ConfigurationRegistry configurationRegistry;
+    public ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
     private String[] functionBasePackages;
 
-    public RuleConfigurationProvider(ConfigurationRegistry configurationRegistry, String[] functionBasePackages) {
-        this.configurationRegistry = configurationRegistry;
+    public RuleConfigurationProvider(String[] functionBasePackages) {
         this.functionBasePackages = functionBasePackages;
     }
 

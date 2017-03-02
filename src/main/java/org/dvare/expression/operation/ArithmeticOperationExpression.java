@@ -53,9 +53,7 @@ public abstract class ArithmeticOperationExpression extends EqualityOperationExp
             return new NullLiteral();
         }
 
-        if (left instanceof NullLiteral) {
-
-            if (right.getType().isAnnotationPresent(Type.class)) {
+        if (left instanceof NullLiteral && right.getType().isAnnotationPresent(Type.class)) {
                 Type type = (Type) right.getType().getAnnotation(Type.class);
 
                 switch (type.dataType()) {
@@ -74,7 +72,7 @@ public abstract class ArithmeticOperationExpression extends EqualityOperationExp
                     }
 
                 }
-            }
+
         }
 
         try {

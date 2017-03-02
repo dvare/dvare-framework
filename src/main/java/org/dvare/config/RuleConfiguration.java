@@ -27,7 +27,6 @@ package org.dvare.config;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.dvare.binding.function.FunctionBinding;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.parser.ExpressionParser;
 
@@ -36,11 +35,9 @@ import java.util.List;
 
 public class RuleConfiguration {
 
-    private RuleConfigurationProvider configurationProvider;
-    private String[] functionBasePackages;
-    private ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+
     private ExpressionParser expressionParser;
-    private boolean silentMode = false;
+
 
     public RuleConfiguration() {
         this(null);
@@ -53,8 +50,7 @@ public class RuleConfiguration {
 
 
     public RuleConfiguration(String[] functionBasePackages, boolean silentMode) {
-        this.functionBasePackages = functionBasePackages;
-        this.silentMode = silentMode;
+
         if (silentMode) {
             List<Logger> loggers = Collections.<Logger>list(LogManager.getCurrentLoggers());
             loggers.add(LogManager.getRootLogger());
@@ -66,7 +62,7 @@ public class RuleConfiguration {
         }
 
 
-        new RuleConfigurationProvider(configurationRegistry, functionBasePackages).init();
+        new RuleConfigurationProvider(functionBasePackages).init();
 
     }
 
@@ -85,11 +81,5 @@ public class RuleConfiguration {
 
     /*Getter and Setters */
 
-    public ConfigurationRegistry getConfigurationRegistry() {
-        return configurationRegistry;
-    }
 
-    public void registerFunction(FunctionBinding binding) {
-        configurationRegistry.registerFunction(binding);
-    }
 }

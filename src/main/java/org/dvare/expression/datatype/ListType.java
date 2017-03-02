@@ -23,12 +23,65 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.datatype;
 
+import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
+import org.dvare.expression.literal.ListLiteral;
+import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.operation.validation.Equals;
+import org.dvare.expression.operation.validation.In;
+import org.dvare.expression.operation.validation.NotEquals;
+import org.dvare.expression.operation.validation.NotIn;
+
+import java.util.List;
 
 @Type(dataType = DataType.ListType)
 public class ListType extends DataTypeExpression {
     public ListType() {
         super(DataType.ListType);
+    }
+
+
+    @OperationMapping(operations = {
+            Equals.class
+    })
+    public boolean equal(LiteralExpression left, LiteralExpression right) {
+        if (left instanceof ListLiteral && right instanceof ListLiteral) {
+            List leftValues = ((ListLiteral) left).getValue();
+            List rightValues = ((ListLiteral) right).getValue();
+            return leftValues.equals(rightValues);
+
+        }
+
+
+        return false;
+    }
+
+    @OperationMapping(operations = {
+            NotEquals.class
+    })
+    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+        return !equal(left, right);
+    }
+
+
+    @OperationMapping(operations = {
+            In.class
+    })
+    public boolean in(LiteralExpression left, LiteralExpression right) {
+        if (left instanceof ListLiteral && right instanceof ListLiteral) {
+            List leftValues = ((ListLiteral) left).getValue();
+            List rightValues = ((ListLiteral) right).getValue();
+            return leftValues.containsAll(rightValues);
+
+        }
+        return false;
+    }
+
+    @OperationMapping(operations = {
+            NotIn.class
+    })
+    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+        return !in(left, right);
     }
 }
 

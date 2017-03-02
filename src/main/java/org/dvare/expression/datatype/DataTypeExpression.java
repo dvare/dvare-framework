@@ -29,6 +29,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
 
 import java.lang.annotation.Annotation;
@@ -56,19 +57,20 @@ public abstract class DataTypeExpression extends Expression {
 
     public LiteralExpression evaluate(OperationExpression operationExpression, LiteralExpression left, LiteralExpression right) throws InterpretException {
 
-        String methodName = getMethodName(operationExpression.getClass());
 
         try {
+            String methodName = getMethodName(operationExpression.getClass());
+            if (methodName != null) {
+                Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
+                Object result = method.invoke(this, left, right);
 
-            Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
-            Object result = method.invoke(this, left, right);
-
-            DataType type = LiteralType.computeDataType(result.toString());
-            if (type == null) {
-                type = this.getDataType();
+                DataType type = LiteralType.computeDataType(result.toString());
+                if (type == null) {
+                    type = this.getDataType();
+                }
+                return LiteralType.getLiteralExpression(result.toString(), type);
             }
-            return LiteralType.getLiteralExpression(result.toString(), type);
-
+            return new NullLiteral();
 
         } catch (Exception m) {
             throw new InterpretException(m);

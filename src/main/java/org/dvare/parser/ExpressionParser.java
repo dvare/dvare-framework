@@ -51,9 +51,7 @@ public class ExpressionParser {
 
     private ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
-    public ExpressionParser() {
 
-    }
 
     public static TypeBinding translate(Class types) {
         TypeBinding typeBinding = new TypeBinding();

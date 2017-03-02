@@ -66,4 +66,48 @@ public abstract class ConditionOperationExpression extends OperationExpression {
     }
 
 
+    @Override
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+
+        if (leftOperand != null) {
+            toStringBuilder.append(leftOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(" ");
+
+
+        if (condition != null) {
+            toStringBuilder.append(" ");
+            toStringBuilder.append(condition.toString());
+            toStringBuilder.append(" ");
+        }
+
+        if (thenOperand != null) {
+            toStringBuilder.append("THEN ");
+            toStringBuilder.append(thenOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        if (elseOperand != null) {
+            toStringBuilder.append("ELSE ");
+            toStringBuilder.append(elseOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+
+        if (rightOperand != null) {
+            toStringBuilder.append(rightOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+
+        return toStringBuilder.toString();
+    }
+
+
+
+
 }

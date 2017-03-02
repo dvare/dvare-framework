@@ -24,7 +24,6 @@ THE SOFTWARE.*/
 package org.dvare.test.validation;
 
 import junit.framework.TestCase;
-import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.builder.ExpressionBuilder;
 import org.dvare.builder.LiteralBuilder;
@@ -46,14 +45,13 @@ import org.slf4j.LoggerFactory;
 import java.text.ParseException;
 
 public class BuilderTest extends TestCase {
-    static Logger logger = LoggerFactory.getLogger(BuilderTest.class);
+    private static Logger logger = LoggerFactory.getLogger(BuilderTest.class);
 
     @Test
     public void testApp() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        ContextsBinding contexts = new ContextsBinding();
 
         OperationExpression stringEqualExpression = new OperationBuilder().operation(OperationType.EQUAL)//
                 .leftOperand(new VariableBuilder().variableType(DataType.StringType).variableName("Variable1").build())//
@@ -70,6 +68,7 @@ public class BuilderTest extends TestCase {
                 .rightOperand(integerEqualExpression).build();
 
         Expression expression = new ExpressionBuilder().expression(andExpression).build();
+
 
         if (logger.isDebugEnabled()) {
             logger.debug(expression.toString());

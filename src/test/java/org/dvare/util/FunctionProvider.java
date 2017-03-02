@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 @FunctionService
 public class FunctionProvider {
-    static Logger logger = LoggerFactory.getLogger(FunctionProvider.class);
+    private static Logger logger = LoggerFactory.getLogger(FunctionProvider.class);
 
 
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.IntegerType})

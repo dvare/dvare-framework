@@ -6,7 +6,6 @@ import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
-import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
@@ -29,12 +28,39 @@ public class ValuesOperation extends AggregationOperationExpression {
     }
 
 
+
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        List<Object> values = null;
-        Class<? extends DataTypeExpression> dataTypeExpression = null;
+        List<Object> values = extractValues(instancesBinding);
 
+        if (values != null) {
+            List<Object> includedValues = values;
+            if (!rightOperand.isEmpty()) {
+                if (rightOperand.size() == 1) {
+                    Expression includeParam = rightOperand.get(0);
+                    includedValues = includedFilter(includeParam, instancesBinding, values);
+
+                } else if (rightOperand.size() == 2) {
+                    Expression includeParam = rightOperand.get(0);
+                    Expression exculdeParam = rightOperand.get(1);
+                    includedValues = excludedFilter(includeParam, exculdeParam, instancesBinding, values);
+
+
+                }
+
+
+            }
+
+            return new ListLiteral(includedValues, dataTypeExpression);
+
+        }
+        return new NullLiteral();
+    }
+
+
+    private List<Object> extractValues(InstancesBinding instancesBinding) throws InterpretException {
+        List<Object> values = null;
         Expression left = this.leftOperand;
         if (left instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) left;
@@ -83,147 +109,128 @@ public class ValuesOperation extends AggregationOperationExpression {
                 instancesBinding.addInstance(operandType, instance);
             }
         }
-
-        if (values != null) {
-            if (!rightOperand.isEmpty()) {
-
-                List filterValues = new ArrayList();
-
-                Expression includeParam = rightOperand.get(0);
-                if (includeParam instanceof EqualityOperationExpression) {
-
-
-                    OperationExpression operationExpression = (OperationExpression) includeParam;
-
-
-                    Expression leftExpression = operationExpression.getLeftOperand();
-
-                    while (leftExpression instanceof OperationExpression) {
-                        leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
-                    }
-
-
-                    if (leftExpression instanceof VariableExpression) {
-                        VariableExpression variableExpression = (VariableExpression) leftExpression;
-                        String name = variableExpression.getName();
-                        String operandType = variableExpression.getOperandType();
-
-
-                        for (Object value : values) {
-
-
-                            Object instance = instancesBinding.getInstance(operandType);
-
-                            if (instance == null || !(instance instanceof DataRow)) {
-                                DataRow dataRow = new DataRow();
-                                dataRow.addData(name, value);
-                                instancesBinding.addInstance(operandType, dataRow);
-                            } else {
-                                DataRow dataRow = (DataRow) instance;
-                                dataRow.addData(name, value);
-                                instancesBinding.addInstance(operandType, dataRow);
-                            }
-
-
-                            Object interpret = operationExpression.interpret(instancesBinding);
-
-                            Boolean result = toBoolean(interpret);
-
-                            if (result) {
-                                filterValues.add(value);
-
-                            }
-
-                        }
-
-
-                    }
-
-
-                } else if (includeParam instanceof BooleanExpression) {
-
-                    BooleanExpression booleanExpression = (BooleanExpression) includeParam;
-
-                    Boolean result = toBoolean(booleanExpression.interpret(instancesBinding));
-
-                    if (result) {
-                        filterValues = values;
-                    }
-
-
-                }
-
-
-                if (rightOperand.size() == 2 && !filterValues.isEmpty()) {
-
-
-                    Expression exculdeParam = rightOperand.get(1);
-                    if (exculdeParam instanceof EqualityOperationExpression) {
-
-
-                        OperationExpression operationExpression = (OperationExpression) exculdeParam;
-
-
-                        Expression leftExpression = operationExpression.getLeftOperand();
-
-                        while (leftExpression instanceof OperationExpression) {
-                            leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
-                        }
-
-
-                        if (leftExpression instanceof VariableExpression) {
-                            VariableExpression variableExpression = (VariableExpression) leftExpression;
-                            String name = variableExpression.getName();
-                            String operandType = variableExpression.getOperandType();
-
-                            List exculdeValues = new ArrayList();
-
-                            for (Object value : filterValues) {
-
-
-                                Object instance = instancesBinding.getInstance(operandType);
-
-                                if (instance == null || !(instance instanceof DataRow)) {
-                                    DataRow dataRow = new DataRow();
-                                    dataRow.addData(name, value);
-                                    instancesBinding.addInstance(operandType, dataRow);
-                                } else {
-                                    DataRow dataRow = (DataRow) instance;
-                                    dataRow.addData(name, value);
-                                    instancesBinding.addInstance(operandType, dataRow);
-                                }
-
-
-                                Object interpret = operationExpression.interpret(instancesBinding);
-
-                                Boolean result = toBoolean(interpret);
-
-                                if (!result) {
-                                    exculdeValues.add(value);
-
-                                }
-
-                            }
-
-                            filterValues = exculdeValues;
-
-                        }
-
-
-                    }
-
-
-                }
-
-
-                return new ListLiteral(filterValues, dataTypeExpression);
-
-            } else {
-                return new ListLiteral(values, dataTypeExpression);
-            }
-        }
-        return new NullLiteral();
+        return values;
     }
+
+
+    private List<Object> includedFilter(Expression includeParam, InstancesBinding instancesBinding, List<Object> values) throws InterpretException {
+        if (includeParam instanceof EqualityOperationExpression) {
+
+
+            OperationExpression operationExpression = (OperationExpression) includeParam;
+
+
+            Expression leftExpression = operationExpression.getLeftOperand();
+
+            while (leftExpression instanceof OperationExpression) {
+                leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+            }
+
+
+            if (leftExpression instanceof VariableExpression) {
+                VariableExpression variableExpression = (VariableExpression) leftExpression;
+                String name = variableExpression.getName();
+                String operandType = variableExpression.getOperandType();
+
+                List<Object> includedValues = new ArrayList<>();
+                for (Object value : values) {
+
+
+                    Object instance = instancesBinding.getInstance(operandType);
+                    if (instance == null || !(instance instanceof DataRow)) {
+                        DataRow dataRow = new DataRow();
+                        dataRow.addData(name, value);
+                        instancesBinding.addInstance(operandType, dataRow);
+                    } else {
+                        DataRow dataRow = (DataRow) instance;
+                        dataRow.addData(name, value);
+                        instancesBinding.addInstance(operandType, dataRow);
+                    }
+
+                    Object interpret = operationExpression.interpret(instancesBinding);
+                    if (toBoolean(interpret)) {
+                        includedValues.add(value);
+                    }
+                }
+
+                return includedValues;
+            }
+
+
+        } else if (includeParam instanceof BooleanExpression) {
+
+            BooleanExpression booleanExpression = (BooleanExpression) includeParam;
+
+            Boolean result = toBoolean(booleanExpression.interpret(instancesBinding));
+
+            if (!result) {
+                return new ArrayList<>();
+            }
+
+
+        }
+        return values;
+    }
+
+    private List<Object> excludedFilter(Expression includeParam, Expression exculdeParam, InstancesBinding instancesBinding, List<Object> values) throws InterpretException {
+
+        List<Object> includedValues = includedFilter(includeParam, instancesBinding, values);
+
+
+        if (exculdeParam instanceof EqualityOperationExpression) {
+
+
+            OperationExpression operationExpression = (OperationExpression) exculdeParam;
+
+
+            Expression leftExpression = operationExpression.getLeftOperand();
+
+            while (leftExpression instanceof OperationExpression) {
+                leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+            }
+
+
+            if (leftExpression instanceof VariableExpression) {
+                VariableExpression variableExpression = (VariableExpression) leftExpression;
+                String name = variableExpression.getName();
+                String operandType = variableExpression.getOperandType();
+
+
+                List<Object> excludedValues = new ArrayList<>();
+                for (Object value : includedValues) {
+
+                    Object instance = instancesBinding.getInstance(operandType);
+
+                    if (instance == null || !(instance instanceof DataRow)) {
+                        DataRow dataRow = new DataRow();
+                        dataRow.addData(name, value);
+                        instancesBinding.addInstance(operandType, dataRow);
+                    } else {
+                        DataRow dataRow = (DataRow) instance;
+                        dataRow.addData(name, value);
+                        instancesBinding.addInstance(operandType, dataRow);
+                    }
+
+
+                    Object interpret = operationExpression.interpret(instancesBinding);
+
+                    Boolean result = toBoolean(interpret);
+                    if (result) {
+                        excludedValues.add(value);
+                    }
+
+                }
+
+                includedValues.removeAll(excludedValues);
+
+            }
+
+
+        }
+
+        return includedValues;
+    }
+
 
 
 }

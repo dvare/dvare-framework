@@ -35,8 +35,6 @@ import org.dvare.expression.Expression;
 import org.dvare.test.dataobjects.Function;
 import org.dvare.util.ValueFinder;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +43,7 @@ import java.util.Map;
 
 
 public class FunctionTest extends TestCase {
-    private static Logger logger = LoggerFactory.getLogger(FunctionTest.class);
+
 
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {
