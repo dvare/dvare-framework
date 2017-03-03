@@ -10,7 +10,7 @@ A Lightweight Java business rule expression language.
 ```java
 public class ArithmeticOperationTest {
 
-    @Test
+    
     public void testApp8() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();

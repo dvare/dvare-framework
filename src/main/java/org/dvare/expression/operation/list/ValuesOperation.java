@@ -6,10 +6,9 @@ import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.datatype.NullType;
-import org.dvare.expression.literal.ListLiteral;
-import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.literal.*;
 import org.dvare.expression.operation.*;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
@@ -26,7 +25,6 @@ public class ValuesOperation extends AggregationOperationExpression {
     public ValuesOperation() {
         super(OperationType.VALUES);
     }
-
 
 
     @Override
@@ -114,48 +112,45 @@ public class ValuesOperation extends AggregationOperationExpression {
 
 
     private List<Object> includedFilter(Expression includeParam, InstancesBinding instancesBinding, List<Object> values) throws InterpretException {
-        if (includeParam instanceof EqualityOperationExpression) {
+
+        if (includeParam instanceof LogicalOperationExpression) {
 
 
             OperationExpression operationExpression = (OperationExpression) includeParam;
 
+            Expression left = operationExpression.getLeftOperand();
+            Expression right = operationExpression.getRightOperand();
 
-            Expression leftExpression = operationExpression.getLeftOperand();
-
-            while (leftExpression instanceof OperationExpression) {
-                leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
-            }
-
-
-            if (leftExpression instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) leftExpression;
-                String name = variableExpression.getName();
-                String operandType = variableExpression.getOperandType();
-
-                List<Object> includedValues = new ArrayList<>();
-                for (Object value : values) {
+            List<Object> includedValues = new ArrayList<>();
+            for (Object value : values) {
 
 
-                    Object instance = instancesBinding.getInstance(operandType);
-                    if (instance == null || !(instance instanceof DataRow)) {
-                        DataRow dataRow = new DataRow();
-                        dataRow.addData(name, value);
-                        instancesBinding.addInstance(operandType, dataRow);
-                    } else {
-                        DataRow dataRow = (DataRow) instance;
-                        dataRow.addData(name, value);
-                        instancesBinding.addInstance(operandType, dataRow);
-                    }
-
-                    Object interpret = operationExpression.interpret(instancesBinding);
-                    if (toBoolean(interpret)) {
-                        includedValues.add(value);
-                    }
+                Boolean result = solveLogical(operationExpression, instancesBinding, value);
+                if (result) {
+                    includedValues.add(value);
                 }
 
-                return includedValues;
+                operationExpression.setLeftOperand(left);
+                operationExpression.setRightOperand(right);
+
             }
 
+
+            return includedValues;
+        } else if (includeParam instanceof EqualityOperationExpression || includeParam instanceof ChainOperationExpression) {
+            List<Object> includedValues = new ArrayList<>();
+            for (Object value : values) {
+
+
+                Boolean result = buildEqualityOperationExpression(includeParam, instancesBinding, value);
+                if (result) {
+                    includedValues.add(value);
+                }
+
+            }
+
+
+            return includedValues;
 
         } else if (includeParam instanceof BooleanExpression) {
 
@@ -177,54 +172,39 @@ public class ValuesOperation extends AggregationOperationExpression {
         List<Object> includedValues = includedFilter(includeParam, instancesBinding, values);
 
 
-        if (exculdeParam instanceof EqualityOperationExpression) {
+        if (exculdeParam instanceof LogicalOperationExpression) {
 
 
-            OperationExpression operationExpression = (OperationExpression) exculdeParam;
+            OperationExpression operationExpression = (OperationExpression) includeParam;
+
+            Expression left = operationExpression.getLeftOperand();
+            Expression right = operationExpression.getRightOperand();
+
+            List<Object> excludedValues = new ArrayList<>();
+            for (Object value : values) {
 
 
-            Expression leftExpression = operationExpression.getLeftOperand();
-
-            while (leftExpression instanceof OperationExpression) {
-                leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
-            }
-
-
-            if (leftExpression instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) leftExpression;
-                String name = variableExpression.getName();
-                String operandType = variableExpression.getOperandType();
-
-
-                List<Object> excludedValues = new ArrayList<>();
-                for (Object value : includedValues) {
-
-                    Object instance = instancesBinding.getInstance(operandType);
-
-                    if (instance == null || !(instance instanceof DataRow)) {
-                        DataRow dataRow = new DataRow();
-                        dataRow.addData(name, value);
-                        instancesBinding.addInstance(operandType, dataRow);
-                    } else {
-                        DataRow dataRow = (DataRow) instance;
-                        dataRow.addData(name, value);
-                        instancesBinding.addInstance(operandType, dataRow);
-                    }
-
-
-                    Object interpret = operationExpression.interpret(instancesBinding);
-
-                    Boolean result = toBoolean(interpret);
-                    if (result) {
-                        excludedValues.add(value);
-                    }
-
+                Boolean result = solveLogical(operationExpression, instancesBinding, value);
+                if (result) {
+                    excludedValues.add(value);
                 }
 
-                includedValues.removeAll(excludedValues);
-
+                operationExpression.setLeftOperand(left);
+                operationExpression.setRightOperand(right);
             }
+            includedValues.removeAll(excludedValues);
 
+
+            return includedValues;
+        } else if (exculdeParam instanceof EqualityOperationExpression || exculdeParam instanceof ChainOperationExpression) {
+            List<Object> excludedValues = new ArrayList<>();
+            for (Object value : includedValues) {
+                Boolean result = buildEqualityOperationExpression(exculdeParam, instancesBinding, value);
+                if (result) {
+                    excludedValues.add(value);
+                }
+            }
+            includedValues.removeAll(excludedValues);
 
         }
 
@@ -232,5 +212,78 @@ public class ValuesOperation extends AggregationOperationExpression {
     }
 
 
+    private Boolean buildEqualityOperationExpression(Expression includeParam, InstancesBinding instancesBinding, Object value) throws InterpretException {
+
+        if (includeParam instanceof BooleanLiteral) {
+            return toBoolean(includeParam);
+        }
+
+
+        OperationExpression operationExpression = (OperationExpression) includeParam;
+        Expression leftExpression = operationExpression.getLeftOperand();
+
+        while (leftExpression instanceof OperationExpression) {
+            leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+        }
+
+
+        if (leftExpression instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) leftExpression;
+            String name = variableExpression.getName();
+            String operandType = variableExpression.getOperandType();
+
+
+            Object instance = instancesBinding.getInstance(operandType);
+            if (instance == null || !(instance instanceof DataRow)) {
+                DataRow dataRow = new DataRow();
+                dataRow.addData(name, value);
+                instancesBinding.addInstance(operandType, dataRow);
+            } else {
+                DataRow dataRow = (DataRow) instance;
+                dataRow.addData(name, value);
+                instancesBinding.addInstance(operandType, dataRow);
+            }
+
+            Object interpret = operationExpression.interpret(instancesBinding);
+            return toBoolean(interpret);
+        }
+
+        return false;
+
+    }
+
+
+    private Boolean solveLogical(OperationExpression operationExpression, InstancesBinding instancesBinding, Object value) throws InterpretException {
+
+
+        Expression left = operationExpression.getLeftOperand();
+        Expression right = operationExpression.getRightOperand();
+        if (left != null) {
+            if (left instanceof LogicalOperationExpression) {
+
+                Boolean result = solveLogical((OperationExpression) left, instancesBinding, value);
+                operationExpression.setLeftOperand(LiteralType.getLiteralExpression(result, BooleanType.class));
+            } else {
+                Boolean result = buildEqualityOperationExpression(left, instancesBinding, value);
+                operationExpression.setLeftOperand(LiteralType.getLiteralExpression(result, BooleanType.class));
+            }
+        }
+
+
+        if (right != null) {
+            if (right instanceof LogicalOperationExpression) {
+                Boolean result = solveLogical((OperationExpression) right, instancesBinding, value);
+                operationExpression.setRightOperand(LiteralType.getLiteralExpression(result, BooleanType.class));
+            } else {
+                Boolean result = buildEqualityOperationExpression(right, instancesBinding, value);
+                operationExpression.setRightOperand(LiteralType.getLiteralExpression(result, BooleanType.class));
+            }
+        }
+
+        Boolean result = toBoolean(operationExpression.interpret(instancesBinding));
+        operationExpression.setLeftOperand(left);
+        operationExpression.setRightOperand(right);
+        return result;
+    }
 
 }

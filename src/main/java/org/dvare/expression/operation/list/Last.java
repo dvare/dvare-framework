@@ -55,7 +55,7 @@ public class Last extends AggregationOperationExpression {
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
-        if (right instanceof ValuesOperation) {
+        if (right instanceof ValuesOperation || right instanceof MapOperation) {
             OperationExpression valuesOperation = (OperationExpression) right;
             Object valuesResult = valuesOperation.interpret(instancesBinding);
             if (valuesResult instanceof ListLiteral) {

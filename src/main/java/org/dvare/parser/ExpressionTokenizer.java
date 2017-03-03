@@ -58,9 +58,12 @@ public class ExpressionTokenizer {
 
 
     public static String[] toToken(String expr) {
-
-
         String splits[] = {"\\s", "\\,", "\\->"};
+        return toToken(expr, splits);
+    }
+
+    public static String[] toToken(String expr, String splits[]) {
+
 
         StringBuilder builder = new StringBuilder("");
         for (String split : splits) {

@@ -1,4 +1,4 @@
-package org.dvare.test.aggregation;
+package org.dvare.test.list;
 
 import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
@@ -9,15 +9,14 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.util.ValueFinder;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LastTest extends TestCase {
-    @Test
+public class FirstTest extends TestCase {
+
     public void testApp() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -28,9 +27,9 @@ public class LastTest extends TestCase {
 
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
+        validationTypes.put("V2", "IntegerType");
 
-
-        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1->last (  )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1-> first (  )", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
@@ -47,6 +46,7 @@ public class LastTest extends TestCase {
         d1.put("V1", 10);
         dataSet.add(new DataRow(d1));
 
+
         Map<String, Object> d2 = new HashMap<>();
         d2.put("V1", 20);
         dataSet.add(new DataRow(d2));
@@ -58,8 +58,7 @@ public class LastTest extends TestCase {
         RuleEvaluator evaluator = factory.getEvaluator();
         Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
 
-
-        boolean result = ValueFinder.findValue("A0", resultModel).equals(40);
+        boolean result = ValueFinder.findValue("A0", resultModel).equals(10);
 
         assertTrue(result);
     }

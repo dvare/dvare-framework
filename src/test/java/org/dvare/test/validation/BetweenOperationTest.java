@@ -35,14 +35,13 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.BetweenOperation;
-import org.junit.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 public class BetweenOperationTest extends TestCase {
-    @Test
+
     public void testApp() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();

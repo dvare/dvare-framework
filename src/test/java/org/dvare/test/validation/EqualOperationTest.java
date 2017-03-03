@@ -36,13 +36,12 @@ import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ArithmeticOperation;
 import org.dvare.test.dataobjects.EqualOperation;
 import org.dvare.test.dataobjects.Function;
-import org.junit.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class EqualOperationTest extends TestCase {
-    @Test
+
     public void testApp() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -83,7 +82,6 @@ public class EqualOperationTest extends TestCase {
     }
 
 
-    @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration();
@@ -101,7 +99,7 @@ public class EqualOperationTest extends TestCase {
         assertTrue(result);
     }
 
-    @Test
+
     public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration();
@@ -119,7 +117,7 @@ public class EqualOperationTest extends TestCase {
         assertTrue(result);
     }
 
-    @Test
+
     public void testApp3() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -149,7 +147,6 @@ public class EqualOperationTest extends TestCase {
     }
 
 
-    @Test
     public void testApp4() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration();

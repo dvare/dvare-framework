@@ -23,6 +23,8 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.literal;
 
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.RegexType;
@@ -45,6 +47,12 @@ public abstract class LiteralExpression<T> extends Expression {
 
     public Class<? extends DataTypeExpression> getType() {
         return this.type;
+    }
+
+
+    @Override
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        return this;
     }
 
 

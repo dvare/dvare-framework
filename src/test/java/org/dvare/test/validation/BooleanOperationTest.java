@@ -10,14 +10,13 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.junit.Assert;
-import org.junit.Test;
 
 import java.text.ParseException;
 
 
 public class BooleanOperationTest extends TestCase {
-    @Test
-    public void testApp02() throws ExpressionParseException, InterpretException, ParseException {
+
+    public void testApp1() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -32,5 +31,6 @@ public class BooleanOperationTest extends TestCase {
         Assert.assertTrue(result);
 
     }
+
 
 }

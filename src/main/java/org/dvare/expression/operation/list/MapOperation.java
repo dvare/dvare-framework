@@ -33,7 +33,7 @@ public class MapOperation extends AggregationOperationExpression {
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
-        if (leftOperand instanceof ValuesOperation && !rightOperand.isEmpty() && rightOperand.get(0) instanceof ChainOperationExpression) {
+        if ((leftOperand instanceof ValuesOperation || leftOperand instanceof MapOperation) && !rightOperand.isEmpty() && rightOperand.get(0) instanceof ChainOperationExpression) {
 
 
             ChainOperationExpression chainOperationExpression = (ChainOperationExpression) rightOperand.get(0);
@@ -52,7 +52,7 @@ public class MapOperation extends AggregationOperationExpression {
                 String operandType = variableExpression.getOperandType();
 
 
-                ValuesOperation valueOperation = (ValuesOperation) leftOperand;
+                OperationExpression valueOperation = (OperationExpression) leftOperand;
                 Object interpret = valueOperation.interpret(instancesBinding);
 
                 if (interpret instanceof ListLiteral) {

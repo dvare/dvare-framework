@@ -11,8 +11,10 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.BooleanLiteral;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.list.MapOperation;
 import org.dvare.expression.operation.list.ValuesOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
@@ -129,7 +131,7 @@ public class Match extends OperationExpression {
                 }
             }
 
-        } else if (valueParam instanceof ValuesOperation) {
+        } else if (valueParam instanceof ValuesOperation || valueParam instanceof MapOperation) {
 
             Object interpret = valueParam.interpret(instancesBinding);
             if (interpret instanceof LiteralExpression) {
@@ -168,7 +170,7 @@ public class Match extends OperationExpression {
             Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
             variableExpression = VariableType.setVariableValue(variableExpression, instance);
             matchParams = new ArrayList();
-            matchParams.add(variableExpression);
+            matchParams.add(variableExpression.getValue());
 
         }
 
@@ -182,7 +184,11 @@ public class Match extends OperationExpression {
         }
 
 
-        if (dataType != null && matchParams != null && !matchParams.isEmpty() && !values.isEmpty()) {
+        if (dataType != null && matchParams != null && values != null) {
+
+            if (matchParams.isEmpty() && values.isEmpty()) {
+                return true;
+            }
 
 
             switch (dataType) {
@@ -190,7 +196,11 @@ public class Match extends OperationExpression {
                     List<String> valueStringList = (List<String>) values;
                     TreeSet<String> valuesSet = new TreeSet<>();
                     for (String value : valueStringList) {
-                        valuesSet.add(TrimString.trim(value));
+                        if (value != null) {
+                            valuesSet.add(TrimString.trim(value));
+                        } else {
+                            valuesSet.add(null);
+                        }
                     }
 
 
@@ -200,7 +210,15 @@ public class Match extends OperationExpression {
 
                         List<String> combSet = new ArrayList<>();
                         for (String value : combStringList) {
-                            combSet.add(TrimString.trim(value));
+
+
+                            if (value != null) {
+                                combSet.add(TrimString.trim(value));
+                            } else {
+                                combSet.add(null);
+                            }
+
+
                         }
 
                         if (anyMatch) {
@@ -288,16 +306,16 @@ public class Match extends OperationExpression {
 
 
     private List buildMatchParams(LiteralExpression literalExpression) {
-        List matchParams = null;
+        List matchParams = new ArrayList();
         if (literalExpression instanceof ListLiteral) {
             ListLiteral listLiteral = (ListLiteral) literalExpression;
             if (listLiteral.getValue() != null) {
                 matchParams = listLiteral.getValue();
             }
-        } else {
-            matchParams = new ArrayList();
+        } else if (!(literalExpression instanceof NullLiteral)) {
             matchParams.add(literalExpression.getValue());
         }
+
         return matchParams;
     }
 

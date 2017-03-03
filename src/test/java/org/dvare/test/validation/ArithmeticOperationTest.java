@@ -23,6 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare.test.validation;
 
+import junit.framework.TestCase;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
@@ -35,12 +36,11 @@ import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ArithmeticOperation;
 import org.junit.Assert;
-import org.junit.Test;
 
 import java.util.HashMap;
 
-public class ArithmeticOperationTest {
-    @Test
+public class ArithmeticOperationTest extends TestCase {
+
     public void testApp() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -71,7 +71,7 @@ public class ArithmeticOperationTest {
         Assert.assertTrue(result);
     }
 
-    @Test
+
     public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();

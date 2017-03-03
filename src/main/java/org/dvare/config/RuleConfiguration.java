@@ -27,6 +27,7 @@ package org.dvare.config;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.dvare.binding.function.FunctionBinding;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.parser.ExpressionParser;
 
@@ -34,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class RuleConfiguration {
-
+    private ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
     private ExpressionParser expressionParser;
 
@@ -79,7 +80,14 @@ public class RuleConfiguration {
     }
 
 
-    /*Getter and Setters */
+    public void registerFunction(FunctionBinding binding) {
+        configurationRegistry.registerFunction(binding);
+    }
+
+
+    public ConfigurationRegistry getConfigurationRegistry() {
+        return configurationRegistry;
+    }
 
 
 }

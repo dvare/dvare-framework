@@ -38,7 +38,6 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.test.dataobjects.EqualOperation;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,7 @@ import java.text.ParseException;
 public class BuilderTest extends TestCase {
     private static Logger logger = LoggerFactory.getLogger(BuilderTest.class);
 
-    @Test
+
     public void testApp() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -84,5 +83,41 @@ public class BuilderTest extends TestCase {
         boolean result = (Boolean) evaluator.evaluate(rule, equalOperation);
         assertTrue(result);
     }
+
+    public void testApp2() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        Expression left = new LiteralBuilder().literalType(DataType.BooleanType).literalValue("true").build();
+
+
+        Expression right = new LiteralBuilder().literalType(DataType.BooleanType).literalValue("true").build();
+
+
+        OperationExpression andExpression = new OperationBuilder().operation(OperationType.AND)//
+                .leftOperand(left)//
+                .rightOperand(right).build();
+
+        Expression expression = new ExpressionBuilder().expression(andExpression).build();
+
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(expression.toString());
+        }
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        EqualOperation equalOperation = new EqualOperation();
+        equalOperation.setVariable1("'A'");
+        equalOperation.setVariable2(2);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, equalOperation);
+        assertTrue(result);
+    }
+
+
+
 
 }

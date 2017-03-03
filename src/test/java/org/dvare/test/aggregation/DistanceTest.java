@@ -8,14 +8,13 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.util.ValueFinder;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DistanceTest extends TestCase {
 
-    @Test
+
     public void testApp() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();

@@ -23,8 +23,11 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.veriable;
 
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataTypeExpression;
+import org.dvare.expression.literal.LiteralType;
 
 public abstract class VariableExpression<T> extends Expression {
 
@@ -44,6 +47,12 @@ public abstract class VariableExpression<T> extends Expression {
         this.value = value;
 
     }
+
+    @Override
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        return LiteralType.getLiteralExpression(value, type);
+    }
+
 
     @Override
     public String toString() {

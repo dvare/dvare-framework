@@ -32,13 +32,12 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.test.dataobjects.InOperation;
-import org.junit.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class InOperationTest extends TestCase {
-    @Test
+
     public void testApp() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -73,7 +72,6 @@ public class InOperationTest extends TestCase {
     }
 
 
-    @Test
     public void testApp2() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -93,7 +91,7 @@ public class InOperationTest extends TestCase {
         assertTrue(result);
     }
 
-    @Test
+
     public void testApp1() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -127,7 +125,7 @@ public class InOperationTest extends TestCase {
         assertTrue(result);
     }
 
-    @Test
+
     public void testApp3() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -144,7 +142,7 @@ public class InOperationTest extends TestCase {
         assertTrue(result);
     }
 
-    @Test
+
     public void testApp4() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();

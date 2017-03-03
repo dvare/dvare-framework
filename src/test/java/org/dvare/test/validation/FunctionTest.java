@@ -34,7 +34,6 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.test.dataobjects.Function;
 import org.dvare.util.ValueFinder;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +44,6 @@ import java.util.Map;
 public class FunctionTest extends TestCase {
 
 
-    @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -63,7 +61,7 @@ public class FunctionTest extends TestCase {
         assertTrue(result);
     }
 
-    @Test
+
     public void testApp1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -81,7 +79,7 @@ public class FunctionTest extends TestCase {
         assertTrue(result);
     }
 
-    @Test
+
     public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -98,7 +96,7 @@ public class FunctionTest extends TestCase {
         assertTrue(result);
     }
 
-    @Test
+
     public void testApp21() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -115,7 +113,7 @@ public class FunctionTest extends TestCase {
         assertTrue(result);
     }
 
-    @Test
+
     public void testApp3() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -132,7 +130,7 @@ public class FunctionTest extends TestCase {
         assertTrue(result);
     }
 
-    @Test
+
     public void testApp31() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -149,7 +147,7 @@ public class FunctionTest extends TestCase {
         assertTrue(result);
     }
 
-    @Test
+
     public void testApp4() throws ExpressionParseException, InterpretException, ClassNotFoundException {
 
         RuleConfiguration factory = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -194,7 +192,6 @@ public class FunctionTest extends TestCase {
     }
 
 
-    @Test
     public void testApp5() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});

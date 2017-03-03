@@ -9,7 +9,6 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.util.ValueFinder;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ConditionTest extends TestCase {
-    @Test
+
     public void testApp() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -64,7 +63,6 @@ public class ConditionTest extends TestCase {
     }
 
 
-    @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -110,7 +108,6 @@ public class ConditionTest extends TestCase {
     }
 
 
-    @Test
     public void testApp3() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();

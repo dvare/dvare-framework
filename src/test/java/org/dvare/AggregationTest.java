@@ -1,6 +1,10 @@
 package org.dvare;
 
 import org.dvare.test.aggregation.*;
+import org.dvare.test.list.FirstTest;
+import org.dvare.test.list.LastTest;
+import org.dvare.test.list.LengthTest;
+import org.dvare.test.list.ValuesTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

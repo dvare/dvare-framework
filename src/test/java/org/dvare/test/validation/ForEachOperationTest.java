@@ -36,14 +36,13 @@ import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ForEachOperation;
 import org.junit.Assert;
-import org.junit.Test;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ForEachOperationTest extends TestCase {
-    @Test
+
     public void testApp() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -85,7 +84,6 @@ public class ForEachOperationTest extends TestCase {
     }
 
 
-    @Test
     public void testApp01() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();

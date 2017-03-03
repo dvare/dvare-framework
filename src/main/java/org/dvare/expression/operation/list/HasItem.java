@@ -32,7 +32,7 @@ public class HasItem extends AggregationOperationExpression {
 
 
         Expression right = leftOperand;
-        if (right instanceof ValuesOperation) {
+        if (right instanceof ValuesOperation || right instanceof MapOperation) {
             OperationExpression valuesOperation = (OperationExpression) right;
 
             Object valuesResult = valuesOperation.interpret(instancesBinding);

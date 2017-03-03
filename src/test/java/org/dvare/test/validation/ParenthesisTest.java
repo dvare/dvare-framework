@@ -32,10 +32,9 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.test.dataobjects.Parenthesis;
-import org.junit.Test;
 
 public class ParenthesisTest extends TestCase {
-    @Test
+
     public void testApp() throws ExpressionParseException, InterpretException {
 
 
