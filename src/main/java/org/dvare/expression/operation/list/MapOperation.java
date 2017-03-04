@@ -12,6 +12,7 @@ import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.utility.GetExpOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +32,22 @@ public class MapOperation extends AggregationOperationExpression {
 
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        List values = null;
+        if ((leftOperand instanceof ValuesOperation || leftOperand instanceof MapOperation || leftOperand instanceof GetExpOperation)) {
+            OperationExpression valueOperation = (OperationExpression) leftOperand;
+            Object interpret = valueOperation.interpret(instancesBinding);
+
+            if (interpret instanceof ListLiteral) {
+                ListLiteral listLiteral = (ListLiteral) interpret;
+                values = listLiteral.getValue();
+                dataTypeExpression = listLiteral.getType();
+
+            }
 
 
-        if ((leftOperand instanceof ValuesOperation || leftOperand instanceof MapOperation) && !rightOperand.isEmpty() && rightOperand.get(0) instanceof ChainOperationExpression) {
+        }
+
+        if (values != null && !rightOperand.isEmpty() && rightOperand.get(0) instanceof ChainOperationExpression) {
 
 
             ChainOperationExpression chainOperationExpression = (ChainOperationExpression) rightOperand.get(0);
@@ -52,53 +66,45 @@ public class MapOperation extends AggregationOperationExpression {
                 String operandType = variableExpression.getOperandType();
 
 
-                OperationExpression valueOperation = (OperationExpression) leftOperand;
-                Object interpret = valueOperation.interpret(instancesBinding);
+                List<Object> mappedValues = new ArrayList<>();
 
-                if (interpret instanceof ListLiteral) {
-                    ListLiteral listLiteral = (ListLiteral) interpret;
-                    List values = listLiteral.getValue();
-                    dataTypeExpression = listLiteral.getType();
-
-                    List<Object> mappedValues = new ArrayList<>();
-
-                    for (Object value : values) {
+                for (Object value : values) {
 
 
-                        Object instance = instancesBinding.getInstance(operandType);
-                        if (instance == null || !(instance instanceof DataRow)) {
-                            DataRow dataRow = new DataRow();
-                            dataRow.addData(name, value);
-                            instancesBinding.addInstance(operandType, dataRow);
-                        } else {
-                            DataRow dataRow = (DataRow) instance;
-                            dataRow.addData(name, value);
-                            instancesBinding.addInstance(operandType, dataRow);
-                        }
+                    Object instance = instancesBinding.getInstance(operandType);
+                    if (instance == null || !(instance instanceof DataRow)) {
+                        DataRow dataRow = new DataRow();
+                        dataRow.addData(name, value);
+                        instancesBinding.addInstance(operandType, dataRow);
+                    } else {
+                        DataRow dataRow = (DataRow) instance;
+                        dataRow.addData(name, value);
+                        instancesBinding.addInstance(operandType, dataRow);
+                    }
 
-                        Object chainOperationInterpret = chainOperationExpression.interpret(instancesBinding);
+                    Object chainOperationInterpret = chainOperationExpression.interpret(instancesBinding);
 
-                        if (chainOperationInterpret instanceof LiteralExpression) {
+                    if (chainOperationInterpret instanceof LiteralExpression) {
 
-                            LiteralExpression literalExpression = (LiteralExpression) chainOperationInterpret;
-                            if (!(literalExpression instanceof NullLiteral) && literalExpression.getType() != null && !literalExpression.getType().equals(dataTypeExpression)) {
-                                dataTypeExpression = literalExpression.getType();
-
-                            }
-
-                            Object mapdedvalue = literalExpression.getValue();
-                            mappedValues.add(mapdedvalue);
-
+                        LiteralExpression literalExpression = (LiteralExpression) chainOperationInterpret;
+                        if (!(literalExpression instanceof NullLiteral) && literalExpression.getType() != null && !literalExpression.getType().equals(dataTypeExpression)) {
+                            dataTypeExpression = literalExpression.getType();
 
                         }
+
+                        Object mapdedvalue = literalExpression.getValue();
+                        mappedValues.add(mapdedvalue);
 
 
                     }
 
 
-                    return new ListLiteral(mappedValues, dataTypeExpression);
-
                 }
+
+
+                return new ListLiteral(mappedValues, dataTypeExpression);
+
+
             }
 
         }

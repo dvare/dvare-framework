@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016-2017 Muhammad Hammad
+Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,9 +31,13 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.list.MapOperation;
+import org.dvare.expression.operation.list.ValuesOperation;
+import org.dvare.expression.operation.utility.GetExpOperation;
 import org.dvare.expression.operation.validation.RightPriority;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
@@ -142,6 +146,25 @@ public abstract class AggregationOperationExpression extends OperationExpression
         }
 
         return toStringBuilder.toString();
+    }
+
+
+    protected List<Object> buildValues(Expression expression, InstancesBinding instancesBinding) throws InterpretException {
+
+        if (expression instanceof ValuesOperation || expression instanceof MapOperation || expression instanceof GetExpOperation) {
+            OperationExpression valuesOperation = (OperationExpression) expression;
+
+            Object valuesResult = valuesOperation.interpret(instancesBinding);
+
+            if (valuesResult instanceof ListLiteral) {
+                ListLiteral listLiteral = (ListLiteral) valuesResult;
+                List values = listLiteral.getValue();
+                dataTypeExpression = listLiteral.getType();
+                return values;
+            }
+
+        }
+        return null;
     }
 
     @Override

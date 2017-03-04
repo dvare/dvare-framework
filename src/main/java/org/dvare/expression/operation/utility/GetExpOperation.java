@@ -24,107 +24,88 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
+import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
-import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.NamedExpression;
-import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.literal.DateTimeLiteral;
-import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.validation.RightPriority;
+import org.dvare.parser.ExpressionTokenizer;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
-@Operation(type = OperationType.DATE_TIME, dataTypes = {DataType.DateTimeType})
-public class DateTimeOperation extends OperationExpression {
+@Operation(type = OperationType.GET_EXP)
+public class GetExpOperation extends OperationExpression {
 
 
-    public DateTimeOperation() {
-        super(OperationType.DATE_TIME);
+    public GetExpOperation() {
+        super(OperationType.GET_EXP);
     }
 
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
-
-
         pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
-
-        DateTimeFormatter dateFormat = null;
-        String value = null;
-
-        Expression expression = stack.pop();
-
-        if (!stack.isEmpty() && stack.peek() instanceof NamedExpression) {
-
-            if (expression instanceof NamedExpression) {
-                NamedExpression namedExpression = (NamedExpression) expression;
-                dateFormat = DateTimeFormatter.ofPattern(namedExpression.getName());
+        if (leftOperand != null) {
+            String name = ((NamedExpression) leftOperand).getName();
+            if (!expressions.containsKey(name)) {
+                throw new ExpressionParseException("Expression " + name + " not registered at " + ExpressionTokenizer.toString(tokens, pos));
             }
-
-
-            Expression valueExpression = stack.pop();
-            if (valueExpression instanceof NamedExpression) {
-                NamedExpression namedExpression = (NamedExpression) valueExpression;
-                value = namedExpression.getName();
-            }
-
-
-        } else if (expression instanceof NamedExpression) {
-
-            dateFormat = LiteralType.dateTimeFormat;
-
-            NamedExpression namedExpression = (NamedExpression) expression;
-            value = namedExpression.getName();
-
-
         }
 
-
-        try {
-            if (dateFormat != null && value != null) {
-                LocalDateTime localDateTime = LocalDateTime.parse(value, dateFormat);
-                DateTimeLiteral literal = new DateTimeLiteral(localDateTime);
-                stack.push(literal);
-            }
-        } catch (Exception e) {
-            String message = String.format(" Unable to Parse literal %s to Date Time", value);
-            logger.error(message);
-            throw new IllegalValueException(message);
-        }
-
+        stack.push(this);
         return pos;
     }
 
 
     @Override
+
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
-        for (int i = pos; i < tokens.length; i++) {
-            String token = tokens[i];
+        Stack<Expression> localStack = new Stack<>();
+        for (; pos < tokens.length; pos++) {
+            String token = tokens[pos];
 
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
+                if (op instanceof RightPriority) {
+                    List<Expression> expressionList = new ArrayList<>(localStack);
 
+                    if (expressionList.size() == 1) {
 
-                if (op.getClass().equals(RightPriority.class)) {
-                    return i;
+                        Expression namedExpression = expressionList.get(0);
+                        if (namedExpression instanceof NamedExpression) {
+                            leftOperand = namedExpression;
+
+                        }
+                    }
+
+                    return pos;
                 }
+            } else {
 
-            } else if (!token.isEmpty() && !token.equals(",")) {
-                NamedExpression namedExpression = new NamedExpression(token);
-                stack.push(namedExpression);
+                localStack.add(new NamedExpression(token));
+
+
             }
         }
-        return null;
+        return pos;
+    }
+
+
+    @Override
+    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+        String expressionName = ((NamedExpression) leftOperand).getName();
+        Expression expression = expressions.get(expressionName);
+        return expression.interpret(instancesBinding);
     }
 
 

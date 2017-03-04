@@ -12,6 +12,7 @@ import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.utility.GetExpOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,16 @@ public class Length extends AggregationOperationExpression {
                 ListLiteral listLiteral = (ListLiteral) valuesResult;
                 return LiteralType.getLiteralExpression(listLiteral.getSize(), IntegerType.class);
             }
+        } else if (right instanceof GetExpOperation) {
+
+            OperationExpression valuesOperation = (OperationExpression) right;
+            Object valuesResult = valuesOperation.interpret(instancesBinding);
+            if (valuesResult instanceof ListLiteral) {
+                ListLiteral listLiteral = (ListLiteral) valuesResult;
+
+                return LiteralType.getLiteralExpression(listLiteral.getSize(), IntegerType.class);
+            }
+
         } else if (right instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) right;
 

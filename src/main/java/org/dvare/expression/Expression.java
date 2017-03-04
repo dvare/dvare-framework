@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016-2017 Muhammad Hammad
+Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +26,15 @@ package org.dvare.expression;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 
+import java.util.HashMap;
+
 
 public abstract class Expression {
+
+    protected static HashMap<String, Expression> expressions = new HashMap<>();
 
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
         return false;
     }
-
 
 }

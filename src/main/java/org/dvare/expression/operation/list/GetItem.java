@@ -5,7 +5,10 @@ import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.literal.*;
+import org.dvare.expression.literal.IntegerLiteral;
+import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.*;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
@@ -26,93 +29,77 @@ public class GetItem extends AggregationOperationExpression {
     @Override
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        Expression right = leftOperand;
-        if (right instanceof ValuesOperation || right instanceof MapOperation) {
-            OperationExpression valuesOperation = (OperationExpression) right;
+        List<Object> values = buildValues(leftOperand, instancesBinding);
 
-            Object valuesResult = valuesOperation.interpret(instancesBinding);
+        if (values != null && !rightOperand.isEmpty()) {
+            Expression expression = rightOperand.get(0);
 
-            List<Object> values = null;
-            Class dataTypeExpress = null;
-            if (valuesResult instanceof ListLiteral) {
-                ListLiteral listLiteral = (ListLiteral) valuesResult;
-                values = listLiteral.getValue();
-                dataTypeExpress = listLiteral.getType();
-            }
+            if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
 
-
-            if (!rightOperand.isEmpty()) {
-                Expression expression = rightOperand.get(0);
-
-                if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
-
-                    OperationExpression operationExpression = (OperationExpression) expression;
-                    Object interpret = operationExpression.interpret(instancesBinding);
-                    if (interpret instanceof IntegerLiteral) {
-                        return buildItem(values, (IntegerLiteral) interpret, dataTypeExpress);
-                    }
+                OperationExpression operationExpression = (OperationExpression) expression;
+                Object interpret = operationExpression.interpret(instancesBinding);
+                if (interpret instanceof IntegerLiteral) {
+                    return buildItem(values, (IntegerLiteral) interpret, dataTypeExpression);
+                }
 
 
-                } else if (expression instanceof EqualityOperationExpression) {
+            } else if (expression instanceof EqualityOperationExpression) {
 
 
-                    OperationExpression operationExpression = (OperationExpression) expression;
+                OperationExpression operationExpression = (OperationExpression) expression;
 
 
-                    Expression leftExpression = operationExpression.getLeftOperand();
+                Expression leftExpression = operationExpression.getLeftOperand();
 
-                    while (leftExpression instanceof OperationExpression) {
-                        leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
-                    }
-
-
-                    if (leftExpression instanceof VariableExpression) {
-                        VariableExpression variableExpression = (VariableExpression) leftExpression;
-                        String name = variableExpression.getName();
-                        String operandType = variableExpression.getOperandType();
+                while (leftExpression instanceof OperationExpression) {
+                    leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+                }
 
 
-                        for (Object value : values) {
+                if (leftExpression instanceof VariableExpression) {
+                    VariableExpression variableExpression = (VariableExpression) leftExpression;
+                    String name = variableExpression.getName();
+                    String operandType = variableExpression.getOperandType();
 
 
-                            Object instance = instancesBinding.getInstance(operandType);
-
-                            if (instance == null || !(instance instanceof DataRow)) {
-                                DataRow dataRow = new DataRow();
-                                dataRow.addData(name, value);
-                                instancesBinding.addInstance(operandType, dataRow);
-                            } else {
-
-                                DataRow dataRow = (DataRow) instance;
-                                dataRow.addData(name, value);
-                                instancesBinding.addInstance(operandType, dataRow);
-                            }
+                    for (Object value : values) {
 
 
-                            Object interpret = operationExpression.interpret(instancesBinding);
+                        Object instance = instancesBinding.getInstance(operandType);
 
-                            Boolean result = toBoolean(interpret);
+                        if (instance == null || !(instance instanceof DataRow)) {
+                            DataRow dataRow = new DataRow();
+                            dataRow.addData(name, value);
+                            instancesBinding.addInstance(operandType, dataRow);
+                        } else {
 
-                            if (result) {
+                            DataRow dataRow = (DataRow) instance;
+                            dataRow.addData(name, value);
+                            instancesBinding.addInstance(operandType, dataRow);
+                        }
 
 
-                                return LiteralType.getLiteralExpression(value, dataTypeExpress);
+                        Object interpret = operationExpression.interpret(instancesBinding);
 
-                            }
+                        Boolean result = toBoolean(interpret);
+
+                        if (result) {
+
+
+                            return LiteralType.getLiteralExpression(value, dataTypeExpression);
 
                         }
 
                     }
 
-
-                } else if (expression instanceof IntegerLiteral) {
-
-                    return buildItem(values, (IntegerLiteral) expression, dataTypeExpress);
-
                 }
+
+
+            } else if (expression instanceof IntegerLiteral) {
+
+                return buildItem(values, (IntegerLiteral) expression, dataTypeExpression);
+
             }
-
-
         }
 
 

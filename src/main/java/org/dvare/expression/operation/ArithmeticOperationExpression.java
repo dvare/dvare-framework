@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016-2017 Muhammad Hammad
+Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -54,24 +54,24 @@ public abstract class ArithmeticOperationExpression extends EqualityOperationExp
         }
 
         if (left instanceof NullLiteral && right.getType().isAnnotationPresent(Type.class)) {
-                Type type = (Type) right.getType().getAnnotation(Type.class);
+            Type type = (Type) right.getType().getAnnotation(Type.class);
 
-                switch (type.dataType()) {
+            switch (type.dataType()) {
 
-                    case FloatType: {
-                        left = LiteralType.getLiteralExpression(0f, right.getType());
-                        break;
-                    }
-                    case IntegerType: {
-                        left = LiteralType.getLiteralExpression(0, right.getType());
-                        break;
-                    }
-                    case StringType: {
-                        left = LiteralType.getLiteralExpression("", right.getType());
-                        break;
-                    }
-
+                case FloatType: {
+                    left = LiteralType.getLiteralExpression(0f, right.getType());
+                    break;
                 }
+                case IntegerType: {
+                    left = LiteralType.getLiteralExpression(0, right.getType());
+                    break;
+                }
+                case StringType: {
+                    left = LiteralType.getLiteralExpression("", right.getType());
+                    break;
+                }
+
+            }
 
         }
 

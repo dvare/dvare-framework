@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016-2017 Muhammad Hammad
+Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,13 +27,12 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
-import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.utility.GetExpOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,16 +54,12 @@ public class Last extends AggregationOperationExpression {
     public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
-        if (right instanceof ValuesOperation || right instanceof MapOperation) {
-            OperationExpression valuesOperation = (OperationExpression) right;
-            Object valuesResult = valuesOperation.interpret(instancesBinding);
-            if (valuesResult instanceof ListLiteral) {
-                ListLiteral listLiteral = (ListLiteral) valuesResult;
-                List values = listLiteral.getValue();
-                if (!values.isEmpty()) {
-                    return LiteralType.getLiteralExpression(values.get(values.size() - 1), listLiteral.getType());
-                }
+        if (right instanceof ValuesOperation || right instanceof MapOperation || right instanceof GetExpOperation) {
+            List<Object> values = buildValues(leftOperand, instancesBinding);
+            if (!values.isEmpty()) {
+                return LiteralType.getLiteralExpression(values.get(values.size() - 1), dataTypeExpression);
             }
+
         } else if (right instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) right;
 

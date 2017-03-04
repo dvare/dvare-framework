@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016-2017 Muhammad Hammad
+Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,6 @@ public class ExpressionParser {
     private static Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
 
     private ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-
 
 
     public static TypeBinding translate(Class types) {

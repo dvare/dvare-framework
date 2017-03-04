@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016-2017 Muhammad Hammad
+Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -77,14 +77,14 @@ public class IF extends ConditionOperationExpression {
                     if (operation instanceof ELSE) {
                         pos = operation.parse(tokens, pos, stack, contexts);
                         this.elseOperand = stack.pop();
-                        continue;
+                        return pos;
                     }
 
-                    if (operation instanceof IF) {
+                    /*if (operation instanceof IF) {
                         pos = operation.parse(tokens, pos, stack, contexts);
                         this.elseOperand = stack.pop();
                         return pos;
-                    }
+                    }*/
 
                     if (operation instanceof ENDIF) {
                         return pos;

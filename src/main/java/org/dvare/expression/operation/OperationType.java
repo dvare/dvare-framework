@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016-2017 Muhammad Hammad
+Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -51,7 +51,7 @@ public enum OperationType {
     SUM("Sum", "sum"), VALUE("Value", "value"), COLON(";"),//
     VALUES("Values", "values"), MAP("Map", "map"), GET_ITEM("GetItem", "getItem"), HAS_ITEM("HasItem", "hasItem"),//
     ITEM_POSITION("ItemPosition", "itemPosition"),//
-    LET("let", "Let");
+    LET("let", "Let"), PUT_EXP("putExp"), GET_EXP("getExp");
 
     private List<String> symbols = new ArrayList<>();
 
