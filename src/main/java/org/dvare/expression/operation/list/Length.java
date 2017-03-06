@@ -2,6 +2,7 @@ package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.IntegerType;
@@ -31,12 +32,12 @@ public class Length extends AggregationOperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
         if (right instanceof ValuesOperation || right instanceof MapOperation) {
             OperationExpression valuesOperation = (OperationExpression) right;
-            Object valuesResult = valuesOperation.interpret(instancesBinding);
+            Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
             if (valuesResult instanceof ListLiteral) {
                 ListLiteral listLiteral = (ListLiteral) valuesResult;
                 return LiteralType.getLiteralExpression(listLiteral.getSize(), IntegerType.class);
@@ -44,7 +45,7 @@ public class Length extends AggregationOperationExpression {
         } else if (right instanceof GetExpOperation) {
 
             OperationExpression valuesOperation = (OperationExpression) right;
-            Object valuesResult = valuesOperation.interpret(instancesBinding);
+            Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
             if (valuesResult instanceof ListLiteral) {
                 ListLiteral listLiteral = (ListLiteral) valuesResult;
 

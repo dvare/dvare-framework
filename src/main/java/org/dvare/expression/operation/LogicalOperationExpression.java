@@ -23,6 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation;
 
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -44,10 +45,10 @@ public abstract class LogicalOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
         Expression left = stack.pop();
 
-        pos = findNextExpression(tokens, pos + 1, stack, contexts);
+        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
 
         Expression right = stack.pop();
 
@@ -63,7 +64,7 @@ public abstract class LogicalOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (; pos < tokens.length; pos++) {
             OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
@@ -74,7 +75,7 @@ public abstract class LogicalOperationExpression extends OperationExpression {
                 }
 
 
-                pos = op.parse(tokens, pos, stack, contexts);
+                pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
 
 
                 if (pos + 1 < tokens.length) {

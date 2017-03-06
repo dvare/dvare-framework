@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ContextsBinding {
+
+
     private Map<String, TypeBinding> contexts = new HashMap<>();
 
 
@@ -61,4 +63,11 @@ public class ContextsBinding {
     }
 
 
+    public Map<String, TypeBinding> getContexts() {
+        return contexts;
+    }
+
+    public void setContexts(Map<String, TypeBinding> contexts) {
+        this.contexts = contexts;
+    }
 }

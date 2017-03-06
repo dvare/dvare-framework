@@ -29,8 +29,8 @@ public class ArithmeticOperationTest {
 
 ## Current version
 
-* The current stable version is `1.4` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|1.4|)
-* The current snapshot version is `2.0` : [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework) [![Coverage Status](https://coveralls.io/repos/github/dvare/dvare-framework/badge.svg?branch=master)](https://coveralls.io/github/dvare/dvare-framework?branch=master)
+* The current stable version is `1.4` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|1.4|) [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.dvare/dvare-framework/badge.svg)](http://www.javadoc.io/doc/org.dvare/dvare-framework)
+* The current snapshot version is `2.0-SNAPSHOT` : [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework) [![Coverage Status](https://coveralls.io/repos/github/dvare/dvare-framework/badge.svg?branch=master)](https://coveralls.io/github/dvare/dvare-framework?branch=master)
 
 In order to use snapshot versions, you need to add the following maven repository in your `pom.xml`:
 

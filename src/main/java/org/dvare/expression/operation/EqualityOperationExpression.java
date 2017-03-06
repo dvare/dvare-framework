@@ -23,6 +23,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation;
 
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -70,13 +71,13 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     }
 
 
-    private int expression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts, TokenType tokenType) throws ExpressionParseException {
+    private int expression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts, TokenType tokenType) throws ExpressionParseException {
         Expression expression;
         OperationExpression op = ConfigurationRegistry.INSTANCE.getOperation(tokenType.token);
         if (op != null) {
 
 
-            pos = op.parse(tokens, pos + 1, stack, contexts);
+            pos = op.parse(tokens, pos + 1, stack, expressionBinding, contexts);
 
             expression = stack.pop();
 
@@ -98,7 +99,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
             OperationExpression testOp = configurationRegistry.getOperation(tokens[pos + 1]);
             if (testOp instanceof ChainOperationExpression) {
                 stack.push(expression);
-                pos = testOp.parse(tokens, pos + 1, stack, contexts);
+                pos = testOp.parse(tokens, pos + 1, stack, expressionBinding, contexts);
                 expression = stack.pop();
             }
 
@@ -110,7 +111,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     }
 
 
-    protected int parseOperands(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    protected int parseOperands(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
 
         String leftString = tokens[pos - 1];
 
@@ -121,7 +122,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
         // computing expression left side̵
 
         if (stack.isEmpty()) {
-            pos = expression(tokens, pos, stack, contexts, leftTokenType);
+            pos = expression(tokens, pos, stack, expressionBinding, contexts, leftTokenType);
         }
 
         this.leftOperand = stack.pop();
@@ -135,7 +136,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
 
         // computing expression right side̵
-        pos = expression(tokens, pos, stack, contexts, rightTokenType);
+        pos = expression(tokens, pos, stack, expressionBinding, contexts, rightTokenType);
         this.rightOperand = stack.pop();
 
 
@@ -213,11 +214,11 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
 
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
 
-            pos = parseOperands(tokens, pos, stack, contexts);
+            pos = parseOperands(tokens, pos, stack, expressionBinding, contexts);
 
             Expression left = this.leftOperand;
             Expression right = this.rightOperand;
@@ -234,12 +235,12 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (; pos < tokens.length; pos++) {
             OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
-                pos = op.parse(tokens, pos, stack, contexts);
+                pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
                 return pos;
 
             }
@@ -248,15 +249,15 @@ public abstract class EqualityOperationExpression extends OperationExpression {
     }
 
 
-    public void interpretOperand(InstancesBinding instancesBinding) throws InterpretException {
+    public void interpretOperand(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
-        Expression leftExpression = super.interpretOperand(leftOperand, instancesBinding);
+        Expression leftExpression = super.interpretOperand(leftOperand, expressionBinding, instancesBinding);
 
         Expression right = this.rightOperand;
         LiteralExpression<?> rightExpression = null;
         if (right instanceof OperationExpression) {
             OperationExpression operation = (OperationExpression) right;
-            rightExpression = (LiteralExpression) operation.interpret(instancesBinding);
+            rightExpression = (LiteralExpression) operation.interpret(expressionBinding, instancesBinding);
         } else if (right instanceof LiteralExpression) {
             rightExpression = (LiteralExpression<?>) right;
         } else if (right instanceof VariableExpression) {
@@ -282,9 +283,9 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
-        interpretOperand(instancesBinding);
+        interpretOperand(expressionBinding, instancesBinding);
 
         if (leftValueOperand != null && rightValueOperand != null) {
 

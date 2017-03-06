@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -46,15 +47,15 @@ public class LetOperation extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos + 1, stack, contexts);
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
 
 
         return pos;
     }
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
         String token = tokens[pos];
 
         if (token.contains(":")) {

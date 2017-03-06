@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -52,8 +53,8 @@ public class PutExpOperation extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos + 1, stack, contexts);
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
 
 
         return pos;
@@ -61,7 +62,7 @@ public class PutExpOperation extends OperationExpression {
 
     @Override
 
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         Stack<Expression> localStack = new Stack<>();
@@ -78,13 +79,19 @@ public class PutExpOperation extends OperationExpression {
                         Expression namedExpression = expressionList.get(0);
                         if (namedExpression instanceof NamedExpression) {
                             Expression expression = expressionList.get(1);
-                            expressions.put(((NamedExpression) namedExpression).getName(), expression);
+
+                            if (expressionBinding != null) {
+                                expressionBinding.addExpression(((NamedExpression) namedExpression).getName(), expression);
+                            } else {
+                                throw new ExpressionParseException("Exression Binding is null");
+                            }
+
                         }
                     }
 
                     return pos;
                 } else if (!(op instanceof LeftPriority)) {
-                    pos = op.parse(tokens, pos, localStack, contexts);
+                    pos = op.parse(tokens, pos, localStack, expressionBinding, contexts);
                 }
             } else {
 

@@ -3,6 +3,7 @@ package org.dvare.expression.operation.list;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.ListLiteral;
@@ -31,11 +32,11 @@ public class MapOperation extends AggregationOperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
         List values = null;
         if ((leftOperand instanceof ValuesOperation || leftOperand instanceof MapOperation || leftOperand instanceof GetExpOperation)) {
             OperationExpression valueOperation = (OperationExpression) leftOperand;
-            Object interpret = valueOperation.interpret(instancesBinding);
+            Object interpret = valueOperation.interpret(expressionBinding, instancesBinding);
 
             if (interpret instanceof ListLiteral) {
                 ListLiteral listLiteral = (ListLiteral) interpret;
@@ -82,7 +83,7 @@ public class MapOperation extends AggregationOperationExpression {
                         instancesBinding.addInstance(operandType, dataRow);
                     }
 
-                    Object chainOperationInterpret = chainOperationExpression.interpret(instancesBinding);
+                    Object chainOperationInterpret = chainOperationExpression.interpret(expressionBinding, instancesBinding);
 
                     if (chainOperationInterpret instanceof LiteralExpression) {
 

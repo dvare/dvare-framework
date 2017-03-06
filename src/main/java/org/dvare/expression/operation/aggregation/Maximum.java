@@ -25,6 +25,7 @@ package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
@@ -47,7 +48,7 @@ public class Maximum extends AggregationOperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = this.leftOperand;
 
@@ -75,7 +76,7 @@ public class Maximum extends AggregationOperationExpression {
         }
 
 
-        return super.interpret(instancesBinding);
+        return super.interpret(expressionBinding, instancesBinding);
     }
 
 

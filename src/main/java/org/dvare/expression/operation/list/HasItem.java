@@ -3,12 +3,12 @@ package org.dvare.expression.operation.list;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.*;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
@@ -27,10 +27,10 @@ public class HasItem extends AggregationOperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
 
-        List<Object> values = buildValues(leftOperand, instancesBinding);
+        List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
 
 
         if (values != null && !rightOperand.isEmpty()) {
@@ -40,7 +40,7 @@ public class HasItem extends AggregationOperationExpression {
             if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
 
                 OperationExpression operationExpression = (OperationExpression) expression;
-                Object interpret = operationExpression.interpret(instancesBinding);
+                Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
                 if (interpret instanceof LiteralExpression) {
 
                     LiteralExpression literalExpression = (LiteralExpression) interpret;
@@ -91,7 +91,7 @@ public class HasItem extends AggregationOperationExpression {
                         }
 
 
-                        Object interpret = operationExpression.interpret(instancesBinding);
+                        Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
 
                         Boolean result = toBoolean(interpret);
 
@@ -130,7 +130,7 @@ public class HasItem extends AggregationOperationExpression {
         }
 
 
-        return new NullLiteral<>();
+        return LiteralType.getLiteralExpression(false, BooleanType.class);
     }
 
 }

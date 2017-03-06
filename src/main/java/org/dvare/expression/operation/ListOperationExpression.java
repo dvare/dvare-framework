@@ -25,6 +25,7 @@ package org.dvare.expression.operation;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -59,7 +60,7 @@ public class ListOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
 
 
         List<String> listPrams = new ArrayList<>();
@@ -89,7 +90,7 @@ public class ListOperationExpression extends OperationExpression {
             if (op != null) {
 
 
-                i = op.parse(values, i, localStack, contexts);
+                i = op.parse(values, i, localStack, expressionBinding, contexts);
 
                 expression = localStack.pop();
 
@@ -118,7 +119,7 @@ public class ListOperationExpression extends OperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
         Class<? extends DataTypeExpression> dataType = null;
         List<Object> values = new ArrayList<>();
         for (Expression expression : expressions) {
@@ -126,7 +127,7 @@ public class ListOperationExpression extends OperationExpression {
             if (expression instanceof OperationExpression) {
                 OperationExpression operationExpression = (OperationExpression) expression;
 
-                Object interpret = operationExpression.interpret(instancesBinding);
+                Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
 
                 if (interpret instanceof LiteralExpression) {
                     LiteralExpression literalExpression = (LiteralExpression) interpret;
@@ -176,7 +177,7 @@ public class ListOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
         return pos;
     }
 

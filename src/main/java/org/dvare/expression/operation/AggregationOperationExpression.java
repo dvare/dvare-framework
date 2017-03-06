@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation;
 
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -60,7 +61,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
 
 
         String token = tokens[pos - 1];
@@ -72,7 +73,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
             if (operationExpression != null) {
                 if (operationExpression instanceof ListOperationExpression) {
-                    pos = operationExpression.parse(tokens, pos, stack, contexts);
+                    pos = operationExpression.parse(tokens, pos, stack, expressionBinding, contexts);
                     this.leftOperand = stack.pop();
                 }
             } else {
@@ -91,7 +92,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
         }
 
 
-        pos = findNextExpression(tokens, pos + 1, stack, contexts);
+        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
         if (logger.isDebugEnabled()) {
             logger.debug("Operation Expression Call Expression : {}", getClass().getSimpleName());
         }
@@ -101,7 +102,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         Stack<Expression> localStack = new Stack<>();
@@ -115,7 +116,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
                     return pos;
                 } else {
 
-                    pos = op.parse(tokens, pos, localStack, contexts);
+                    pos = op.parse(tokens, pos, localStack, expressionBinding, contexts);
                 }
 
 
@@ -149,12 +150,12 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
 
-    protected List<Object> buildValues(Expression expression, InstancesBinding instancesBinding) throws InterpretException {
+    protected List<Object> buildValues(Expression expression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         if (expression instanceof ValuesOperation || expression instanceof MapOperation || expression instanceof GetExpOperation) {
             OperationExpression valuesOperation = (OperationExpression) expression;
 
-            Object valuesResult = valuesOperation.interpret(instancesBinding);
+            Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
 
             if (valuesResult instanceof ListLiteral) {
                 ListLiteral listLiteral = (ListLiteral) valuesResult;
@@ -168,7 +169,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
 
         List dataSet = (List) instancesBinding.getInstance("data");
@@ -179,7 +180,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
             if (right instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) right;
-                literalExpression = (LiteralExpression) operation.interpret(instancesBinding);
+                literalExpression = (LiteralExpression) operation.interpret(expressionBinding, instancesBinding);
             } else if (right instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) right;
                 variableExpression = VariableType.setVariableValue(variableExpression, bindings);

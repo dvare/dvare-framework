@@ -3,6 +3,7 @@ package org.dvare.expression.operation.list;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.IntegerLiteral;
@@ -27,9 +28,9 @@ public class GetItem extends AggregationOperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
-        List<Object> values = buildValues(leftOperand, instancesBinding);
+        List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
 
         if (values != null && !rightOperand.isEmpty()) {
             Expression expression = rightOperand.get(0);
@@ -37,7 +38,7 @@ public class GetItem extends AggregationOperationExpression {
             if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
 
                 OperationExpression operationExpression = (OperationExpression) expression;
-                Object interpret = operationExpression.interpret(instancesBinding);
+                Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
                 if (interpret instanceof IntegerLiteral) {
                     return buildItem(values, (IntegerLiteral) interpret, dataTypeExpression);
                 }
@@ -79,7 +80,7 @@ public class GetItem extends AggregationOperationExpression {
                         }
 
 
-                        Object interpret = operationExpression.interpret(instancesBinding);
+                        Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
 
                         Boolean result = toBoolean(interpret);
 

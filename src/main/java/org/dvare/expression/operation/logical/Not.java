@@ -25,6 +25,7 @@ package org.dvare.expression.operation.logical;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -42,8 +43,8 @@ public class Not extends LogicalOperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
-        int i = findNextExpression(tokens, pos + 1, stack, contexts);
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+        int i = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
         this.rightOperand = stack.pop();
         stack.push(this);
         return i;
@@ -51,8 +52,8 @@ public class Not extends LogicalOperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
-        return !toBoolean(this.rightOperand.interpret(instancesBinding));
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+        return !toBoolean(this.rightOperand.interpret(expressionBinding, instancesBinding));
     }
 
 

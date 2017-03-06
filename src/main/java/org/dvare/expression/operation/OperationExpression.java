@@ -26,6 +26,7 @@ package org.dvare.expression.operation;
 
 import org.dvare.annotations.Type;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
@@ -107,9 +108,13 @@ public abstract class OperationExpression extends Expression {
         return tokenType;
     }
 
-    public abstract Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException;
+    public abstract Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException;
 
-    public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException;
+    public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException;
+
+
+
+
 
     protected Expression buildExpression(String token, ContextsBinding contextsBinding) throws IllegalPropertyException, IllegalValueException {
         TokenType tokenType = findDataObject(token, contextsBinding);
@@ -143,7 +148,7 @@ public abstract class OperationExpression extends Expression {
     }
 
 
-    public Expression interpretOperand(Expression expression, InstancesBinding instancesBinding) throws InterpretException {
+    public Expression interpretOperand(Expression expression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
 
         Expression leftExpression = null;
@@ -152,7 +157,7 @@ public abstract class OperationExpression extends Expression {
             OperationExpression operation = (OperationExpression) expression;
 
             LiteralExpression literalExpression;
-            literalExpression = (LiteralExpression) operation.interpret(instancesBinding);
+            literalExpression = (LiteralExpression) operation.interpret(expressionBinding, instancesBinding);
 
             if (literalExpression != null) {
                 dataTypeExpression = literalExpression.getType();

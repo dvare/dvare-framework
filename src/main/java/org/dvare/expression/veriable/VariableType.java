@@ -145,8 +145,10 @@ public class VariableType {
 
     private static VariableExpression setValue(VariableExpression variable, Object value) throws IllegalPropertyValueException {
 
-        if (value == null)
+        if (value == null) {
+            variable.setValue(null);
             return variable;
+        }
 
         if (variable.getType().isAnnotationPresent(Type.class)) {
             Type type = (Type) variable.getType().getAnnotation(Type.class);

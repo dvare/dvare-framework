@@ -24,17 +24,21 @@ THE SOFTWARE.*/
 package org.dvare.expression;
 
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-
-import java.util.HashMap;
 
 
 public abstract class Expression {
 
-    protected static HashMap<String, Expression> expressions = new HashMap<>();
 
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
         return false;
+
+
     }
 
+
 }
+
+
+

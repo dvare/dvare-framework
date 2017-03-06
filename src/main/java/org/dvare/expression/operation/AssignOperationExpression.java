@@ -3,6 +3,7 @@ package org.dvare.expression.operation;
 import org.dvare.annotations.Operation;
 import org.dvare.annotations.Type;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -33,7 +34,7 @@ public class AssignOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
 
             String leftString = tokens[pos - 1];
@@ -50,7 +51,7 @@ public class AssignOperationExpression extends OperationExpression {
                 this.leftOperand = stack.pop();
             }
 
-            pos = findNextExpression(tokens, pos + 1, stack, contexts);
+            pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
             if (!stack.isEmpty()) {
                 this.rightOperand = stack.pop();
             }
@@ -79,7 +80,7 @@ public class AssignOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (; pos < tokens.length; pos++) {
@@ -93,7 +94,7 @@ public class AssignOperationExpression extends OperationExpression {
                     return pos - 1;
                 }
 
-                pos = op.parse(tokens, pos, stack, contexts);
+                pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
 
 
             } else {
@@ -111,7 +112,7 @@ public class AssignOperationExpression extends OperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         VariableExpression variable;
         Expression left = this.leftOperand;
@@ -128,7 +129,7 @@ public class AssignOperationExpression extends OperationExpression {
             LiteralExpression literalExpression = null;
             if (right instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) right;
-                literalExpression = (LiteralExpression) operation.interpret(instancesBinding);
+                literalExpression = (LiteralExpression) operation.interpret(expressionBinding, instancesBinding);
             } else if (right instanceof LiteralExpression) {
                 literalExpression = (LiteralExpression) right;
             }

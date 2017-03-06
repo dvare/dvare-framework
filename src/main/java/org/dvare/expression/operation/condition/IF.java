@@ -25,6 +25,7 @@ package org.dvare.expression.operation.condition;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -49,15 +50,15 @@ public class IF extends ConditionOperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos + 1, stack, contexts);
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
         stack.push(this);
         return pos;
     }
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (; pos < tokens.length; pos++) {
@@ -69,13 +70,13 @@ public class IF extends ConditionOperationExpression {
                 if (operation instanceof IF || operation instanceof ELSE || operation instanceof THEN || operation instanceof ENDIF) {
 
                     if (operation instanceof THEN) {
-                        pos = operation.parse(tokens, pos, stack, contexts);
+                        pos = operation.parse(tokens, pos, stack, expressionBinding, contexts);
                         this.thenOperand = stack.pop();
                         continue;
                     }
 
                     if (operation instanceof ELSE) {
-                        pos = operation.parse(tokens, pos, stack, contexts);
+                        pos = operation.parse(tokens, pos, stack, expressionBinding, contexts);
                         this.elseOperand = stack.pop();
                         return pos;
                     }
@@ -96,7 +97,7 @@ public class IF extends ConditionOperationExpression {
                     if (condition != null) {
                         stack.push(condition);
                     }
-                    pos = operation.parse(tokens, pos, stack, contexts);
+                    pos = operation.parse(tokens, pos, stack, expressionBinding, contexts);
                     this.condition = stack.pop();
                 }
             }
@@ -106,13 +107,13 @@ public class IF extends ConditionOperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
-        Boolean result = toBoolean(condition.interpret(instancesBinding));
+        Boolean result = toBoolean(condition.interpret(expressionBinding, instancesBinding));
         if (result) {
-            return thenOperand.interpret(instancesBinding);
+            return thenOperand.interpret(expressionBinding, instancesBinding);
         } else if (elseOperand != null) {
-            return elseOperand.interpret(instancesBinding);
+            return elseOperand.interpret(expressionBinding, instancesBinding);
         }
         return result;
     }

@@ -4,11 +4,14 @@ package org.dvare.builder;
 import org.dvare.expression.Expression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.arithmetic.*;
 import org.dvare.expression.operation.logical.And;
 import org.dvare.expression.operation.logical.Implies;
 import org.dvare.expression.operation.logical.Not;
 import org.dvare.expression.operation.logical.OR;
 import org.dvare.expression.operation.validation.*;
+
+import java.util.List;
 
 public class OperationBuilder {
 
@@ -18,6 +21,7 @@ public class OperationBuilder {
 
     private Expression rightOperand;
 
+    private List<Expression> parameters;
 
     public OperationBuilder() {
     }
@@ -26,10 +30,18 @@ public class OperationBuilder {
         this.operationType = operationType;
     }
 
+
     public OperationBuilder(OperationType operationType, Expression leftOperand, Expression rightOperand) {
         this.operationType = operationType;
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
+
+    }
+
+    public OperationBuilder(OperationType operationType, Expression leftOperand, List<Expression> parameters) {
+        this.operationType = operationType;
+        this.leftOperand = leftOperand;
+        this.parameters = parameters;
 
     }
 
@@ -48,12 +60,17 @@ public class OperationBuilder {
         return this;
     }
 
+    public OperationBuilder parameters(List<Expression> parameters) {
+        this.parameters = parameters;
+        return this;
+    }
+
     public OperationExpression build() {
         OperationExpression operationExpression = null;
         switch (operationType) {
             case NOT: {
                 operationExpression = new Not();
-                operationExpression.setLeftOperand(leftOperand);
+                operationExpression.setRightOperand(rightOperand);
                 break;
             }
 
@@ -121,7 +138,47 @@ public class OperationBuilder {
                 break;
             }
 
+            case ADD: {
+                operationExpression = new Add();
+                operationExpression.setLeftOperand(leftOperand);
+                operationExpression.setRightOperand(rightOperand);
+                break;
+            }
 
+            case SUBTRACT: {
+                operationExpression = new Subtract();
+                operationExpression.setLeftOperand(leftOperand);
+                operationExpression.setRightOperand(rightOperand);
+                break;
+            }
+
+            case MUL: {
+                operationExpression = new Multiply();
+                operationExpression.setLeftOperand(leftOperand);
+                operationExpression.setRightOperand(rightOperand);
+                break;
+            }
+
+
+            case DIVIDE: {
+                operationExpression = new Divide();
+                operationExpression.setLeftOperand(leftOperand);
+                operationExpression.setRightOperand(rightOperand);
+                break;
+            }
+
+            case MAX: {
+                operationExpression = new Max();
+                operationExpression.setLeftOperand(leftOperand);
+                operationExpression.setRightOperand(rightOperand);
+                break;
+            }
+            case MIN: {
+                operationExpression = new Min();
+                operationExpression.setLeftOperand(leftOperand);
+                operationExpression.setRightOperand(rightOperand);
+                break;
+            }
         }
         return operationExpression;
     }

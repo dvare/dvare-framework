@@ -25,6 +25,7 @@ package org.dvare.evaluator;
 
 
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.literal.LiteralExpression;
@@ -53,9 +54,14 @@ public class RuleEvaluator {
 
     public Object evaluate(RuleBinding rule, InstancesBinding instancesBinding) throws InterpretException {
 
+        return evaluate(rule, null, instancesBinding);
+    }
+
+    public Object evaluate(RuleBinding rule, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+
 
         Object result = null;
-        Object ruleRawResult = rule.getExpression().interpret(instancesBinding);
+        Object ruleRawResult = rule.getExpression().interpret(expressionBinding, instancesBinding);
         if (ruleRawResult instanceof LiteralExpression) {
             LiteralExpression literalExpression = (LiteralExpression) ruleRawResult;
             if (literalExpression.getValue() != null) {
@@ -69,10 +75,15 @@ public class RuleEvaluator {
 
 
     public InstancesBinding aggregate(List<RuleBinding> rules, InstancesBinding instancesBinding) throws InterpretException {
+        return aggregate(rules, null, instancesBinding);
+    }
+
+
+    public InstancesBinding aggregate(List<RuleBinding> rules, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
 
         for (RuleBinding rule : rules) {
-            rule.getExpression().interpret(instancesBinding);
+            rule.getExpression().interpret(expressionBinding, instancesBinding);
         }
 
         return instancesBinding;
@@ -80,11 +91,15 @@ public class RuleEvaluator {
 
 
     public Object aggregate(RuleBinding rule, InstancesBinding instancesBinding) throws InterpretException {
-
-        rule.getExpression().interpret(instancesBinding);
-        return instancesBinding;
+        return aggregate(rule, null, instancesBinding);
     }
 
+
+    public Object aggregate(RuleBinding rule, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+
+        rule.getExpression().interpret(expressionBinding, instancesBinding);
+        return instancesBinding;
+    }
 
     public Object aggregate(List<RuleBinding> rules, Object aggregate, Object dataset) throws InterpretException {
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
@@ -92,7 +107,7 @@ public class RuleEvaluator {
         instancesBinding.addInstance("data", dataset);
 
         for (RuleBinding rule : rules) {
-            rule.getExpression().interpret(instancesBinding);
+            rule.getExpression().interpret(null, instancesBinding);
         }
 
         return instancesBinding.getInstance("self");
@@ -103,9 +118,8 @@ public class RuleEvaluator {
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", aggregate);
         instancesBinding.addInstance("data", dataset);
-        rule.getExpression().interpret(instancesBinding);
+        rule.getExpression().interpret(null, instancesBinding);
         return instancesBinding.getInstance("self");
     }
-
 
 }

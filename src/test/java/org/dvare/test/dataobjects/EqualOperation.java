@@ -1,6 +1,8 @@
 package org.dvare.test.dataobjects;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class EqualOperation {
@@ -12,7 +14,9 @@ public class EqualOperation {
     public Date Variable5;
     public Date Variable6;
     public String Variable7;
-    public ArithmeticOperation Variable8;
+    public LocalDate Variable8;
+    public LocalDateTime Variable9;
+    public ArithmeticOperation Variable10;
 
     public String getVariable1() {
         return Variable1;
@@ -70,11 +74,27 @@ public class EqualOperation {
         Variable7 = variable7;
     }
 
-    public ArithmeticOperation getVariable8() {
+    public LocalDate getVariable8() {
         return Variable8;
     }
 
-    public void setVariable8(ArithmeticOperation variable8) {
+    public void setVariable8(LocalDate variable8) {
         Variable8 = variable8;
+    }
+
+    public LocalDateTime getVariable9() {
+        return Variable9;
+    }
+
+    public void setVariable9(LocalDateTime variable9) {
+        Variable9 = variable9;
+    }
+
+    public ArithmeticOperation getVariable10() {
+        return Variable10;
+    }
+
+    public void setVariable10(ArithmeticOperation variable10) {
+        Variable10 = variable10;
     }
 }

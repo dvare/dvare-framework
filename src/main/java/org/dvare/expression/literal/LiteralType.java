@@ -38,6 +38,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 public class LiteralType {
@@ -159,10 +160,14 @@ public class LiteralType {
                         Date date = (Date) value;
                         localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                     } else {
-                        localDateTime = LocalDateTime.parse(valueString, dateTimeFormat);
+                        try {
+                            localDateTime = LocalDateTime.parse(valueString, dateTimeFormat);
+                        } catch (DateTimeParseException e) {
+                            localDateTime = LocalDateTime.parse(valueString, DateTimeFormatter.ISO_DATE_TIME);
+                        }
                     }
 
-                } catch (Exception e) {
+                } catch (DateTimeParseException e) {
                     String message = String.format("Unable to Parse literal %s to Date Time", valueString);
                     logger.error(message);
                     throw new IllegalValueException(message, e);
@@ -182,7 +187,11 @@ public class LiteralType {
                         Date date = (Date) value;
                         localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                     } else {
-                        localDate = LocalDate.parse(valueString, dateFormat);
+                        try {
+                            localDate = LocalDate.parse(valueString, dateFormat);
+                        } catch (DateTimeParseException e) {
+                            localDate = LocalDate.parse(valueString, DateTimeFormatter.ISO_DATE);
+                        }
                     }
                 } catch (Exception e) {
                     String message = String.format("Unable to Parse literal %s to Date", valueString);

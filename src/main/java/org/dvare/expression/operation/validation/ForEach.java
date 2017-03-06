@@ -2,6 +2,7 @@ package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -34,7 +35,7 @@ public class ForEach extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
 
 
         refrenceValueToken = tokens[pos - 1];
@@ -76,7 +77,7 @@ public class ForEach extends OperationExpression {
         }*/
 
 
-        pos = findNextExpression(tokens, pos, stack, contexts);
+        pos = findNextExpression(tokens, pos, stack, expressionBinding, contexts);
 
         this.rightOperand = stack.pop();
         contexts.removeContext(driveContexttToken);
@@ -91,7 +92,7 @@ public class ForEach extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
@@ -104,7 +105,7 @@ public class ForEach extends OperationExpression {
                 if (op.getClass().equals(EndForEach.class)) {
                     return pos;
                 } else if (!op.getClass().equals(LeftPriority.class)) {
-                    pos = op.parse(tokens, pos, stack, contexts);
+                    pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
                 }
             } else {
 
@@ -119,7 +120,7 @@ public class ForEach extends OperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
         Object object = instancesBinding.getInstance(refrenceValueToken);
         if (object instanceof List) {
             List instances = (List) object;
@@ -129,7 +130,7 @@ public class ForEach extends OperationExpression {
             for (Object instance : instances) {
                 instancesBinding.addInstance(driveContexttToken, instance);
 
-                Object result = rightOperand.interpret(instancesBinding);
+                Object result = rightOperand.interpret(expressionBinding, instancesBinding);
                 results.add(toBoolean(result));
 
 

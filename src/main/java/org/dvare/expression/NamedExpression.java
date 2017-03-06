@@ -38,6 +38,15 @@ public class NamedExpression extends Expression {
         }
     }
 
+
+    @Override
+    public String toString() {
+        return "NamedExpression[" + name + "]";
+    }
+
+
+    /*getter and setters*/
+
     public String getName() {
         return name;
     }

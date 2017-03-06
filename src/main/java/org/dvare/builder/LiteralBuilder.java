@@ -16,9 +16,9 @@ public class LiteralBuilder {
     public LiteralBuilder() {
     }
 
-    public LiteralBuilder(Object value, DataType type) {
-        this.value = value;
+    public LiteralBuilder(DataType type, Object value) {
         this.type = type;
+        this.value = value;
     }
 
 
@@ -33,7 +33,6 @@ public class LiteralBuilder {
     }
 
     public LiteralExpression build() throws IllegalPropertyException, IllegalValueException {
-        LiteralExpression literalExpression = LiteralType.getLiteralExpression(value.toString(), type);
-        return literalExpression;
+        return LiteralType.getLiteralExpression(value, type);
     }
 }

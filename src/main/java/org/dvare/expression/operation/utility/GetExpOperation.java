@@ -25,12 +25,14 @@ package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.NamedExpression;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.validation.RightPriority;
@@ -50,12 +52,13 @@ public class GetExpOperation extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos + 1, stack, contexts);
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
 
         if (leftOperand != null) {
             String name = ((NamedExpression) leftOperand).getName();
-            if (!expressions.containsKey(name)) {
+
+            if (expressionBinding == null || expressionBinding.getExpression(name) == null) {
                 throw new ExpressionParseException("Expression " + name + " not registered at " + ExpressionTokenizer.toString(tokens, pos));
             }
         }
@@ -67,7 +70,7 @@ public class GetExpOperation extends OperationExpression {
 
     @Override
 
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         Stack<Expression> localStack = new Stack<>();
@@ -102,10 +105,14 @@ public class GetExpOperation extends OperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
         String expressionName = ((NamedExpression) leftOperand).getName();
-        Expression expression = expressions.get(expressionName);
-        return expression.interpret(instancesBinding);
+        if (expressionBinding != null) {
+            Expression expression = expressionBinding.getExpression(expressionName);
+            return expression.interpret(expressionBinding, instancesBinding);
+        }
+        return new NullLiteral<>();
+
     }
 
 

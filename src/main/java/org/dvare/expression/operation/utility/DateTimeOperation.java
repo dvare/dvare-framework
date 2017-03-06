@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -51,10 +52,10 @@ public class DateTimeOperation extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
 
 
-        pos = findNextExpression(tokens, pos + 1, stack, contexts);
+        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
 
 
         DateTimeFormatter dateFormat = null;
@@ -105,7 +106,7 @@ public class DateTimeOperation extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (int i = pos; i < tokens.length; i++) {

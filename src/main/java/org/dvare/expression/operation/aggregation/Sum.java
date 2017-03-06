@@ -25,6 +25,7 @@ package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralType;
@@ -46,7 +47,7 @@ public class Sum extends AggregationOperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
 
         if (leftOperand instanceof VariableExpression) {
@@ -76,7 +77,7 @@ public class Sum extends AggregationOperationExpression {
             }
         }
 
-        return super.interpret(instancesBinding);
+        return super.interpret(expressionBinding, instancesBinding);
     }
 
 }

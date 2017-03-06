@@ -122,7 +122,7 @@ public class EqualOperationTest extends TestCase {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        String exp = "self.Variable1 = self.Variable8.Variable1->toString()";
+        String exp = "self.Variable1 = self.Variable10.Variable1->toString()";
 
 
         TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
@@ -138,7 +138,7 @@ public class EqualOperationTest extends TestCase {
 
         ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
         arithmeticOperation.setVariable1(9);
-        equalOperation.setVariable8(arithmeticOperation);
+        equalOperation.setVariable10(arithmeticOperation);
 
 
         RuleEvaluator evaluator = factory.getEvaluator();

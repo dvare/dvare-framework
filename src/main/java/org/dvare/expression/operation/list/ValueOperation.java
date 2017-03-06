@@ -2,6 +2,7 @@ package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
@@ -27,7 +28,7 @@ public class ValueOperation extends AggregationOperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         if (!this.rightOperand.isEmpty()) {
             Expression right = this.rightOperand.get(0);
@@ -49,7 +50,7 @@ public class ValueOperation extends AggregationOperationExpression {
                 return right;
             } else if (right instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) right;
-                Object result = operation.interpret(instancesBinding);
+                Object result = operation.interpret(expressionBinding, instancesBinding);
                 if (result instanceof LiteralExpression) {
                     return result;
                 }

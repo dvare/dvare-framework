@@ -24,6 +24,7 @@ package org.dvare.expression.operation;
 
 import org.dvare.annotations.Type;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
@@ -39,8 +40,8 @@ public abstract class ArithmeticOperationExpression extends EqualityOperationExp
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
-        interpretOperand(instancesBinding);
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+        interpretOperand(expressionBinding, instancesBinding);
         Expression leftExpression = leftValueOperand;
         if (leftExpression == null)
             return new NullLiteral();

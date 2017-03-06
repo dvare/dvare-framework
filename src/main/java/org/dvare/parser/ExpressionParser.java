@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.parser;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -129,6 +130,10 @@ public class ExpressionParser {
     }
 
     public Expression fromString(String expr, ContextsBinding contexts) throws ExpressionParseException {
+        return fromString(expr, null, contexts);
+    }
+
+    public Expression fromString(String expr, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
 
         if (expr != null && !expr.isEmpty()) {
             Stack<Expression> stack = new Stack<>();
@@ -147,7 +152,7 @@ public class ExpressionParser {
                 String token = tokens[i];
                 OperationExpression op = configurationRegistry.getOperation(token);
                 if (op != null) {
-                    i = op.parse(tokens, i, stack, contexts);
+                    i = op.parse(tokens, i, stack, expressionBinding, contexts);
                 } else {
 
 
@@ -165,7 +170,11 @@ public class ExpressionParser {
             if (stack.empty()) {
                 throw new ExpressionParseException("Unable to Parse Expression");
             }
+
+
             Expression expression = stack.pop();
+
+
 
            /* if (expression instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) expression;

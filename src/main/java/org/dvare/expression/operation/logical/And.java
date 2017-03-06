@@ -2,6 +2,7 @@ package org.dvare.expression.operation.logical;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.operation.LogicalOperationExpression;
 import org.dvare.expression.operation.OperationType;
@@ -14,9 +15,9 @@ public class And extends LogicalOperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
-        Boolean left = toBoolean(leftOperand.interpret(instancesBinding));
-        Boolean right = toBoolean(rightOperand.interpret(instancesBinding));
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+        Boolean left = toBoolean(leftOperand.interpret(expressionBinding, instancesBinding));
+        Boolean right = toBoolean(rightOperand.interpret(expressionBinding, instancesBinding));
         return left && right;
     }
 }

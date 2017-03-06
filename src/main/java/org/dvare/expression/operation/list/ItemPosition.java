@@ -3,6 +3,7 @@ package org.dvare.expression.operation.list;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.IntegerType;
@@ -28,15 +29,15 @@ public class ItemPosition extends AggregationOperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
-        List<Object> values = buildValues(leftOperand, instancesBinding);
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+        List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
 
         if (values != null && !rightOperand.isEmpty()) {
             Expression expression = rightOperand.get(0);
             if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
 
                 OperationExpression operationExpression = (OperationExpression) expression;
-                Object interpret = operationExpression.interpret(instancesBinding);
+                Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
                 if (interpret instanceof LiteralExpression) {
 
 
@@ -85,7 +86,7 @@ public class ItemPosition extends AggregationOperationExpression {
                         }
 
 
-                        Object interpret = operationExpression.interpret(instancesBinding);
+                        Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
 
                         Boolean result = toBoolean(interpret);
 

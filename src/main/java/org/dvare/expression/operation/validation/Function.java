@@ -2,6 +2,7 @@ package org.dvare.expression.operation.validation;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,9 +44,9 @@ public class Function extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
 
-        pos = findNextExpression(tokens, pos + 1, stack, contexts);
+        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
         FunctionExpression functionExpression = (FunctionExpression) stack.pop();
 
 
@@ -74,7 +76,7 @@ public class Function extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
@@ -107,7 +109,7 @@ public class Function extends OperationExpression {
 
                     return pos;
                 } else if (!op.getClass().equals(LeftPriority.class)) {
-                    pos = op.parse(tokens, pos, localStack, contexts);
+                    pos = op.parse(tokens, pos, localStack, expressionBinding, contexts);
                 }
             } else if (configurationRegistry.getFunction(token) != null) {
                 FunctionBinding functionBinding = configurationRegistry.getFunction(token);
@@ -127,13 +129,13 @@ public class Function extends OperationExpression {
 
 
     @Override
-    public Object interpret(InstancesBinding instancesBinding) throws InterpretException {
-        return interpretFunction(instancesBinding);
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+        return interpretFunction(expressionBinding, instancesBinding);
 
     }
 
 
-    private Object interpretFunction(InstancesBinding instancesBinding) throws InterpretException {
+    private Object interpretFunction(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
 
@@ -153,7 +155,7 @@ public class Function extends OperationExpression {
             if (expression instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) expression;
                 LiteralExpression literalExpression;
-                literalExpression = (LiteralExpression) operation.interpret(instancesBinding);
+                literalExpression = (LiteralExpression) operation.interpret(expressionBinding, instancesBinding);
 
                 ParamValue paramsValue = buildLiteralParam(literalExpression, originalType);
                 params[counter] = paramsValue.param;
@@ -262,10 +264,17 @@ public class Function extends OperationExpression {
             } else {
                 return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType().getClass());
             }
-
+        } catch (InvocationTargetException e) {
+            Throwable target = e.getTargetException();
+            if (target != null) {
+                throw new InterpretException(target.getMessage(), target);
+            } else {
+                throw new InterpretException(e.getMessage(), e);
+            }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new InterpretException(e);
+
+            throw new InterpretException(e.getMessage(), e);
+
         }
 
         return new NullLiteral();
@@ -300,8 +309,6 @@ public class Function extends OperationExpression {
                     paramsValue.param = originalType;
                     paramsValue.value = value;
                 }
-
-
             } catch (Exception e) {
                 throw new InterpretException(e.getMessage(), e);
             }
