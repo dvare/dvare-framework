@@ -1,0 +1,28 @@
+package org.dvare.test.utility;
+
+
+import junit.framework.TestCase;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
+import org.dvare.binding.rule.RuleBinding;
+import org.dvare.config.RuleConfiguration;
+import org.dvare.evaluator.RuleEvaluator;
+import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.exceptions.parser.ExpressionParseException;
+import org.dvare.expression.Expression;
+import org.junit.Assert;
+
+public class DateTest extends TestCase {
+
+    public void testApp2() throws ExpressionParseException, InterpretException {
+        RuleConfiguration factory = new RuleConfiguration();
+        String exp = "date ( 12-05-2016 , dd-MM-yyyy ) < today()";
+        Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
+        RuleBinding rule = new RuleBinding(expression);
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
+        Assert.assertTrue(result);
+    }
+
+
+}

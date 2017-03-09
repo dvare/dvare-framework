@@ -232,4 +232,126 @@ public class ValuesTest extends TestCase {
 
     }
 
+
+    public void testApp6() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+
+        Expression expression = factory.getParser().fromString("Variable1->toInteger()->values()->Sort(let item:IntegerType ->toString()->substring(5,1))->first() = 42453", contexts);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        List<ValuesObject> dataSet = new ArrayList<>();
+
+
+        ValuesObject valuesObject1 = new ValuesObject();
+        valuesObject1.setVariable1("42964");
+        dataSet.add(valuesObject1);
+
+        ValuesObject valuesObject2 = new ValuesObject();
+        valuesObject2.setVariable1("42453");
+        dataSet.add(valuesObject2);
+
+
+        ValuesObject valuesObject3 = new ValuesObject();
+        valuesObject3.setVariable1("42459");
+        dataSet.add(valuesObject3);
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertTrue(result);
+
+    }
+
+
+    public void testApp7() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+
+        Expression expression = factory.getParser().fromString("Variable1->toInteger()->values(let item:IntegerType ->toString()->substring(5,1) = '6')->isEmpty()", contexts);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        List<ValuesObject> dataSet = new ArrayList<>();
+
+
+        ValuesObject valuesObject1 = new ValuesObject();
+        valuesObject1.setVariable1("42964");
+        dataSet.add(valuesObject1);
+
+        ValuesObject valuesObject2 = new ValuesObject();
+        valuesObject2.setVariable1("42453");
+        dataSet.add(valuesObject2);
+
+
+        ValuesObject valuesObject3 = new ValuesObject();
+        valuesObject3.setVariable1("42459");
+        dataSet.add(valuesObject3);
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertTrue(result);
+
+    }
+
+
+    public void testApp8() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+
+        Expression expression = factory.getParser().fromString("Variable1->toInteger()->values(let item:IntegerType ->toString()->substring(5,1) = '6')->notEmpty()", contexts);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        List<ValuesObject> dataSet = new ArrayList<>();
+
+
+        ValuesObject valuesObject1 = new ValuesObject();
+        valuesObject1.setVariable1("42964");
+        dataSet.add(valuesObject1);
+
+        ValuesObject valuesObject2 = new ValuesObject();
+        valuesObject2.setVariable1("42453");
+        dataSet.add(valuesObject2);
+
+
+        ValuesObject valuesObject3 = new ValuesObject();
+        valuesObject3.setVariable1("42459");
+        dataSet.add(valuesObject3);
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertFalse(result);
+
+    }
 }

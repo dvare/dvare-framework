@@ -70,7 +70,7 @@ public abstract class LogicalOperationExpression extends OperationExpression {
             OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
 
-                if (op instanceof RightPriority || op instanceof EndForEach || op instanceof ENDIF) {
+                if (op instanceof RightPriority || op instanceof EndForEach || op instanceof ENDIF/* || (op instanceof AggregationOperationExpression && !stack.isEmpty())*/) {
                     return pos - 1;
                 }
 

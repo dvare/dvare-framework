@@ -55,7 +55,7 @@ public class Last extends AggregationOperationExpression {
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
-        if (right instanceof ValuesOperation || right instanceof MapOperation || right instanceof GetExpOperation) {
+        if (right instanceof ValuesOperation || right instanceof MapOperation || right instanceof GetExpOperation || right instanceof SortOperation) {
             List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
             if (!values.isEmpty()) {
                 return LiteralType.getLiteralExpression(values.get(values.size() - 1), dataTypeExpression);

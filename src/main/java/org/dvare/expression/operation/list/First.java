@@ -53,7 +53,7 @@ public class First extends AggregationOperationExpression {
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
-        if (right instanceof ValuesOperation || right instanceof MapOperation || right instanceof GetExpOperation) {
+        if (right instanceof ValuesOperation || right instanceof MapOperation || right instanceof GetExpOperation || right instanceof SortOperation) {
 
             List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
             if (!values.isEmpty()) {

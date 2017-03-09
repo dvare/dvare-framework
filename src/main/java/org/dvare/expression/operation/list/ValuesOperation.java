@@ -67,7 +67,7 @@ public class ValuesOperation extends AggregationOperationExpression {
         List<Object> values = null;
         Expression left = this.leftOperand;
 
-        if (left instanceof ValuesOperation || left instanceof MapOperation || left instanceof GetExpOperation) {
+        if (left instanceof ValuesOperation || left instanceof MapOperation || left instanceof GetExpOperation || left instanceof SortOperation) {
             values = buildValues(left, expressionBinding, instancesBinding);
         } else if (left instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) left;

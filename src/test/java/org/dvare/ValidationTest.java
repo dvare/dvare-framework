@@ -23,6 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare;
 
+import org.dvare.test.utility.DateTest;
 import org.dvare.test.validation.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -40,7 +41,8 @@ import org.junit.runners.Suite;
         BuilderTest.class,
         BooleanOperationTest.class,
         FunctionTest.class,
-        ArithmeticOperationTest.class})
+        ArithmeticOperationTest.class,
+        DateTest.class})
 public class ValidationTest {
 
 }

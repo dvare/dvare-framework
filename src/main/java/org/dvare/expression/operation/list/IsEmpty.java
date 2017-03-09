@@ -5,7 +5,7 @@ import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.datatype.IntegerType;
+import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -20,13 +20,13 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Operation(type = OperationType.LENGTH)
-public class Length extends AggregationOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Length.class);
+@Operation(type = OperationType.IS_EMPTY)
+public class IsEmpty extends AggregationOperationExpression {
+    static Logger logger = LoggerFactory.getLogger(IsEmpty.class);
 
 
-    public Length() {
-        super(OperationType.LENGTH);
+    public IsEmpty() {
+        super(OperationType.IS_EMPTY);
     }
 
 
@@ -39,7 +39,7 @@ public class Length extends AggregationOperationExpression {
             Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
             if (valuesResult instanceof ListLiteral) {
                 ListLiteral listLiteral = (ListLiteral) valuesResult;
-                return LiteralType.getLiteralExpression(listLiteral.getSize(), IntegerType.class);
+                return LiteralType.getLiteralExpression(listLiteral.getSize() == 0, BooleanType.class);
             }
         } else if (right instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) right;
@@ -59,10 +59,10 @@ public class Length extends AggregationOperationExpression {
                 LiteralExpression literalExpression = LiteralType.getLiteralExpression(value, variableExpression.getType());
                 values.add(literalExpression.getValue());
             }
-            return LiteralType.getLiteralExpression(values.size(), IntegerType.class);
+            return LiteralType.getLiteralExpression(values.size() == 0, BooleanType.class);
         }
 
-        return LiteralType.getLiteralExpression(0, IntegerType.class);
+        return LiteralType.getLiteralExpression(true, BooleanType.class);
     }
 
 

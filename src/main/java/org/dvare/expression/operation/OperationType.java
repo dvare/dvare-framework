@@ -45,11 +45,12 @@ public enum OperationType {
     STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
     FOREACH("foreach", "forEach", "FOREACH"), END_FOREACH("endforeach", "endForEach", "ENDFOREACH"), ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
     IF("IF", "if", "ELSEIF", "elseif"), THEN("THEN", "then"),//
-    ASSIGN(":=", "assign", "update"), LENGTH("Length", "length"), FIRST("First", "first"), LAST("Last", "last"),//
+    ASSIGN(":=", "assign", "update"), FIRST("First", "first"), LAST("Last", "last"),//
+    LENGTH("Length", "length"), NOT_EMPTY("notEmpty", "NotEMPTY"), IS_EMPTY("isEmpty", "ISEMPTY"),//
     MAXIMUM("Maximum", "maximum"), MINIMUM("Minimum", "minimum"),//
     MEAN("Mean", "mean", "Avg", "avg"), MEDIAN("Median", "median"), MODE("Mode", "mode"),//
     SUM("Sum", "sum"), VALUE("Value", "value"), COLON(";"),//
-    FILTER("Filter", "filter"), VALUES("Values", "values"), MAP("Map", "map"), //
+    FILTER("Filter", "filter"), VALUES("Values", "values"), MAP("Map", "map"), SORT("Sort", "sort"), //
     GET_ITEM("GetItem", "getItem"), HAS_ITEM("HasItem", "hasItem"), ITEM_POSITION("ItemPosition", "itemPosition"),//
     LET("let", "Let"), PUT_EXP("putExp"), GET_EXP("getExp");
 
