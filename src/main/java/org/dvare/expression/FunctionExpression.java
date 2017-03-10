@@ -42,7 +42,7 @@ public class FunctionExpression extends Expression {
         this.name = name;
         this.binding = binding;
         if (logger.isDebugEnabled()) {
-            logger.debug("FunctionService Name  Expression :  [{} {}]", name, binding.getReturnType().getDataType());
+            logger.debug("FunctionService Name  Expression :  [{}]", name);
         }
     }
 

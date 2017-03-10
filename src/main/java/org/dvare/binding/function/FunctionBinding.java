@@ -96,7 +96,7 @@ public class FunctionBinding {
         return functionInstance;
     }
 
-    public void setFunctionInstance(Class functionInstance) {
+    public void setFunctionInstance(Object functionInstance) {
         this.functionInstance = functionInstance;
     }
 }

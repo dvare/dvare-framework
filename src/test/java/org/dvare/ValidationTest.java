@@ -40,7 +40,6 @@ import org.junit.runners.Suite;
         ChainOperationTest.class,
         BuilderTest.class,
         BooleanOperationTest.class,
-        FunctionTest.class,
         ArithmeticOperationTest.class,
         DateTest.class})
 public class ValidationTest {

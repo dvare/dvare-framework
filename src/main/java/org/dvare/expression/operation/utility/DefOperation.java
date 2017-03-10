@@ -21,73 +21,76 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.operation;
+package org.dvare.expression.operation.utility;
 
+import org.dvare.annotations.Operation;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
-import org.dvare.config.ConfigurationRegistry;
+import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.operation.condition.ENDIF;
-import org.dvare.expression.operation.list.EndForAllEach;
-import org.dvare.expression.operation.validation.RightPriority;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.operation.OperationExpression;
+import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.veriable.VariableExpression;
+import org.dvare.expression.veriable.VariableType;
 
 import java.util.Stack;
 
-public abstract class LogicalOperationExpression extends OperationExpression {
-    protected static Logger logger = LoggerFactory.getLogger(LogicalOperationExpression.class);
+@Operation(type = OperationType.DEF)
+public class DefOperation extends OperationExpression {
 
-    public LogicalOperationExpression(OperationType operationType) {
-        super(operationType);
+
+    public DefOperation() {
+        super(OperationType.DEF);
     }
 
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
-        Expression left = stack.pop();
-
         pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
-
-        Expression right = stack.pop();
-
-        this.leftOperand = left;
-        this.rightOperand = right;
-        if (logger.isDebugEnabled()) {
-            logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
-        }
-        stack.push(this);
 
         return pos;
     }
 
-
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
-        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-        for (; pos < tokens.length; pos++) {
-            OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
-            if (op != null) {
+        String token = tokens[pos];
 
-                if (op instanceof RightPriority || op instanceof EndForAllEach || op instanceof ENDIF/* || (op instanceof AggregationOperationExpression && !stack.isEmpty())*/) {
-                    return pos - 1;
-                }
+        if (token.contains(":")) {
+            String parts[] = token.split(":");
+            if (parts.length == 2) {
 
+                String name = parts[0].trim();
+                String type = parts[1].trim();
+                DataType dataType = DataType.valueOf(type);
 
-                pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
+                TokenType tokenType = buildTokenType(name);
 
-
-                if (pos + 1 < tokens.length) {
-                    OperationExpression testOp = configurationRegistry.getOperation(tokens[pos + 1]);
-                    if (testOp instanceof LogicalOperationExpression) {
-                        return pos;
+                if (contexts.getContext(tokenType.type) != null) {
+                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                    if (typeBinding.getDataType(tokenType.token) == null) {
+                        typeBinding.addTypes(tokenType.token, dataType);
+                        contexts.addContext(tokenType.type, typeBinding);
+                    } else {
+                        throw new ExpressionParseException(tokenType.type + " already contains " + tokenType.token + "variable ");
                     }
+
+
+                } else {
+                    TypeBinding typeBinding = new TypeBinding();
+                    typeBinding.addTypes(tokenType.token, dataType);
+                    contexts.addContext(tokenType.type, typeBinding);
                 }
 
+
+                VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, dataType, tokenType.type);
+                stack.push(variableExpression);
 
             }
         }
+
+
         return pos;
     }
 

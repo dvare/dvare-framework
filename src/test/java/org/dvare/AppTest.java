@@ -24,12 +24,15 @@ THE SOFTWARE.*/
 package org.dvare;
 
 
+import org.dvare.test.utility.DefTest;
+import org.dvare.test.utility.FunctionTest;
+import org.dvare.test.utility.InvokeTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ValidationTest.class, AggregationTest.class})
+@Suite.SuiteClasses({ValidationTest.class, AggregationTest.class, DefTest.class, FunctionTest.class, InvokeTest.class})
 public class AppTest {
 
 

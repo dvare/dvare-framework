@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.test.validation;
+package org.dvare.test.list;
 
 import junit.framework.TestCase;
 import org.dvare.binding.data.InstancesBinding;
@@ -41,13 +41,13 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ForEachOperationTest extends TestCase {
+public class ForAllOperationTest extends TestCase {
 
     public void testApp() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        String exp = "self->forEach selfInstance selfInstance.Variable1->substring(2,2)->toInteger() between [80,90] endForEach";
+        String exp = "self->forAll selfInstance selfInstance.Variable1->substring(2,2)->toInteger() between [80,90] endForAll";
 
 
         TypeBinding typeBinding = ExpressionParser.translate(ForEachOperation.class);
@@ -88,7 +88,7 @@ public class ForEachOperationTest extends TestCase {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        String exp = "not self->forEach selfInstance  selfInstance.Variable1->substring(2,2)->toInteger() between [80,90] endForEach";
+        String exp = "not self->forAll selfInstance  selfInstance.Variable1->substring(2,2)->toInteger() between [80,90] endForAll";
 
 
         TypeBinding typeBinding = ExpressionParser.translate(ForEachOperation.class);

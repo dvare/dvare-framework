@@ -1,4 +1,4 @@
-package org.dvare.expression.operation.validation;
+package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
@@ -13,6 +13,7 @@ import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.validation.LeftPriority;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
@@ -22,15 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-@Operation(type = OperationType.FOREACH)
-public class ForEach extends OperationExpression {
-    private static Logger logger = LoggerFactory.getLogger(ForEach.class);
+@Operation(type = OperationType.FORALL)
+public class ForAll extends OperationExpression {
+    private static Logger logger = LoggerFactory.getLogger(ForAll.class);
 
-    String refrenceValueToken;
-    String driveContexttToken;
+    private String refrenceValueToken;
+    private String driveContexttToken;
 
-    public ForEach() {
-        super(OperationType.FOREACH);
+    public ForAll() {
+        super(OperationType.FORALL);
     }
 
 
@@ -102,7 +103,7 @@ public class ForEach extends OperationExpression {
 
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
-                if (op.getClass().equals(EndForEach.class)) {
+                if (op.getClass().equals(EndForAllEach.class)) {
                     return pos;
                 } else if (!op.getClass().equals(LeftPriority.class)) {
                     pos = op.parse(tokens, pos, stack, expressionBinding, contexts);

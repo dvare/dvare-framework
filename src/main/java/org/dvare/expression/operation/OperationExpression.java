@@ -65,7 +65,7 @@ public abstract class OperationExpression extends Expression {
 
     }
 
-    public static TokenType findDataObject(String token, ContextsBinding contexts) {
+    public static TokenType buildTokenType(String token) {
         TokenType tokenType = new TokenType();
         final String selfPatten = ".{1,}\\..{1,}";
         if (!token.matches(selfPatten)) {
@@ -75,8 +75,12 @@ public abstract class OperationExpression extends Expression {
             tokenType.type = token.substring(0, token.indexOf("."));
             tokenType.token = token.substring(token.indexOf(".") + 1, token.length());
         }
+        return tokenType;
+    }
 
+    public static TokenType findDataObject(String token, ContextsBinding contexts) {
 
+        TokenType tokenType = buildTokenType(token);
         if (contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
             return tokenType;
         } else {
@@ -111,9 +115,6 @@ public abstract class OperationExpression extends Expression {
     public abstract Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException;
 
     public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException;
-
-
-
 
 
     protected Expression buildExpression(String token, ContextsBinding contextsBinding) throws IllegalPropertyException, IllegalValueException {

@@ -1,4 +1,27 @@
-package org.dvare.expression.operation.validation;
+/*The MIT License (MIT)
+
+Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Sogiftware.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.*/
+
+
+package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
@@ -18,6 +41,8 @@ import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.validation.LeftPriority;
+import org.dvare.expression.operation.validation.RightPriority;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.DataTypeMapping;
@@ -42,6 +67,9 @@ public class Function extends OperationExpression {
         super(OperationType.FUNCTION);
     }
 
+    public Function(OperationType operationType) {
+        super(operationType);
+    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
@@ -135,7 +163,7 @@ public class Function extends OperationExpression {
     }
 
 
-    private Object interpretFunction(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    protected Object interpretFunction(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
 
@@ -241,46 +269,6 @@ public class Function extends OperationExpression {
     }
 
 
-    private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) throws InterpretException {
-
-        try {
-            FunctionBinding functionBinding = functionExpression.getBinding();
-            String functionName = functionExpression.getName();
-            Class<?> functionClass = functionBinding.getFunctionClass();
-            Object value;
-            if (functionClass != null) {
-                Object classInstance = functionClass.newInstance();
-                Method method = functionClass.getMethod(functionName, params);
-                value = method.invoke(classInstance, values);
-            } else {
-                Object classInstance = functionBinding.getFunctionInstance();
-                Method method = classInstance.getClass().getMethod(functionName, params);
-                value = method.invoke(classInstance, values);
-            }
-
-            if (value instanceof Collection) {
-                Collection collection = (Collection) value;
-//                return new ListLiteral<>(collection, functionExpression.binding.getReturnType(), collection.size());
-            } else {
-                return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType().getClass());
-            }
-        } catch (InvocationTargetException e) {
-            Throwable target = e.getTargetException();
-            if (target != null) {
-                throw new InterpretException(target.getMessage(), target);
-            } else {
-                throw new InterpretException(e.getMessage(), e);
-            }
-        } catch (Exception e) {
-
-            throw new InterpretException(e.getMessage(), e);
-
-        }
-
-        return new NullLiteral();
-    }
-
-
     private ParamValue buildLiteralParam(Expression expression, Class originalType) throws InterpretException {
         ParamValue paramsValue = new ParamValue();
         if (expression instanceof ListLiteral) {
@@ -363,6 +351,47 @@ public class Function extends OperationExpression {
         }
         return paramsValue;
     }
+
+
+    private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) throws InterpretException {
+
+        try {
+            FunctionBinding functionBinding = functionExpression.getBinding();
+            String functionName = functionExpression.getName();
+            Class<?> functionClass = functionBinding.getFunctionClass();
+            Object classInstance = functionBinding.getFunctionInstance();
+            Object value;
+            if (functionClass != null && classInstance == null) {
+                classInstance = functionClass.newInstance();
+                Method method = functionClass.getMethod(functionName, params);
+                value = method.invoke(classInstance, values);
+            } else {
+                Method method = classInstance.getClass().getMethod(functionName, params);
+                value = method.invoke(classInstance, values);
+            }
+
+            if (value instanceof Collection) {
+                Collection collection = (Collection) value;
+//                return new ListLiteral<>(collection, functionExpression.binding.getReturnType(), collection.size());
+            } else {
+                return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType().getClass());
+            }
+        } catch (InvocationTargetException e) {
+            Throwable target = e.getTargetException();
+            if (target != null) {
+                throw new InterpretException(target.getMessage(), target);
+            } else {
+                throw new InterpretException(e.getMessage(), e);
+            }
+        } catch (Exception e) {
+
+            throw new InterpretException(e.getMessage(), e);
+
+        }
+
+        return new NullLiteral();
+    }
+
 
     @Override
     public String toString() {

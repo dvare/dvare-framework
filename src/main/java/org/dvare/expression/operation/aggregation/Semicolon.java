@@ -26,13 +26,10 @@ public class Semicolon extends OperationExpression {
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
-        String leftString = tokens[pos - 1];
-        String rightString = tokens[pos + 1];
-
 
         Expression left = null;
         if (stack.isEmpty()) {
-
+            String leftString = tokens[pos - 1];
             OperationExpression.TokenType tokenType = OperationExpression.findDataObject(leftString, contexts);
             if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type))
                     != null) {
@@ -79,9 +76,9 @@ public class Semicolon extends OperationExpression {
 
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        instancesBinding = (InstancesBinding) rightOperand.interpret(expressionBinding, instancesBinding);
-        instancesBinding = (InstancesBinding) leftOperand.interpret(expressionBinding, instancesBinding);
-        return instancesBinding;
+        leftOperand.interpret(expressionBinding, instancesBinding);
+        return rightOperand.interpret(expressionBinding, instancesBinding);
+
     }
 
 

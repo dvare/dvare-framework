@@ -2,6 +2,7 @@ package org.dvare.expression.operation;
 
 import org.dvare.annotations.Operation;
 import org.dvare.annotations.Type;
+import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
@@ -121,6 +122,12 @@ public class AssignOperationExpression extends OperationExpression {
             variable = (VariableExpression) left;
 
             Object aggregation = instancesBinding.getInstance(variable.getOperandType());
+
+            if (aggregation == null) {
+                aggregation = new DataRow();
+                instancesBinding.addInstance(variable.getOperandType(), aggregation);
+            }
+
 
             variable = VariableType.setVariableValue(variable, aggregation);
 

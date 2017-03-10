@@ -29,36 +29,48 @@ import java.util.List;
 
 public enum OperationType {
 
-    List("["),
-    ABSOLUTE("Abs", "abs"), Match("Match", "match"), FUNCTION("Function", "function", "fun"),//
+    List("["), ASSIGN(":=", "assign", "update"),
+    INVOKE("Invoke", "invoke"), FUNCTION("Function", "function", "fun"),//
+
+    ABSOLUTE("Abs", "abs"), Match("Match", "match"),//
     LEFT_PRIORITY("("), RIGHT_PRIORITY(")"),//
-    DATE("Date", "date"), DATE_TIME("DateTime", "dateTime"), TO_DAY("today", "ToDay"),//
-    FOUND("Found", "found"), POWER("Pow", "pow", "^"),//
+    DATE("Date", "date"), DATE_TIME("DateTime", "dateTime"), TO_DAY("today"),//
+    POWER("Pow", "pow", "^"),//
     NOT("not", "NOT", "Not", "!"), AND("and", "AND", "And", "&&"), OR("or", "OR", "||"), IMPLIES("implies", "Implies", "=>"),//
     EQUAL("=", "eq"), NOT_EQUAL("!=", "ne", "<>"),//
     LESS("<", "lt"), LESS_EQUAL("<=", "le"), GREATER(">", "gt"), GREATER_EQUAL(">=", "ge"),//
     IN("in", "IN", "In"), NOT_IN("notIn", "NOTIN", "NotIn"), BETWEEN("between", "Between"), //
     MUL("Mul", "mul", "*"), DIVIDE("Div", "div", "/"), ADD("Add", "add", "+"), SUBTRACT("Sub", "sub", "-"),//
     MAX("Max", "max"), MIN("Min", "min"),//
+
+    //Chain Operations
+
     TO_INTEGER("toInteger", "ToInteger"), TO_STRING("toString", "ToString"), TO_DATE("ToDate", "toDate"),//
     SUBSTRING("substring", "Substring"), APPEND("append", "Append"), PREPEND("prepend", "Prepend"), CONTAINS("contains", "Contains"),//
     STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
-    FOREACH("foreach", "forEach", "FOREACH"), END_FOREACH("endforeach", "endForEach", "ENDFOREACH"), ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
+
+    //Condition
+
     IF("IF", "if", "ELSEIF", "elseif"), THEN("THEN", "then"),//
-    ASSIGN(":=", "assign", "update"), FIRST("First", "first"), LAST("Last", "last"),//
+    ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
+    // List
+    FORALL("forAll", "ForAll"), END_FORALL("endForAll", "EndForAll"), FOREACH("forEach", "ForEach"), END_FOREACH("endForEach", "EndForEach"), //
+
+    VALUES("Values", "values"), FILTER("Filter", "filter"), MAP("Map", "map"), SORT("Sort", "sort"), //
+    GET_ITEM("GetItem", "getItem"), HAS_ITEM("HasItem", "hasItem"), ITEM_POSITION("ItemPosition", "itemPosition"),//
+
+    FIRST("First", "first"), LAST("Last", "last"),//
     LENGTH("Length", "length"), NOT_EMPTY("notEmpty", "NotEMPTY"), IS_EMPTY("isEmpty", "ISEMPTY"),//
+
     MAXIMUM("Maximum", "maximum"), MINIMUM("Minimum", "minimum"),//
     MEAN("Mean", "mean", "Avg", "avg"), MEDIAN("Median", "median"), MODE("Mode", "mode"),//
     SUM("Sum", "sum"), VALUE("Value", "value"), COLON(";"),//
-    FILTER("Filter", "filter"), VALUES("Values", "values"), MAP("Map", "map"), SORT("Sort", "sort"), //
-    GET_ITEM("GetItem", "getItem"), HAS_ITEM("HasItem", "hasItem"), ITEM_POSITION("ItemPosition", "itemPosition"),//
-    LET("let", "Let"), PUT_EXP("putExp"), GET_EXP("getExp");
+
+    // initialization
+    DEF("Def", "def"), LET("let", "Let"), PUT_EXP("PutExp", "putExp"), GET_EXP("GetExp", "getExp");
+
 
     private List<String> symbols = new ArrayList<>();
-
-    OperationType() {
-
-    }
 
     OperationType(String... symbols) {
         this.symbols.addAll(Arrays.asList(symbols));
@@ -68,7 +80,4 @@ public enum OperationType {
         return symbols;
     }
 
-    public void setSymbols(List<String> symbols) {
-        this.symbols = symbols;
-    }
 }

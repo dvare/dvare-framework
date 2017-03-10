@@ -89,8 +89,19 @@ public class DataTypeMapping {
                 return DataType.BooleanType;
             }
 
+
+            case "Boolean[]": {
+                return DataType.BooleanListType;
+            }
+
+
+
             case "boolean": {
                 return DataType.BooleanType;
+            }
+
+            case "boolean[]": {
+                return DataType.BooleanListType;
             }
 
 
@@ -99,8 +110,17 @@ public class DataTypeMapping {
             }
 
 
+            case "Integer[]": {
+                return DataType.IntegerListType;
+            }
+
+
             case "int": {
                 return DataType.IntegerType;
+            }
+
+            case "int[]": {
+                return DataType.IntegerListType;
             }
 
 
@@ -109,25 +129,50 @@ public class DataTypeMapping {
             }
 
 
+            case "Float[]": {
+                return DataType.FloatListType;
+            }
             case "float": {
                 return DataType.FloatType;
+            }
+
+            case "float[]": {
+                return DataType.FloatListType;
             }
 
             case "String": {
                 return DataType.StringType;
             }
 
+            case "String[]": {
+                return DataType.StringListType;
+            }
+
             case "Date": {
                 return DataType.SimpleDateType;
+            }
+
+            case "Date[]": {
+                return DataType.SimpleDateListType;
             }
 
             case "LocalDate": {
                 return DataType.DateType;
             }
 
+
+            case "LocalDate[]": {
+                return DataType.DateListType;
+            }
+
             case "LocalDateTime": {
                 return DataType.DateTimeType;
             }
+
+            case "LocalDateTime[]": {
+                return DataType.DateTimeListType;
+            }
+
         }
         return null;
 
@@ -208,51 +253,4 @@ public class DataTypeMapping {
     }
 
 
-  /*  public static Class getDataTypeMappingSingleType(String type) {
-        return getDataTypeMappingSingleType(DataType.valueOf(type));
-    }
-
-    public static Class getDataTypeMappingSingleType(DataType type) {
-
-        switch (type) {
-            case BooleanType:
-            case BooleanListType: {
-                return Boolean.class;
-            }
-
-            case FloatType:
-            case FloatListType: {
-                return Float.class;
-            }
-
-            case IntegerType:
-            case IntegerListType: {
-                return Integer.class;
-            }
-
-            case StringType:
-            case StringListType: {
-                return String.class;
-            }
-
-            case DateTimeType:
-            case DateTimeListType: {
-                return Date.class;
-            }
-
-            case DateType:
-            case DateListType: {
-                return Date.class;
-            }
-
-            case RegexType: {
-                return String.class;
-            }
-
-        }
-        return null;
-
-    }
-
-*/
 }
