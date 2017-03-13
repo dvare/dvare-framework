@@ -30,7 +30,6 @@ import org.dvare.annotations.FunctionService;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +61,7 @@ public class RuleConfigurationProvider {
 
                 List<Class<?>> classes = ClassFinder.findAnnotated(functionPackage, FunctionService.class);
                 for (Class _class : classes) {
-                    try {
+
 
 
                         for (Method method : _class.getMethods()) {
@@ -74,18 +73,14 @@ public class RuleConfigurationProvider {
                                 DataType[] parameters = functionMethod.parameters();
 
                                 Class returnTypeExpression = DataTypeMapping.getDataTypeClass(returnType);
-                                DataTypeExpression returnTypeInstance = (DataTypeExpression) returnTypeExpression.newInstance();
 
-                                FunctionBinding functionBinding = new FunctionBinding(functionName, _class, returnTypeInstance);
+                                FunctionBinding functionBinding = new FunctionBinding(functionName, _class, returnTypeExpression);
                                 functionBinding.setParameters(Arrays.asList(parameters));
 
                                 configurationRegistry.registerFunction(functionBinding);
                             }
                         }
 
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        logger.error(e.getMessage(), e);
-                    }
 
                 }
 

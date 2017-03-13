@@ -34,20 +34,20 @@ public class FunctionBinding {
     private String methodName;
     private Class functionClass;
     private Object functionInstance;
-    private DataTypeExpression returnType;
+    private Class<? extends DataTypeExpression> returnType;
     private List<DataType> parameters = new ArrayList<>();
 
 
-    public FunctionBinding(String methodName, Class functionClass, DataTypeExpression returnType) {
+    public FunctionBinding(String methodName, Class functionClass, Class<? extends DataTypeExpression> returnType) {
         this(methodName, functionClass, null, returnType, null);
     }
 
-    public FunctionBinding(String methodName, Object functionInstance, DataTypeExpression returnType) {
+    public FunctionBinding(String methodName, Object functionInstance, Class<? extends DataTypeExpression> returnType) {
         this(methodName, null, functionInstance, returnType, null);
     }
 
 
-    public FunctionBinding(String methodName, Class functionClass, Object functionInstance, DataTypeExpression returnType, List<DataType> parameters) {
+    public FunctionBinding(String methodName, Class functionClass, Object functionInstance, Class<? extends DataTypeExpression> returnType, List<DataType> parameters) {
         this.methodName = methodName;
         this.functionClass = functionClass;
         this.returnType = returnType;
@@ -75,11 +75,11 @@ public class FunctionBinding {
         this.functionClass = functionClass;
     }
 
-    public DataTypeExpression getReturnType() {
+    public Class<? extends DataTypeExpression> getReturnType() {
         return returnType;
     }
 
-    public void setReturnType(DataTypeExpression returnType) {
+    public void setReturnType(Class<? extends DataTypeExpression> returnType) {
         this.returnType = returnType;
     }
 

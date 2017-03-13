@@ -29,6 +29,7 @@ import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
+import org.dvare.exceptions.interpreter.FunctionCallException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -38,7 +39,6 @@ import org.dvare.expression.datatype.StringType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.validation.LeftPriority;
@@ -53,10 +53,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 @Operation(type = OperationType.FUNCTION)
 public class Function extends OperationExpression {
@@ -370,18 +367,20 @@ public class Function extends OperationExpression {
                 value = method.invoke(classInstance, values);
             }
 
-            if (value instanceof Collection) {
-                Collection collection = (Collection) value;
-//                return new ListLiteral<>(collection, functionExpression.binding.getReturnType(), collection.size());
+            if (value instanceof List) {
+                List list = (List) value;
+                return new ListLiteral(list, functionExpression.binding.getReturnType());
+            } else if (value.getClass().isArray()) {
+                return new ListLiteral(Arrays.asList(value), functionExpression.binding.getReturnType());
             } else {
-                return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType().getClass());
+                return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType());
             }
         } catch (InvocationTargetException e) {
             Throwable target = e.getTargetException();
             if (target != null) {
-                throw new InterpretException(target.getMessage(), target);
+                throw new FunctionCallException(target.getMessage(), target);
             } else {
-                throw new InterpretException(e.getMessage(), e);
+                throw new FunctionCallException(e.getMessage(), e);
             }
         } catch (Exception e) {
 
@@ -389,7 +388,7 @@ public class Function extends OperationExpression {
 
         }
 
-        return new NullLiteral();
+
     }
 
 

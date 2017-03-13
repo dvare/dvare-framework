@@ -31,11 +31,11 @@ import java.util.Date;
 
 public class DataTypeMapping {
 
-    public static Class getDataTypeClass(String type) {
+    public static Class<? extends DataTypeExpression> getDataTypeClass(String type) {
         return getDataTypeClass(DataType.valueOf(type));
     }
 
-    public static Class getDataTypeClass(DataType type) {
+    public static Class<? extends DataTypeExpression> getDataTypeClass(DataType type) {
 
         switch (type) {
             case BooleanType:

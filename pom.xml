@@ -65,9 +65,10 @@
 
 
     <scm>
-        <connection>scm:git:git://github.com/dvare/dvare.git</connection>
-        <developerConnection>scm:git:git://github.com/dvare/dvare.git</developerConnection>
-        <url>https://github.com/dvare/dvare.git</url>
+        <connection>scm:git:git://github.com/dvare/dvare-framework.git</connection>
+        <developerConnection>scm:git:git://github.com/dvare/dvare-framework.git</developerConnection>
+        <url>https://github.com/dvare/dvare-framework</url>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
@@ -276,8 +277,6 @@
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
-
-
                 </plugins>
             </build>
         </profile>

@@ -35,7 +35,6 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
@@ -181,11 +180,9 @@ public class Invoke extends Function {
 
                 Class dataTypeExpressionClass = DataTypeMapping.getDataTypeClass(returnType);
                 if (dataTypeExpressionClass != null) {
-                    try {
-                        functionBinding.setReturnType((DataTypeExpression) dataTypeExpressionClass.newInstance());
-                    } catch (Exception e) {
-                        throw new InterpretException(e.getMessage(), e);
-                    }
+
+                    functionBinding.setReturnType(dataTypeExpressionClass);
+
                 }
 
             }

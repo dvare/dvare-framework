@@ -26,14 +26,13 @@ package org.dvare.binding.model;
 
 import org.dvare.expression.datatype.DataType;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TypeBinding {
-    private Map<String, Object> types = new HashMap<>();
+    private Map<String, Object> types = new LinkedHashMap<>();
 
     public TypeBinding() {
-        types = new HashMap<>();
     }
 
     public TypeBinding(Map<String, Object> types) {

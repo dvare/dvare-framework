@@ -21,43 +21,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.binding.data;
+package org.dvare.exceptions.interpreter;
 
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-public class DataRow {
-    private Map<String, Object> data = new LinkedHashMap<>();
-
-    public DataRow() {
+public class FunctionCallException extends InterpretException {
+    public FunctionCallException() {
     }
 
-    public DataRow(Map<String, Object> data) {
-        this.data = data;
+    public FunctionCallException(String message) {
+        super(message);
     }
 
-    public Object getValue(String name) {
-        return data.get(name);
+    public FunctionCallException(Throwable cause) {
+        super(cause);
     }
 
-    public void addData(String name, Object value) {
-        this.data.put(name, value);
+    public FunctionCallException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    @Override
-    public String toString() {
-        return data != null ? data.toString() : "";
+    public FunctionCallException(String message, Throwable cause,
+                                 boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
-    /* Getter and Setters */
-
-    public Map<String, Object> getData() {
-        return data;
-    }
-
-    public void setData(Map<String, Object> data) {
-        this.data = data;
-    }
-
-
 }
