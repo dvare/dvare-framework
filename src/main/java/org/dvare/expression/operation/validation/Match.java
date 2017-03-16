@@ -199,8 +199,6 @@ public class Match extends OperationExpression {
                     for (String value : valueStringList) {
                         if (value != null) {
                             valuesSet.add(TrimString.trim(value));
-                        } else {
-                            valuesSet.add(null);
                         }
                     }
 

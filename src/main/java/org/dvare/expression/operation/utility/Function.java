@@ -39,6 +39,7 @@ import org.dvare.expression.datatype.StringType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.validation.LeftPriority;
@@ -367,6 +368,10 @@ public class Function extends OperationExpression {
                 value = method.invoke(classInstance, values);
             }
 
+            if (value == null) {
+                return new NullLiteral<>();
+            }
+
             if (value instanceof List) {
                 List list = (List) value;
                 return new ListLiteral(list, functionExpression.binding.getReturnType());
@@ -377,10 +382,10 @@ public class Function extends OperationExpression {
             }
         } catch (InvocationTargetException e) {
             Throwable target = e.getTargetException();
-            if (target != null) {
+            if (target instanceof InterpretException) {
                 throw new FunctionCallException(target.getMessage(), target);
             } else {
-                throw new FunctionCallException(e.getMessage(), e);
+                throw new InterpretException(e.getMessage(), e);
             }
         } catch (Exception e) {
 
