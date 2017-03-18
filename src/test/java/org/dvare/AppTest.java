@@ -32,7 +32,7 @@ import org.junit.runners.Suite;
 
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ValidationTest.class, AggregationTest.class, DefTest.class, FunctionTest.class, InvokeTest.class})
+@Suite.SuiteClasses({ValidationTest.class, AggregationTest.class, ListTest.class, DefTest.class, FunctionTest.class, InvokeTest.class})
 public class AppTest {
 
 

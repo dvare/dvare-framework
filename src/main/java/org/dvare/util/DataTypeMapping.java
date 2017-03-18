@@ -95,7 +95,6 @@ public class DataTypeMapping {
             }
 
 
-
             case "boolean": {
                 return DataType.BooleanType;
             }

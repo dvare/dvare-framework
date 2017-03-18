@@ -63,23 +63,22 @@ public class RuleConfigurationProvider {
                 for (Class _class : classes) {
 
 
+                    for (Method method : _class.getMethods()) {
 
-                        for (Method method : _class.getMethods()) {
+                        if (method.isAnnotationPresent(FunctionMethod.class)) {
+                            String functionName = method.getName();
+                            FunctionMethod functionMethod = method.getAnnotation(FunctionMethod.class);
+                            DataType returnType = functionMethod.returnType();
+                            DataType[] parameters = functionMethod.parameters();
 
-                            if (method.isAnnotationPresent(FunctionMethod.class)) {
-                                String functionName = method.getName();
-                                FunctionMethod functionMethod = method.getAnnotation(FunctionMethod.class);
-                                DataType returnType = functionMethod.returnType();
-                                DataType[] parameters = functionMethod.parameters();
+                            Class returnTypeExpression = DataTypeMapping.getDataTypeClass(returnType);
 
-                                Class returnTypeExpression = DataTypeMapping.getDataTypeClass(returnType);
+                            FunctionBinding functionBinding = new FunctionBinding(functionName, _class, returnTypeExpression);
+                            functionBinding.setParameters(Arrays.asList(parameters));
 
-                                FunctionBinding functionBinding = new FunctionBinding(functionName, _class, returnTypeExpression);
-                                functionBinding.setParameters(Arrays.asList(parameters));
-
-                                configurationRegistry.registerFunction(functionBinding);
-                            }
+                            configurationRegistry.registerFunction(functionBinding);
                         }
+                    }
 
 
                 }

@@ -33,7 +33,6 @@ import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.utility.GetExpOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,13 +54,7 @@ public class Last extends AggregationOperationExpression {
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
-        if (right instanceof ValuesOperation || right instanceof MapOperation || right instanceof GetExpOperation || right instanceof SortOperation) {
-            List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
-            if (!values.isEmpty()) {
-                return LiteralType.getLiteralExpression(values.get(values.size() - 1), dataTypeExpression);
-            }
-
-        } else if (right instanceof VariableExpression) {
+        if (right instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) right;
 
             Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
@@ -81,6 +74,11 @@ public class Last extends AggregationOperationExpression {
             }
             if (!values.isEmpty()) {
                 return LiteralType.getLiteralExpression(values.get(values.size() - 1), variableExpression.getType());
+            }
+        } else {
+            List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
+            if (values != null && !values.isEmpty()) {
+                return LiteralType.getLiteralExpression(values.get(values.size() - 1), dataTypeExpression);
             }
         }
 

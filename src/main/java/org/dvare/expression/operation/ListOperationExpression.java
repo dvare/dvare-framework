@@ -23,182 +23,205 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation;
 
-import org.dvare.annotations.Operation;
+import org.apache.commons.lang3.tuple.Pair;
+import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
-import org.dvare.binding.model.ContextsBinding;
-import org.dvare.binding.model.TypeBinding;
-import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.exceptions.parser.ExpressionParseException;
+import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
-import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.datatype.DataTypeExpression;
-import org.dvare.expression.literal.ListLiteral;
-import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.datatype.BooleanType;
+import org.dvare.expression.literal.BooleanLiteral;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.veriable.VariableExpression;
-import org.dvare.expression.veriable.VariableType;
-import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
-@Operation(type = OperationType.List)
-public class ListOperationExpression extends OperationExpression {
-    protected static Logger logger = LoggerFactory.getLogger(ListOperationExpression.class);
+public abstract class ListOperationExpression extends AggregationOperationExpression {
+    private static Logger logger = LoggerFactory.getLogger(ListOperationExpression.class);
 
-    List<Expression> expressions = new ArrayList<>();
 
-    public ListOperationExpression() {
-        super(OperationType.List);
+    public ListOperationExpression(OperationType operationType) {
+        super(operationType);
     }
 
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    protected boolean isPairList(List<Object> values) {
+        return values.stream().allMatch(o -> o instanceof Pair);
+    }
+
+    protected List<Object> includedFilter(Expression includeParam, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, List<Object> values) throws InterpretException {
+
+        if (includeParam instanceof LogicalOperationExpression) {
 
 
-        List<String> listPrams = new ArrayList<>();
-        while (!tokens[pos].equals("]")) {
-            String value = tokens[pos];
-            if (!value.equals("[")) {
-                listPrams.add(value);
+            OperationExpression operationExpression = (OperationExpression) includeParam;
+
+            Expression left = operationExpression.getLeftOperand();
+            Expression right = operationExpression.getRightOperand();
+
+            List<Object> includedValues = new ArrayList<>();
+            for (Object value : values) {
+                Boolean result = solveLogical(operationExpression, expressionBinding, instancesBinding, value);
+                if (result) {
+                    includedValues.add(value);
+                }
+                operationExpression.setLeftOperand(left);
+                operationExpression.setRightOperand(right);
+
             }
-            pos++;
+
+
+            return includedValues;
+        } else if (includeParam instanceof EqualityOperationExpression || includeParam instanceof ChainOperationExpression) {
+            List<Object> includedValues = new ArrayList<>();
+            for (Object value : values) {
+
+
+                Boolean result = buildEqualityOperationExpression(includeParam, expressionBinding, instancesBinding, value);
+                if (result) {
+                    includedValues.add(value);
+                }
+
+            }
+
+
+            return includedValues;
+
+        } else if (includeParam instanceof BooleanExpression) {
+
+            BooleanExpression booleanExpression = (BooleanExpression) includeParam;
+
+            Boolean result = toBoolean(booleanExpression.interpret(expressionBinding, instancesBinding));
+
+            if (!result) {
+                return new ArrayList<>();
+            }
+
+
+        }
+        return values;
+    }
+
+
+    protected List<Object> excludedFilter(Expression includeParam, Expression exculdeParam, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, List<Object> values) throws InterpretException {
+
+        List<Object> includedValues = includedFilter(includeParam, expressionBinding, instancesBinding, values);
+
+
+        if (exculdeParam instanceof LogicalOperationExpression) {
+
+
+            OperationExpression operationExpression = (OperationExpression) includeParam;
+
+            Expression left = operationExpression.getLeftOperand();
+            Expression right = operationExpression.getRightOperand();
+
+            List<Object> excludedValues = new ArrayList<>();
+            for (Object value : values) {
+
+                Boolean result = solveLogical(operationExpression, expressionBinding, instancesBinding, value);
+                if (result) {
+                    excludedValues.add(value);
+                }
+
+                operationExpression.setLeftOperand(left);
+                operationExpression.setRightOperand(right);
+            }
+
+            includedValues.removeAll(excludedValues);
+
+            return includedValues;
+        } else if (exculdeParam instanceof EqualityOperationExpression || exculdeParam instanceof ChainOperationExpression) {
+            List<Object> excludedValues = new ArrayList<>();
+            for (Object value : includedValues) {
+                Boolean result = buildEqualityOperationExpression(exculdeParam, expressionBinding, instancesBinding, value);
+                if (result) {
+                    excludedValues.add(value);
+                }
+            }
+            includedValues.removeAll(excludedValues);
+
+        }
+
+        return includedValues;
+    }
+
+
+    protected Boolean buildEqualityOperationExpression(Expression includeParam, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Object value) throws InterpretException {
+
+        if (includeParam instanceof BooleanLiteral) {
+            return toBoolean(includeParam);
         }
 
 
-        String values[] = listPrams.toArray(new String[listPrams.size()]);
+        OperationExpression operationExpression = (OperationExpression) includeParam;
+        Expression leftExpression = operationExpression.getLeftOperand();
 
-        Stack<Expression> localStack = new Stack<>();
-        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-
-        for (int i = 0; i < values.length; i++) {
-            String token = values[i];
-
-
-            TokenType tokenType = findDataObject(token, contexts);
+        while (leftExpression instanceof OperationExpression) {
+            leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+        }
 
 
-            Expression expression = null;
-            OperationExpression op = configurationRegistry.getOperation(token);
-            if (op != null) {
+        if (leftExpression instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) leftExpression;
+            String name = variableExpression.getName();
+            String operandType = variableExpression.getOperandType();
 
 
-                i = op.parse(values, i, localStack, expressionBinding, contexts);
-
-                expression = localStack.pop();
-
-            } else if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
-                TypeBinding typeBinding = contexts.getContext(tokenType.type);
-                DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                expression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+            Object instance = instancesBinding.getInstance(operandType);
+            if (instance == null || !(instance instanceof DataRow)) {
+                DataRow dataRow = new DataRow();
+                dataRow.addData(name, value);
+                instancesBinding.addInstance(operandType, dataRow);
             } else {
-                expression = LiteralType.getLiteralExpression(tokenType.token);
-
+                DataRow dataRow = (DataRow) instance;
+                dataRow.addData(name, value);
+                instancesBinding.addInstance(operandType, dataRow);
             }
 
-
-            localStack.push(expression);
-
-
+            Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+            return toBoolean(interpret);
         }
 
-        expressions.addAll(localStack);
+        return false;
 
-
-        stack.push(this);
-
-        return pos;
     }
 
-
-    @Override
-    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        Class<? extends DataTypeExpression> dataType = null;
-        List<Object> values = new ArrayList<>();
-        for (Expression expression : expressions) {
-
-            if (expression instanceof OperationExpression) {
-                OperationExpression operationExpression = (OperationExpression) expression;
-
-                Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
-
-                if (interpret instanceof LiteralExpression) {
-                    LiteralExpression literalExpression = (LiteralExpression) interpret;
-                    values.add(literalExpression.getValue());
-
-                    if (dataType == null || toDataType(dataType).equals(DataType.NullType)) {
-                        dataType = literalExpression.getType();
-                    }
-                } else {
-                    values.add(interpret);
-                }
+    protected Boolean solveLogical(OperationExpression operationExpression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Object value) throws InterpretException {
 
 
-            } else if (expression instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) expression;
-                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-                variableExpression = VariableType.setVariableValue(variableExpression, instance);
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
-                values.add(literalExpression.getValue());
-                dataType = variableExpression.getType();
-            } else if (expression instanceof LiteralExpression) {
-                LiteralExpression literalExpression = (LiteralExpression) expression;
-                values.add(literalExpression.getValue());
-                if (dataType == null || toDataType(dataType).equals(DataType.NullType)) {
-                    dataType = literalExpression.getType();
-                }
-            }
+        Expression left = operationExpression.getLeftOperand();
+        Expression right = operationExpression.getRightOperand();
+        if (left != null) {
+            if (left instanceof LogicalOperationExpression) {
 
-
-        }
-
-
-        ListLiteral listLiteral = new ListLiteral(values, dataType);
-        if (logger.isDebugEnabled()) {
-            logger.debug("List Literal Expression : {} [{}]", toDataType(listLiteral.getType()), listLiteral.getValue());
-        }
-        return listLiteral;
-    }
-
-    public boolean isEmpty() {
-        return expressions.isEmpty();
-    }
-
-    public Integer getSize() {
-        return expressions.size();
-    }
-
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
-        return pos;
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("[");
-        Iterator<Expression> iterator = expressions.iterator();
-
-        while (iterator.hasNext()) {
-            stringBuilder.append(iterator.next().toString());
-            if (iterator.hasNext()) {
-                stringBuilder.append(", ");
+                Boolean result = solveLogical((OperationExpression) left, expressionBinding, instancesBinding, value);
+                operationExpression.setLeftOperand(LiteralType.getLiteralExpression(result, BooleanType.class));
+            } else {
+                Boolean result = buildEqualityOperationExpression(left, expressionBinding, instancesBinding, value);
+                operationExpression.setLeftOperand(LiteralType.getLiteralExpression(result, BooleanType.class));
             }
         }
-        stringBuilder.append("]");
-
-        return stringBuilder.toString();
 
 
+        if (right != null) {
+            if (right instanceof LogicalOperationExpression) {
+                Boolean result = solveLogical((OperationExpression) right, expressionBinding, instancesBinding, value);
+                operationExpression.setRightOperand(LiteralType.getLiteralExpression(result, BooleanType.class));
+            } else {
+                Boolean result = buildEqualityOperationExpression(right, expressionBinding, instancesBinding, value);
+                operationExpression.setRightOperand(LiteralType.getLiteralExpression(result, BooleanType.class));
+            }
+        }
+
+        Boolean result = toBoolean(operationExpression.interpret(expressionBinding, instancesBinding));
+        operationExpression.setLeftOperand(left);
+        operationExpression.setRightOperand(right);
+        return result;
     }
 
 

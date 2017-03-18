@@ -36,10 +36,8 @@ import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.list.MapOperation;
-import org.dvare.expression.operation.list.SortOperation;
-import org.dvare.expression.operation.list.ValuesOperation;
 import org.dvare.expression.operation.utility.GetExpOperation;
+import org.dvare.expression.operation.validation.LeftPriority;
 import org.dvare.expression.operation.validation.RightPriority;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
@@ -66,14 +64,14 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
 
         String token = tokens[pos - 1];
-        pos = pos + 1;
+        //pos = pos + 1;
 
         if (stack.isEmpty()) {
             ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
             OperationExpression operationExpression = configurationRegistry.getOperation(token);
 
             if (operationExpression != null) {
-                if (operationExpression instanceof ListOperationExpression) {
+                if (operationExpression instanceof ListLiteralOperationExpression) {
                     pos = operationExpression.parse(tokens, pos, stack, expressionBinding, contexts);
                     this.leftOperand = stack.pop();
                 }
@@ -115,7 +113,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
                 if (op.getClass().equals(RightPriority.class)) {
                     this.rightOperand = new ArrayList<>(localStack);
                     return pos;
-                } else {
+                } else if (!op.getClass().equals(LeftPriority.class)) {
 
                     pos = op.parse(tokens, pos, localStack, expressionBinding, contexts);
                 }
@@ -153,16 +151,13 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
     protected List<Object> buildValues(Expression expression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
-        if (expression instanceof ValuesOperation || expression instanceof MapOperation || expression instanceof SortOperation || expression instanceof GetExpOperation) {
+        if (expression instanceof ListOperationExpression || expression instanceof GetExpOperation) {
             OperationExpression valuesOperation = (OperationExpression) expression;
-
             Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
-
             if (valuesResult instanceof ListLiteral) {
                 ListLiteral listLiteral = (ListLiteral) valuesResult;
-                List values = listLiteral.getValue();
                 dataTypeExpression = listLiteral.getType();
-                return values;
+                return listLiteral.getValue();
             }
 
         }

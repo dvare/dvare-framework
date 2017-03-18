@@ -30,7 +30,8 @@ import java.util.List;
 public enum OperationType {
 
     List("["), ASSIGN(":=", "assign", "update"),
-    INVOKE("Invoke", "invoke"), FUNCTION("Function", "function", "fun"),//
+    INVOKE("Invoke", "invoke"),
+    FUNCTION("Function", "function", "fun"),//
 
     ABSOLUTE("Abs", "abs"), Match("Match", "match"),//
     LEFT_PRIORITY("("), RIGHT_PRIORITY(")"),//
@@ -66,8 +67,13 @@ public enum OperationType {
     MEAN("Mean", "mean", "Avg", "avg"), MEDIAN("Median", "median"), MODE("Mode", "mode"),//
     SUM("Sum", "sum"), VALUE("Value", "value"), COLON(";"),//
 
+
+    PAIR("Pair", "pair"), KEYS("Keys", "keys"),
+
     // initialization
-    DEF("Def", "def"), LET("let", "Let"), PUT_EXP("PutExp", "putExp"), GET_EXP("GetExp", "getExp");
+    DEF("Def", "def"), LET("let", "Let"),
+
+    PUT_EXP("PutExp", "putExp"), GET_EXP("GetExp", "getExp");
 
 
     private List<String> symbols = new ArrayList<>();
