@@ -8,11 +8,9 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.literal.BooleanLiteral;
-import org.dvare.expression.literal.ListLiteral;
-import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.literal.*;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.list.MapOperation;
@@ -42,11 +40,11 @@ public class Match extends OperationExpression {
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contextss) throws ExpressionParseException {
 
-        int i = findNextExpression(tokens, pos + 1, stack, expressionBinding, contextss);
+        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contextss);
 
         computeParam(this.leftOperand);
         stack.push(this);
-        return i;
+        return pos;
     }
 
 
@@ -176,19 +174,24 @@ public class Match extends OperationExpression {
         }
 
 
-        Boolean anyMatch = false;
+        Boolean fullSetMatchWithParam = false;
         if (expressions.size() > 2) {
-
             if (expressions.get(2) instanceof BooleanLiteral) {
-                anyMatch = ((BooleanLiteral) expressions.get(2)).getValue();
+                fullSetMatchWithParam = ((BooleanLiteral) expressions.get(2)).getValue();
             }
         }
 
 
+        return match(dataType, values, matchParams, fullSetMatchWithParam);
+    }
+
+
+    private LiteralExpression match(DataType dataType, List values, List matchParams, Boolean fullSetMatchWithParam) throws InterpretException {
+
         if (dataType != null && matchParams != null && values != null) {
 
             if (matchParams.isEmpty() && values.isEmpty()) {
-                return true;
+                return LiteralType.getLiteralExpression(true, BooleanType.class);
             }
 
 
@@ -206,30 +209,25 @@ public class Match extends OperationExpression {
                     try {
                         List<String> combStringList = (List<String>) matchParams;
 
-
                         List<String> combSet = new ArrayList<>();
                         for (String value : combStringList) {
-
-
                             if (value != null) {
                                 combSet.add(TrimString.trim(value));
                             } else {
                                 combSet.add(null);
                             }
-
-
                         }
 
-                        if (anyMatch) {
-
+                        if (fullSetMatchWithParam) {
                             for (String value : valuesSet) {
                                 if (!combStringList.contains(value)) {
-                                    return false;
+                                    return LiteralType.getLiteralExpression(false, BooleanType.class);
                                 }
                             }
-                            return true;
+                            return LiteralType.getLiteralExpression(true, BooleanType.class);
                         } else {
-                            return valuesSet.containsAll(combSet);
+                            boolean result = valuesSet.containsAll(combSet);
+                            return LiteralType.getLiteralExpression(result, BooleanType.class);
                         }
 
 
@@ -247,22 +245,24 @@ public class Match extends OperationExpression {
                     try {
                         List<Integer> combList = (List<Integer>) matchParams;
 
-                        if (anyMatch) {
+                        if (fullSetMatchWithParam) {
                             for (Integer value : valuesSet) {
                                 if (!combList.contains(value)) {
-                                    return false;
+                                    return LiteralType.getLiteralExpression(false, BooleanType.class);
                                 }
                             }
-                            return true;
+                            return LiteralType.getLiteralExpression(true, BooleanType.class);
                         } else {
-                            return valueStringList.containsAll(combList);
+                            boolean result = valueStringList.containsAll(combList);
+                            return LiteralType.getLiteralExpression(result, BooleanType.class);
                         }
 
 
                     } catch (ClassCastException e) {
                         List<Float> combList = (List<Float>) matchParams;
 
-                        return valuesSet.containsAll(combList);
+                        boolean result = valuesSet.containsAll(combList);
+                        return LiteralType.getLiteralExpression(result, BooleanType.class);
                     }
 
                 }
@@ -278,31 +278,30 @@ public class Match extends OperationExpression {
                         List<Float> combList = (List<Float>) matchParams;
 
 
-                        if (anyMatch) {
+                        if (fullSetMatchWithParam) {
                             for (Float value : valuesSet) {
                                 if (!combList.contains(value)) {
-                                    return false;
+                                    return LiteralType.getLiteralExpression(false, BooleanType.class);
                                 }
                             }
-                            return true;
+                            return LiteralType.getLiteralExpression(true, BooleanType.class);
                         } else {
-                            return valuesSet.containsAll(combList);
+                            boolean result = valuesSet.containsAll(combList);
+                            return LiteralType.getLiteralExpression(result, BooleanType.class);
                         }
 
 
                     } catch (ClassCastException e) {
                         List<Integer> combList = (List<Integer>) matchParams;
-                        return valuesSet.containsAll(combList);
+                        boolean result = valuesSet.containsAll(combList);
+                        return LiteralType.getLiteralExpression(result, BooleanType.class);
                     }
                 }
 
             }
-
-
         }
-        return false;
+        return LiteralType.getLiteralExpression(false, BooleanType.class);
     }
-
 
     private List buildMatchParams(LiteralExpression literalExpression) {
         List matchParams = new ArrayList();

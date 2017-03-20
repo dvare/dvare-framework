@@ -10,6 +10,7 @@ import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.AggregationOperationExpression;
+import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.utility.GetExpOperation;
@@ -34,7 +35,8 @@ public class IsEmpty extends AggregationOperationExpression {
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
-        if (right instanceof ValuesOperation || right instanceof MapOperation || right instanceof GetExpOperation || right instanceof SortOperation) {
+
+        if (right instanceof PairOperation || right instanceof ListOperationExpression || right instanceof GetExpOperation) {
             OperationExpression valuesOperation = (OperationExpression) right;
             Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
             if (valuesResult instanceof ListLiteral) {

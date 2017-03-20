@@ -36,6 +36,7 @@ import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.aggregation.Semicolon;
 import org.dvare.expression.operation.utility.GetExpOperation;
 import org.dvare.expression.operation.validation.LeftPriority;
 import org.dvare.expression.operation.validation.RightPriority;
@@ -151,7 +152,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
     protected List<Object> buildValues(Expression expression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
-        if (expression instanceof ListOperationExpression || expression instanceof GetExpOperation) {
+        if (expression instanceof ListOperationExpression || expression instanceof GetExpOperation || expression instanceof Semicolon) {
             OperationExpression valuesOperation = (OperationExpression) expression;
             Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
             if (valuesResult instanceof ListLiteral) {
