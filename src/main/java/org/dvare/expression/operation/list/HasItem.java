@@ -47,9 +47,8 @@ public class HasItem extends AggregationOperationExpression {
                     Object item = literalExpression.getValue();
 
                     if (item != null && !values.isEmpty() && (dataTypeExpression.equals(literalExpression.getType()))) {
-
                         for (Object value : values) {
-                            if (value.equals(item)) {
+                            if (value != null && value.equals(item)) {
                                 return LiteralType.getLiteralExpression(true, BooleanType.class);
                             }
                         }
@@ -76,10 +75,7 @@ public class HasItem extends AggregationOperationExpression {
 
 
                     for (Object value : values) {
-
-
                         Object instance = instancesBinding.getInstance(operandType);
-
                         if (instance == null || !(instance instanceof DataRow)) {
                             DataRow dataRow = new DataRow();
                             dataRow.addData(name, value);
@@ -89,24 +85,13 @@ public class HasItem extends AggregationOperationExpression {
                             dataRow.addData(name, value);
                             instancesBinding.addInstance(operandType, dataRow);
                         }
-
-
                         Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
-
                         Boolean result = toBoolean(interpret);
-
                         if (result) {
-
-
                             return LiteralType.getLiteralExpression(true, BooleanType.class);
-
                         }
-
                     }
-
                 }
-
-
             } else if (expression instanceof LiteralExpression) {
 
 
@@ -119,7 +104,7 @@ public class HasItem extends AggregationOperationExpression {
                     if (!values.isEmpty() && (dataTypeExpression.equals(itemDataTypeExpress))) {
 
                         for (Object value : values) {
-                            if (value.equals(item)) {
+                            if (value != null && value.equals(item)) {
                                 return LiteralType.getLiteralExpression(true, BooleanType.class);
                             }
                         }
