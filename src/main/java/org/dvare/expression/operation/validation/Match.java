@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import java.util.TreeSet;
 
 @Operation(type = OperationType.Match)
 public class Match extends OperationExpression {
@@ -125,9 +124,9 @@ public class Match extends OperationExpression {
             dataType = toDataType(variableExpression.getType());
             for (Object dataRow : dataSet) {
                 variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
-                if (variableExpression.getValue() != null) {
+//                if (variableExpression.getValue() != null) {
                     values.add(variableExpression.getValue());
-                }
+//                }
             }
 
         } else if (valueParam instanceof ValuesOperation || valueParam instanceof MapOperation) {
@@ -186,6 +185,22 @@ public class Match extends OperationExpression {
     }
 
 
+/*    public static void main(String[] args) throws Exception {
+
+        Match match = new Match();
+
+        List messages = Arrays.asList("H",null, null,"V");
+        List params=Arrays.asList("H","V", null);
+
+        LiteralExpression result = match.match(DataType.StringType,messages ,params , false);
+        LiteralExpression result2 = match.match(DataType.StringType, messages,params, true);
+
+
+        System.out.println(match.toBoolean(result) && match.toBoolean(result2));
+
+    }*/
+
+
     private LiteralExpression match(DataType dataType, List values, List matchParams, Boolean fullSetMatchWithParam) throws InterpretException {
 
         if (dataType != null && matchParams != null && values != null) {
@@ -198,12 +213,6 @@ public class Match extends OperationExpression {
             switch (dataType) {
                 case StringType: {
                     List<String> valueStringList = (List<String>) values;
-                    TreeSet<String> valuesSet = new TreeSet<>();
-                    for (String value : valueStringList) {
-                        if (value != null) {
-                            valuesSet.add(TrimString.trim(value));
-                        }
-                    }
 
 
                     try {
@@ -219,14 +228,30 @@ public class Match extends OperationExpression {
                         }
 
                         if (fullSetMatchWithParam) {
-                            for (String value : valuesSet) {
+
+                            for (String value : valueStringList) {
+
+
+                                value = TrimString.trim(value);
+
                                 if (!combStringList.contains(value)) {
                                     return LiteralType.getLiteralExpression(false, BooleanType.class);
                                 }
+
+
                             }
+
                             return LiteralType.getLiteralExpression(true, BooleanType.class);
                         } else {
-                            boolean result = valuesSet.containsAll(combSet);
+                            List<String> valuesList = new ArrayList<>();
+                            for (String value : valueStringList) {
+                                if (value != null) {
+                                    valuesList.add(TrimString.trim(value));
+                                } else {
+                                    valuesList.add(null);
+                                }
+                            }
+                            boolean result = valuesList.containsAll(combSet);
                             return LiteralType.getLiteralExpression(result, BooleanType.class);
                         }
 
@@ -237,16 +262,39 @@ public class Match extends OperationExpression {
 
                 }
 
+                case BooleanType: {
+                    List<Boolean> valueStringList = (List<Boolean>) values;
+
+
+                    try {
+                        List<Boolean> combList = (List<Boolean>) matchParams;
+                        if (fullSetMatchWithParam) {
+                            for (Boolean value : valueStringList) {
+
+                                if (!combList.contains(value)) {
+                                    return LiteralType.getLiteralExpression(false, BooleanType.class);
+                                }
+                            }
+                            return LiteralType.getLiteralExpression(true, BooleanType.class);
+                        } else {
+
+                            boolean result = valueStringList.containsAll(combList);
+                            return LiteralType.getLiteralExpression(result, BooleanType.class);
+                        }
+                    } catch (ClassCastException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+
+                }
                 case IntegerType: {
                     List<Integer> valueStringList = (List<Integer>) values;
-                    TreeSet<Integer> valuesSet = new TreeSet<>();
-                    valuesSet.addAll(valueStringList);
+
 
                     try {
                         List<Integer> combList = (List<Integer>) matchParams;
 
                         if (fullSetMatchWithParam) {
-                            for (Integer value : valuesSet) {
+                            for (Integer value : valueStringList) {
                                 if (!combList.contains(value)) {
                                     return LiteralType.getLiteralExpression(false, BooleanType.class);
                                 }
@@ -261,7 +309,7 @@ public class Match extends OperationExpression {
                     } catch (ClassCastException e) {
                         List<Float> combList = (List<Float>) matchParams;
 
-                        boolean result = valuesSet.containsAll(combList);
+                        boolean result = valueStringList.containsAll(combList);
                         return LiteralType.getLiteralExpression(result, BooleanType.class);
                     }
 
@@ -271,29 +319,26 @@ public class Match extends OperationExpression {
                     List<Float> valueStringList = (List<Float>) values;
 
 
-                    TreeSet<Float> valuesSet = new TreeSet<>();
-                    valuesSet.addAll(valueStringList);
-
                     try {
                         List<Float> combList = (List<Float>) matchParams;
 
 
                         if (fullSetMatchWithParam) {
-                            for (Float value : valuesSet) {
+                            for (Float value : valueStringList) {
                                 if (!combList.contains(value)) {
                                     return LiteralType.getLiteralExpression(false, BooleanType.class);
                                 }
                             }
                             return LiteralType.getLiteralExpression(true, BooleanType.class);
                         } else {
-                            boolean result = valuesSet.containsAll(combList);
+                            boolean result = valueStringList.containsAll(combList);
                             return LiteralType.getLiteralExpression(result, BooleanType.class);
                         }
 
 
                     } catch (ClassCastException e) {
                         List<Integer> combList = (List<Integer>) matchParams;
-                        boolean result = valuesSet.containsAll(combList);
+                        boolean result = valueStringList.containsAll(combList);
                         return LiteralType.getLiteralExpression(result, BooleanType.class);
                     }
                 }
