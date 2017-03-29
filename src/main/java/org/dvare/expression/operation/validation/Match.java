@@ -125,7 +125,7 @@ public class Match extends OperationExpression {
             for (Object dataRow : dataSet) {
                 variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
 //                if (variableExpression.getValue() != null) {
-                    values.add(variableExpression.getValue());
+                values.add(variableExpression.getValue());
 //                }
             }
 
@@ -361,5 +361,24 @@ public class Match extends OperationExpression {
 
         return matchParams;
     }
+
+
+    @Override
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+
+        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append("( ");
+        if (leftOperand != null && !leftOperand.isEmpty()) {
+            for (Expression expression : leftOperand) {
+                toStringBuilder.append(expression.toString());
+                toStringBuilder.append(" , ");
+            }
+        }
+        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(" )");
+        return toStringBuilder.toString();
+    }
+
 
 }

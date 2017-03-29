@@ -206,7 +206,10 @@ public abstract class OperationExpression extends Expression {
 
 
             if (!(interpret instanceof NullLiteral) && ((LiteralExpression) interpret).getValue() != null) {
-                result = (Boolean) ((LiteralExpression) interpret).getValue();
+                Object value = ((LiteralExpression) interpret).getValue();
+                if (value instanceof Boolean) {
+                    result = (Boolean) value;
+                }
             }
 
         } else if (interpret != null && interpret instanceof Boolean) {
