@@ -89,7 +89,7 @@ public class LiteralType {
 
 
         if (type == null || type.equals(DataType.UnknownType)) {
-            throw new IllegalValueException("Unable to parse Literal " + value + " of type is Unknown Type");
+            throw new IllegalValueException("Unable to parse Literal \"" + value + "\" of type is Unknown Type");
         }
 
 
@@ -145,7 +145,7 @@ public class LiteralType {
                 break;
             }
             case RegexType: {
-                valueString = valueString.substring(1, valueString.length()).trim();
+                valueString = valueString.substring(1, valueString.length() - 1).trim();
                 literalExpression = new RegexLiteral(valueString);
                 break;
             }
@@ -267,7 +267,7 @@ public class LiteralType {
         if (value.startsWith("'") && value.endsWith("'")) {
             return DataType.StringType;
         }
-        if (value.startsWith("R'")) {
+        if (value.startsWith("{") && value.endsWith("}")) {
             return DataType.RegexType;
         }
         if (value.matches(date)) {

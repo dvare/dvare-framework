@@ -94,7 +94,141 @@ public class ExpressionTokenizer {
 
             while (tokenizer.hasNext()) {
                 String token = tokenizer.next();
-                if (validateToken(token)) {
+
+
+                if ((countOccurrences(token, '\'') == 2) && (!token.startsWith("'") || !token.endsWith("'"))) {
+
+
+                    if (!token.startsWith("'")) {
+
+                        String left = token.substring(0, token.indexOf("'"));
+                        left = left.trim();
+                        if (validateToken(left)) {
+                            tokenArray.addAll(parseToken(left));
+                        } else {
+                            if (left.isEmpty()) {
+                                tokenArray.add(left);
+                            }
+                        }
+
+                        token = token.substring(token.indexOf("'"), token.length());
+                        token = token.trim();
+
+                    }
+
+
+                    if (!token.endsWith("'")) {
+
+                        String left;
+                        if (!token.startsWith("'")) {
+                            left = token.substring(0, token.indexOf("'") + 1);
+                        } else {
+                            left = token.substring(0, token.indexOf("'", 1) + 1);
+                        }
+
+
+                        left = left.trim();
+                        if (validateToken(left)) {
+                            tokenArray.addAll(parseToken(left));
+                        } else {
+                            if (!left.isEmpty()) {
+                                tokenArray.add(left);
+                            }
+                        }
+
+
+                        String right;
+                        if (!token.startsWith("'")) {
+                            right = token.substring(token.indexOf("'") + 1, token.length());
+                        } else {
+                            right = token.substring(token.indexOf("'", 1) + 1, token.length());
+                        }
+
+
+                        right = right.trim();
+                        if (validateToken(right)) {
+                            tokenArray.addAll(parseToken(right));
+                        } else {
+                            if (!right.isEmpty()) {
+                                tokenArray.add(right);
+                            }
+                        }
+
+                    } else {
+                        if (validateToken(token)) {
+                            tokenArray.addAll(parseToken(token));
+                        } else {
+                            if (!token.isEmpty()) {
+                                tokenArray.add(token);
+                            }
+                        }
+                    }
+
+
+                } else if ((countOccurrences(token, '\'') == 1) && (!token.startsWith("'") && !token.endsWith("'"))) {
+
+
+                    String left = token.substring(0, token.indexOf("'"));
+                    left = left.trim();
+                    if (validateToken(left)) {
+                        tokenArray.addAll(parseToken(left));
+                    } else {
+                        if (left.isEmpty()) {
+                            tokenArray.add(left);
+                        }
+                    }
+
+                    token = token.substring(token.indexOf("'"), token.length());
+                    String tempToken = token.trim();
+
+
+                    while (tokenizer.hasNext()) {
+                        token = tokenizer.next();
+
+
+                        if (!token.startsWith("'") && token.endsWith("'")) {
+                            tempToken += " " + token;
+                            tokenArray.add(tempToken);
+                        } else if (!token.startsWith("'") && token.contains("'")) {
+
+
+                            left = token.substring(0, token.indexOf("'") + 1);
+                            left = left.trim();
+                            tempToken += " " + left;
+                            tokenArray.add(tempToken);
+
+                            String right = token.substring(token.indexOf("'") + 1, token.length());
+                            if (validateToken(right)) {
+                                tokenArray.addAll(parseToken(right));
+                            } else {
+                                if (right.isEmpty()) {
+                                    tokenArray.add(right);
+                                }
+                            }
+
+
+                        } else {
+                            tempToken += " " + token;
+                        }
+
+                    }
+
+                } else if ((countOccurrences(token, '\'') == 1) && (token.startsWith("'") && !token.endsWith("'"))) {
+
+                    String tempToken = token;
+
+                    while (tokenizer.hasNext()) {
+                        token = tokenizer.next();
+                        tempToken += " " + token;
+
+                        if (!token.startsWith("'") && token.endsWith("'")) {
+                            tokenArray.add(tempToken);
+                            break;
+                        }
+
+                    }
+
+                } else if (validateToken(token)) {
 
                     tokenArray.addAll(parseToken(token));
 
@@ -107,6 +241,7 @@ public class ExpressionTokenizer {
 
             }
 
+
             if (logger.isDebugEnabled()) {
                 logger.debug("tokens: {}", tokenArray);
             }
@@ -116,9 +251,24 @@ public class ExpressionTokenizer {
         return null;
     }
 
+
+    private static int countOccurrences(String haystack, char needle) {
+        int count = 0;
+        for (int i = 0; i < haystack.length(); i++) {
+            if (haystack.charAt(i) == needle) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     private static boolean validateToken(String token) {
 
         if (token.length() < 1) {
+            return false;
+        }
+
+        if (token.startsWith("'") && token.endsWith("'")) {
             return false;
         }
 

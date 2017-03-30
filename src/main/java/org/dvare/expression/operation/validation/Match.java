@@ -375,7 +375,7 @@ public class Match extends OperationExpression {
                 toStringBuilder.append(" , ");
             }
         }
-        toStringBuilder.append(operationType.getSymbols().get(0));
+
         toStringBuilder.append(" )");
         return toStringBuilder.toString();
     }

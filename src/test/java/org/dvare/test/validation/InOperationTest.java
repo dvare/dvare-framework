@@ -49,7 +49,7 @@ public class InOperationTest extends TestCase {
                 " And Variable4 in [true,false]" +
                /* " And Variable5 in [12-05-2016,13-05-2016]" +*/
                /* " And Variable6 in [12-05-2016-15:30:00,13-05-2016-15:30:00]" +*/
-                " And Variable7 in [R'B1.*',R'A1.*']";
+                " And Variable7 in [{B1.*},{A1.*}]";
 
         Expression expression = factory.getParser().fromString(exp, InOperation.class);
         RuleBinding rule = new RuleBinding(expression);
@@ -103,7 +103,7 @@ public class InOperationTest extends TestCase {
                 " And Variable4 notIn [true,true]" +
                 " And Variable5 notIn [16-05-2016,14-05-2016]" +
                 " And Variable6 notIn [16-05-2016-15:30:00,14-05-2016-15:30:00]" +
-                " And Variable7 notIn [R'B1.*',R'C1.*']";
+                " And Variable7 notIn [{B1.*},{C1.*}]";
 
         Expression expression = factory.getParser().fromString(exp, InOperation.class);
         RuleBinding rule = new RuleBinding(expression);

@@ -175,16 +175,10 @@ public class ExpressionParser {
             Expression expression = stack.pop();
 
 
-
-           /* if (expression instanceof OperationExpression) {
-                OperationExpression operation = (OperationExpression) expression;
-                Node<String> root = operation.AST();
-                TreePrinter.printNode(root);
-            }*/
             return expression;
 
         } else {
-            String message = String.format("Expression is null or Empty");
+            String message = "Expression is null or Empty";
             logger.error(message);
             throw new ExpressionParseException(message);
         }

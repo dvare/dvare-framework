@@ -31,7 +31,10 @@ import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.parser.ExpressionTokenizer;
 import org.dvare.test.dataobjects.Parenthesis;
+
+import java.util.Arrays;
 
 public class ParenthesisTest extends TestCase {
 
@@ -63,5 +66,49 @@ public class ParenthesisTest extends TestCase {
         assertTrue(result);
     }
 
+
+    public void testApp1() throws ExpressionParseException, InterpretException {
+
+
+        String expr = "Variable1 = ('dvare(framework)')";
+
+        String tokens[] = ExpressionTokenizer.toToken(expr);
+
+        assertEquals(tokens.length, 5);
+
+    }
+
+
+    public void testApp3() throws ExpressionParseException, InterpretException {
+
+
+        String expr = "Variable1 = ('dvare (framework)')";
+        String tokens[] = ExpressionTokenizer.toToken(expr);
+
+        assertEquals(tokens.length, 5);
+        assertEquals(Arrays.asList(tokens), Arrays.asList("Variable1", "=", "(", "'dvare (framework)'", ")"));
+
+    }
+
+    public void testApp2() throws ExpressionParseException, InterpretException {
+
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String expr = "Variable1 = 'dvare(framework)' and Variable2 = 'dvare framework'";
+
+        Expression expression = factory.getParser().fromString(expr, Parenthesis.class);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        Parenthesis parenthesis = new Parenthesis();
+        parenthesis.setVariable1("dvare(framework)");
+        parenthesis.setVariable2("dvare framework");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, parenthesis);
+        assertTrue(result);
+    }
 
 }
