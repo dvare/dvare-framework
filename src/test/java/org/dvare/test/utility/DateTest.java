@@ -14,9 +14,51 @@ import org.junit.Assert;
 
 public class DateTest extends TestCase {
 
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void testApp1() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "date ( 12-05-2016 , dd-MM-yyyy ) < today()";
+        Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
+        RuleBinding rule = new RuleBinding(expression);
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
+        Assert.assertTrue(result);
+    }
+
+
+    public void testApp2() throws ExpressionParseException, InterpretException {
+        RuleConfiguration factory = new RuleConfiguration();
+        String exp = "date ( 12-05-2016 , dd-MM-yyyy )->addYears(1) = date ( 12-05-2017 , dd-MM-yyyy )";
+        Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
+        RuleBinding rule = new RuleBinding(expression);
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
+        Assert.assertTrue(result);
+    }
+
+    public void testApp3() throws ExpressionParseException, InterpretException {
+        RuleConfiguration factory = new RuleConfiguration();
+        String exp = "date ( 12-05-2016 , dd-MM-yyyy )->addYears(1)->addMonths(2) = date ( 12-07-2017 , dd-MM-yyyy )";
+        Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
+        RuleBinding rule = new RuleBinding(expression);
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
+        Assert.assertTrue(result);
+    }
+
+    public void testApp4() throws ExpressionParseException, InterpretException {
+        RuleConfiguration factory = new RuleConfiguration();
+        String exp = "date ( 12-05-2016 , dd-MM-yyyy )->addYears(1)->addMonths(2)->addDays(10) = date ( 22-07-2017 , dd-MM-yyyy )";
+        Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
+        RuleBinding rule = new RuleBinding(expression);
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
+        Assert.assertTrue(result);
+    }
+
+
+    public void testApp5() throws ExpressionParseException, InterpretException {
+        RuleConfiguration factory = new RuleConfiguration();
+        String exp = "date ( 12-05-2016 , dd-MM-yyyy )->addYears(1)->addMonths(2)->addDays(10) ->getYear() = 2017";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
         RuleBinding rule = new RuleBinding(expression);
         RuleEvaluator evaluator = factory.getEvaluator();

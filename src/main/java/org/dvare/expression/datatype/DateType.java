@@ -27,10 +27,12 @@ import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.arithmetic.Subtract;
 import org.dvare.expression.operation.validation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -147,6 +149,21 @@ public class DateType extends DataTypeExpression {
             return (LocalDate) value;
         }
         return null;
+    }
+
+
+    @OperationMapping(operations = {
+            Subtract.class
+    })
+    public LocalDate sub(LiteralExpression left, LiteralExpression right) {
+        LocalDate leftValue = (LocalDate) left.getValue();
+        LocalDate rightValue = (LocalDate) right.getValue();
+        Period period = Period.between(rightValue, leftValue);
+        int year = period.getYears() > 0 ? period.getYears() : -1 * period.getYears();
+        int month = period.getMonths() > 0 ? period.getMonths() : -1 * period.getMonths();
+        int days = period.getDays() > 0 ? period.getDays() : -1 * period.getDays();
+        return LocalDate.of(year, month, days);
+
     }
 
     private List<LocalDate> buildLocalDateList(List<?> objectsList) {

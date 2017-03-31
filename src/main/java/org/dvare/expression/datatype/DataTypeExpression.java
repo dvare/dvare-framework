@@ -31,6 +31,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
+import org.dvare.util.DataTypeMapping;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -64,11 +65,15 @@ public abstract class DataTypeExpression extends Expression {
                 Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
                 Object result = method.invoke(this, left, right);
 
-                DataType type = LiteralType.computeDataType(result.toString());
+                DataType type = DataTypeMapping.getTypeMapping(result.getClass());
+
                 if (type == null) {
-                    type = this.getDataType();
+                    type = LiteralType.computeDataType(result.toString());
+                    if (type == null) {
+                        type = this.getDataType();
+                    }
                 }
-                return LiteralType.getLiteralExpression(result.toString(), type);
+                return LiteralType.getLiteralExpression(result, type);
             }
             return new NullLiteral();
 

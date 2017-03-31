@@ -23,6 +23,8 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.utility;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
@@ -361,11 +363,27 @@ public class Function extends OperationExpression {
             Object value;
             if (functionClass != null && classInstance == null) {
                 classInstance = functionClass.newInstance();
-                Method method = functionClass.getMethod(functionName, params);
-                value = method.invoke(classInstance, values);
+                Method method = MethodUtils.getAccessibleMethod(functionClass, functionName, params);
+                if (method == null) {
+                    method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), castParams(params));
+                }
+                if (method != null) {
+                    value = method.invoke(classInstance, values);
+                } else {
+                    throw new InterpretException("Method Param not match");
+                }
             } else {
-                Method method = classInstance.getClass().getMethod(functionName, params);
-                value = method.invoke(classInstance, values);
+
+                Method method = MethodUtils.getAccessibleMethod(classInstance.getClass(), functionName, params);
+                if (method == null) {
+                    method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), castParams(params));
+                }
+
+                if (method != null) {
+                    value = method.invoke(classInstance, values);
+                } else {
+                    throw new InterpretException("Method Param not match");
+                }
             }
 
             if (value == null) {
@@ -396,6 +414,22 @@ public class Function extends OperationExpression {
 
     }
 
+    private Class[] castParams(Class[] params) {
+        for (int i = 0; i < params.length; i++) {
+
+            if (!params[i].isPrimitive()) {
+                try {
+                    Class aClass = (Class) FieldUtils.readStaticField(params[i], "TYPE", true);
+                    if (aClass != null) {
+                        params[i] = aClass;
+                    }
+                } catch (IllegalAccessException e) {
+                }
+            }
+
+        }
+        return params;
+    }
 
     @Override
     public String toString() {

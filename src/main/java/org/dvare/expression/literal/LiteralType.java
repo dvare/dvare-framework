@@ -46,6 +46,9 @@ public class LiteralType {
     public final static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     public final static DateTimeFormatter defaultFormat = DateTimeFormatter.ofPattern("E MMM dd hh:mm:ss Z yyyy");
     public static String date = "\\s*(0[1-9]|1[0-9]|2[0-9]|3[0-1])-(0[1-9]|1[0-2])-([1-9][0-9][0-9][0-9])\\s*";
+    public static String date2 = "\\s*([1-9][0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])\\s*";
+
+
     public static String dateTime = "\\s*(0[1-9]|1[0-9]|2[0-9]|3[0-1])-(0[1-9]|1[0-2])-([1-9][0-9][0-9][0-9])\\-{1}(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])\\s*";
     private static Logger logger = LoggerFactory.getLogger(LiteralType.class);
 
@@ -151,7 +154,7 @@ public class LiteralType {
             }
 
             case DateTimeType: {
-                LocalDateTime localDateTime = null;
+                LocalDateTime localDateTime;
                 try {
 
                     if (value instanceof LocalDateTime) {
@@ -254,6 +257,9 @@ public class LiteralType {
         }
     }
 
+    public static void main(String arfs[]) {
+
+    }
 
     public static DataType computeDataType(String value) {
 
@@ -270,13 +276,22 @@ public class LiteralType {
         if (value.startsWith("{") && value.endsWith("}")) {
             return DataType.RegexType;
         }
-        if (value.matches(date)) {
+        if (value.matches(date) || value.matches(date2)) {
             return DataType.DateType;
         }
+
 
         if (value.matches(dateTime)) {
             return DataType.DateTimeType;
         }
+
+        try {
+            LocalDate.parse(value, DateTimeFormatter.ISO_DATE);
+            return DataType.DateType;
+        } catch (DateTimeParseException e) {
+
+        }
+
 
         if (value.contains(".")) {
             try {

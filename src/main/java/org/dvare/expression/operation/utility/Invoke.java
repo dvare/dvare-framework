@@ -23,6 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation.utility;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
@@ -166,29 +167,59 @@ public class Invoke extends Function {
 
 
             Method method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName());
-            List<DataType> parameters = new ArrayList<>();
-            for (Class type : method.getParameterTypes()) {
-                DataType dataType = DataTypeMapping.getTypeMapping(type);
-                parameters.add(dataType);
-            }
 
-
-            Class returnClass = method.getReturnType();
-            if (returnClass != null && !returnClass.equals(Void.class)) {
-
-                DataType returnType = DataTypeMapping.getTypeMapping(returnClass);
-
-                Class dataTypeExpressionClass = DataTypeMapping.getDataTypeClass(returnType);
-                if (dataTypeExpressionClass != null) {
-
-                    functionBinding.setReturnType(dataTypeExpressionClass);
-
+            if (method == null) {
+                List<Class> parameters = new ArrayList<>();
+                for (Expression expression : functionExpression.getParameters()) {
+                    Object interpret = expression.interpret(expressionBinding, instancesBinding);
+                    if (interpret instanceof LiteralExpression) {
+                        Object value1 = ((LiteralExpression) interpret).getValue();
+                        parameters.add(value1.getClass());
+                    }
                 }
 
+                Class[] params = parameters.toArray(new Class[parameters.size()]);
+
+                method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), params);
+
+                if (method == null) {
+                    for (int i = 0; i < params.length; i++) {
+
+                        if (!params[i].isPrimitive()) {
+                            try {
+                                Class aClass = (Class) FieldUtils.readStaticField(params[i], "TYPE", true);
+                                params[i] = aClass;
+                            } catch (IllegalAccessException e) {
+                            }
+                        }
+                    }
+                    method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), params);
+                }
             }
 
+            if (method != null) {
+                List<DataType> parameters = new ArrayList<>();
+                for (Class type : method.getParameterTypes()) {
+                    DataType dataType = DataTypeMapping.getTypeMapping(type);
+                    parameters.add(dataType);
+                }
+                functionBinding.setParameters(parameters);
+                Class returnClass = method.getReturnType();
+                if (returnClass != null && !returnClass.equals(Void.class)) {
 
-            functionBinding.setParameters(parameters);
+                    DataType returnType = DataTypeMapping.getTypeMapping(returnClass);
+
+                    Class dataTypeExpressionClass = DataTypeMapping.getDataTypeClass(returnType);
+                    if (dataTypeExpressionClass != null) {
+
+                        functionBinding.setReturnType(dataTypeExpressionClass);
+
+                    }
+
+                }
+            } else {
+                throw new InterpretException("Method Param not match");
+            }
 
 
         }
