@@ -160,8 +160,8 @@ public class DateType extends DataTypeExpression {
         LocalDate rightValue = (LocalDate) right.getValue();
         Period period = Period.between(rightValue, leftValue);
         int year = period.getYears() > 0 ? period.getYears() : -1 * period.getYears();
-        int month = period.getMonths() > 0 ? period.getMonths() : -1 * period.getMonths();
-        int days = period.getDays() > 0 ? period.getDays() : -1 * period.getDays();
+        int month = period.getMonths() > 0 ? period.getMonths() : -1 * period.getMonths() > 0 ? -1 * period.getMonths() : 1;
+        int days = period.getDays() > 0 ? period.getDays() : -1 * period.getDays() > 0 ? -1 * period.getDays() : 1;
         return LocalDate.of(year, month, days);
 
     }

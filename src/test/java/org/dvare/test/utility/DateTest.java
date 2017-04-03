@@ -58,7 +58,18 @@ public class DateTest extends TestCase {
 
     public void testApp5() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
-        String exp = "date ( 12-05-2016 , dd-MM-yyyy )->addYears(1)->addMonths(2)->addDays(10) ->getYear() = 2017";
+        String exp = "date ( 12-05-2016 , dd-MM-yyyy )->addYears(1)->addMonths(2)->addDays(10) ->getYears() = 2017";
+        Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
+        RuleBinding rule = new RuleBinding(expression);
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
+        Assert.assertTrue(result);
+    }
+
+
+    public void testApp6() throws ExpressionParseException, InterpretException {
+        RuleConfiguration factory = new RuleConfiguration();
+        String exp = "(date ( 12-05-2016 , dd-MM-yyyy ) - date ( 12-05-1990 , dd-MM-yyyy )) ->getYears() = 26";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
         RuleBinding rule = new RuleBinding(expression);
         RuleEvaluator evaluator = factory.getEvaluator();

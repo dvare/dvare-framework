@@ -39,12 +39,12 @@ import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
-@Operation(type = OperationType.GET_YEAR)
-public class getYear extends ChainOperationExpression {
+@Operation(type = OperationType.GET_YEARS)
+public class GetYear extends ChainOperationExpression {
 
 
-    public getYear() {
-        super(OperationType.GET_YEAR);
+    public GetYear() {
+        super(OperationType.GET_YEARS);
     }
 
 

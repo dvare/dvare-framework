@@ -48,7 +48,7 @@ public enum OperationType {
 
     TO_INTEGER("toInteger", "ToInteger"), TO_STRING("toString", "ToString"),
     TO_DATE("ToDate", "toDate"), ADD_YEARS("AddYears", "addYears"), ADD_MONTHS("AddMonths", "addMonths"), ADD_DAYS("AddDays", "addDays"),//
-    GET_YEAR("GetYear", "getYear"), //
+    GET_YEARS("GetYears", "getYears"), //
 
     SUBSTRING("substring", "Substring"), APPEND("append", "Append"), PREPEND("prepend", "Prepend"), CONTAINS("contains", "Contains"),//
     STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
