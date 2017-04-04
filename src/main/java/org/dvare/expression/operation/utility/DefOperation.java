@@ -76,7 +76,6 @@ public class DefOperation extends OperationExpression {
                         throw new ExpressionParseException(tokenType.type + " already contains " + tokenType.token + "variable ");
                     }
 
-
                 } else {
                     TypeBinding typeBinding = new TypeBinding();
                     typeBinding.addTypes(tokenType.token, dataType);
@@ -87,6 +86,8 @@ public class DefOperation extends OperationExpression {
                 VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, dataType, tokenType.type);
                 stack.push(variableExpression);
 
+            } else {
+                throw new ExpressionParseException("variable type not found");
             }
         }
 

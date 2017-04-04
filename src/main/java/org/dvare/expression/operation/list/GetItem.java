@@ -44,7 +44,7 @@ public class GetItem extends AggregationOperationExpression {
                 }
 
 
-            } else if (expression instanceof EqualityOperationExpression) {
+            } else if (expression instanceof EqualityOperationExpression || expression instanceof ChainOperationExpression) {
 
 
                 OperationExpression operationExpression = (OperationExpression) expression;

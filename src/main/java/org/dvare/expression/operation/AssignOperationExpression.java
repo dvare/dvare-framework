@@ -15,14 +15,15 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.aggregation.Semicolon;
-import org.dvare.expression.veriable.VariableExpression;
-import org.dvare.expression.veriable.VariableType;
+import org.dvare.expression.veriable.*;
 import org.dvare.parser.ExpressionTokenizer;
 import org.dvare.util.TrimString;
 import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 @Operation(type = OperationType.ASSIGN)
@@ -144,12 +145,10 @@ public class AssignOperationExpression extends OperationExpression {
 
             if (variable.getType().isAnnotationPresent(Type.class)) {
                 Type type = (Type) variable.getType().getAnnotation(Type.class);
-
-
                 DataType dataType = type.dataType();
 
 
-                aggregation = updateValue(aggregation, dataType, variable.getName(), literalExpression);
+                aggregation = updateValue(aggregation, dataType, variable, literalExpression);
                 instancesBinding.addInstance(variable.getOperandType(), aggregation);
             }
         }
@@ -157,37 +156,80 @@ public class AssignOperationExpression extends OperationExpression {
         return instancesBinding;
     }
 
-    private Object updateValue(Object aggregation, DataType dataType, String variableName, LiteralExpression<?> literalExpression) throws InterpretException {
+    private Object updateValue(Object aggregation, DataType dataType, VariableExpression variableExpression, LiteralExpression<?> literalExpression) throws InterpretException {
+        String variableName = variableExpression.getName();
         Object value = literalExpression.getValue();
         if (value != null) {
             switch (dataType) {
                 case IntegerType: {
-                    if (value instanceof Integer) {
-                        aggregation = setValue(aggregation, variableName, value);
-                    } else {
-                        aggregation = setValue(aggregation, variableName, new Integer("" + value));
+                    if (variableExpression instanceof ListVariable) {
+                        if (value instanceof List) {
+                            aggregation = setValue(aggregation, variableName, value);
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            if (value instanceof Integer) {
+
+                                values.add(value);
+                            } else {
+                                values.add(new Integer("" + value));
+                            }
+                            aggregation = setValue(aggregation, variableName, values);
+                        }
+
+                    } else if (variableExpression instanceof IntegerVariable) {
+                        if (value instanceof Integer) {
+                            aggregation = setValue(aggregation, variableName, value);
+                        } else {
+                            aggregation = setValue(aggregation, variableName, new Integer("" + value));
+                        }
                     }
                     break;
                 }
 
                 case FloatType: {
-                    if (value instanceof Float) {
+                    if (variableExpression instanceof ListVariable) {
+                        if (value instanceof List) {
+                            aggregation = setValue(aggregation, variableName, value);
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            if (value instanceof Float) {
 
-                        aggregation = setValue(aggregation, variableName, literalExpression.getValue());
-                    } else {
-                        aggregation = setValue(aggregation, variableName, new Float("" + value));
+                                values.add(value);
+                            } else {
+                                values.add(new Float("" + value));
+                            }
+                            aggregation = setValue(aggregation, variableName, values);
+                        }
+
+                    } else if (variableExpression instanceof FloatVariable) {
+                        if (value instanceof Float) {
+
+                            aggregation = setValue(aggregation, variableName, literalExpression.getValue());
+                        } else {
+                            aggregation = setValue(aggregation, variableName, new Float("" + value));
+                        }
                     }
                     break;
                 }
 
                 case StringType: {
-                    if (value instanceof String) {
+                    if (variableExpression instanceof ListVariable) {
+                        if (value instanceof List) {
+                            aggregation = setValue(aggregation, variableName, value);
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            values.add(value);
+                            aggregation = setValue(aggregation, variableName, values);
+                        }
 
-                        value = TrimString.trim((String) value);
-                        aggregation = setValue(aggregation, variableName, value);
-                    } else {
-                        value = TrimString.trim(value.toString());
-                        aggregation = setValue(aggregation, variableName, value);
+                    } else if (variableExpression instanceof StringVariable) {
+                        if (value instanceof String) {
+                            value = TrimString.trim((String) value);
+                            aggregation = setValue(aggregation, variableName, value);
+                        } else {
+                            value = TrimString.trim(value.toString());
+                            aggregation = setValue(aggregation, variableName, value);
+                        }
                     }
                     break;
                 }

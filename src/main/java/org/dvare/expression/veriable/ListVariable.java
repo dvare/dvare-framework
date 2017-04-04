@@ -25,18 +25,20 @@ package org.dvare.expression.veriable;
 
 
 import org.dvare.expression.datatype.DataTypeExpression;
-import org.dvare.expression.datatype.FloatType;
 
 import java.util.List;
 
 public class ListVariable extends VariableExpression<List> {
 
     public ListVariable(String name, Class<? extends DataTypeExpression> type) {
-        super(name, FloatType.class);
+        super(name, type);
     }
 
+    public boolean isEmpty() {
+        return getSize() < 1;
+    }
 
-    public Integer getListSize() {
+    public Integer getSize() {
         return value != null ? value.size() : 0;
     }
 

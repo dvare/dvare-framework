@@ -12,6 +12,7 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
 
@@ -66,7 +67,10 @@ public class Semicolon extends OperationExpression {
             OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
                 pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
-                return pos;
+                if (!(stack.peek() instanceof VariableExpression)) {
+                    return pos;
+                }
+
 
             }
         }

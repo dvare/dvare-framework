@@ -84,7 +84,7 @@ public class ForAllOperationTest extends TestCase {
     }
 
 
-    public void testApp01() throws ExpressionParseException, InterpretException, ParseException {
+    public void testApp1() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -123,6 +123,46 @@ public class ForAllOperationTest extends TestCase {
         Assert.assertTrue(result);
 
     }
+
+   /* public void testApp2() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String exp = "self.Variable1->forAll temp.variableItem temp.variableItem->contains('D') endForAll";
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(ForEachOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+        Expression expression = factory.getParser().fromString(exp, contexts);
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        List<ForEachOperation> dataSet = new ArrayList<>();
+
+
+        ForEachOperation eachOperation1 = new ForEachOperation();
+        eachOperation1.setVariable1("D81");
+        dataSet.add(eachOperation1);
+
+        ForEachOperation eachOperation2 = new ForEachOperation();
+        eachOperation2.setVariable1("D45F");
+        dataSet.add(eachOperation2);
+
+        ForEachOperation eachOperation3 = new ForEachOperation();
+        eachOperation3.setVariable1("D89");
+        dataSet.add(eachOperation3);
+
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        Assert.assertTrue(result);
+
+    }*/
 
 
 }

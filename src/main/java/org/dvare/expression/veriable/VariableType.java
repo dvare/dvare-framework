@@ -37,7 +37,9 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class VariableType {
     private static Logger logger = LoggerFactory.getLogger(VariableType.class);
@@ -157,7 +159,18 @@ public class VariableType {
             DataType dataType = type.dataType();
             switch (dataType) {
                 case BooleanType: {
-                    if (variable instanceof BooleanVariable) {
+                    if (variable instanceof ListVariable) {
+                        ListVariable listVariable = (ListVariable) variable;
+                        if (value instanceof List) {
+                            listVariable.setValue((List) value);
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            if (value instanceof Boolean) {
+                                values.add(value);
+                            }
+                            listVariable.setValue(values);
+                        }
+                    } else if (variable instanceof BooleanVariable) {
                         BooleanVariable booleanVariable = (BooleanVariable) variable;
                         if (value instanceof Boolean) {
                             booleanVariable.setValue((Boolean) value);
@@ -173,7 +186,20 @@ public class VariableType {
                 }
 
                 case FloatType: {
-                    if (variable instanceof FloatVariable) {
+                    if (variable instanceof ListVariable) {
+                        ListVariable listVariable = (ListVariable) variable;
+                        if (value instanceof List) {
+                            listVariable.setValue((List) value);
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            if (value instanceof Float) {
+                                values.add(value);
+                            } else {
+                                values.add(Float.parseFloat(value.toString()));
+                            }
+                            listVariable.setValue(values);
+                        }
+                    } else if (variable instanceof FloatVariable) {
                         FloatVariable floatVariable = (FloatVariable) variable;
                         try {
                             if (value instanceof Float) {
@@ -197,7 +223,20 @@ public class VariableType {
                     break;
                 }
                 case IntegerType: {
-                    if (variable instanceof IntegerVariable) {
+                    if (variable instanceof ListVariable) {
+                        ListVariable listVariable = (ListVariable) variable;
+                        if (value instanceof List) {
+                            listVariable.setValue((List) value);
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            if (value instanceof Integer) {
+                                values.add(value);
+                            } else {
+                                values.add(Integer.parseInt((String) value));
+                            }
+                            listVariable.setValue(values);
+                        }
+                    } else if (variable instanceof IntegerVariable) {
                         IntegerVariable integerVariable = (IntegerVariable) variable;
                         try {
                             if (value instanceof Integer) {
@@ -220,7 +259,16 @@ public class VariableType {
                     break;
                 }
                 case StringType: {
-                    if (variable instanceof StringVariable) {
+                    if (variable instanceof ListVariable) {
+                        ListVariable listVariable = (ListVariable) variable;
+                        if (value instanceof List) {
+                            listVariable.setValue((List) value);
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            values.add(value);
+                            listVariable.setValue(values);
+                        }
+                    } else if (variable instanceof StringVariable) {
                         StringVariable stringVariable = (StringVariable) variable;
                         if (value instanceof String) {
                             stringVariable.setValue((String) value);
@@ -231,7 +279,18 @@ public class VariableType {
                     break;
                 }
                 case DateTimeType: {
-                    if (variable instanceof DateTimeVariable) {
+                    if (variable instanceof ListVariable) {
+                        ListVariable listVariable = (ListVariable) variable;
+                        if (value instanceof List) {
+                            listVariable.setValue((List) value);
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            if (value instanceof LocalDateTime) {
+                                values.add(value);
+                            }
+                            listVariable.setValue(values);
+                        }
+                    } else if (variable instanceof DateTimeVariable) {
                         DateTimeVariable dateTimeVariable = (DateTimeVariable) variable;
                         LocalDateTime localDateTime = null;
                         if (value instanceof LocalDateTime) {
@@ -264,8 +323,18 @@ public class VariableType {
                     break;
                 }
                 case DateType: {
-
-                    if (variable instanceof DateVariable) {
+                    if (variable instanceof ListVariable) {
+                        ListVariable listVariable = (ListVariable) variable;
+                        if (value instanceof List) {
+                            listVariable.setValue((List) value);
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            if (value instanceof LocalDate) {
+                                values.add(value);
+                            }
+                            listVariable.setValue(values);
+                        }
+                    } else if (variable instanceof DateVariable) {
                         DateVariable dateVariable = (DateVariable) variable;
 
                         LocalDate localDate = null;
@@ -301,8 +370,18 @@ public class VariableType {
                 }
 
                 case SimpleDateType: {
-
-                    if (variable instanceof SimpleDateVariable) {
+                    if (variable instanceof ListVariable) {
+                        ListVariable listVariable = (ListVariable) variable;
+                        if (value instanceof List) {
+                            listVariable.setValue((List) value);
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            if (value instanceof Date) {
+                                values.add(value);
+                            }
+                            listVariable.setValue(values);
+                        }
+                    } else if (variable instanceof SimpleDateVariable) {
                         SimpleDateVariable dateVariable = (SimpleDateVariable) variable;
 
                         Date date = null;
@@ -348,25 +427,7 @@ public class VariableType {
                     break;
                 }
 
-                /*case BooleanListType: {
-                    if (value instanceof Boolean[]) {
-                        variable.setValue((Boolean[]) value);
-                    } else {
-                        if (value.toString().equals("") || value == null) {
-                            variable.setValue(new Boolean[]{Boolean.valueOf(false)});
-                        } else {
-                            String tokens[] = value.toString().split(",");
-                            Boolean[] values = new Boolean[tokens.length];
-                            int index = 0;
-                            for (String token : tokens) {
-                                values[index++] = Boolean.parseBoolean((String) token);
-                            }
 
-                            variable.setValue(values);
-                        }
-                    }
-                    break;
-                }*/
             }
 
         }

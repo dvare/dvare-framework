@@ -15,7 +15,9 @@ import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
+import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,20 +71,32 @@ public class ValuesOperation extends ListOperationExpression {
 
         if (left instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) left;
-            dataTypeExpression = variableExpression.getType();
-            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-            List dataSet;
-            if (instance instanceof List) {
-                dataSet = (List) instance;
+
+            if (variableExpression instanceof ListVariable) {
+                dataTypeExpression = variableExpression.getType();
+                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+                variableExpression = VariableType.setVariableValue(variableExpression, instance);
+                values = ((ListVariable) variableExpression).getValue();
+
             } else {
-                dataSet = new ArrayList<>();
-                dataSet.add(instance);
+
+                dataTypeExpression = variableExpression.getType();
+                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+                List dataSet;
+                if (instance instanceof List) {
+                    dataSet = (List) instance;
+                } else {
+                    dataSet = new ArrayList<>();
+                    dataSet.add(instance);
+                }
+                values = new ArrayList<>();
+                for (Object object : dataSet) {
+                    Object value = getValue(object, variableExpression.getName());
+                    values.add(value);
+                }
+
             }
-            values = new ArrayList<>();
-            for (Object object : dataSet) {
-                Object value = getValue(object, variableExpression.getName());
-                values.add(value);
-            }
+
 
         } else if (left instanceof ChainOperationExpression) {
             ChainOperationExpression operationExpression = (ChainOperationExpression) left;
