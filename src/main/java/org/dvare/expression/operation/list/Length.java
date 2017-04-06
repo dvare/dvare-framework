@@ -6,13 +6,11 @@ import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.IntegerType;
-import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.utility.GetExpOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +32,13 @@ public class Length extends AggregationOperationExpression {
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
-        if (right instanceof ValuesOperation || right instanceof MapOperation || right instanceof GetExpOperation || right instanceof SortOperation) {
-            OperationExpression valuesOperation = (OperationExpression) right;
-            Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
-            if (valuesResult instanceof ListLiteral) {
-                ListLiteral listLiteral = (ListLiteral) valuesResult;
-                return LiteralType.getLiteralExpression(listLiteral.getSize(), IntegerType.class);
+        if (right instanceof OperationExpression) {
+
+            List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
+            if (values != null) {
+                return LiteralType.getLiteralExpression(values.size(), IntegerType.class);
             }
+
         } else if (right instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) right;
 
