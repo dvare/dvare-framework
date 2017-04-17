@@ -3,52 +3,18 @@ A Lightweight Java business rule expression language.
 [http://dvare.org](http://dvare.org)
 
 
-## Example
-
-##### Arithmetic Operation..
-
-```java
-public class ArithmeticOperationTest {
-
-    
-    public void testApp8() throws ExpressionParseException, InterpretException {
-
-        RuleConfiguration factory = new RuleConfiguration();
-        String expr = "Variable5->substring(2,2)->toInteger() between [80,90] and Variable5->substring(3,2)->toInteger() in [45,46]";
-        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
-        RuleBinding rule = new RuleBinding(expression);
-        ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
-        arithmeticOperation.setVariable5("D845");
-
-        RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(rule, arithmeticOperation);
-        assertTrue(result);
-    }
- }
-```
-
 ## Current version
 
-* The current stable version is `1.4` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|1.4|) [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.dvare/dvare-framework/badge.svg)](http://www.javadoc.io/doc/org.dvare/dvare-framework)
-* The current snapshot version is `2.0-SNAPSHOT` : [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework) [![Coverage Status](https://coveralls.io/repos/github/dvare/dvare-framework/badge.svg?branch=master)](https://coveralls.io/github/dvare/dvare-framework?branch=master)
-
-In order to use snapshot versions, you need to add the following maven repository in your `pom.xml`:
-
-```xml
-<repository>
-    <id>ossrh</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-</repository>
-```
-
+* The current stable version is `2.0` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|2.0|) [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.dvare/dvare-framework/badge.svg)](http://www.javadoc.io/doc/org.dvare/dvare-framework)
 
  Maven dependency:
+ 
 ```xml
 <dependencies>
         <dependency>
             <groupId>org.dvare</groupId>
             <artifactId>dvare-framework</artifactId>
-            <version>1.4</version>
+            <version>2.0</version>
         </dependency>         
 </dependencies>
 ```
