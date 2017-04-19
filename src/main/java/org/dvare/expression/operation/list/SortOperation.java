@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +43,7 @@ public class SortOperation extends ListOperationExpression {
             }
 
         }
-        return 0;
+        return -1;
     };
 
 
@@ -64,6 +65,16 @@ public class SortOperation extends ListOperationExpression {
 
                 List<Object> values = ((ListLiteral) valuesResult).getValue();
                 dataTypeExpression = ((ListLiteral) valuesResult).getType();
+
+                List<Object> notNullList = new ArrayList<>();
+                for (Object value : values) {
+                    if (value instanceof Pair && ((Pair) value).getLeft() != null) {
+                        notNullList.add(value);
+                    }
+                }
+                values = notNullList;
+
+
                 values.sort(pairComparator);
                 return new ListLiteral(values, dataTypeExpression);
             }
@@ -74,6 +85,13 @@ public class SortOperation extends ListOperationExpression {
 
             if (values != null) {
 
+                List<Object> notNullList = new ArrayList<>();
+                for (Object value : values) {
+                    if (value != null) {
+                        notNullList.add(value);
+                    }
+                }
+                values = notNullList;
 
                 if (rightOperand.isEmpty()) {
                     values.sort(null);
@@ -114,9 +132,9 @@ public class SortOperation extends ListOperationExpression {
 
 
                             } catch (Exception e) {
-                                return 0;
+                                return -1;
                             }
-                            return 0;
+                            return -1;
                         });
 
 
@@ -225,7 +243,7 @@ public class SortOperation extends ListOperationExpression {
             }
         }
 
-        return 0;
+        return -1;
     }
 
     private class ValueType {
