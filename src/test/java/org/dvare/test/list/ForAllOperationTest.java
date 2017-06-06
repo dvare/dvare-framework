@@ -23,27 +23,9 @@ THE SOFTWARE.*/
 
 package org.dvare.test.list;
 
-import junit.framework.TestCase;
-import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.model.ContextsBinding;
-import org.dvare.binding.model.TypeBinding;
-import org.dvare.binding.rule.RuleBinding;
-import org.dvare.config.RuleConfiguration;
-import org.dvare.evaluator.RuleEvaluator;
-import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.exceptions.parser.ExpressionParseException;
-import org.dvare.expression.Expression;
-import org.dvare.parser.ExpressionParser;
-import org.dvare.test.dataobjects.ForEachOperation;
-import org.junit.Assert;
+public class ForAllOperationTest /*extends TestCase*/ {
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
-public class ForAllOperationTest extends TestCase {
-
-    public void testApp() throws ExpressionParseException, InterpretException, ParseException {
+    /*public void testApp() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -81,10 +63,10 @@ public class ForAllOperationTest extends TestCase {
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
         Assert.assertTrue(result);
 
-    }
+    }*/
 
 
-    public void testApp1() throws ExpressionParseException, InterpretException, ParseException {
+   /* public void testApp1() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -122,7 +104,7 @@ public class ForAllOperationTest extends TestCase {
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
         Assert.assertTrue(result);
 
-    }
+    }*/
 
    /* public void testApp2() throws ExpressionParseException, InterpretException, ParseException {
 

@@ -97,17 +97,17 @@ public abstract class ChainOperationExpression extends OperationExpression {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         Stack<Expression> localStack = new Stack<>();
-        for (; pos < tokens.length; pos++) {
-            String token = tokens[pos];
+        for (int newPos = pos; newPos < tokens.length; newPos++) {
+            String token = tokens[newPos];
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
 
                 if (op.getClass().equals(RightPriority.class)) {
                     this.rightOperand = new ArrayList<>(localStack);
-                    return pos;
+                    return newPos;
                 } else {
 
-                    pos = op.parse(tokens, pos, localStack, expressionBinding, contexts);
+                    newPos = op.parse(tokens, newPos, localStack, expressionBinding, contexts);
                 }
 
 
@@ -120,7 +120,7 @@ public abstract class ChainOperationExpression extends OperationExpression {
 
             }
         }
-        return pos;
+        throw new ExpressionParseException(getClass().getSimpleName() + " Closing Bracket Not Found at " + pos);
     }
 
     @Override

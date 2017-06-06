@@ -148,11 +148,11 @@ public class ExpressionParser {
                 }
 
             }
-            for (int i = 0; i < tokens.length - 1; i++) {
-                String token = tokens[i];
+            for (int pos = 0; pos < tokens.length - 1; pos++) {
+                String token = tokens[pos];
                 OperationExpression op = configurationRegistry.getOperation(token);
                 if (op != null) {
-                    i = op.parse(tokens, i, stack, expressionBinding, contexts);
+                    pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
                 } else {
 
 
@@ -162,6 +162,10 @@ public class ExpressionParser {
                         DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
                         VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
                         stack.add(variableExpression);
+                    } else {
+
+                        throw new ExpressionParseException("syntax Error \"" + token + "\" at " + pos);
+
                     }
 
 

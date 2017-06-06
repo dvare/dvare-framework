@@ -52,7 +52,7 @@ import java.util.Stack;
 public class ListLiteralOperationExpression extends OperationExpression {
     protected static Logger logger = LoggerFactory.getLogger(ListLiteralOperationExpression.class);
 
-    List<Expression> expressions = new ArrayList<>();
+    protected List<Expression> expressions = new ArrayList<>();
 
     public ListLiteralOperationExpression() {
         super(OperationType.List);
@@ -62,14 +62,19 @@ public class ListLiteralOperationExpression extends OperationExpression {
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
 
-
+        int newPos = pos;
         List<String> listPrams = new ArrayList<>();
-        while (!tokens[pos].equals("]")) {
-            String value = tokens[pos];
+        while (!tokens[newPos].equals("]")) {
+            String value = tokens[newPos];
             if (!value.equals("[")) {
                 listPrams.add(value);
             }
-            pos++;
+            newPos++;
+
+            if (newPos == tokens.length) {
+                throw new ExpressionParseException("Array Closing Bracket Not Found at " + pos);
+            }
+
         }
 
 
@@ -114,7 +119,7 @@ public class ListLiteralOperationExpression extends OperationExpression {
 
         stack.push(this);
 
-        return pos;
+        return newPos;
     }
 
 
