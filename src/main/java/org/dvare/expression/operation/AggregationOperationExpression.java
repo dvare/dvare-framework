@@ -40,6 +40,7 @@ import org.dvare.expression.operation.aggregation.Semicolon;
 import org.dvare.expression.operation.utility.GetExpOperation;
 import org.dvare.expression.operation.validation.LeftPriority;
 import org.dvare.expression.operation.validation.RightPriority;
+import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
@@ -160,6 +161,35 @@ public abstract class AggregationOperationExpression extends OperationExpression
                 dataTypeExpression = listLiteral.getType();
                 return listLiteral.getValue();
             }
+
+        } else if (expression instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) expression;
+
+            if (variableExpression instanceof ListVariable) {
+                dataTypeExpression = variableExpression.getType();
+                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+                variableExpression = VariableType.setVariableValue(variableExpression, instance);
+                return ((ListVariable) variableExpression).getValue();
+
+            } else {
+
+                dataTypeExpression = variableExpression.getType();
+                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+                List dataSet;
+                if (instance instanceof List) {
+                    dataSet = (List) instance;
+                } else {
+                    dataSet = new ArrayList<>();
+                    dataSet.add(instance);
+                }
+                List<Object> values = new ArrayList<>();
+                for (Object object : dataSet) {
+                    Object value = getValue(object, variableExpression.getName());
+                    values.add(value);
+                }
+                return values;
+            }
+
 
         }
         return null;
