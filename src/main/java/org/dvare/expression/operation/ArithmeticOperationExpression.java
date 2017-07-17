@@ -27,6 +27,7 @@ import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -74,6 +75,10 @@ public abstract class ArithmeticOperationExpression extends EqualityOperationExp
 
             }
 
+        }
+
+        if (left instanceof NullLiteral || right instanceof NullLiteral) {
+            dataTypeExpression = NullType.class;
         }
 
         try {

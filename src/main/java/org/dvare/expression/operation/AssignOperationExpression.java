@@ -11,10 +11,12 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalPropertyException;
+import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.operation.aggregation.Semicolon;
+import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.utility.Semicolon;
 import org.dvare.expression.veriable.*;
 import org.dvare.parser.ExpressionTokenizer;
 import org.dvare.util.TrimString;
@@ -41,7 +43,7 @@ public class AssignOperationExpression extends OperationExpression {
 
             String leftString = tokens[pos - 1];
 
-            if (stack.isEmpty()) {
+            if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression) {
                 TokenType tokenType = findDataObject(leftString, contexts);
                 if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
                     TypeBinding typeBinding = contexts.getContext(tokenType.type);
@@ -89,10 +91,12 @@ public class AssignOperationExpression extends OperationExpression {
             String token = tokens[pos];
 
             OperationExpression op = configurationRegistry.getOperation(token);
+
+
             if (op != null) {
 
 
-                if (/*op instanceof AggregationOperationExpression ||*/ op instanceof Semicolon || op instanceof ConditionOperationExpression) {
+                if (op instanceof Semicolon || op instanceof ConditionOperationExpression) {
                     return pos - 1;
                 }
 
@@ -101,7 +105,15 @@ public class AssignOperationExpression extends OperationExpression {
 
             } else {
 
-                stack.add(buildExpression(token, contexts));
+                Expression expression = buildExpression(token, contexts);
+
+
+                if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression) {
+                    stack.add(expression);
+                } else {
+                    return pos;
+                }
+
 
             }
 
@@ -109,7 +121,7 @@ public class AssignOperationExpression extends OperationExpression {
         }
 
         return pos;
-        // throw new ExpressionParseException("Aggregation Operation Not Found");
+
     }
 
 
@@ -137,9 +149,23 @@ public class AssignOperationExpression extends OperationExpression {
             LiteralExpression literalExpression = null;
             if (right instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) right;
-                literalExpression = (LiteralExpression) operation.interpret(expressionBinding, instancesBinding);
+
+                Object interpret = operation.interpret(expressionBinding, instancesBinding);
+                if (interpret instanceof LiteralExpression) {
+                    literalExpression = (LiteralExpression) interpret;
+                } else {
+                    try {
+                        literalExpression = LiteralType.getLiteralExpression(interpret.toString());
+                    } catch (IllegalValueException e) {
+                        throw new InterpretException(e);
+                    }
+                }
             } else if (right instanceof LiteralExpression) {
                 literalExpression = (LiteralExpression) right;
+            } else if (right instanceof VariableExpression) {
+                VariableExpression variableExpression = (VariableExpression) right;
+                variableExpression = VariableType.setVariableValue(variableExpression, instancesBinding.getInstance(variableExpression.getOperandType()));
+                literalExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
             }
 
 

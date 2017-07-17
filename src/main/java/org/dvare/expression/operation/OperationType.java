@@ -33,7 +33,10 @@ public enum OperationType {
     INVOKE("Invoke", "invoke"),
     FUNCTION("Function", "function", "fun"),//
 
-    ABSOLUTE("Abs", "abs"), Match("Match", "match"),//
+    ABSOLUTE("Abs", "abs"), //
+    Match("Match", "match"),//
+    INSIDE_COMB("InsideComb", "insideComb"), COMB_EXISTS("CombExists", "combExists"),//
+    BOTH_INSIDE_EXISTS_COMB("InsideExistsComb", "insideExistsComb"), //
     LEFT_PRIORITY("("), RIGHT_PRIORITY(")"),//
     DATE("Date", "date"), DATE_TIME("DateTime", "dateTime"), TO_DAY("today"),//
     POWER("Pow", "pow", "^"),//

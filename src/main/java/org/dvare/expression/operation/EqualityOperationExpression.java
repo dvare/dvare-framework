@@ -96,10 +96,10 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
         while (pos + 1 < tokens.length) {
             ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-            OperationExpression testOp = configurationRegistry.getOperation(tokens[pos + 1]);
-            if (testOp instanceof ChainOperationExpression) {
+            OperationExpression nextOpp = configurationRegistry.getOperation(tokens[pos + 1]);
+            if (nextOpp instanceof ChainOperationExpression || nextOpp instanceof AggregationOperationExpression) {
                 stack.push(expression);
-                pos = testOp.parse(tokens, pos + 1, stack, expressionBinding, contexts);
+                pos = nextOpp.parse(tokens, pos + 1, stack, expressionBinding, contexts);
                 expression = stack.pop();
             }
 
@@ -121,7 +121,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
         // computing expression left side̵
 
-        if (stack.isEmpty()) {
+        if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression) {
             pos = expression(tokens, pos, stack, expressionBinding, contexts, leftTokenType);
         }
 

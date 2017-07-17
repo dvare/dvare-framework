@@ -370,7 +370,7 @@ public class Function extends OperationExpression {
                 if (method != null) {
                     value = method.invoke(classInstance, values);
                 } else {
-                    throw new InterpretException("Method Param not match");
+                    throw new InterpretException("Function \"" + functionName + "\" parameter not match near " + this.toString());
                 }
             } else {
 
@@ -382,7 +382,7 @@ public class Function extends OperationExpression {
                 if (method != null) {
                     value = method.invoke(classInstance, values);
                 } else {
-                    throw new InterpretException("Method Param not match");
+                    throw new InterpretException("Function \"" + functionName + "\" parameter not match near " + this.toString());
                 }
             }
 
@@ -414,17 +414,16 @@ public class Function extends OperationExpression {
 
     }
 
-    private Class[] castParams(Class[] params) {
+    private Class[] castParams(Class[] params) throws Exception {
         for (int i = 0; i < params.length; i++) {
 
-            if (!params[i].isPrimitive()) {
-                try {
-                    Class aClass = (Class) FieldUtils.readStaticField(params[i], "TYPE", true);
-                    if (aClass != null) {
-                        params[i] = aClass;
-                    }
-                } catch (IllegalAccessException e) {
+            Class param = params[i];
+            if (!param.isPrimitive() && (param.equals(Integer.class) || param.equals(Float.class) || param.equals(Boolean.class) || param.equals(Double.class) || param.getClass().equals(Long.class))) {
+                Class aClass = (Class) FieldUtils.readStaticField(params[i], "TYPE", true);
+                if (aClass != null) {
+                    params[i] = aClass;
                 }
+
             }
 
         }

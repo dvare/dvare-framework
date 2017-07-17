@@ -2,6 +2,7 @@ package org.dvare.test.utility;
 
 
 import junit.framework.TestCase;
+import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.rule.RuleBinding;
@@ -10,14 +11,20 @@ import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.util.ValueFinder;
 import org.junit.Assert;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DefTest extends TestCase {
 
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void testApp() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = " def newVariable:IntegerType "
-                + "newVariable := 4 + 5 ; " +
+                + " := 4 + 5 ; " +
                 " newVariable > 7";
 
 
@@ -28,6 +35,128 @@ public class DefTest extends TestCase {
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
         Assert.assertTrue(result);
+    }
+
+
+    public void testApp1() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        Map<String, String> aggregationTypes = new HashMap<>();
+        aggregationTypes.put("A0", "IntegerType");
+
+
+        Map<String, String> validationTypes = new HashMap<>();
+        validationTypes.put("V1", "IntegerType");
+        validationTypes.put("V2", "IntegerType");
+
+        Expression aggregate = factory.getParser().fromString("" +
+                        "def temp.variable:IntegerType :=  data.V1->first() * 10 " +
+                        "self.A0 := temp.variable"
+                , aggregationTypes, validationTypes);
+
+        RuleBinding rule = new RuleBinding(aggregate);
+        List<RuleBinding> rules = new ArrayList<>();
+        rules.add(rule);
+
+
+        Map<String, Object> aggregation = new HashMap<>();
+        aggregation.put("A0", 2);
+
+
+        Map<String, Object> dataset = new HashMap<>();
+        dataset.put("V1", 5);
+        dataset.put("V2", 5);
+
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), new DataRow(dataset));
+
+
+        boolean result = ValueFinder.findValue("A0", resultModel).equals(50);
+
+        assertTrue(result);
+    }
+
+
+    public void testApp2() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        Map<String, String> aggregationTypes = new HashMap<>();
+        aggregationTypes.put("A0", "IntegerType");
+
+
+        Map<String, String> validationTypes = new HashMap<>();
+        validationTypes.put("V1", "IntegerType");
+        validationTypes.put("V2", "IntegerType");
+
+        //Expression aggregate = factory.getParser().fromString("def temp.variable:IntegerType :=  10 * (data.V1->first()) ; self.A0 := temp.variable", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("def temp.variable:IntegerType :=  10 * data.V1->first() * data.V2->first() - 100  / 10 * self.A0" +
+                " self.A0 := temp.variable", aggregationTypes, validationTypes);
+
+        RuleBinding rule = new RuleBinding(aggregate);
+        List<RuleBinding> rules = new ArrayList<>();
+        rules.add(rule);
+
+
+        Map<String, Object> aggregation = new HashMap<>();
+        aggregation.put("A0", 2);
+
+
+        Map<String, Object> dataset = new HashMap<>();
+        dataset.put("V1", 3);
+        dataset.put("V2", 5);
+
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), new DataRow(dataset));
+
+
+        boolean result = ValueFinder.findValue("A0", resultModel).equals(10);
+
+        assertTrue(result);
+    }
+
+    public void testApp3() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        Map<String, String> aggregationTypes = new HashMap<>();
+        aggregationTypes.put("A0", "IntegerType");
+
+
+        Map<String, String> validationTypes = new HashMap<>();
+        validationTypes.put("V1", "IntegerType");
+        validationTypes.put("V2", "IntegerType");
+
+        Expression aggregate = factory.getParser().fromString("" +
+                "def temp.variable:BooleanType := true " +
+                "IF temp.variable = true " +
+                "THEN A0 := 25 " +
+                "ENDIF", aggregationTypes, validationTypes);
+
+        RuleBinding rule = new RuleBinding(aggregate);
+        List<RuleBinding> rules = new ArrayList<>();
+        rules.add(rule);
+
+
+        Map<String, Object> aggregation = new HashMap<>();
+        aggregation.put("A0", 2);
+
+
+        Map<String, Object> dataset = new HashMap<>();
+        dataset.put("V1", 5);
+        dataset.put("V2", 5);
+
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), new DataRow(dataset));
+
+
+        boolean result = ValueFinder.findValue("A0", resultModel).equals(25);
+
+        assertTrue(result);
     }
 
 

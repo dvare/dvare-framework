@@ -26,7 +26,10 @@ package org.dvare.expression.operation.chain;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.exceptions.parser.ExpressionParseException;
+import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.StringType;
 import org.dvare.expression.literal.LiteralExpression;
@@ -35,6 +38,8 @@ import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.TrimString;
+
+import java.util.Stack;
 
 @Operation(type = OperationType.SUBSTRING, dataTypes = {DataType.StringType})
 public class Substring extends ChainOperationExpression {
@@ -46,10 +51,23 @@ public class Substring extends ChainOperationExpression {
 
 
     @Override
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+        pos = super.parse(tokens, pos, stack, expressionBinding, contexts);
+
+        if (rightOperand.size() != 2) {
+            throw new ExpressionParseException(String.format("%s must contain two parameters at %d", getClass().getSimpleName(), pos));
+        }
+
+
+        return pos;
+    }
+
+
+    @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
         leftValueOperand = super.interpretOperand(this.leftOperand, expressionBinding, instancesBinding);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+        if ((literalExpression != null && !(literalExpression instanceof NullLiteral) && rightOperand.size() >= 2)) {
 
 
             if (literalExpression.getValue() == null) {

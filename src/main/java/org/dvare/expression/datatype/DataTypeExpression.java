@@ -65,15 +65,17 @@ public abstract class DataTypeExpression extends Expression {
                 Method method = this.getClass().getMethod(methodName, LiteralExpression.class, LiteralExpression.class);
                 Object result = method.invoke(this, left, right);
 
-                DataType type = DataTypeMapping.getTypeMapping(result.getClass());
+                if (result != null) {
+                    DataType type = DataTypeMapping.getTypeMapping(result.getClass());
 
-                if (type == null) {
-                    type = LiteralType.computeDataType(result.toString());
                     if (type == null) {
-                        type = this.getDataType();
+                        type = LiteralType.computeDataType(result.toString());
+                        if (type == null) {
+                            type = this.getDataType();
+                        }
                     }
+                    return LiteralType.getLiteralExpression(result, type);
                 }
-                return LiteralType.getLiteralExpression(result, type);
             }
             return new NullLiteral();
 

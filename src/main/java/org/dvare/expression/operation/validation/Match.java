@@ -11,10 +11,9 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.*;
+import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.list.MapOperation;
-import org.dvare.expression.operation.list.ValuesOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TrimString;
@@ -35,13 +34,18 @@ public class Match extends OperationExpression {
         super(OperationType.Match);
     }
 
+    public Match(OperationType operationType) {
+        super(operationType);
+
+    }
+
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contextss) throws ExpressionParseException {
 
         pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contextss);
 
-        computeParam(this.leftOperand);
+        computeParam(leftOperand);
         stack.push(this);
         return pos;
     }
@@ -50,19 +54,12 @@ public class Match extends OperationExpression {
     private void computeParam(List<Expression> expressions) throws ExpressionParseException {
 
 
-        String error = null;
-
-
         if (expressions == null || expressions.size() < 2) {
-            error = "Match Operation minimum two parameter";
-
-        }
-
-
-        if (error != null && !error.isEmpty()) {
+            String error = "Match Operation minimum two parameter";
             logger.error(error);
             throw new ExpressionParseException(error);
         }
+
 
         if (logger.isDebugEnabled()) {
             logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
@@ -101,12 +98,52 @@ public class Match extends OperationExpression {
 
 
         List<Expression> expressions = this.leftOperand;
-        DataType dataType = null;
-        List values = new ArrayList<>();
+
+
 
         /* values to match */
 
         Expression valueParam = expressions.get(0);
+        List values = buildValues(expressionBinding, instancesBinding, valueParam);
+        DataType dataType = toDataType(dataTypeExpression);
+        ;
+        
+        /*match params*/
+        Expression paramsExpression = expressions.get(1);
+        List matchParams = buildMatchParams(expressionBinding, instancesBinding, paramsExpression);
+
+
+        Boolean insideCombination = false;
+        Boolean combinationExist = false;
+
+
+        if (expressions.size() == 2) {
+
+            combinationExist = true;  //backward compatibility
+
+
+        } else {
+            if (expressions.size() > 2) {
+                if (expressions.get(2) instanceof BooleanLiteral) {
+                    insideCombination = ((BooleanLiteral) expressions.get(2)).getValue();
+                }
+            }
+
+
+            if (expressions.size() > 3) {
+                if (expressions.get(3) instanceof BooleanLiteral) {
+                    combinationExist = ((BooleanLiteral) expressions.get(3)).getValue();
+                }
+            }
+        }
+
+
+        return match(dataType, values, matchParams, insideCombination, combinationExist);
+    }
+
+
+    protected List buildValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
+        List values = new ArrayList<>();
         if (valueParam instanceof VariableExpression) {
 
             VariableExpression variableExpression = (VariableExpression) valueParam;
@@ -121,44 +158,35 @@ public class Match extends OperationExpression {
             }
 
 
-            dataType = toDataType(variableExpression.getType());
+            dataTypeExpression = variableExpression.getType();
             for (Object dataRow : dataSet) {
                 variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
-//                if (variableExpression.getValue() != null) {
                 values.add(variableExpression.getValue());
-//                }
             }
 
-        } else if (valueParam instanceof ValuesOperation || valueParam instanceof MapOperation) {
+        } else if (valueParam instanceof ListOperationExpression) {
 
             Object interpret = valueParam.interpret(expressionBinding, instancesBinding);
-            if (interpret instanceof LiteralExpression) {
-                LiteralExpression literalExpression = (LiteralExpression) interpret;
-                if (literalExpression instanceof ListLiteral) {
-                    ListLiteral listLiteral = (ListLiteral) literalExpression;
-                    if (listLiteral.getValue() != null) {
-                        values = listLiteral.getValue();
-                        dataType = toDataType(listLiteral.getType());
-                    }
+            if (interpret instanceof ListLiteral) {
+                ListLiteral listLiteral = (ListLiteral) interpret;
+                if (listLiteral.getValue() != null) {
+                    values = listLiteral.getValue();
+                    dataTypeExpression = listLiteral.getType();
                 }
             }
         }
-        
-        
-        
-        
-        
-        /*match params*/
+        return values;
+    }
 
 
+    protected List buildMatchParams(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression paramsExpression) throws InterpretException {
         List matchParams = null;
-        Expression paramsExpression = expressions.get(1);
         if (paramsExpression instanceof LiteralExpression) {
             matchParams = buildMatchParams((LiteralExpression) paramsExpression);
 
 
         } else if (paramsExpression instanceof OperationExpression) {
-            OperationExpression operationExpression = (OperationExpression) expressions.get(1);
+            OperationExpression operationExpression = (OperationExpression) paramsExpression;
             Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
             if (interpret instanceof LiteralExpression) {
                 matchParams = buildMatchParams((LiteralExpression) interpret);
@@ -171,37 +199,11 @@ public class Match extends OperationExpression {
             matchParams.add(variableExpression.getValue());
 
         }
-
-
-        Boolean fullSetMatchWithParam = false;
-        if (expressions.size() > 2) {
-            if (expressions.get(2) instanceof BooleanLiteral) {
-                fullSetMatchWithParam = ((BooleanLiteral) expressions.get(2)).getValue();
-            }
-        }
-
-
-        return match(dataType, values, matchParams, fullSetMatchWithParam);
+        return matchParams;
     }
 
 
-/*    public static void main(String[] args) throws Exception {
-
-        Match match = new Match();
-
-        List messages = Arrays.asList("H",null, null,"V");
-        List params=Arrays.asList("H","V", null);
-
-        LiteralExpression result = match.match(DataType.StringType,messages ,params , false);
-        LiteralExpression result2 = match.match(DataType.StringType, messages,params, true);
-
-
-        System.out.println(match.toBoolean(result) && match.toBoolean(result2));
-
-    }*/
-
-
-    private LiteralExpression match(DataType dataType, List values, List matchParams, Boolean fullSetMatchWithParam) throws InterpretException {
+    protected LiteralExpression match(DataType dataType, List values, List matchParams, Boolean insideCombination, Boolean combinationExist) throws InterpretException {
 
         if (dataType != null && matchParams != null && values != null) {
 
@@ -212,47 +214,24 @@ public class Match extends OperationExpression {
 
             switch (dataType) {
                 case StringType: {
-                    List<String> valueStringList = (List<String>) values;
 
 
                     try {
-                        List<String> combStringList = (List<String>) matchParams;
-
-                        List<String> combSet = new ArrayList<>();
-                        for (String value : combStringList) {
-                            if (value != null) {
-                                combSet.add(TrimString.trim(value));
-                            } else {
-                                combSet.add(null);
-                            }
-                        }
-
-                        if (fullSetMatchWithParam) {
-
-                            for (String value : valueStringList) {
+                        List<String> stringValues = (List<String>) values;
+                        List<String> matchParamsStringValues = (List<String>) matchParams;
 
 
-                                value = TrimString.trim(value);
+                        if (insideCombination && combinationExist) {
+                            return LiteralType.getLiteralExpression(
+                                    insideCombinationString(stringValues, matchParamsStringValues) &&
+                                            combinationExistString(stringValues, matchParamsStringValues),
+                                    BooleanType.class);
 
-                                if (!combStringList.contains(value)) {
-                                    return LiteralType.getLiteralExpression(false, BooleanType.class);
-                                }
+                        } else if (insideCombination) {
+                            return LiteralType.getLiteralExpression(insideCombinationString(stringValues, matchParamsStringValues), BooleanType.class);
+                        } else if (combinationExist) {
 
-
-                            }
-
-                            return LiteralType.getLiteralExpression(true, BooleanType.class);
-                        } else {
-                            List<String> valuesList = new ArrayList<>();
-                            for (String value : valueStringList) {
-                                if (value != null) {
-                                    valuesList.add(TrimString.trim(value));
-                                } else {
-                                    valuesList.add(null);
-                                }
-                            }
-                            boolean result = valuesList.containsAll(combSet);
-                            return LiteralType.getLiteralExpression(result, BooleanType.class);
+                            return LiteralType.getLiteralExpression(combinationExistString(stringValues, matchParamsStringValues), BooleanType.class);
                         }
 
 
@@ -263,22 +242,20 @@ public class Match extends OperationExpression {
                 }
 
                 case BooleanType: {
-                    List<Boolean> valueStringList = (List<Boolean>) values;
-
 
                     try {
-                        List<Boolean> combList = (List<Boolean>) matchParams;
-                        if (fullSetMatchWithParam) {
-                            for (Boolean value : valueStringList) {
+                        List<Boolean> booleanValues = (List<Boolean>) values;
+                        List<Boolean> matchParamsBooleanValues = (List<Boolean>) matchParams;
 
-                                if (!combList.contains(value)) {
-                                    return LiteralType.getLiteralExpression(false, BooleanType.class);
-                                }
-                            }
-                            return LiteralType.getLiteralExpression(true, BooleanType.class);
-                        } else {
+                        if (insideCombination && combinationExist) {
+                            return LiteralType.getLiteralExpression(
+                                    insideCombinationBoolean(booleanValues, matchParamsBooleanValues)
+                                            && booleanValues.containsAll(matchParamsBooleanValues), BooleanType.class);
+                        } else if (insideCombination) {
+                            return LiteralType.getLiteralExpression(insideCombinationBoolean(booleanValues, matchParamsBooleanValues), BooleanType.class);
+                        } else if (combinationExist) {
 
-                            boolean result = valueStringList.containsAll(combList);
+                            boolean result = booleanValues.containsAll(matchParamsBooleanValues);
                             return LiteralType.getLiteralExpression(result, BooleanType.class);
                         }
                     } catch (ClassCastException e) {
@@ -287,21 +264,24 @@ public class Match extends OperationExpression {
 
                 }
                 case IntegerType: {
-                    List<Integer> valueStringList = (List<Integer>) values;
 
 
+                    List<Integer> integerValues = (List<Integer>) values;
                     try {
-                        List<Integer> combList = (List<Integer>) matchParams;
 
-                        if (fullSetMatchWithParam) {
-                            for (Integer value : valueStringList) {
-                                if (!combList.contains(value)) {
-                                    return LiteralType.getLiteralExpression(false, BooleanType.class);
-                                }
-                            }
-                            return LiteralType.getLiteralExpression(true, BooleanType.class);
-                        } else {
-                            boolean result = valueStringList.containsAll(combList);
+                        List<Integer> matchParamsIntegerValues = (List<Integer>) matchParams;
+
+                        if (insideCombination && combinationExist) {
+                            return LiteralType.getLiteralExpression(
+                                    insideCombinationInteger(integerValues, matchParamsIntegerValues) &&
+                                            integerValues.containsAll(matchParamsIntegerValues)
+                                    , BooleanType.class);
+                        } else if (insideCombination) {
+
+                            return LiteralType.getLiteralExpression(
+                                    insideCombinationInteger(integerValues, matchParamsIntegerValues), BooleanType.class);
+                        } else if (combinationExist) {
+                            boolean result = integerValues.containsAll(matchParamsIntegerValues);
                             return LiteralType.getLiteralExpression(result, BooleanType.class);
                         }
 
@@ -309,36 +289,35 @@ public class Match extends OperationExpression {
                     } catch (ClassCastException e) {
                         List<Float> combList = (List<Float>) matchParams;
 
-                        boolean result = valueStringList.containsAll(combList);
+                        boolean result = integerValues.containsAll(combList);
                         return LiteralType.getLiteralExpression(result, BooleanType.class);
                     }
 
                 }
 
                 case FloatType: {
-                    List<Float> valueStringList = (List<Float>) values;
+                    List<Float> floatValues = (List<Float>) values;
 
 
                     try {
-                        List<Float> combList = (List<Float>) matchParams;
+                        List<Float> matchParamsFloatValues = (List<Float>) matchParams;
 
-
-                        if (fullSetMatchWithParam) {
-                            for (Float value : valueStringList) {
-                                if (!combList.contains(value)) {
-                                    return LiteralType.getLiteralExpression(false, BooleanType.class);
-                                }
-                            }
-                            return LiteralType.getLiteralExpression(true, BooleanType.class);
-                        } else {
-                            boolean result = valueStringList.containsAll(combList);
+                        if (insideCombination && combinationExist) {
+                            return LiteralType.getLiteralExpression(
+                                    insideCombinationFloat(floatValues, matchParamsFloatValues) &&
+                                            floatValues.containsAll(matchParamsFloatValues)
+                                    , BooleanType.class);
+                        } else if (insideCombination) {
+                            return LiteralType.getLiteralExpression(insideCombinationFloat(floatValues, matchParamsFloatValues), BooleanType.class);
+                        } else if (combinationExist) {
+                            boolean result = floatValues.containsAll(matchParamsFloatValues);
                             return LiteralType.getLiteralExpression(result, BooleanType.class);
                         }
 
 
                     } catch (ClassCastException e) {
                         List<Integer> combList = (List<Integer>) matchParams;
-                        boolean result = valueStringList.containsAll(combList);
+                        boolean result = floatValues.containsAll(combList);
                         return LiteralType.getLiteralExpression(result, BooleanType.class);
                     }
                 }
@@ -348,8 +327,76 @@ public class Match extends OperationExpression {
         return LiteralType.getLiteralExpression(false, BooleanType.class);
     }
 
+
+    private Boolean insideCombinationString(List<String> stringValues, List<String> matchParamsStringValues) throws InterpretException {
+
+        for (String value : stringValues) {
+            value = TrimString.trim(value);
+            if (!matchParamsStringValues.contains(value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Boolean combinationExistString(List<String> stringValues, List<String> matchParamsStringValues) throws InterpretException {
+
+        List<String> stringValuesTrimed = new ArrayList<>();
+        for (String value : stringValues) {
+            if (value != null) {
+                stringValuesTrimed.add(TrimString.trim(value));
+            } else {
+                stringValuesTrimed.add(null);
+            }
+        }
+
+        List<String> matchParamsStringValuesTrimed = new ArrayList<>();
+        for (String value : matchParamsStringValues) {
+            if (value != null) {
+                matchParamsStringValuesTrimed.add(TrimString.trim(value));
+            } else {
+                matchParamsStringValuesTrimed.add(null);
+            }
+        }
+
+        return stringValuesTrimed.containsAll(matchParamsStringValuesTrimed);
+
+    }
+
+    private Boolean insideCombinationBoolean(List<Boolean> booleanValues, List<Boolean> matchParamsBooleanValues) throws InterpretException {
+        for (Boolean value : booleanValues) {
+
+            if (!matchParamsBooleanValues.contains(value)) {
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    private Boolean insideCombinationInteger(List<Integer> integerValues, List<Integer> matchParamsIntegerValues) throws InterpretException {
+        for (Integer value : integerValues) {
+            if (!matchParamsIntegerValues.contains(value)) {
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    private Boolean insideCombinationFloat(List<Float> floatValues, List<Float> matchParamsFloatValues) throws InterpretException {
+        for (Float value : floatValues) {
+            if (!matchParamsFloatValues.contains(value)) {
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+
     private List buildMatchParams(LiteralExpression literalExpression) {
-        List matchParams = new ArrayList();
+        List<Object> matchParams = new ArrayList<>();
         if (literalExpression instanceof ListLiteral) {
             ListLiteral listLiteral = (ListLiteral) literalExpression;
             if (listLiteral.getValue() != null) {
@@ -381,4 +428,19 @@ public class Match extends OperationExpression {
     }
 
 
+   /* public static void main(String[] args) throws Exception {
+
+        Match match = new Match();
+
+
+        List messages = Arrays.asList("H",null, null,"V");
+        List params=Arrays.asList("H","V", null);
+
+        LiteralExpression result = match.match(DataType.StringType,messages ,params , false);
+        LiteralExpression result2 = match.match(DataType.StringType, messages,params, true);
+
+
+        System.out.println(match.toBoolean(result) && match.toBoolean(result2));
+
+    }*/
 }

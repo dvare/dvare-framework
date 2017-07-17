@@ -1,4 +1,4 @@
-package org.dvare.expression.operation.aggregation;
+package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;

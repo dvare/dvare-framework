@@ -29,6 +29,8 @@ import org.dvare.annotations.Type;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.arithmetic.Add;
+import org.dvare.expression.operation.arithmetic.Subtract;
 import org.dvare.expression.operation.validation.*;
 
 import java.util.List;
@@ -115,4 +117,21 @@ public class NullType extends DataTypeExpression {
     public boolean notIn(LiteralExpression left, LiteralExpression right) {
         return !in(left, right);
     }
+
+
+    @OperationMapping(operations = {
+            org.dvare.expression.operation.aggregation.Sum.class,
+            Add.class
+    })
+    public Object sum(LiteralExpression left, LiteralExpression right) {
+        return null;
+    }
+
+    @OperationMapping(operations = {
+            Subtract.class
+    })
+    public Object sub(LiteralExpression left, LiteralExpression right) {
+        return null;
+    }
+
 }

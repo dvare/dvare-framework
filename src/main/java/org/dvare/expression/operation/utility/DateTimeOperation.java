@@ -50,6 +50,10 @@ public class DateTimeOperation extends OperationExpression {
         super(OperationType.DATE_TIME);
     }
 
+    public DateTimeOperation(OperationType operationType) {
+        super(operationType);
+    }
+
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {

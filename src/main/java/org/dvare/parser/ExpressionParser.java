@@ -32,6 +32,7 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.operation.MultipleOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -175,8 +177,15 @@ public class ExpressionParser {
                 throw new ExpressionParseException("Unable to Parse Expression");
             }
 
+            Expression expression;
 
-            Expression expression = stack.pop();
+            if (stack.size() > 1) {
+
+                expression = new MultipleOperationExpression(new ArrayList<>(stack));
+
+            } else {
+                expression = stack.pop();
+            }
 
 
             return expression;

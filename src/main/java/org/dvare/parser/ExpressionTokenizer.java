@@ -96,7 +96,17 @@ public class ExpressionTokenizer {
                 String token = tokenizer.next();
 
 
-                if ((countOccurrences(token, '\'') == 2) && (!token.startsWith("'") || !token.endsWith("'"))) {
+                if (token.equals("/*") || token.startsWith("/*")) {
+
+                    while (tokenizer.hasNext()) {
+                        token = tokenizer.next();
+
+                        if (token.equals("*/") || token.endsWith("*/")) {
+                            break;
+                        }
+                    }
+
+                } else if ((countOccurrences(token, '\'') == 2) && (!token.startsWith("'") || !token.endsWith("'"))) {
 
 
                     if (!token.startsWith("'")) {
@@ -215,14 +225,14 @@ public class ExpressionTokenizer {
 
                 } else if ((countOccurrences(token, '\'') == 1) && (token.startsWith("'") && !token.endsWith("'"))) {
 
-                    String tempToken = token;
+                    StringBuilder tempToken = new StringBuilder(token);
 
                     while (tokenizer.hasNext()) {
                         token = tokenizer.next();
-                        tempToken += " " + token;
+                        tempToken.append(" ").append(token);
 
                         if (!token.startsWith("'") && token.endsWith("'")) {
-                            tokenArray.add(tempToken);
+                            tokenArray.add(tempToken.toString());
                             break;
                         }
 
@@ -321,6 +331,11 @@ public class ExpressionTokenizer {
         if (token.contains("!")) {
             return true;
         }
+
+        if (token.contains(";")) {
+            return true;
+        }
+
         /*if (token.contains("+")) {
             return true;
         }
@@ -375,6 +390,8 @@ public class ExpressionTokenizer {
             tokenArray.addAll(parse(token, "!"));
         } else if (token.contains("+")) {
             tokenArray.addAll(parse(token, "+"));
+        } else if (token.contains(";")) {
+            tokenArray.addAll(parse(token, ";"));
         }/* else if (token.contains("-")) {
             tokenArray.addAll(parse(token, "-"));
         } else if (token.contains("*")) {
