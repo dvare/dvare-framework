@@ -36,7 +36,6 @@ import org.dvare.expression.literal.DateTimeLiteral;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.validation.RightPriority;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

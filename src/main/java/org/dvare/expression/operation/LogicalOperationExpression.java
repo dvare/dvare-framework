@@ -28,9 +28,9 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.operation.condition.ENDIF;
+import org.dvare.expression.operation.flow.ENDIF;
 import org.dvare.expression.operation.list.EndForAllEach;
-import org.dvare.expression.operation.validation.RightPriority;
+import org.dvare.expression.operation.utility.RightPriority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

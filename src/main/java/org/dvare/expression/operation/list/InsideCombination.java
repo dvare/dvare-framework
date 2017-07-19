@@ -9,7 +9,7 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.validation.Match;
+import org.dvare.expression.operation.utility.Match;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

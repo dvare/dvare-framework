@@ -32,15 +32,17 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.list.ValuesOperation;
 import org.dvare.expression.operation.utility.GetExpOperation;
+import org.dvare.expression.operation.utility.LeftPriority;
+import org.dvare.expression.operation.utility.RightPriority;
 import org.dvare.expression.operation.utility.Semicolon;
-import org.dvare.expression.operation.validation.LeftPriority;
-import org.dvare.expression.operation.validation.RightPriority;
 import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
@@ -154,6 +156,27 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
     protected List<Object> buildValues(Expression expression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
+        if (expression instanceof LiteralExpression) {
+
+            if (expression instanceof ListLiteral) {
+                dataTypeExpression = ((ListLiteral) expression).getType();
+                return ((ListLiteral) expression).getValue();
+            } else {
+                List values = new ArrayList<>();
+                values.add(((ListLiteral) expression).getValue());
+                dataTypeExpression = ((LiteralExpression) expression).getType();
+            }
+
+        }
+        if (expression instanceof ListLiteralOperationExpression) {
+            Object interpret = expression.interpret(expressionBinding, instancesBinding);
+            if (interpret instanceof ListLiteral) {
+
+                dataTypeExpression = ((ListLiteral) interpret).getType();
+                return ((ListLiteral) interpret).getValue();
+            }
+
+        }
         if (expression instanceof ListOperationExpression || expression instanceof GetExpOperation || expression instanceof Semicolon) {
             OperationExpression valuesOperation = (OperationExpression) expression;
             Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
@@ -230,35 +253,67 @@ public abstract class AggregationOperationExpression extends OperationExpression
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
 
-        List dataSet = (List) instancesBinding.getInstance("data");
-        for (Object bindings : dataSet) {
+        Expression valueOperand = this.leftOperand;
 
-            Expression right = this.leftOperand;
-            LiteralExpression<?> literalExpression = null;
 
-            if (right instanceof OperationExpression) {
-                OperationExpression operation = (OperationExpression) right;
-                literalExpression = (LiteralExpression) operation.interpret(expressionBinding, instancesBinding);
-            } else if (right instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) right;
-                variableExpression = VariableType.setVariableValue(variableExpression, bindings);
-                literalExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
-            } else if (right instanceof LiteralExpression) {
-                literalExpression = (LiteralExpression<?>) right;
+        List valuesList = null;
+        Class<? extends DataTypeExpression> type = null;
+
+
+        OperationExpression operationExpression = new ValuesOperation();
+        operationExpression.setLeftOperand(valueOperand);
+
+        Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+
+        if (interpret instanceof ListLiteral) {
+
+            ListLiteral listLiteral = (ListLiteral) interpret;
+            type = listLiteral.getType();
+            valuesList = listLiteral.getValue();
+        }
+
+
+        if (leftExpression == null) {
+            switch (toDataType(type)) {
+
+                case FloatType: {
+                    leftExpression = LiteralType.getLiteralExpression(Float.MIN_VALUE, type);
+                    break;
+                }
+                case IntegerType: {
+                    leftExpression = LiteralType.getLiteralExpression(Integer.MIN_VALUE, type);
+                    break;
+                }
+
+                default: {
+                    leftExpression = new NullLiteral();
+                    //throw new IllegalOperationException("Min OperationExpression Not Allowed");
+                }
+
             }
+        }
 
-            if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+        if (valuesList != null && type != null) {
 
-                try {
-                    leftExpression = literalExpression.getType().newInstance().evaluate(this, leftExpression, literalExpression);
-                } catch (InstantiationException | IllegalAccessException e) {
-                    logger.error(e.getMessage(), e);
+            for (Object value : valuesList) {
+
+
+                LiteralExpression<?> literalExpression = LiteralType.getLiteralExpression(value, type);
+
+                if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+
+                    try {
+                        leftExpression = literalExpression.getType().newInstance().evaluate(this, leftExpression, literalExpression);
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Updating value of  by " + leftExpression.getValue());
+                    }
+                } else {
+                    throw new InterpretException("Literal Expression is null");
                 }
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Updating value of  by " + leftExpression.getValue());
-                }
-            } else {
-                throw new InterpretException("Literal Expression is null");
+
             }
 
         }

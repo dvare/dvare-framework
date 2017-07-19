@@ -30,7 +30,7 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.validation.RightPriority;
+import org.dvare.expression.operation.utility.RightPriority;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
 

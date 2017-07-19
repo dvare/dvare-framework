@@ -26,7 +26,7 @@ package org.dvare.expression.datatype;
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.operation.validation.*;
+import org.dvare.expression.operation.relational.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,7 +66,7 @@ public class SimpleDateType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
-            LessThen.class
+            LessThan.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
         Date leftValue = toLocalDate(left.getValue());
@@ -85,7 +85,7 @@ public class SimpleDateType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
-            GreaterThen.class
+            GreaterThan.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
         Date leftValue = toLocalDate(left.getValue());

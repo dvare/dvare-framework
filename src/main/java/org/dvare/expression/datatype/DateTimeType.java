@@ -27,7 +27,7 @@ import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.validation.*;
+import org.dvare.expression.operation.relational.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -62,7 +62,7 @@ public class DateTimeType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
-            LessThen.class
+            LessThan.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
         LocalDateTime leftValue = (LocalDateTime) left.getValue();
@@ -81,7 +81,7 @@ public class DateTimeType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
-            GreaterThen.class
+            GreaterThan.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
         LocalDateTime leftValue = (LocalDateTime) left.getValue();

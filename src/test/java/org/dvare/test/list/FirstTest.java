@@ -108,4 +108,22 @@ public class FirstTest extends TestCase {
 
         assertTrue(result);
     }
+
+
+    public void testApp1() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        Map<String, String> aggregationTypes = new HashMap<>();
+        aggregationTypes.put("A0", "IntegerType");
+        Expression expression = factory.getParser().fromString("A0 :=  ([10,9,5] -> first ())", aggregationTypes, new HashMap<>());
+
+
+        Object resultModel = factory.getEvaluator().aggregate(new RuleBinding(expression), new DataRow(new HashMap<>()), new ArrayList<>());
+
+        boolean result = ValueFinder.findValue("A0", resultModel).equals(10);
+
+        assertTrue(result);
+    }
+
 }

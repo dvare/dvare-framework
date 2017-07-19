@@ -2,6 +2,8 @@ package org.dvare.test.aggregation;
 
 import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.evaluator.RuleEvaluator;
@@ -65,5 +67,35 @@ public class MeanTest extends TestCase {
 
         assertTrue(result);
     }
+
+
+    public void testApp1() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        Expression expression = factory.getParser().fromString("[10.0,20.0,40.0,55.0] -> mean () = 31.25", new ContextsBinding());
+
+
+        boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding(new HashMap<>()));
+
+        assertTrue(result);
+    }
+
+    public void testApp2() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        Expression expression = factory.getParser().fromString("[10,20,40,55] -> mean () = 31", new ContextsBinding());
+
+
+        boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding(new HashMap<>()));
+
+        assertTrue(result);
+    }
+
+
+
 
 }

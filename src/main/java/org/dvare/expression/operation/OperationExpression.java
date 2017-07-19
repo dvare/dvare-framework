@@ -65,6 +65,19 @@ public abstract class OperationExpression extends Expression {
 
     }
 
+
+    public OperationExpression(OperationType operationType, Expression leftOperand) {
+        this.operationType = operationType;
+        this.leftOperand = leftOperand;
+    }
+
+
+    public OperationExpression(OperationType operationType, Expression leftOperand, Expression rightOperand) {
+        this.operationType = operationType;
+        this.leftOperand = leftOperand;
+        this.rightOperand = rightOperand;
+    }
+
     public static TokenType buildTokenType(String token) {
         TokenType tokenType = new TokenType();
         final String selfPatten = ".{1,}\\..{1,}";

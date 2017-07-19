@@ -9,7 +9,7 @@ import org.dvare.expression.operation.logical.And;
 import org.dvare.expression.operation.logical.Implies;
 import org.dvare.expression.operation.logical.Not;
 import org.dvare.expression.operation.logical.OR;
-import org.dvare.expression.operation.validation.*;
+import org.dvare.expression.operation.relational.*;
 
 import java.util.List;
 
@@ -110,7 +110,7 @@ public class OperationBuilder {
             }
 
             case GREATER: {
-                operationExpression = new GreaterThen();
+                operationExpression = new GreaterThan();
                 operationExpression.setLeftOperand(leftOperand);
                 operationExpression.setRightOperand(rightOperand);
                 break;
@@ -125,7 +125,7 @@ public class OperationBuilder {
             }
 
             case LESS: {
-                operationExpression = new LessThen();
+                operationExpression = new LessThan();
                 operationExpression.setLeftOperand(leftOperand);
                 operationExpression.setRightOperand(rightOperand);
                 break;

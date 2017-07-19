@@ -31,7 +31,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.arithmetic.Add;
 import org.dvare.expression.operation.arithmetic.Subtract;
-import org.dvare.expression.operation.validation.*;
+import org.dvare.expression.operation.relational.*;
 
 import java.util.List;
 
@@ -62,7 +62,7 @@ public class NullType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
-            LessThen.class
+            LessThan.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
         return false;
@@ -76,7 +76,7 @@ public class NullType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
-            GreaterThen.class
+            GreaterThan.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
         return false;

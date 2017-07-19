@@ -27,7 +27,7 @@ package org.dvare.expression.datatype;
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.operation.validation.*;
+import org.dvare.expression.operation.relational.*;
 import org.dvare.util.TrimString;
 
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public class StringType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
-            LessThen.class
+            LessThan.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
         String leftValue = left.getValue().toString();
@@ -106,7 +106,7 @@ public class StringType extends DataTypeExpression {
     }
 
     @OperationMapping(operations = {
-            GreaterThen.class
+            GreaterThan.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
         String leftValue = left.getValue().toString();

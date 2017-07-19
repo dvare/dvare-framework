@@ -35,7 +35,6 @@ import org.dvare.expression.NamedExpression;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.validation.RightPriority;
 import org.dvare.parser.ExpressionTokenizer;
 
 import java.util.ArrayList;

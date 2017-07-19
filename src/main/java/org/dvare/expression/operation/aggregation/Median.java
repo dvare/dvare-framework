@@ -31,10 +31,12 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.FloatType;
 import org.dvare.expression.datatype.IntegerType;
+import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.AggregationOperationExpression;
+import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.veriable.VariableExpression;
+import org.dvare.expression.operation.list.ValuesOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,22 +57,28 @@ public class Median extends AggregationOperationExpression {
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
 
-        Expression right = this.leftOperand;
-        if (right instanceof VariableExpression) {
-            VariableExpression variableExpression = ((VariableExpression) right);
-            String name = variableExpression.getName();
-            DataType type = toDataType(variableExpression.getType());
+        Expression valueOperand = this.leftOperand;
 
-            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-            List dataSet;
-            if (instance instanceof List) {
-                dataSet = (List) instance;
-            } else {
-                dataSet = new ArrayList<>();
-                dataSet.add(instance);
-            }
 
-            int length = dataSet.size();
+        List valuesList = null;
+        DataType type = null;
+
+
+        OperationExpression operationExpression = new ValuesOperation();
+        operationExpression.setLeftOperand(valueOperand);
+
+        Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+
+        if (interpret instanceof ListLiteral) {
+
+            ListLiteral listLiteral = (ListLiteral) interpret;
+            type = toDataType(listLiteral.getType());
+            valuesList = listLiteral.getValue();
+        }
+
+
+        if (valuesList != null && type != null) {
+            int length = valuesList.size();
             int middle = length / 2;
 
             switch (type) {
@@ -79,15 +87,14 @@ public class Median extends AggregationOperationExpression {
 
                     List<Float> values = new ArrayList<>();
 
-                    for (Object bindings : dataSet) {
-                        Object value = getValue(bindings, name);
+                    for (Object value : valuesList) {
                         if (value instanceof Float) {
                             values.add((Float) value);
                         }
                     }
 
 
-                    Float result = 0f;
+                    Float result;
                     if (length % 2 == 1) {
                         result = values.get(middle);
 
@@ -105,15 +112,15 @@ public class Median extends AggregationOperationExpression {
                 case IntegerType: {
                     List<Integer> values = new ArrayList<>();
 
-                    for (Object bindings : dataSet) {
-                        Object value = getValue(bindings, name);
+                    for (Object value : valuesList) {
+
                         if (value instanceof Integer) {
                             values.add((Integer) value);
                         }
                     }
 
 
-                    Integer result = 0;
+                    Integer result;
                     if (length % 2 == 1) {
                         result = values.get(middle);
 
@@ -128,8 +135,9 @@ public class Median extends AggregationOperationExpression {
                     break;
                 }
             }
-        }
 
+
+        }
 
         return leftExpression;
     }

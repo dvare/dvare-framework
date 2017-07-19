@@ -54,6 +54,27 @@ public class ExpressionParser {
 
     private ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
+    public static TypeBinding translate(String types) {
+
+        String variables[] = types.split(",");
+        TypeBinding typeBinding = new TypeBinding();
+        for (String variable : variables) {
+            if (variable != null && variable.contains(":")) {
+                String variableTokens[] = variable.split(":");
+                typeBinding.addTypes(variableTokens[0], DataType.valueOf(variableTokens[1]));
+            }
+        }
+        return typeBinding;
+    }
+
+    public static TypeBinding translate(Map<String, String> types) {
+        TypeBinding typeBinding = new TypeBinding();
+        for (String name : types.keySet()) {
+            DataType dataType = DataType.valueOf(types.get(name));
+            typeBinding.addTypes(name, dataType);
+        }
+        return typeBinding;
+    }
 
     public static TypeBinding translate(Class types) {
         TypeBinding typeBinding = new TypeBinding();
@@ -87,17 +108,15 @@ public class ExpressionParser {
         return typeBinding;
     }
 
-    public static TypeBinding translate(Map<String, String> types) {
-        TypeBinding typeBinding = new TypeBinding();
-        for (String name : types.keySet()) {
-            DataType dataType = DataType.valueOf(types.get(name));
-            typeBinding.addTypes(name, dataType);
-        }
-        return typeBinding;
-    }
 
     public Expression fromString(String expr, HashMap<String, String> type) throws ExpressionParseException {
         TypeBinding typeBinding = translate(type);
+        return fromString(expr, typeBinding);
+    }
+
+
+    public Expression fromString(String expr, String types) throws ExpressionParseException {
+        TypeBinding typeBinding = translate(types);
         return fromString(expr, typeBinding);
     }
 
@@ -111,10 +130,21 @@ public class ExpressionParser {
         return fromString(expr, typeBinding, null);
     }
 
+    public Expression fromString(String expr, Map<String, String> aTypes) throws ExpressionParseException {
+        TypeBinding aTypeBinding = ExpressionParser.translate(aTypes);
+        return fromString(expr, aTypeBinding, null);
+    }
+
     public Expression fromString(String expr, Map<String, String> aTypes, Map<String, String> vTypes) throws ExpressionParseException {
         TypeBinding vTypeBinding = ExpressionParser.translate(vTypes);
         TypeBinding aTypeBinding = ExpressionParser.translate(aTypes);
         return fromString(expr, aTypeBinding, vTypeBinding);
+    }
+
+    public Expression fromString(String expr, String atype, String vtype) throws ExpressionParseException {
+        TypeBinding aTypes = translate(atype);
+        TypeBinding vTypes = translate(vtype);
+        return fromString(expr, aTypes, vTypes);
     }
 
     public Expression fromString(String expr, Class atype, Class vtype) throws ExpressionParseException {

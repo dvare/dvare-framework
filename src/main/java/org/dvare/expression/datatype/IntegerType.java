@@ -30,7 +30,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.aggregation.Maximum;
 import org.dvare.expression.operation.aggregation.Minimum;
 import org.dvare.expression.operation.arithmetic.*;
-import org.dvare.expression.operation.validation.*;
+import org.dvare.expression.operation.relational.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,26 +46,45 @@ public class IntegerType extends DataTypeExpression {
     })
     public boolean equal(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
-        Integer rightValue = (Integer) right.getValue();
-        return leftValue.equals(rightValue);
+
+        if (right.getValue() instanceof Float) {
+            return leftValue == Math.round((Float) right.getValue());
+        } else {
+            Integer rightValue = (Integer) right.getValue();
+            return leftValue.equals(rightValue);
+        }
+
     }
+
 
     @OperationMapping(operations = {
             NotEquals.class
     })
     public boolean notEqual(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
-        Integer rightValue = (Integer) right.getValue();
-        return !leftValue.equals(rightValue);
+
+
+        if (right.getValue() instanceof Float) {
+            return leftValue != Math.ceil((Float) right.getValue());
+        } else {
+            Integer rightValue = (Integer) right.getValue();
+            return !leftValue.equals(rightValue);
+        }
+
     }
 
     @OperationMapping(operations = {
-            LessThen.class
+            LessThan.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
-        Integer rightValue = (Integer) right.getValue();
-        return leftValue < rightValue;
+        if (right.getValue() instanceof Float) {
+            return leftValue < (Float) right.getValue();
+        } else {
+            Integer rightValue = (Integer) right.getValue();
+            return leftValue < rightValue;
+        }
+
     }
 
     @OperationMapping(operations = {
@@ -73,17 +92,31 @@ public class IntegerType extends DataTypeExpression {
     })
     public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
-        Integer rightValue = (Integer) right.getValue();
-        return leftValue <= rightValue;
+
+
+        if (right.getValue() instanceof Float) {
+            return leftValue <= (Float) right.getValue();
+        } else {
+            Integer rightValue = (Integer) right.getValue();
+            return leftValue <= rightValue;
+        }
+
+
     }
 
     @OperationMapping(operations = {
-            GreaterThen.class
+            GreaterThan.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
-        Integer rightValue = (Integer) right.getValue();
-        return leftValue > rightValue;
+
+        if (right.getValue() instanceof Float) {
+            return leftValue > (Float) right.getValue();
+        } else {
+            Integer rightValue = (Integer) right.getValue();
+            return leftValue > rightValue;
+        }
+
     }
 
     @OperationMapping(operations = {
@@ -91,8 +124,14 @@ public class IntegerType extends DataTypeExpression {
     })
     public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
         Integer leftValue = (Integer) left.getValue();
-        Integer rightValue = (Integer) right.getValue();
-        return leftValue >= rightValue;
+
+        if (right.getValue() instanceof Float) {
+            return leftValue >= (Float) right.getValue();
+        } else {
+            Integer rightValue = (Integer) right.getValue();
+            return leftValue >= rightValue;
+        }
+
     }
 
     @OperationMapping(operations = {

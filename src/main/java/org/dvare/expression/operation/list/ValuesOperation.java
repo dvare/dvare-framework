@@ -11,10 +11,7 @@ import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.ChainOperationExpression;
-import org.dvare.expression.operation.ListOperationExpression;
-import org.dvare.expression.operation.OperationExpression;
-import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.*;
 import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
@@ -69,7 +66,26 @@ public class ValuesOperation extends ListOperationExpression {
         List<Object> values = null;
         Expression left = this.leftOperand;
 
-        if (left instanceof VariableExpression) {
+        if (left instanceof LiteralExpression) {
+
+            if (left instanceof ListLiteral) {
+                values = ((ListLiteral) left).getValue();
+                dataTypeExpression = ((ListLiteral) left).getType();
+            } else {
+                values = new ArrayList<>();
+                values.add(((ListLiteral) left).getValue());
+                dataTypeExpression = ((LiteralExpression) left).getType();
+            }
+
+        }
+        if (left instanceof ListLiteralOperationExpression) {
+            Object interpret = left.interpret(expressionBinding, instancesBinding);
+            if (interpret instanceof ListLiteral) {
+                values = ((ListLiteral) interpret).getValue();
+                dataTypeExpression = ((ListLiteral) interpret).getType();
+            }
+
+        } else if (left instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) left;
 
             if (variableExpression instanceof ListVariable) {

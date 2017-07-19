@@ -27,10 +27,10 @@ import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.operation.validation.Equals;
-import org.dvare.expression.operation.validation.In;
-import org.dvare.expression.operation.validation.NotEquals;
-import org.dvare.expression.operation.validation.NotIn;
+import org.dvare.expression.operation.relational.Equals;
+import org.dvare.expression.operation.relational.In;
+import org.dvare.expression.operation.relational.NotEquals;
+import org.dvare.expression.operation.relational.NotIn;
 
 import java.util.List;
 

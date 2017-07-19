@@ -95,12 +95,6 @@ public class RuleEvaluator {
     }
 
 
-    public Object aggregate(RuleBinding rule, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-
-        rule.getExpression().interpret(expressionBinding, instancesBinding);
-        return instancesBinding;
-    }
-
     public Object aggregate(List<RuleBinding> rules, Object aggregate, Object dataset) throws InterpretException {
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", aggregate);
@@ -113,7 +107,6 @@ public class RuleEvaluator {
         return instancesBinding.getInstance("self");
     }
 
-
     public Object aggregate(RuleBinding rule, Object aggregate, Object dataset) throws InterpretException {
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", aggregate);
@@ -122,4 +115,9 @@ public class RuleEvaluator {
         return instancesBinding.getInstance("self");
     }
 
+    public Object aggregate(RuleBinding rule, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+
+        rule.getExpression().interpret(expressionBinding, instancesBinding);
+        return instancesBinding;
+    }
 }

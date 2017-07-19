@@ -17,7 +17,7 @@ import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.validation.LeftPriority;
+import org.dvare.expression.operation.utility.LeftPriority;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
