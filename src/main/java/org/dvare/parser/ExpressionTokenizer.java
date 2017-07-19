@@ -435,15 +435,18 @@ public class ExpressionTokenizer {
         return tokenArray;
     }
 
-
     public static String toString(String[] tokens, int pos) {
+        return toString(tokens, pos, 0);
+    }
+
+    public static String toString(String[] tokens, int pos, int startIndex) {
         StringBuilder stringBuilder = new StringBuilder("");
 
         if (tokens.length >= pos + 1) {
             pos++;
         }
 
-        for (int i = 0; i < pos; i++) {
+        for (int i = startIndex; i < pos; i++) {
             stringBuilder.append(tokens[i]);
             stringBuilder.append(" ");
         }

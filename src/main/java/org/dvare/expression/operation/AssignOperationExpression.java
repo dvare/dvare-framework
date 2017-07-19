@@ -16,6 +16,7 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.utility.DefOperation;
 import org.dvare.expression.operation.utility.Semicolon;
 import org.dvare.expression.veriable.*;
 import org.dvare.parser.ExpressionTokenizer;
@@ -43,7 +44,7 @@ public class AssignOperationExpression extends OperationExpression {
 
             String leftString = tokens[pos - 1];
 
-            if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression) {
+            if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof Semicolon) {
                 TokenType tokenType = findDataObject(leftString, contexts);
                 if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
                     TypeBinding typeBinding = contexts.getContext(tokenType.type);
@@ -65,7 +66,7 @@ public class AssignOperationExpression extends OperationExpression {
 
 
             if (!(left instanceof VariableExpression)) {
-                String message = String.format("Left operand of aggregation operation is not variable  near %s", ExpressionTokenizer.toString(tokens, pos));
+                String message = String.format("Left operand of aggregation operation is not variable  near %s", ExpressionTokenizer.toString(tokens, pos, pos - 5));
                 logger.error(message);
                 throw new IllegalPropertyException(message);
             }
@@ -96,7 +97,7 @@ public class AssignOperationExpression extends OperationExpression {
             if (op != null) {
 
 
-                if (op instanceof Semicolon || op instanceof ConditionOperationExpression) {
+                if (op instanceof Semicolon || op instanceof ConditionOperationExpression || op instanceof DefOperation) {
                     return pos - 1;
                 }
 
@@ -108,7 +109,7 @@ public class AssignOperationExpression extends OperationExpression {
                 Expression expression = buildExpression(token, contexts);
 
 
-                if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression) {
+                if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof Semicolon) {
                     stack.add(expression);
                 } else {
                     return pos;

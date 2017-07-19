@@ -36,6 +36,7 @@ import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.utility.Semicolon;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.parser.ExpressionTokenizer;
@@ -121,7 +122,7 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
         // computing expression left side̵
 
-        if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression) {
+        if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof Semicolon) {
             pos = expression(tokens, pos, stack, expressionBinding, contexts, leftTokenType);
         }
 

@@ -30,11 +30,14 @@ import org.apache.log4j.Logger;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.parser.ExpressionParser;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
 
 public class RuleConfiguration {
+
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(RuleConfiguration.class);
     private ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
     private ExpressionParser expressionParser;
@@ -53,12 +56,18 @@ public class RuleConfiguration {
     public RuleConfiguration(String[] functionBasePackages, boolean silentMode) {
 
         if (silentMode) {
-            List<Logger> loggers = Collections.<Logger>list(LogManager.getCurrentLoggers());
-            loggers.add(LogManager.getRootLogger());
-            for (Logger logger : loggers) {
-                if (logger.getName().startsWith("org.dvare") || logger.getName().equals("root")) {
-                    logger.setLevel(Level.OFF);
+            try {
+
+                Class.forName("org.apache.log4j.LogManager");
+                List<Logger> loggers = Collections.<Logger>list(LogManager.getCurrentLoggers());
+                loggers.add(LogManager.getRootLogger());
+                for (Logger logger : loggers) {
+                    if (logger.getName().startsWith("org.dvare") || logger.getName().equals("root")) {
+                        logger.setLevel(Level.OFF);
+                    }
                 }
+            } catch (ClassNotFoundException e) {
+                logger.error(e.getMessage());
             }
         }
 
