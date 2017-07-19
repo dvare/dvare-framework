@@ -5,7 +5,7 @@ A Lightweight Java business rule expression language.
 
 ## Current version
 
-* The current stable version is `2.1` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|2.0|) [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.dvare/dvare-framework/badge.svg)](http://www.javadoc.io/doc/org.dvare/dvare-framework)
+* The current stable version is `2.1` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|2.1|) [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.dvare/dvare-framework/badge.svg)](http://www.javadoc.io/doc/org.dvare/dvare-framework)
 
 In order to use snapshot versions, you need to add the following maven repository in your `pom.xml`:
 
