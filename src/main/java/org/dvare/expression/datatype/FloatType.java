@@ -250,11 +250,8 @@ public class FloatType extends DataTypeExpression {
                 values.add((Float) tempValue);
             } else {
                 try {
-                    Float value = Float.parseFloat(tempValue.toString());
-                    values.add(value);
-                } catch (NumberFormatException e) {
-                    values.add(null);
-                } catch (NullPointerException e) {
+                    values.add(Float.parseFloat(tempValue.toString()));
+                } catch (NumberFormatException | NullPointerException e) {
                     values.add(null);
                 }
             }

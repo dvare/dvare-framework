@@ -154,7 +154,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
 
-    protected List<Object> buildValues(Expression expression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    protected List<?> buildValues(Expression expression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         if (expression instanceof LiteralExpression) {
 

@@ -49,11 +49,11 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
     }
 
 
-    protected boolean isPairList(List<Object> values) {
+    protected boolean isPairList(List<?> values) {
         return values.stream().allMatch(o -> o instanceof Pair);
     }
 
-    protected List<Object> includedFilter(Expression includeParam, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, List<Object> values) throws InterpretException {
+    protected List<?> includedFilter(Expression includeParam, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, List<?> values) throws InterpretException {
 
         if (includeParam instanceof LogicalOperationExpression) {
 
@@ -107,9 +107,9 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
     }
 
 
-    protected List<Object> excludedFilter(Expression includeParam, Expression exculdeParam, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, List<Object> values) throws InterpretException {
+    protected List<?> excludedFilter(Expression includeParam, Expression exculdeParam, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, List<?> values) throws InterpretException {
 
-        List<Object> includedValues = includedFilter(includeParam, expressionBinding, instancesBinding, values);
+        List<?> includedValues = includedFilter(includeParam, expressionBinding, instancesBinding, values);
 
 
         if (exculdeParam instanceof LogicalOperationExpression) {

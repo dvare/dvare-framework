@@ -74,7 +74,7 @@ public class First extends AggregationOperationExpression {
                 return LiteralType.getLiteralExpression(values.get(0), variableExpression.getType());
             }
         } else {
-            List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
+            List<?> values = buildValues(leftOperand, expressionBinding, instancesBinding);
             if (values != null && !values.isEmpty()) {
                 return LiteralType.getLiteralExpression(values.get(0), dataTypeExpression);
             }

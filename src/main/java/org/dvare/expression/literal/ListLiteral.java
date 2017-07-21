@@ -24,7 +24,8 @@ THE SOFTWARE.*/
 package org.dvare.expression.literal;
 
 
-import org.dvare.expression.datatype.DataTypeExpression;
+import org.dvare.annotations.Type;
+import org.dvare.expression.datatype.*;
 
 import java.util.List;
 
@@ -33,7 +34,6 @@ public class ListLiteral extends LiteralExpression<List> {
 
     public ListLiteral(List value, Class<? extends DataTypeExpression> type) {
         super(value, type);
-
     }
 
     public boolean isEmpty() {
@@ -42,6 +42,36 @@ public class ListLiteral extends LiteralExpression<List> {
 
     public Integer getSize() {
         return value != null ? value.size() : 0;
+    }
+
+
+    public Class<? extends DataTypeExpression> getListType() {
+
+
+        if (getType() != null) {
+
+            Type type = getType().getAnnotation(Type.class);
+            switch (type.dataType()) {
+
+                case IntegerType:
+                    return IntegerListType.class;
+                case FloatListType:
+                    return FloatListType.class;
+                case StringType:
+                    return StringListType.class;
+                case BooleanType:
+                    return ListType.class;
+                case DateTimeType:
+                    return ListType.class;
+                case DateType:
+                    return ListType.class;
+
+            }
+
+
+        }
+
+        return ListType.class;
     }
 
 

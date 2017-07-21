@@ -34,6 +34,7 @@ public class FunctionProvider {
     private static Logger logger = LoggerFactory.getLogger(FunctionProvider.class);
 
 
+
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.IntegerType})
     public Integer addFunction(Integer variable, Integer variable2) {
         if (logger.isDebugEnabled()) {
@@ -47,6 +48,15 @@ public class FunctionProvider {
     public Integer addFiveFunction(Integer variable, String variable2) {
         if (logger.isDebugEnabled()) {
             logger.debug("inside addFiveFuntion with arguments : " + variable + " and " + variable2);
+        }
+        return variable + 5;
+    }
+
+
+    @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType})
+    public Integer addFiveFunction(Integer variable) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("inside addFiveFunction with arguments : " + variable);
         }
         return variable + 5;
     }

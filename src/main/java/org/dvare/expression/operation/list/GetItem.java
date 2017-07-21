@@ -30,7 +30,7 @@ public class GetItem extends AggregationOperationExpression {
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
-        List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
+        List<?> values = buildValues(leftOperand, expressionBinding, instancesBinding);
 
         if (values != null && !rightOperand.isEmpty()) {
             Expression expression = rightOperand.get(0);
@@ -107,7 +107,7 @@ public class GetItem extends AggregationOperationExpression {
         return new NullLiteral();
     }
 
-    private LiteralExpression buildItem(List<Object> values, IntegerLiteral integerLiteral, Class dataTypeExpress) throws InterpretException {
+    private LiteralExpression buildItem(List<?> values, IntegerLiteral integerLiteral, Class dataTypeExpress) throws InterpretException {
         Integer index = integerLiteral.getValue();
         if (index != null && values != null) {
             index--; // start index from 1

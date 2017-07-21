@@ -47,7 +47,7 @@ public class FilterOperation extends ListOperationExpression {
 
         } else {
 
-            List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
+            List<?> values = buildValues(leftOperand, expressionBinding, instancesBinding);
 
             if (values != null) {
 

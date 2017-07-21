@@ -33,6 +33,7 @@ import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.NullType;
+import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -290,16 +291,21 @@ public abstract class EqualityOperationExpression extends OperationExpression {
 
         if (leftValueOperand != null && rightValueOperand != null) {
 
-            LiteralExpression left = toLiteralExpression(leftValueOperand);
-            LiteralExpression right = toLiteralExpression(rightValueOperand);
+            LiteralExpression leftLiteralExpression = toLiteralExpression(leftValueOperand);
+            LiteralExpression rightLiteralExpression = toLiteralExpression(rightValueOperand);
 
-            if (left instanceof NullLiteral || right instanceof NullLiteral) {
+            if (leftLiteralExpression instanceof ListLiteral && rightLiteralExpression instanceof ListLiteral) {
+
+                dataTypeExpression = ((ListLiteral) leftLiteralExpression).getListType();
+            }
+
+            if (leftLiteralExpression instanceof NullLiteral || rightLiteralExpression instanceof NullLiteral) {
                 dataTypeExpression = NullType.class;
             }
 
 
             try {
-                return dataTypeExpression.newInstance().evaluate(this, left, right);
+                return dataTypeExpression.newInstance().evaluate(this, leftLiteralExpression, rightLiteralExpression);
             } catch (InstantiationException | IllegalAccessException e) {
                 logger.error(e.getMessage(), e);
             }

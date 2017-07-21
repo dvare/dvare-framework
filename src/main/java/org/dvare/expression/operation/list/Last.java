@@ -76,7 +76,7 @@ public class Last extends AggregationOperationExpression {
                 return LiteralType.getLiteralExpression(values.get(values.size() - 1), variableExpression.getType());
             }
         } else {
-            List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
+            List<?> values = buildValues(leftOperand, expressionBinding, instancesBinding);
             if (values != null && !values.isEmpty()) {
                 return LiteralType.getLiteralExpression(values.get(values.size() - 1), dataTypeExpression);
             }

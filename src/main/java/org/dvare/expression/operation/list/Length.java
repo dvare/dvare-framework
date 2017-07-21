@@ -34,7 +34,7 @@ public class Length extends AggregationOperationExpression {
         Expression right = leftOperand;
         if (right instanceof OperationExpression) {
 
-            List<Object> values = buildValues(leftOperand, expressionBinding, instancesBinding);
+            List<?> values = buildValues(leftOperand, expressionBinding, instancesBinding);
             if (values != null) {
                 return LiteralType.getLiteralExpression(values.size(), IntegerType.class);
             }

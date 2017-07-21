@@ -73,6 +73,31 @@ public class ToInteger extends ChainOperationExpression {
                         logger.error(e.getMessage(), e);
                     }
                 }
+
+                case IntegerType: {
+
+                    Integer integer = null;
+                    if (value instanceof Integer) {
+                        integer = (Integer) value;
+
+
+                    } else {
+                        if (value != null) {
+                            integer = Integer.parseInt(value.toString());
+
+                        }
+                    }
+
+                    if (integer != null) {
+                        try {
+                            LiteralExpression returnExpression = LiteralType.getLiteralExpression(integer, DataType.IntegerType);
+                            return returnExpression;
+                        } catch (IllegalValueException | NumberFormatException e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                    }
+
+                }
                 case FloatType: {
                     Float aFloat = null;
                     if (value instanceof Float) {
@@ -90,9 +115,7 @@ public class ToInteger extends ChainOperationExpression {
                         try {
                             LiteralExpression returnExpression = LiteralType.getLiteralExpression(Math.round(aFloat), DataType.IntegerType);
                             return returnExpression;
-                        } catch (IllegalValueException e) {
-                            logger.error(e.getMessage(), e);
-                        } catch (NumberFormatException e) {
+                        } catch (IllegalValueException | NumberFormatException e) {
                             logger.error(e.getMessage(), e);
                         }
                     }

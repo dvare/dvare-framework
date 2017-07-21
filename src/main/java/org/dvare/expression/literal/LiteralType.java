@@ -27,7 +27,6 @@ import org.dvare.annotations.Type;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.SimpleDateType;
 import org.dvare.util.TrimString;
 import org.slf4j.Logger;
@@ -53,7 +52,7 @@ public class LiteralType {
     private static Logger logger = LoggerFactory.getLogger(LiteralType.class);
 
 
-    public static LiteralExpression<?> getLiteralExpression(Object value, Class<? extends DataTypeExpression> dataTypeExpression) throws InterpretException {
+    public static LiteralExpression<?> getLiteralExpression(Object value, Class<?> dataTypeExpression) throws InterpretException {
 
         if (value == null) {
             return new NullLiteral();

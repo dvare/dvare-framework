@@ -249,8 +249,7 @@ public class IntegerType extends DataTypeExpression {
                 values.add((Integer) tempValue);
             } else {
                 try {
-                    Integer value = Integer.parseInt(tempValue.toString());
-                    values.add(value);
+                    values.add(Integer.parseInt(tempValue.toString()));
                 } catch (NumberFormatException | NullPointerException e) {
                     values.add(null);
                 }

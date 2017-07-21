@@ -80,19 +80,17 @@ public class PairOperation extends AggregationOperationExpression {
 
         if (rightOperand.size() == 2) {
 
-            Expression left = rightOperand.get(0);
-
-
-            Expression right = rightOperand.get(1);
+            Expression keyParam = rightOperand.get(0);
+            Expression valueParam = rightOperand.get(1);
 
 
             VariableExpression leftVariableExpression = null;
             OperationExpression leftOperationExpression = null;
-            if (left instanceof VariableExpression) {
-                leftVariableExpression = (VariableExpression) left;
+            if (keyParam instanceof VariableExpression) {
+                leftVariableExpression = (VariableExpression) keyParam;
 
-            } else if (left instanceof ChainOperationExpression) {
-                leftOperationExpression = (ChainOperationExpression) left;
+            } else if (keyParam instanceof ChainOperationExpression) {
+                leftOperationExpression = (ChainOperationExpression) keyParam;
                 Expression expression = leftOperationExpression.getLeftOperand();
                 while (expression instanceof ChainOperationExpression) {
                     expression = ((ChainOperationExpression) expression).getLeftOperand();
@@ -105,11 +103,11 @@ public class PairOperation extends AggregationOperationExpression {
 
             VariableExpression rightVariableExpression = null;
             OperationExpression rightOperationExpression = null;
-            if (right instanceof VariableExpression) {
-                rightVariableExpression = (VariableExpression) right;
+            if (valueParam instanceof VariableExpression) {
+                rightVariableExpression = (VariableExpression) valueParam;
                 dataTypeExpression = rightVariableExpression.getType();
-            } else if (right instanceof ChainOperationExpression) {
-                rightOperationExpression = (ChainOperationExpression) right;
+            } else if (valueParam instanceof ChainOperationExpression) {
+                rightOperationExpression = (ChainOperationExpression) valueParam;
                 Expression expression = rightOperationExpression.getLeftOperand();
                 while (expression instanceof ChainOperationExpression) {
                     expression = ((ChainOperationExpression) expression).getLeftOperand();
@@ -148,30 +146,32 @@ public class PairOperation extends AggregationOperationExpression {
 
                 while (leftIterator.hasNext() && rightIterator.hasNext()) {
 
-                    Object templeftInstance = leftIterator.next();
-                    Object temprightInstance = rightIterator.next();
+                    Object tempLeftInstance = leftIterator.next();
+                    Object tempRightInstance = rightIterator.next();
 
 
                     Object leftValue;
                     if (leftOperationExpression != null) {
-                        instancesBinding.addInstance(leftVariableExpression.getName(), templeftInstance);
+                        instancesBinding.addInstance(leftVariableExpression.getOperandType(), tempLeftInstance);
                         LiteralExpression literalExpression = (LiteralExpression) leftOperationExpression.interpret(expressionBinding, instancesBinding);
                         leftValue = literalExpression.getValue();
                     } else {
-                        leftValue = getValue(templeftInstance, leftVariableExpression.getName());
+                        leftValue = getValue(tempLeftInstance, leftVariableExpression.getName());
 
                     }
 
                     Object rightValue;
                     if (rightOperationExpression != null) {
-                        instancesBinding.addInstance(rightVariableExpression.getName(), temprightInstance);
+                        instancesBinding.addInstance(rightVariableExpression.getOperandType(), tempRightInstance);
                         LiteralExpression literalExpression = (LiteralExpression) rightOperationExpression.interpret(expressionBinding, instancesBinding);
                         rightValue = literalExpression.getValue();
                         if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
                             dataTypeExpression = literalExpression.getType();
                         }
+
+
                     } else {
-                        rightValue = getValue(temprightInstance, rightVariableExpression.getName());
+                        rightValue = getValue(tempRightInstance, rightVariableExpression.getName());
 
                     }
 

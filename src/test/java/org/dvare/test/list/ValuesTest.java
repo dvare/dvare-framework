@@ -189,6 +189,16 @@ public class ValuesTest extends TestCase {
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
         assertTrue(result);
 
+
+        expression = factory.getParser().fromString("Variable1->toInteger()->toString()->substring(2,2)->toInteger()->values() = [29,24,24]", contexts);
+
+        rule = new RuleBinding(expression);
+
+        result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertTrue(result);
+
+
+
     }
 
 
@@ -314,10 +324,10 @@ public class ValuesTest extends TestCase {
 
     }
 
-
+/*
     public void testApp8() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration factory = new RuleConfiguration();
+        RuleConfiguration factory = new RuleConfiguration(new String[]{"org.dvare.util"});
 
 
         TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
@@ -325,7 +335,7 @@ public class ValuesTest extends TestCase {
         contexts.addContext("self", typeBinding);
 
 
-        Expression expression = factory.getParser().fromString("Variable1->toInteger()->values(let item:IntegerType ->toString()->substring(5,1) = '6')->notEmpty()", contexts);
+        Expression expression = factory.getParser().fromString(" fun ( addFiveFunction , Variable2) -> values()->notEmpty()", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
 
@@ -334,16 +344,16 @@ public class ValuesTest extends TestCase {
 
 
         ValuesObject valuesObject1 = new ValuesObject();
-        valuesObject1.setVariable1("42964");
+        valuesObject1.setVariable2(10);
         dataSet.add(valuesObject1);
 
         ValuesObject valuesObject2 = new ValuesObject();
-        valuesObject2.setVariable1("42453");
+        valuesObject2.setVariable2(15);
         dataSet.add(valuesObject2);
 
 
         ValuesObject valuesObject3 = new ValuesObject();
-        valuesObject3.setVariable1("42459");
+        valuesObject3.setVariable2(20);
         dataSet.add(valuesObject3);
 
         InstancesBinding instancesBinding = new InstancesBinding();
@@ -353,5 +363,5 @@ public class ValuesTest extends TestCase {
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
         assertFalse(result);
 
-    }
+    }*/
 }

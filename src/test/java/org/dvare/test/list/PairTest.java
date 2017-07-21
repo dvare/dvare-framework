@@ -46,7 +46,7 @@ public class PairTest extends TestCase {
         contexts.addContext("self", typeBinding);
 
 
-        Expression expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> Keys() ->isEmpty()", contexts);
+        Expression expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> Keys() ->notEmpty()", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
 
@@ -75,11 +75,126 @@ public class PairTest extends TestCase {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        assertFalse(result);
+        assertTrue(result);
+
+
+        expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> Keys() ->notEmpty() and Pair (Variable2,Variable1) -> Keys() = [1,3,2]", contexts);
+
+        rule = new RuleBinding(expression);
+
+        result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertTrue(result);
+
 
     }
 
     public void testApp3() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+
+        Expression expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> values() ->notEmpty()", contexts);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        List<ValuesObject> dataSet = new ArrayList<>();
+
+
+        ValuesObject valuesObject1 = new ValuesObject();
+        valuesObject1.setVariable1("42964");
+        valuesObject1.setVariable2(1);
+        dataSet.add(valuesObject1);
+
+        ValuesObject valuesObject2 = new ValuesObject();
+        valuesObject2.setVariable1("42456");
+        valuesObject2.setVariable2(3);
+        dataSet.add(valuesObject2);
+
+
+        ValuesObject valuesObject3 = new ValuesObject();
+        valuesObject3.setVariable1("42459");
+        valuesObject3.setVariable2(2);
+        dataSet.add(valuesObject3);
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        // [{1,42964},{3,42456},{2,42459}]
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertTrue(result);
+
+
+        expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> values() ->notEmpty() and Pair (Variable2,Variable1) -> values() = ['42964','42456','42459']", contexts);
+
+        rule = new RuleBinding(expression);
+
+        result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertTrue(result);
+
+
+        expression = factory.getParser().fromString("Pair (Variable2,Variable1->substring(1,4)) -> values() = ['4296','4245','4245']", contexts);
+
+        rule = new RuleBinding(expression);
+
+        result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertTrue(result);
+
+    }
+
+
+    public void testApp3_1() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+
+        Expression expression = factory.getParser().fromString("Pair (Variable2,Variable1->substring(1,4)) -> values() = ['4296','4245','4245']", contexts);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        List<ValuesObject> dataSet = new ArrayList<>();
+
+
+        ValuesObject valuesObject1 = new ValuesObject();
+        valuesObject1.setVariable1("42964");
+        valuesObject1.setVariable2(1);
+        dataSet.add(valuesObject1);
+
+        ValuesObject valuesObject2 = new ValuesObject();
+        valuesObject2.setVariable1("42456");
+        valuesObject2.setVariable2(3);
+        dataSet.add(valuesObject2);
+
+
+        ValuesObject valuesObject3 = new ValuesObject();
+        valuesObject3.setVariable1("42459");
+        valuesObject3.setVariable2(2);
+        dataSet.add(valuesObject3);
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        // [{1,42964},{3,42456},{2,42459}]
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertTrue(result);
+
+
+    }
+
+    public void testApp4() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -116,6 +231,7 @@ public class PairTest extends TestCase {
         InstancesBinding instancesBinding = new InstancesBinding();
         instancesBinding.addInstance("self", dataSet);
 
+
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
         assertTrue(result);
@@ -123,7 +239,7 @@ public class PairTest extends TestCase {
     }
 
 
-    public void testApp4() throws ExpressionParseException, InterpretException {
+    public void testApp5() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -166,7 +282,51 @@ public class PairTest extends TestCase {
 
     }
 
-    public void testApp5() throws ExpressionParseException, InterpretException {
+    public void testApp6() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+
+        Expression expression = factory.getParser().fromString("Pair (Variable2,Variable1) ->sort() -> values() ->last() = '42456'", contexts);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        List<ValuesObject> dataSet = new ArrayList<>();
+
+
+        ValuesObject valuesObject1 = new ValuesObject();
+        valuesObject1.setVariable1("42964");
+        valuesObject1.setVariable2(1);
+        dataSet.add(valuesObject1);
+
+        ValuesObject valuesObject2 = new ValuesObject();
+        valuesObject2.setVariable1("42456");
+        valuesObject2.setVariable2(3);
+        dataSet.add(valuesObject2);
+
+
+        ValuesObject valuesObject3 = new ValuesObject();
+        valuesObject3.setVariable1("42459");
+        valuesObject3.setVariable2(2);
+        dataSet.add(valuesObject3);
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertTrue(result);
+
+    }
+
+
+    public void testApp7() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

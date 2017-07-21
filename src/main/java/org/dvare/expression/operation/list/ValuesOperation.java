@@ -7,11 +7,14 @@ import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.*;
+import org.dvare.expression.operation.utility.Function;
 import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
@@ -35,14 +38,12 @@ public class ValuesOperation extends ListOperationExpression {
         super(operationType);
     }
 
-
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-
-        List<Object> values = extractValues(expressionBinding, instancesBinding);
+        List<?> values = extractValues(expressionBinding, instancesBinding, this.leftOperand);
 
         if (values != null) {
-            List<Object> includedValues = values;
+            List<?> includedValues = values;
             if (!rightOperand.isEmpty()) {
                 if (rightOperand.size() == 1) {
                     Expression includeParam = rightOperand.get(0);
@@ -61,112 +62,37 @@ public class ValuesOperation extends ListOperationExpression {
         return new NullLiteral();
     }
 
-
-    private List<Object> extractValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        List<Object> values = null;
-        Expression left = this.leftOperand;
-
-        if (left instanceof LiteralExpression) {
-
-            if (left instanceof ListLiteral) {
-                values = ((ListLiteral) left).getValue();
-                dataTypeExpression = ((ListLiteral) left).getType();
-            } else {
-                values = new ArrayList<>();
-                values.add(((ListLiteral) left).getValue());
-                dataTypeExpression = ((LiteralExpression) left).getType();
-            }
-
-        }
-        if (left instanceof ListLiteralOperationExpression) {
-            Object interpret = left.interpret(expressionBinding, instancesBinding);
-            if (interpret instanceof ListLiteral) {
-                values = ((ListLiteral) interpret).getValue();
-                dataTypeExpression = ((ListLiteral) interpret).getType();
-            }
-
-        } else if (left instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) left;
-
-            if (variableExpression instanceof ListVariable) {
-                dataTypeExpression = variableExpression.getType();
-                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-                variableExpression = VariableType.setVariableValue(variableExpression, instance);
-                values = ((ListVariable) variableExpression).getValue();
-
-            } else {
-
-                dataTypeExpression = variableExpression.getType();
-                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-                List dataSet;
-                if (instance instanceof List) {
-                    dataSet = (List) instance;
-                } else {
-                    dataSet = new ArrayList<>();
-                    dataSet.add(instance);
-                }
-                values = new ArrayList<>();
-                for (Object object : dataSet) {
-                    Object value = getValue(object, variableExpression.getName());
-                    values.add(value);
-                }
-
-            }
+    private List<?> extractValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression valueOperand) throws InterpretException {
+        List values;
 
 
-        } else if (left instanceof ChainOperationExpression) {
-            ChainOperationExpression operationExpression = (ChainOperationExpression) left;
-            Expression expression = operationExpression.getLeftOperand();
-            while (expression instanceof ChainOperationExpression) {
-                expression = ((ChainOperationExpression) expression).getLeftOperand();
-            }
-            if (expression instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) expression;
-                String operandType = variableExpression.getOperandType();
-                dataTypeExpression = variableExpression.getType();
-                Object instance = instancesBinding.getInstance(operandType);
-                List dataSet;
-                if (instance instanceof List) {
-                    dataSet = (List) instance;
-                } else {
-                    dataSet = new ArrayList<>();
-                    dataSet.add(instance);
-                }
-                values = new ArrayList<>();
-                for (Object object : dataSet) {
-                    instancesBinding.addInstance(operandType, object);
-                    LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(expressionBinding, instancesBinding);
-                    if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
-                        dataTypeExpression = literalExpression.getType();
-                    }
-                    values.add(literalExpression.getValue());
-                }
-                instancesBinding.addInstance(operandType, instance);
-            }
-        } else if (left instanceof PairOperation) {
+        if (valueOperand instanceof LiteralExpression) {
 
-            values = pairValues(left, expressionBinding, instancesBinding);
+            values = literalExpressionValues((LiteralExpression) valueOperand);
+
+        } else if (valueOperand instanceof ListLiteralOperationExpression) {
+
+            values = listLiteralValues(expressionBinding, instancesBinding, (ListLiteralOperationExpression) valueOperand);
+
+        } else if (valueOperand instanceof VariableExpression) {
+
+            values = variableExpressionValues(instancesBinding, (VariableExpression) valueOperand);
+
+        } else if (valueOperand instanceof ChainOperationExpression) {
+
+            values = chainOperationExpressionValues(expressionBinding, instancesBinding, (ChainOperationExpression) valueOperand);
+
+        } else if (valueOperand instanceof Function) {
+
+            values = functionExpressionExpressionValues(expressionBinding, instancesBinding, (Function) valueOperand);
+
+        } else if (valueOperand instanceof PairOperation) {
+
+            values = pairValues(expressionBinding, instancesBinding, valueOperand);
 
         } else {
 
-           /* if (left instanceof ListOperationExpression) {
-                ListOperationExpression listOperationExpression = (ListOperationExpression) left;
-                Expression expression = listOperationExpression.getLeftOperand();
-                while (expression instanceof OperationExpression) {
-
-                    if (expression instanceof PairOperation) {
-                        values = pairValues(left, expressionBinding, instancesBinding);
-                        break;
-                    } else {
-                        expression = ((OperationExpression) expression).getLeftOperand();
-                    }
-
-
-                }
-
-            }*/
-
-            values = buildValues(left, expressionBinding, instancesBinding);
+            values = buildValues(valueOperand, expressionBinding, instancesBinding);
             if (isPairList(values)) {
                 values = extractPairValues(values);
             }
@@ -175,8 +101,131 @@ public class ValuesOperation extends ListOperationExpression {
         return values;
     }
 
+    private List<?> literalExpressionValues(LiteralExpression literalExpression) throws InterpretException {
+        List values;
 
-    private List<Object> pairValues(Expression expression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+        if (literalExpression instanceof ListLiteral) {
+            values = ((ListLiteral) literalExpression).getValue();
+            dataTypeExpression = ((ListLiteral) literalExpression).getType();
+        } else {
+            values = new ArrayList<>();
+
+            values.add(literalExpression.getValue());
+
+            dataTypeExpression = literalExpression.getType();
+        }
+
+        return values;
+    }
+
+
+    private List<?> listLiteralValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, ListLiteralOperationExpression listLiteralOperationExpression) throws InterpretException {
+        List values = null;
+
+        Object interpret = listLiteralOperationExpression.interpret(expressionBinding, instancesBinding);
+        if (interpret instanceof ListLiteral) {
+            values = ((ListLiteral) interpret).getValue();
+            dataTypeExpression = ((ListLiteral) interpret).getType();
+        }
+
+        return values;
+    }
+
+    private List<?> variableExpressionValues(InstancesBinding instancesBinding, VariableExpression variableExpression) throws InterpretException {
+        List values = null;
+        if (variableExpression instanceof ListVariable) {
+            dataTypeExpression = variableExpression.getType();
+            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+            variableExpression = VariableType.setVariableValue(variableExpression, instance);
+            values = ((ListVariable) variableExpression).getValue();
+
+        } else {
+
+            dataTypeExpression = variableExpression.getType();
+            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+            List dataSet;
+            if (instance instanceof List) {
+                dataSet = (List) instance;
+            } else {
+                dataSet = new ArrayList<>();
+                dataSet.add(instance);
+            }
+            values = new ArrayList<>();
+            for (Object object : dataSet) {
+                Object value = getValue(object, variableExpression.getName());
+                values.add(value);
+            }
+
+        }
+        return values;
+    }
+
+    private List<?> functionExpressionExpressionValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Function function) throws InterpretException {
+        List values = null;
+
+
+        Expression functionValueOperand = function.getLeftOperand();
+
+        List dataSet = extractValues(expressionBinding, instancesBinding, functionValueOperand);
+
+
+        values = new ArrayList<>();
+        for (Object object : dataSet) {
+
+            function.setLeftOperand(LiteralType.getLiteralExpression(object, dataTypeExpression));
+
+            LiteralExpression literalExpression = (LiteralExpression) function.interpret(expressionBinding, instancesBinding);
+
+            if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
+                dataTypeExpression = literalExpression.getType();
+            }
+            values.add(literalExpression.getValue());
+
+        }
+
+
+        return values;
+    }
+
+    private List<?> chainOperationExpressionValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, ChainOperationExpression operationExpression) throws InterpretException {
+        List values = null;
+
+        Expression expression = operationExpression.getLeftOperand();
+        ChainOperationExpression chainOperationExpression = operationExpression;
+        while (expression instanceof ChainOperationExpression) {
+            chainOperationExpression = (ChainOperationExpression) expression;
+            expression = ((ChainOperationExpression) expression).getLeftOperand();
+        }
+
+        List dataSet = null;
+        Class<? extends DataTypeExpression> dataSetDataTypeExpression = null;
+        if (expression instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) expression;
+            dataSet = extractValues(expressionBinding, instancesBinding, variableExpression);
+            dataSetDataTypeExpression = dataTypeExpression;
+        }
+
+
+        if (dataSet != null && dataSetDataTypeExpression != null) {
+            values = new ArrayList<>();
+            for (Object object : dataSet) {
+                Expression leftOperandExpression1 = chainOperationExpression.getLeftOperand();
+                chainOperationExpression.setLeftOperand(LiteralType.getLiteralExpression(object, dataSetDataTypeExpression));
+                LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(expressionBinding, instancesBinding);
+                if (literalExpression.getType() != null && !(literalExpression.getType().equals(NullType.class))) {
+                    dataTypeExpression = literalExpression.getType();
+                }
+                values.add(literalExpression.getValue());
+
+                chainOperationExpression.setLeftOperand(leftOperandExpression1);
+            }
+
+        }
+
+        return values;
+    }
+
+    private List<?> pairValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression expression) throws InterpretException {
         if (expression instanceof PairOperation || expression instanceof ListOperationExpression) {
             OperationExpression pairOperation = (OperationExpression) expression;
 
@@ -192,7 +241,7 @@ public class ValuesOperation extends ListOperationExpression {
         return null;
     }
 
-    private List<Object> extractPairValues(List pairList) {
+    private List<?> extractPairValues(List pairList) {
         List<Object> pairValues = new ArrayList<>();
 
         for (Object pairObject : pairList) {
