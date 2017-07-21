@@ -1,4 +1,4 @@
-package org.dvare.expression.operation.list;
+package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.expression.ExpressionBinding;
@@ -11,9 +11,9 @@ import org.dvare.expression.operation.OperationType;
 import java.util.Stack;
 
 @Operation(type = OperationType.END_FORALL)
-public class EndForAllEach extends OperationExpression {
+public class EndForAll extends OperationExpression {
 
-    public EndForAllEach() {
+    public EndForAll() {
         super(OperationType.END_FORALL);
     }
 

@@ -41,7 +41,7 @@ public class NamedExpression extends Expression {
 
     @Override
     public String toString() {
-        return "NamedExpression[" + name + "]";
+        return name;
     }
 
 

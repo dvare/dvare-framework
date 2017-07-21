@@ -1,7 +1,7 @@
 package org.dvare;
 
 import org.dvare.test.aggregation.*;
-import org.dvare.test.list.LengthTest;
+import org.dvare.test.list.SizeTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -17,7 +17,7 @@ import org.junit.runners.Suite;
         MedianTest.class,
         SemicolonTest.class,
         ConditionTest.class,
-        LengthTest.class,
+        SizeTest.class,
         ConditionChainTest.class,
         DistanceTest.class})
 public class AggregationTest {

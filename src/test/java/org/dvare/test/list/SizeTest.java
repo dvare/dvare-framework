@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LengthTest extends TestCase {
+public class SizeTest extends TestCase {
 
     public void testApp() throws ExpressionParseException, InterpretException {
 
@@ -29,8 +29,8 @@ public class LengthTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-//        Expression aggregate = factory.getParser().fromString("A0 := value(data.V1->values()->length())", aggregationTypes, validationTypes);
-        Expression aggregate = factory.getParser().fromString("A0 := data.V1->values()->length()", aggregationTypes, validationTypes);
+//        Expression aggregate = factory.getParser().fromString("A0 := value(data.V1->values()->size())", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("A0 := data.V1->values()->size()", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
@@ -80,7 +80,7 @@ public class LengthTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getParser().fromString("A0 := data.V1->length()", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("A0 := data.V1->size()", aggregationTypes, validationTypes);
 
 
         RuleBinding rule = new RuleBinding(aggregate);

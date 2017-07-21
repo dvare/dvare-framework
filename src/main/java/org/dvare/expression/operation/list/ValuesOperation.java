@@ -211,7 +211,8 @@ public class ValuesOperation extends ListOperationExpression {
             for (Object object : dataSet) {
                 Expression leftOperandExpression1 = chainOperationExpression.getLeftOperand();
                 chainOperationExpression.setLeftOperand(LiteralType.getLiteralExpression(object, dataSetDataTypeExpression));
-                LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(expressionBinding, instancesBinding);
+                Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+                LiteralExpression literalExpression = (LiteralExpression) interpret;
                 if (literalExpression.getType() != null && !(literalExpression.getType().equals(NullType.class))) {
                     dataTypeExpression = literalExpression.getType();
                 }

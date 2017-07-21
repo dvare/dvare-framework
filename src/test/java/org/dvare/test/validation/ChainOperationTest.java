@@ -101,6 +101,25 @@ public class ChainOperationTest extends TestCase {
     }
 
 
+    public void testApp2_1() throws ExpressionParseException, InterpretException {
+
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String expr = "Variable5->length() = 5";
+        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+        ArithmeticOperation ArithmeticOperation = new ArithmeticOperation();
+        ArithmeticOperation.setVariable5("dvare");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
+        Assert.assertTrue(result);
+    }
+
+
     public void testApp3() throws ExpressionParseException, InterpretException {
 
 

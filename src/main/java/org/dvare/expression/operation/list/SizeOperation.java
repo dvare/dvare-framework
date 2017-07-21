@@ -18,13 +18,13 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Operation(type = OperationType.LENGTH)
-public class Length extends AggregationOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Length.class);
+@Operation(type = OperationType.SIZE)
+public class SizeOperation extends AggregationOperationExpression {
+    static Logger logger = LoggerFactory.getLogger(SizeOperation.class);
 
 
-    public Length() {
-        super(OperationType.LENGTH);
+    public SizeOperation() {
+        super(OperationType.SIZE);
     }
 
 

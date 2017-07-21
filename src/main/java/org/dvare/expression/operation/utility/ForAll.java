@@ -1,4 +1,4 @@
-package org.dvare.expression.operation.list;
+package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
@@ -11,15 +11,9 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.BooleanType;
-import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralType;
-import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.utility.LeftPriority;
-import org.dvare.expression.veriable.VariableExpression;
-import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,22 +26,37 @@ import java.util.Stack;
 public class ForAll extends OperationExpression {
     private static Logger logger = LoggerFactory.getLogger(ForAll.class);
 
-    private String refrenceValueToken;
-    private String driveContexttToken;
+    protected NamedExpression referenceContext;
+    protected NamedExpression derivedContext;
+
 
     public ForAll() {
         super(OperationType.FORALL);
     }
 
+    public ForAll(OperationType operationType) {
+        super(operationType);
+    }
+
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contextsBinding) throws ExpressionParseException {
 
 
-        refrenceValueToken = tokens[pos - 1];
-        pos = pos + 1;
-        driveContexttToken = tokens[pos];
-        pos = pos + 1;
+        pos++;
+
+
+        if (pos + 2 < tokens.length && tokens[pos + 2].equals("|")) {
+
+            referenceContext = new NamedExpression(tokens[pos++]);
+            derivedContext = new NamedExpression(tokens[pos++]);
+
+        } else if (pos + 1 < tokens.length && tokens[pos + 1].equals("|")) {
+            referenceContext = new NamedExpression("self");
+            derivedContext = new NamedExpression(tokens[pos]);
+
+        }
+        pos++;
 
 
         Expression valueExpression = null;
@@ -55,27 +64,27 @@ public class ForAll extends OperationExpression {
         if (stack.isEmpty()) {
 
 
-            TokenType tokenType = findDataObject(refrenceValueToken, contexts);
+            TokenType tokenType = findDataObject(referenceContext.getName(), contextsBinding);
 
-            if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
-
+            if (tokenType.type != null && contextsBinding.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contextsBinding.getContext(tokenType.type)) != null) {
+/*
                 TypeBinding typeBinding = contexts.getContext(tokenType.type);
                 DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                valueExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                valueExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);*/
 
             } else {
 
-                TypeBinding typeBinding = contexts.getContext(refrenceValueToken);
-                if (contexts.getContext(refrenceValueToken) != null) {
-                    contexts.addContext(driveContexttToken, typeBinding);
-                    this.leftOperand = new NamedExpression(refrenceValueToken);
+                TypeBinding typeBinding = contextsBinding.getContext(referenceContext.getName());
+                if (contextsBinding.getContext(referenceContext.getName()) != null) {
+                    contextsBinding.addContext(derivedContext.getName(), typeBinding);
+                    this.leftOperand = new NamedExpression(referenceContext.getName());
                 }
             }
         } else {
-            valueExpression = stack.pop();
+            //valueExpression = stack.pop();
         }
 
-        if (valueExpression instanceof ListOperationExpression) {
+        /*if (valueExpression instanceof ListOperationExpression) {
 
             ListOperationExpression listOperationExpression = (ListOperationExpression) valueExpression;
 
@@ -102,19 +111,21 @@ public class ForAll extends OperationExpression {
                     contexts.addContext(tokenType.type, typeBinding);
                 }
             }
-        }
+        }*/
 
 
-        pos = findNextExpression(tokens, pos, stack, expressionBinding, contexts);
+        pos = findNextExpression(tokens, pos, stack, expressionBinding, contextsBinding);
 
-        this.rightOperand = stack.pop();
-        contexts.removeContext(driveContexttToken);
+        this.leftOperand = stack.pop();
+        contextsBinding.removeContext(derivedContext.getName());
 
         if (logger.isDebugEnabled()) {
             logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
 
         }
         stack.push(this);
+
+
         return pos;
     }
 
@@ -130,7 +141,7 @@ public class ForAll extends OperationExpression {
 
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
-                if (op.getClass().equals(EndForAllEach.class)) {
+                if (op.getClass().equals(EndForAll.class) || op.getClass().equals(EndForEach.class)) {
                     return pos;
                 } else if (!op.getClass().equals(LeftPriority.class)) {
                     pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
@@ -150,28 +161,27 @@ public class ForAll extends OperationExpression {
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
-        if (leftOperand instanceof NamedExpression) {
-            Object object = instancesBinding.getInstance(refrenceValueToken);
-            if (object instanceof List) {
-                List instances = (List) object;
 
-                List<Boolean> results = new ArrayList<>();
+        Object object = instancesBinding.getInstance(referenceContext.getName());
+        if (object instanceof List) {
+            List instances = (List) object;
 
-                for (Object instance : instances) {
-                    instancesBinding.addInstance(driveContexttToken, instance);
+            List<Boolean> results = new ArrayList<>();
 
-                    Object result = rightOperand.interpret(expressionBinding, instancesBinding);
-                    results.add(toBoolean(result));
+            for (Object instance : instances) {
+                instancesBinding.addInstance(derivedContext.getName(), instance);
 
-
-                }
-
-                instancesBinding.removeInstance(refrenceValueToken);
-                Boolean result = results.stream().allMatch(Boolean::booleanValue);
-                return LiteralType.getLiteralExpression(result, BooleanType.class);
+                Object result = leftOperand.interpret(expressionBinding, instancesBinding);
+                results.add(toBoolean(result));
 
             }
-        } else if (leftOperand instanceof ListOperationExpression) {
+
+            instancesBinding.removeInstance(derivedContext.getName());
+            Boolean result = results.stream().allMatch(Boolean::booleanValue);
+            return LiteralType.getLiteralExpression(result, BooleanType.class);
+
+        }
+         /*else if (leftOperand instanceof ListOperationExpression) {
 
             OperationExpression valuesOperation = (OperationExpression) leftOperand;
             Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
@@ -189,8 +199,37 @@ public class ForAll extends OperationExpression {
 
             }
 
-        }
+        }*/
         return LiteralType.getLiteralExpression(false, BooleanType.class);
     }
 
+
+    @Override
+    public String toString() {
+
+        StringBuilder toStringBuilder = new StringBuilder();
+
+        toStringBuilder.append(this.getSymbols().get(0));
+
+
+        toStringBuilder.append(" ");
+        toStringBuilder.append(referenceContext.toString());
+
+        toStringBuilder.append(" ");
+        toStringBuilder.append(derivedContext.toString());
+
+
+        toStringBuilder.append(" ");
+        toStringBuilder.append("|");
+        toStringBuilder.append(" ");
+
+        if (leftOperand != null) {
+            toStringBuilder.append(leftOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        return toStringBuilder.toString();
+
+
+    }
 }

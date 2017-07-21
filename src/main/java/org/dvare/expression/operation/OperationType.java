@@ -53,6 +53,7 @@ public enum OperationType {
     TO_DATE("ToDate", "toDate"), ADD_YEARS("AddYears", "addYears"), ADD_MONTHS("AddMonths", "addMonths"), ADD_DAYS("AddDays", "addDays"),//
     GET_YEARS("GetYears", "getYears"), //
 
+    LENGTH("Length", "length"),//
     SUBSTRING("substring", "Substring"), APPEND("append", "Append"), PREPEND("prepend", "Prepend"), CONTAINS("contains", "Contains"),//
     STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
 
@@ -67,7 +68,7 @@ public enum OperationType {
     GET_ITEM("GetItem", "getItem"), HAS_ITEM("HasItem", "hasItem"), ITEM_POSITION("ItemPosition", "itemPosition"),//
 
     FIRST("First", "first"), LAST("Last", "last"),//
-    LENGTH("Length", "length"), NOT_EMPTY("notEmpty", "NotEMPTY"), IS_EMPTY("isEmpty", "ISEMPTY"),//
+    SIZE("Size", "size"), NOT_EMPTY("notEmpty", "NotEMPTY"), IS_EMPTY("isEmpty", "ISEMPTY"),//
 
     MAXIMUM("Maximum", "maximum"), MINIMUM("Minimum", "minimum"),//
     MEAN("Mean", "mean", "Avg", "avg"), MEDIAN("Median", "median"), MODE("Mode", "mode"),//

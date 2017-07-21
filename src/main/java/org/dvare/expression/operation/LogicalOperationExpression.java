@@ -29,7 +29,7 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.operation.flow.ENDIF;
-import org.dvare.expression.operation.list.EndForAllEach;
+import org.dvare.expression.operation.utility.EndForAll;
 import org.dvare.expression.operation.utility.RightPriority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +70,7 @@ public abstract class LogicalOperationExpression extends OperationExpression {
             OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
 
-                if (op instanceof RightPriority || op instanceof EndForAllEach || op instanceof ENDIF/* || (op instanceof AggregationOperationExpression && !stack.isEmpty())*/) {
+                if (op instanceof RightPriority || op instanceof EndForAll || op instanceof ENDIF/* || (op instanceof AggregationOperationExpression && !stack.isEmpty())*/) {
                     return pos - 1;
                 }
 

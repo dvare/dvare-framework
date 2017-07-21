@@ -112,7 +112,7 @@ public class ConditionChainTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getParser().fromString("self.A1 := data.V1->values()->getItem(data.V1 -> length())", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("self.A1 := data.V1->values()->getItem(data.V1 -> size())", aggregationTypes, validationTypes);
 
         RuleBinding rule = new RuleBinding(aggregate);
 
@@ -152,7 +152,7 @@ public class ConditionChainTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getParser().fromString("self.A1 := data.V1->values()->getItem(data.V1 -> length() - 1)", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("self.A1 := data.V1->values()->getItem(data.V1 -> size() - 1)", aggregationTypes, validationTypes);
 
         RuleBinding rule = new RuleBinding(aggregate);
 

@@ -57,7 +57,15 @@ public abstract class VariableExpression<T> extends Expression {
 
     @Override
     public String toString() {
-        return name;
+        StringBuilder stringBuilder = new StringBuilder();
+
+
+        if (operandType != null) {
+            stringBuilder.append(operandType);
+            stringBuilder.append(".");
+        }
+        stringBuilder.append(name);
+        return stringBuilder.toString();
     }
 
     public String getName() {
