@@ -324,8 +324,7 @@ public class ValuesTest extends TestCase {
 
     }
 
-/*
-    public void testApp8() throws ExpressionParseException, InterpretException {
+    /*public void testApp8() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration(new String[]{"org.dvare.util"});
 

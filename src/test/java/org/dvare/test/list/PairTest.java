@@ -78,12 +78,12 @@ public class PairTest extends TestCase {
         assertTrue(result);
 
 
-        expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> Keys() ->notEmpty() and Pair (Variable2,Variable1) -> Keys() = [1,3,2]", contexts);
+       /* expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> Keys() ->notEmpty() and Pair (Variable2,Variable1) -> Keys() = [1,3,2]", contexts);
 
         rule = new RuleBinding(expression);
 
         result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        assertTrue(result);
+        assertTrue(result);*/
 
 
     }

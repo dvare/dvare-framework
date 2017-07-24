@@ -23,6 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
@@ -31,6 +32,7 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.NullType;
@@ -38,11 +40,9 @@ import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.list.PairOperation;
 import org.dvare.expression.operation.list.ValuesOperation;
-import org.dvare.expression.operation.utility.GetExpOperation;
-import org.dvare.expression.operation.utility.LeftPriority;
-import org.dvare.expression.operation.utility.RightPriority;
-import org.dvare.expression.operation.utility.Semicolon;
+import org.dvare.expression.operation.utility.*;
 import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
@@ -154,101 +154,13 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
 
-    protected List<?> buildValues(Expression expression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    /*protected List<?> extractValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding,Expression expression) throws InterpretException {
 
-        if (expression instanceof LiteralExpression) {
-
-            if (expression instanceof ListLiteral) {
-                dataTypeExpression = ((ListLiteral) expression).getType();
-                return ((ListLiteral) expression).getValue();
-            } else {
-                List values = new ArrayList<>();
-                values.add(((ListLiteral) expression).getValue());
-                dataTypeExpression = ((LiteralExpression) expression).getType();
-            }
-
-        }
-        if (expression instanceof ListLiteralOperationExpression) {
-            Object interpret = expression.interpret(expressionBinding, instancesBinding);
-            if (interpret instanceof ListLiteral) {
-
-                dataTypeExpression = ((ListLiteral) interpret).getType();
-                return ((ListLiteral) interpret).getValue();
-            }
-
-        }
-        if (expression instanceof ListOperationExpression || expression instanceof GetExpOperation || expression instanceof Semicolon) {
-            OperationExpression valuesOperation = (OperationExpression) expression;
-            Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
-            if (valuesResult instanceof ListLiteral) {
-                ListLiteral listLiteral = (ListLiteral) valuesResult;
-                dataTypeExpression = listLiteral.getType();
-                return listLiteral.getValue();
-            }
-
-        } else if (expression instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) expression;
-
-            if (variableExpression instanceof ListVariable) {
-                dataTypeExpression = variableExpression.getType();
-                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-                variableExpression = VariableType.setVariableValue(variableExpression, instance);
-                return ((ListVariable) variableExpression).getValue();
-
-            } else {
-
-                dataTypeExpression = variableExpression.getType();
-                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-                List dataSet;
-                if (instance instanceof List) {
-                    dataSet = (List) instance;
-                } else {
-                    dataSet = new ArrayList<>();
-                    dataSet.add(instance);
-                }
-                List<Object> values = new ArrayList<>();
-                for (Object object : dataSet) {
-                    Object value = getValue(object, variableExpression.getName());
-                    values.add(value);
-                }
-                return values;
-            }
-
-
-        } else if (expression instanceof ChainOperationExpression) {
+        if (expression instanceof ChainOperationExpression) {
             ChainOperationExpression operationExpression = (ChainOperationExpression) expression;
-            Expression leftOperand = operationExpression.getLeftOperand();
-            while (leftOperand instanceof ChainOperationExpression) {
-                leftOperand = ((ChainOperationExpression) leftOperand).getLeftOperand();
-            }
-            if (leftOperand instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) leftOperand;
-                String operandType = variableExpression.getOperandType();
-                dataTypeExpression = variableExpression.getType();
-                Object instance = instancesBinding.getInstance(operandType);
-                List dataSet;
-                if (instance instanceof List) {
-                    dataSet = (List) instance;
-                } else {
-                    dataSet = new ArrayList<>();
-                    dataSet.add(instance);
-                }
-                List<Object> values = new ArrayList<>();
-                for (Object object : dataSet) {
-                    instancesBinding.addInstance(operandType, object);
-                    LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(expressionBinding, instancesBinding);
-                    if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
-                        dataTypeExpression = literalExpression.getType();
-                    }
-                    values.add(literalExpression.getValue());
-                }
-                instancesBinding.addInstance(operandType, instance);
-                return values;
-            }
-        }
-        return null;
-    }
 
+    }
+*/
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
@@ -319,6 +231,273 @@ public abstract class AggregationOperationExpression extends OperationExpression
         }
 
         return leftExpression;
+    }
+
+
+    protected List<?> extractValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression valueOperand) throws InterpretException {
+        List values = null;
+
+        if (valueOperand instanceof ListOperationExpression || valueOperand instanceof GetExpOperation || valueOperand instanceof Semicolon) {
+            OperationExpression valuesOperation = (OperationExpression) valueOperand;
+            Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
+            if (valuesResult instanceof ListLiteral) {
+                ListLiteral listLiteral = (ListLiteral) valuesResult;
+                dataTypeExpression = listLiteral.getType();
+
+                values = listLiteral.getValue();
+
+            }
+
+        } else if (valueOperand instanceof LiteralExpression) {
+
+            values = literalExpressionValues((LiteralExpression) valueOperand);
+
+        } else if (valueOperand instanceof ListLiteralOperationExpression) {
+
+            values = listLiteralValues(expressionBinding, instancesBinding, (ListLiteralOperationExpression) valueOperand);
+
+        } else if (valueOperand instanceof VariableExpression) {
+
+            values = variableExpressionValues(instancesBinding, (VariableExpression) valueOperand);
+
+        } else if (valueOperand instanceof ChainOperationExpression) {
+
+            values = chainOperationExpressionValues(expressionBinding, instancesBinding, (ChainOperationExpression) valueOperand);
+
+        } else if (valueOperand instanceof Function) {
+
+            values = functionExpressionExpressionValues(expressionBinding, instancesBinding, (Function) valueOperand);
+
+        } else if (valueOperand instanceof PairOperation) {
+
+            values = pairValues(expressionBinding, instancesBinding, valueOperand);
+
+        } else {
+
+
+            logger.error(leftOperand.toString());
+
+        }
+        return values;
+    }
+
+    private List<?> literalExpressionValues(LiteralExpression literalExpression) throws InterpretException {
+        List values;
+
+        if (literalExpression instanceof ListLiteral) {
+            values = ((ListLiteral) literalExpression).getValue();
+            dataTypeExpression = ((ListLiteral) literalExpression).getType();
+        } else {
+            values = new ArrayList<>();
+
+            values.add(literalExpression.getValue());
+
+            dataTypeExpression = literalExpression.getType();
+        }
+
+        return values;
+    }
+
+
+    private List<?> listLiteralValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, ListLiteralOperationExpression listLiteralOperationExpression) throws InterpretException {
+        List values = null;
+
+        Object interpret = listLiteralOperationExpression.interpret(expressionBinding, instancesBinding);
+        if (interpret instanceof ListLiteral) {
+            values = ((ListLiteral) interpret).getValue();
+            dataTypeExpression = ((ListLiteral) interpret).getType();
+        }
+
+        return values;
+    }
+
+    private List<?> variableExpressionValues(InstancesBinding instancesBinding, VariableExpression variableExpression) throws InterpretException {
+        List values = null;
+        if (variableExpression instanceof ListVariable) {
+            dataTypeExpression = variableExpression.getType();
+            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+            variableExpression = VariableType.setVariableValue(variableExpression, instance);
+            values = ((ListVariable) variableExpression).getValue();
+
+        } else {
+
+            dataTypeExpression = variableExpression.getType();
+            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+            List dataSet;
+            if (instance instanceof List) {
+                dataSet = (List) instance;
+            } else {
+                dataSet = new ArrayList<>();
+                dataSet.add(instance);
+            }
+            values = new ArrayList<>();
+            for (Object object : dataSet) {
+                Object value = getValue(object, variableExpression.getName());
+                values.add(value);
+            }
+
+        }
+        return values;
+    }
+
+    private List<?> functionExpressionExpressionValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Function function) throws InterpretException {
+        List values = null;
+
+
+        FunctionExpression functionValueOperand = (FunctionExpression) function.getLeftOperand();
+
+
+        List<List> dataSet = new ArrayList<>();
+        for (Expression parameter : functionValueOperand.getParameters()) {
+
+            List dataSetList = extractValues(expressionBinding, instancesBinding, parameter);
+            dataSet.add(dataSetList);
+
+        }
+
+
+        values = new ArrayList<>();
+        for (Object object : dataSet) {
+
+            function.setLeftOperand(LiteralType.getLiteralExpression(object, dataTypeExpression));
+
+            LiteralExpression literalExpression = (LiteralExpression) function.interpret(expressionBinding, instancesBinding);
+
+            if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
+                dataTypeExpression = literalExpression.getType();
+            }
+            values.add(literalExpression.getValue());
+
+        }
+
+
+        return values;
+    }
+
+
+    private List<?> chainOperationExpressionValuesOld(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, ChainOperationExpression operationExpression) throws InterpretException {
+        List values = null;
+        Expression leftOperand = operationExpression.getLeftOperand();
+        while (leftOperand instanceof ChainOperationExpression) {
+            leftOperand = ((ChainOperationExpression) leftOperand).getLeftOperand();
+        }
+        if (leftOperand instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) leftOperand;
+            String operandType = variableExpression.getOperandType();
+            dataTypeExpression = variableExpression.getType();
+            Object instance = instancesBinding.getInstance(operandType);
+            List dataSet;
+            if (instance instanceof List) {
+                dataSet = (List) instance;
+            } else {
+                dataSet = new ArrayList<>();
+                dataSet.add(instance);
+            }
+            values = new ArrayList<>();
+            for (Object object : dataSet) {
+                instancesBinding.addInstance(operandType, object);
+                LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(expressionBinding, instancesBinding);
+                if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
+                    dataTypeExpression = literalExpression.getType();
+                }
+                values.add(literalExpression.getValue());
+            }
+            instancesBinding.addInstance(operandType, instance);
+
+        }
+
+
+        return values;
+    }
+
+
+    private List<?> chainOperationExpressionValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, ChainOperationExpression operationExpression) throws InterpretException {
+        List values = null;
+
+        Expression expression = operationExpression.getLeftOperand();
+        ChainOperationExpression chainOperationExpression = operationExpression;
+        while (expression instanceof ChainOperationExpression) {
+            chainOperationExpression = (ChainOperationExpression) expression;
+            expression = ((ChainOperationExpression) expression).getLeftOperand();
+        }
+
+        List dataSet = null;
+        Class<? extends DataTypeExpression> dataSetDataTypeExpression = null;
+        if (expression instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) expression;
+            dataSet = extractValues(expressionBinding, instancesBinding, variableExpression);
+            dataSetDataTypeExpression = dataTypeExpression;
+        }
+
+
+        if (dataSet != null && dataSetDataTypeExpression != null) {
+            values = new ArrayList<>();
+            for (Object object : dataSet) {
+                Expression leftOperandExpression1 = chainOperationExpression.getLeftOperand();
+                chainOperationExpression.setLeftOperand(LiteralType.getLiteralExpression(object, dataSetDataTypeExpression));
+                Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+                LiteralExpression literalExpression = (LiteralExpression) interpret;
+                if (literalExpression.getType() != null && !(literalExpression.getType().equals(NullType.class))) {
+                    dataTypeExpression = literalExpression.getType();
+                }
+                values.add(literalExpression.getValue());
+
+                chainOperationExpression.setLeftOperand(leftOperandExpression1);
+            }
+
+        }
+
+        /*Expression leftOperand = operationExpression.getLeftOperand();
+        while (leftOperand instanceof ChainOperationExpression) {
+            leftOperand = ((ChainOperationExpression) leftOperand).getLeftOperand();
+        }
+        if (leftOperand instanceof VariableExpression) {
+            VariableExpression variableExpression = (VariableExpression) leftOperand;
+            String operandType = variableExpression.getOperandType();
+            dataTypeExpression = variableExpression.getType();
+            Object instance = instancesBinding.getInstance(operandType);
+            List dataSet;
+            if (instance instanceof List) {
+                dataSet = (List) instance;
+            } else {
+                dataSet = new ArrayList<>();
+                dataSet.add(instance);
+            }
+            List<Object> values = new ArrayList<>();
+            for (Object object : dataSet) {
+                instancesBinding.addInstance(operandType, object);
+                LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(expressionBinding, instancesBinding);
+                if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
+                    dataTypeExpression = literalExpression.getType();
+                }
+                values.add(literalExpression.getValue());
+            }
+            instancesBinding.addInstance(operandType, instance);
+            return values;
+        }*/
+
+
+        return values;
+    }
+
+    private List<?> pairValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression expression) throws InterpretException {
+        if (expression instanceof PairOperation || expression instanceof ListOperationExpression) {
+            OperationExpression pairOperation = (OperationExpression) expression;
+
+            Object pairResultList = pairOperation.interpret(expressionBinding, instancesBinding);
+
+            if (pairResultList instanceof ListLiteral) {
+                ListLiteral listLiteral = (ListLiteral) pairResultList;
+                return listLiteral.getValue();
+
+            }
+        }
+        return null;
+    }
+
+
+    protected boolean isPairList(List<?> values) {
+        return values.stream().allMatch(o -> o instanceof Pair);
     }
 
 

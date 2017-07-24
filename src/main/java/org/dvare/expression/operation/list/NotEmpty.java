@@ -6,14 +6,10 @@ import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.BooleanType;
-import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.AggregationOperationExpression;
-import org.dvare.expression.operation.ListOperationExpression;
-import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.operation.utility.GetExpOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,14 +31,7 @@ public class NotEmpty extends AggregationOperationExpression {
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = leftOperand;
-        if (right instanceof PairOperation || right instanceof ListOperationExpression || right instanceof GetExpOperation) {
-            OperationExpression valuesOperation = (OperationExpression) right;
-            Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
-            if (valuesResult instanceof ListLiteral) {
-                ListLiteral listLiteral = (ListLiteral) valuesResult;
-                return LiteralType.getLiteralExpression(listLiteral.getSize() != 0, BooleanType.class);
-            }
-        } else if (right instanceof VariableExpression) {
+        if (right instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) right;
 
             Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
@@ -61,6 +50,15 @@ public class NotEmpty extends AggregationOperationExpression {
                 values.add(literalExpression.getValue());
             }
             return LiteralType.getLiteralExpression(values.size() != 0, BooleanType.class);
+        } else {
+
+            List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
+
+            if (values != null) {
+                return LiteralType.getLiteralExpression(values.size() != 0, BooleanType.class);
+            }
+
+
         }
 
         return LiteralType.getLiteralExpression(false, BooleanType.class);

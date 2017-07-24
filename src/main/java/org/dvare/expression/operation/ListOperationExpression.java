@@ -23,7 +23,6 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
@@ -49,9 +48,6 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
     }
 
 
-    protected boolean isPairList(List<?> values) {
-        return values.stream().allMatch(o -> o instanceof Pair);
-    }
 
     protected List<?> includedFilter(Expression includeParam, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, List<?> values) throws InterpretException {
 

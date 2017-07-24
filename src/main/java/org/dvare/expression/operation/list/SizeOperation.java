@@ -34,7 +34,7 @@ public class SizeOperation extends AggregationOperationExpression {
         Expression right = leftOperand;
         if (right instanceof OperationExpression) {
 
-            List<?> values = buildValues(leftOperand, expressionBinding, instancesBinding);
+            List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
             if (values != null) {
                 return LiteralType.getLiteralExpression(values.size(), IntegerType.class);
             }

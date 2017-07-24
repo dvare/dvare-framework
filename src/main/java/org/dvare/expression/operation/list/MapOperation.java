@@ -35,7 +35,7 @@ public class MapOperation extends ListOperationExpression {
         if (leftOperand instanceof PairOperation) {
 
         } else {
-            List<?> values = buildValues(leftOperand, expressionBinding, instancesBinding);
+            List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
             if (values != null) {
                 if (rightOperand.isEmpty() || !(rightOperand.get(0) instanceof ChainOperationExpression)) {
                     return new ListLiteral(values, dataTypeExpression);

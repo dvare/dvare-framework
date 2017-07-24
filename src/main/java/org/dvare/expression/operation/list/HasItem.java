@@ -30,7 +30,7 @@ public class HasItem extends AggregationOperationExpression {
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
 
-        List<?> values = buildValues(leftOperand, expressionBinding, instancesBinding);
+        List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
 
 
         if (values != null && !rightOperand.isEmpty()) {

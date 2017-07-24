@@ -81,8 +81,7 @@ public class SortOperation extends ListOperationExpression {
 
 
         } else {
-            List<?> values = buildValues(leftOperand, expressionBinding, instancesBinding);
-
+            List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
             if (values != null) {
 
                 List<Object> notNullList = new ArrayList<>();

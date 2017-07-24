@@ -28,12 +28,10 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.ListOperationExpression;
-import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
@@ -43,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Operation(type = OperationType.KEYS)
-public class KeysOperation extends ValuesOperation {
+public class KeysOperation extends ListOperationExpression {
     static Logger logger = LoggerFactory.getLogger(KeysOperation.class);
 
 
@@ -54,44 +52,38 @@ public class KeysOperation extends ValuesOperation {
 
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        if (leftOperand instanceof PairOperation || leftOperand instanceof ListOperationExpression) {
-            List<Object> pairKeys = pairKeys(leftOperand, expressionBinding, instancesBinding);
-            if (pairKeys != null) {
-                return new ListLiteral(pairKeys, dataTypeExpression);
-            }
+
+        List<?> pairs = extractValues(expressionBinding, instancesBinding, leftOperand);
+
+        if (pairs != null && isPairList(pairs)) {
+            List pairKeys = extractPairKeys(pairs);
+            return new ListLiteral(pairKeys, dataTypeExpression);
         }
 
         return new NullLiteral();
     }
 
-    protected List<Object> pairKeys(Expression expression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        //what if sort comes
-        if (expression instanceof PairOperation || leftOperand instanceof ListOperationExpression) {
 
-            OperationExpression pairOperation = (OperationExpression) expression;
+    private List<Object> extractPairKeys(List pairList) throws InterpretException {
 
-            Object pairResultList = pairOperation.interpret(expressionBinding, instancesBinding);
-
-            if (pairResultList instanceof ListLiteral) {
-                ListLiteral listLiteral = (ListLiteral) pairResultList;
-                List pairList = listLiteral.getValue();
-                List<Object> pairKeys = new ArrayList<>();
-
-                for (Object pairObject : pairList) {
-                    if (pairObject instanceof Pair) {
-                        Pair pair = (Pair) pairObject;
-                        if (dataTypeExpression == null) {
-                            DataType dataType = DataTypeMapping.getTypeMapping(pair.getKey().getClass());
-                            dataTypeExpression = DataTypeMapping.getDataTypeClass(dataType);
-                        }
-                        pairKeys.add(pair.getKey());
+        if (pairList != null) {
+            List<Object> pairKeys = new ArrayList<>();
+            dataTypeExpression = null;
+            for (Object pairObject : pairList) {
+                if (pairObject instanceof Pair) {
+                    Pair pair = (Pair) pairObject;
+                    if (dataTypeExpression == null) {
+                        DataType dataType = DataTypeMapping.getTypeMapping(pair.getKey().getClass());
+                        dataTypeExpression = DataTypeMapping.getDataTypeClass(dataType);
                     }
+                    pairKeys.add(pair.getKey());
                 }
-                return pairKeys;
             }
-
-
+            return pairKeys;
         }
+
+
         return null;
     }
+
 }

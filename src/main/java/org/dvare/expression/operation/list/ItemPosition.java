@@ -30,7 +30,7 @@ public class ItemPosition extends AggregationOperationExpression {
 
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        List<?> values = buildValues(leftOperand, expressionBinding, instancesBinding);
+        List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
 
         if (values != null && !rightOperand.isEmpty()) {
             Expression expression = rightOperand.get(0);
