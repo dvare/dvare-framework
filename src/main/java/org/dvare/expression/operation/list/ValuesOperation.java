@@ -36,25 +36,25 @@ public class ValuesOperation extends ListOperationExpression {
 
         List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
 
-        if (isPairList(values)) {
-            values = extractPairValues(values);
-        }
-
         if (values != null) {
-            List<?> includedValues = values;
+
+            if (isPairList(values)) {
+                values = extractPairValues(values);
+            }
+
             if (!rightOperand.isEmpty()) {
                 if (rightOperand.size() == 1) {
                     Expression includeParam = rightOperand.get(0);
-                    includedValues = includedFilter(includeParam, expressionBinding, instancesBinding, values);
+                    values = includedFilter(includeParam, expressionBinding, instancesBinding, values);
 
                 } else if (rightOperand.size() == 2) {
                     Expression includeParam = rightOperand.get(0);
                     Expression exculdeParam = rightOperand.get(1);
-                    includedValues = excludedFilter(includeParam, exculdeParam, expressionBinding, instancesBinding, values);
+                    values = excludedFilter(includeParam, exculdeParam, expressionBinding, instancesBinding, values);
                 }
             }
 
-            return new ListLiteral(includedValues, dataTypeExpression);
+            return new ListLiteral(values, dataTypeExpression);
 
         }
         return new NullLiteral();

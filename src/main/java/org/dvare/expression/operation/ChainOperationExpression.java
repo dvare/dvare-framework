@@ -35,6 +35,7 @@ import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -129,19 +130,31 @@ public abstract class ChainOperationExpression extends OperationExpression {
 
         if (leftOperand != null) {
             toStringBuilder.append(leftOperand.toString());
-            toStringBuilder.append(" ");
+            toStringBuilder.append(" -> ");
         }
 
         toStringBuilder.append(operationType.getSymbols().get(0));
-        toStringBuilder.append(" ");
+
 
         if (rightOperand != null) {
-            toStringBuilder.append(rightOperand.toString());
+            toStringBuilder.append("(");
+            Iterator<Expression> expressionIterator = rightOperand.iterator();
+            while (expressionIterator.hasNext()) {
+                Expression expression = expressionIterator.next();
+                toStringBuilder.append(expression.toString());
+                if (expressionIterator.hasNext()) {
+                    toStringBuilder.append(", ");
+                }
+            }
+            toStringBuilder.append(")");
+            toStringBuilder.append(" ");
+
+
+        } else {
             toStringBuilder.append(" ");
         }
 
         return toStringBuilder.toString();
     }
-
 
 }

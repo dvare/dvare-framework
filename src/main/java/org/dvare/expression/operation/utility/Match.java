@@ -106,7 +106,7 @@ public class Match extends OperationExpression {
         Expression valueParam = expressions.get(0);
         List values = buildValues(expressionBinding, instancesBinding, valueParam);
         DataType dataType = toDataType(dataTypeExpression);
-        ;
+
         
         /*match params*/
         Expression paramsExpression = expressions.get(1);

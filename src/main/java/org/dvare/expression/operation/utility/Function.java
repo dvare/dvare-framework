@@ -442,9 +442,13 @@ public class Function extends OperationExpression {
             stringBuilder.append(functionExpression.getName());
             stringBuilder.append(", ");
 
-            for (Expression expression : functionExpression.getParameters()) {
+            Iterator<Expression> expressionIterator = functionExpression.getParameters().iterator();
+            while (expressionIterator.hasNext()) {
+                Expression expression = expressionIterator.next();
                 stringBuilder.append(expression);
-                stringBuilder.append(", ");
+                if (expressionIterator.hasNext()) {
+                    stringBuilder.append(", ");
+                }
             }
 
             stringBuilder.append(")");

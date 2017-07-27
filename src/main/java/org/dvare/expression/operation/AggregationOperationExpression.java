@@ -51,6 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -131,26 +132,6 @@ public abstract class AggregationOperationExpression extends OperationExpression
             }
         }
         return pos;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder toStringBuilder = new StringBuilder();
-
-        if (leftOperand != null) {
-            toStringBuilder.append(leftOperand.toString());
-            toStringBuilder.append(" ");
-        }
-
-        toStringBuilder.append(operationType.getSymbols().get(0));
-        toStringBuilder.append(" ");
-
-        if (rightOperand != null) {
-            toStringBuilder.append(rightOperand.toString());
-            toStringBuilder.append(" ");
-        }
-
-        return toStringBuilder.toString();
     }
 
 
@@ -272,11 +253,11 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
             values = pairValues(expressionBinding, instancesBinding, valueOperand);
 
+        } else if (valueOperand instanceof ConditionOperationExpression) {
+            logger.error("Condition Operation Expression: " + leftOperand.toString());
         } else {
 
-
             logger.error(leftOperand.toString());
-
         }
         return values;
     }
@@ -297,7 +278,6 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
         return values;
     }
-
 
     private List<?> listLiteralValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, ListLiteralOperationExpression listLiteralOperationExpression) throws InterpretException {
         List values = null;
@@ -341,7 +321,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
     private List<?> functionExpressionExpressionValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Function function) throws InterpretException {
-        List values = null;
+        List values;
 
 
         FunctionExpression functionValueOperand = (FunctionExpression) function.getLeftOperand();
@@ -356,10 +336,64 @@ public abstract class AggregationOperationExpression extends OperationExpression
         }
 
 
-        values = new ArrayList<>();
-        for (Object object : dataSet) {
+        if (!dataSet.isEmpty()) {
 
-            function.setLeftOperand(LiteralType.getLiteralExpression(object, dataTypeExpression));
+            List<List> d1 = new ArrayList<>();
+            for (int i = 0; i < dataSet.get(0).size(); i++) {
+
+                List<Object> d2 = new ArrayList<>();
+                for (List aDataSet : dataSet) {
+                    d2.add(aDataSet.get(i));
+                }
+                d1.add(d2);
+            }
+
+            dataSet = d1;
+            logger.info(dataSet.toString());
+        }
+
+
+        List<Expression> orignalParameters = functionValueOperand.getParameters();
+
+        values = new ArrayList<>();
+        for (List<?> paramsvalues : dataSet) {
+
+
+            List<Expression> dummyParameters = new ArrayList<>();
+
+
+            for (int i = 0; i < paramsvalues.size(); i++) {
+
+
+                Object object = paramsvalues.get(i);
+
+
+                Expression parameter = orignalParameters.get(i);
+
+
+                if (parameter instanceof ChainOperationExpression) {
+
+                    ChainOperationExpression chainOperationExpression = (ChainOperationExpression) parameter;
+
+                    Expression leftOperandExpression1 = chainOperationExpression.getLeftOperand();
+                    chainOperationExpression.setLeftOperand(LiteralType.getLiteralExpression(object, dataTypeExpression));
+                    Object interpret = chainOperationExpression.interpret(expressionBinding, instancesBinding);
+                    LiteralExpression literalExpression = (LiteralExpression) interpret;
+
+                    dummyParameters.add(literalExpression);
+
+                    chainOperationExpression.setLeftOperand(leftOperandExpression1);
+
+
+                } else {
+                    dummyParameters.add(LiteralType.getLiteralExpression(object, dataTypeExpression));
+                }
+
+
+            }
+
+            functionValueOperand.setParameters(dummyParameters);
+
 
             LiteralExpression literalExpression = (LiteralExpression) function.interpret(expressionBinding, instancesBinding);
 
@@ -368,8 +402,10 @@ public abstract class AggregationOperationExpression extends OperationExpression
             }
             values.add(literalExpression.getValue());
 
+
         }
 
+        functionValueOperand.setParameters(orignalParameters);
 
         return values;
     }
@@ -410,14 +446,13 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return values;
     }
 
-
-    private List<?> chainOperationExpressionValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, ChainOperationExpression operationExpression) throws InterpretException {
+    private List<?> chainOperationExpressionValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, ChainOperationExpression chainOperationExpression) throws InterpretException {
         List values = null;
 
-        Expression expression = operationExpression.getLeftOperand();
-        ChainOperationExpression chainOperationExpression = operationExpression;
+        Expression expression = chainOperationExpression.getLeftOperand();
+        ChainOperationExpression chainOperationExpressionTemp = chainOperationExpression;
         while (expression instanceof ChainOperationExpression) {
-            chainOperationExpression = (ChainOperationExpression) expression;
+            chainOperationExpressionTemp = (ChainOperationExpression) expression;
             expression = ((ChainOperationExpression) expression).getLeftOperand();
         }
 
@@ -433,48 +468,19 @@ public abstract class AggregationOperationExpression extends OperationExpression
         if (dataSet != null && dataSetDataTypeExpression != null) {
             values = new ArrayList<>();
             for (Object object : dataSet) {
-                Expression leftOperandExpression1 = chainOperationExpression.getLeftOperand();
-                chainOperationExpression.setLeftOperand(LiteralType.getLiteralExpression(object, dataSetDataTypeExpression));
-                Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+                Expression leftOperandExpression1 = chainOperationExpressionTemp.getLeftOperand();
+                chainOperationExpressionTemp.setLeftOperand(LiteralType.getLiteralExpression(object, dataSetDataTypeExpression));
+                Object interpret = chainOperationExpression.interpret(expressionBinding, instancesBinding);
                 LiteralExpression literalExpression = (LiteralExpression) interpret;
                 if (literalExpression.getType() != null && !(literalExpression.getType().equals(NullType.class))) {
                     dataTypeExpression = literalExpression.getType();
                 }
                 values.add(literalExpression.getValue());
 
-                chainOperationExpression.setLeftOperand(leftOperandExpression1);
+                chainOperationExpressionTemp.setLeftOperand(leftOperandExpression1);
             }
 
         }
-
-        /*Expression leftOperand = operationExpression.getLeftOperand();
-        while (leftOperand instanceof ChainOperationExpression) {
-            leftOperand = ((ChainOperationExpression) leftOperand).getLeftOperand();
-        }
-        if (leftOperand instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) leftOperand;
-            String operandType = variableExpression.getOperandType();
-            dataTypeExpression = variableExpression.getType();
-            Object instance = instancesBinding.getInstance(operandType);
-            List dataSet;
-            if (instance instanceof List) {
-                dataSet = (List) instance;
-            } else {
-                dataSet = new ArrayList<>();
-                dataSet.add(instance);
-            }
-            List<Object> values = new ArrayList<>();
-            for (Object object : dataSet) {
-                instancesBinding.addInstance(operandType, object);
-                LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(expressionBinding, instancesBinding);
-                if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
-                    dataTypeExpression = literalExpression.getType();
-                }
-                values.add(literalExpression.getValue());
-            }
-            instancesBinding.addInstance(operandType, instance);
-            return values;
-        }*/
 
 
         return values;
@@ -495,9 +501,42 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return null;
     }
 
-
     protected boolean isPairList(List<?> values) {
         return values.stream().allMatch(o -> o instanceof Pair);
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+
+        if (leftOperand != null) {
+            toStringBuilder.append(leftOperand.toString());
+            toStringBuilder.append(" -> ");
+        }
+
+        toStringBuilder.append(operationType.getSymbols().get(0));
+
+
+        if (rightOperand != null) {
+            toStringBuilder.append("(");
+            Iterator<Expression> expressionIterator = rightOperand.iterator();
+            while (expressionIterator.hasNext()) {
+                Expression expression = expressionIterator.next();
+                toStringBuilder.append(expression.toString());
+                if (expressionIterator.hasNext()) {
+                    toStringBuilder.append(", ");
+                }
+            }
+            toStringBuilder.append(")");
+            toStringBuilder.append(" ");
+
+
+        } else {
+            toStringBuilder.append(" ");
+        }
+
+        return toStringBuilder.toString();
     }
 
 
