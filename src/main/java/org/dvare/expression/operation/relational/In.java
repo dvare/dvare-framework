@@ -8,8 +8,8 @@ import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.operation.EqualityOperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.RelationalOperationExpression;
 import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.parser.ExpressionTokenizer;
@@ -17,7 +17,7 @@ import org.dvare.parser.ExpressionTokenizer;
 import java.util.Stack;
 
 @Operation(type = OperationType.IN)
-public class In extends EqualityOperationExpression {
+public class In extends RelationalOperationExpression {
     public In() {
         super(OperationType.IN);
     }

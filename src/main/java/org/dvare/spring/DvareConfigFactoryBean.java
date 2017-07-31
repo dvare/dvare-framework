@@ -57,8 +57,7 @@ public class DvareConfigFactoryBean implements FactoryBean<RuleConfiguration>, A
 
     @Override
     public RuleConfiguration getObject() throws Exception {
-        RuleConfiguration ruleConfiguration = new RuleConfiguration(functionPackages, silentMode);
-        return ruleConfiguration;
+        return new RuleConfiguration(functionPackages, silentMode);
     }
 
 

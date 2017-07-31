@@ -35,19 +35,13 @@ public enum ConfigurationRegistry {
 
     INSTANCE;
 
-    private final Map<String, FunctionBinding> functions = new HashMap<String, FunctionBinding>();
+    private final Map<String, FunctionBinding> functions = new HashMap<>();
 
-    private final Map<String, Class> operations = new HashMap<String, Class>();
-
+    private final Map<String, Class> operations = new HashMap<>();
 
     public List<String> tokens() {
-        List<String> tokens = new ArrayList<>();
-        for (String key : operations.keySet()) {
-            tokens.add(key);
-        }
-        return tokens;
+        return new ArrayList<>(operations.keySet());
     }
-
 
     public void registerOperation(Class op, List<String> symbols) {
         for (String symbol : symbols) {
@@ -57,7 +51,6 @@ public enum ConfigurationRegistry {
         }
     }
 
-
     public void registerFunction(FunctionBinding binding) {
         // if (!functions.containsKey(binding.getMethodName()))
         functions.put(binding.getMethodName(), binding);
@@ -65,17 +58,15 @@ public enum ConfigurationRegistry {
 
     public OperationExpression getOperation(String symbol) {
         Class aClass = operations.get(symbol);
-        OperationExpression operationExpression = null;
-        if (aClass != null) try {
-            operationExpression = (OperationExpression) aClass.newInstance();
-
-
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+        if (aClass != null) {
+            try {
+                return (OperationExpression) aClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
-        return operationExpression;
+        return null;
     }
-
 
     public FunctionBinding getFunction(String name) {
         FunctionBinding functionBinding = this.functions.get(name);
@@ -85,12 +76,7 @@ public enum ConfigurationRegistry {
         return null;
     }
 
-
     public List<String> getFunctionNames() {
-        List<String> functionNames = new ArrayList<>();
-        for (String key : functions.keySet()) {
-            functionNames.add(key);
-        }
-        return functionNames;
+        return new ArrayList<>(functions.keySet());
     }
 }

@@ -30,6 +30,7 @@ import org.dvare.annotations.FunctionService;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,36 +55,24 @@ public class RuleConfigurationProvider {
         functionInit();
     }
 
-
     private void functionInit() {
         if (functionBasePackages != null) {
             for (String functionPackage : functionBasePackages) {
-
                 List<Class<?>> classes = ClassFinder.findAnnotated(functionPackage, FunctionService.class);
                 for (Class _class : classes) {
-
-
                     for (Method method : _class.getMethods()) {
-
                         if (method.isAnnotationPresent(FunctionMethod.class)) {
                             String functionName = method.getName();
                             FunctionMethod functionMethod = method.getAnnotation(FunctionMethod.class);
                             DataType returnType = functionMethod.returnType();
                             DataType[] parameters = functionMethod.parameters();
-
-                            Class returnTypeExpression = DataTypeMapping.getDataTypeClass(returnType);
-
+                            Class<? extends DataTypeExpression> returnTypeExpression = DataTypeMapping.getDataTypeClass(returnType);
                             FunctionBinding functionBinding = new FunctionBinding(functionName, _class, returnTypeExpression);
                             functionBinding.setParameters(Arrays.asList(parameters));
-
                             configurationRegistry.registerFunction(functionBinding);
                         }
                     }
-
-
                 }
-
-
             }
         }
     }
@@ -91,18 +80,11 @@ public class RuleConfigurationProvider {
     private void operationInit() {
         List<Class<?>> classes = ClassFinder.findAnnotated(baseOperationPackage, org.dvare.annotations.Operation.class);
         for (Class _class : classes) {
-
-
             Annotation annotation = _class.getAnnotation(org.dvare.annotations.Operation.class);
             if (annotation != null && annotation instanceof org.dvare.annotations.Operation) {
-
                 configurationRegistry.registerOperation(_class, ((Operation) annotation).type().getSymbols());
             }
-
-
         }
-
-
     }
 
 

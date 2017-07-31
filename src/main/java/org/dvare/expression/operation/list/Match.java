@@ -1,4 +1,4 @@
-package org.dvare.expression.operation.utility;
+package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
@@ -11,9 +11,10 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.*;
-import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.utility.LeftPriority;
+import org.dvare.expression.operation.utility.RightPriority;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TrimString;
@@ -143,39 +144,20 @@ public class Match extends OperationExpression {
 
 
     protected List buildValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
-        List values = new ArrayList<>();
-        if (valueParam instanceof VariableExpression) {
 
-            VariableExpression variableExpression = (VariableExpression) valueParam;
+        OperationExpression operationExpression = new ValuesOperation();
+        operationExpression.setLeftOperand(valueParam);
 
-            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-            List dataSet;
-            if (instance instanceof List) {
-                dataSet = (List) instance;
-            } else {
-                dataSet = new ArrayList<>();
-                dataSet.add(instance);
-            }
+        Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
 
+        if (interpret instanceof ListLiteral) {
 
-            dataTypeExpression = variableExpression.getType();
-            for (Object dataRow : dataSet) {
-                variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
-                values.add(variableExpression.getValue());
-            }
-
-        } else if (valueParam instanceof ListOperationExpression) {
-
-            Object interpret = valueParam.interpret(expressionBinding, instancesBinding);
-            if (interpret instanceof ListLiteral) {
-                ListLiteral listLiteral = (ListLiteral) interpret;
-                if (listLiteral.getValue() != null) {
-                    values = listLiteral.getValue();
-                    dataTypeExpression = listLiteral.getType();
-                }
-            }
+            ListLiteral listLiteral = (ListLiteral) interpret;
+            dataTypeExpression = listLiteral.getType();
+            return listLiteral.getValue();
         }
-        return values;
+
+        return null;
     }
 
 

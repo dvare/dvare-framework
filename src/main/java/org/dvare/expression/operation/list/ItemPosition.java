@@ -40,9 +40,8 @@ public class ItemPosition extends AggregationOperationExpression {
                 Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
                 if (interpret instanceof LiteralExpression) {
 
-
                     Object item = ((LiteralExpression) interpret).getValue();
-                    if (item != null && values != null) {
+                    if (item != null) {
 
                         return LiteralType.getLiteralExpression(values.indexOf(item), IntegerType.class);
                     }
@@ -50,7 +49,7 @@ public class ItemPosition extends AggregationOperationExpression {
                 }
 
 
-            } else if (expression instanceof EqualityOperationExpression) {
+            } else if (expression instanceof RelationalOperationExpression) {
 
 
                 OperationExpression operationExpression = (OperationExpression) expression;
@@ -103,7 +102,7 @@ public class ItemPosition extends AggregationOperationExpression {
 
             } else if (expression instanceof IntegerLiteral) {
                 Object item = ((LiteralExpression) expression).getValue();
-                if (item != null && values != null) {
+                if (item != null) {
 
                     return LiteralType.getLiteralExpression(values.indexOf(item), IntegerType.class);
                 }

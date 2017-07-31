@@ -9,8 +9,8 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.operation.EqualityOperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.RelationalOperationExpression;
 import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.parser.ExpressionTokenizer;
@@ -18,7 +18,7 @@ import org.dvare.parser.ExpressionTokenizer;
 import java.util.Stack;
 
 @Operation(type = OperationType.BETWEEN, dataTypes = {DataType.FloatType, DataType.IntegerType, DataType.DateTimeType, DataType.DateType, DataType.SimpleDateType})
-public class Between extends EqualityOperationExpression {
+public class Between extends RelationalOperationExpression {
     public Between() {
         super(OperationType.BETWEEN);
     }

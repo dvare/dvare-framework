@@ -57,7 +57,7 @@ public class HasItem extends AggregationOperationExpression {
                 }
 
 
-            } else if (expression instanceof EqualityOperationExpression) {
+            } else if (expression instanceof RelationalOperationExpression) {
                 OperationExpression operationExpression = (OperationExpression) expression;
 
 

@@ -37,6 +37,7 @@ public @interface Operation {
 
     OperationType type();
 
-
-    DataType[] dataTypes() default {DataType.IntegerType, DataType.FloatType, DataType.StringType, DataType.BooleanType, DataType.DateTimeType, DataType.DateType, DataType.SimpleDateType, DataType.RegexType, DataType.NullType, DataType.ListType};
+    DataType[] dataTypes() default {DataType.IntegerType, DataType.FloatType, DataType.StringType, DataType.BooleanType,
+            DataType.DateTimeType, DataType.DateType, DataType.SimpleDateType,
+            DataType.RegexType, DataType.NullType, DataType.ListType};
 }

@@ -8,15 +8,11 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.ListLiteral;
-import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
-import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +70,21 @@ public class PairOperation extends AggregationOperationExpression {
         return toStringBuilder.toString();
     }
 
+    protected ListLiteral buildValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
+
+        OperationExpression operationExpression = new ValuesOperation();
+        operationExpression.setLeftOperand(valueParam);
+
+        Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+
+        if (interpret instanceof ListLiteral) {
+
+            return (ListLiteral) interpret;
+        }
+
+        return null;
+    }
+
 
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
@@ -84,110 +95,35 @@ public class PairOperation extends AggregationOperationExpression {
             Expression valueParam = rightOperand.get(1);
 
 
-            VariableExpression leftVariableExpression = null;
-            OperationExpression leftOperationExpression = null;
-            if (keyParam instanceof VariableExpression) {
-                leftVariableExpression = (VariableExpression) keyParam;
+            ListLiteral keyListLiteral = buildValues(expressionBinding, instancesBinding, keyParam);
+            ListLiteral valueListLiteral = buildValues(expressionBinding, instancesBinding, valueParam);
 
-            } else if (keyParam instanceof ChainOperationExpression) {
-                leftOperationExpression = (ChainOperationExpression) keyParam;
-                Expression expression = leftOperationExpression.getLeftOperand();
-                while (expression instanceof ChainOperationExpression) {
-                    expression = ((ChainOperationExpression) expression).getLeftOperand();
-                }
-                if (expression instanceof VariableExpression) {
-                    leftVariableExpression = (VariableExpression) expression;
-                }
-            }
+            if (keyListLiteral != null && valueListLiteral != null) {
+
+                List keys = keyListLiteral.getValue();
+                List values = valueListLiteral.getValue();
 
 
-            VariableExpression rightVariableExpression = null;
-            OperationExpression rightOperationExpression = null;
-            if (valueParam instanceof VariableExpression) {
-                rightVariableExpression = (VariableExpression) valueParam;
-                dataTypeExpression = rightVariableExpression.getType();
-            } else if (valueParam instanceof ChainOperationExpression) {
-                rightOperationExpression = (ChainOperationExpression) valueParam;
-                Expression expression = rightOperationExpression.getLeftOperand();
-                while (expression instanceof ChainOperationExpression) {
-                    expression = ((ChainOperationExpression) expression).getLeftOperand();
-                }
-                if (expression instanceof VariableExpression) {
-                    rightVariableExpression = (VariableExpression) expression;
-                    dataTypeExpression = rightVariableExpression.getType();
-                }
-            }
+                Iterator leftIterator = keys.iterator();
+                Iterator rightIterator = values.iterator();
 
-
-            if (leftVariableExpression != null && rightVariableExpression != null) {
-
-                Object leftInstance = instancesBinding.getInstance(leftVariableExpression.getOperandType());
-                List leftDataSet;
-                if (leftInstance instanceof List) {
-                    leftDataSet = (List) leftInstance;
-                } else {
-                    leftDataSet = new ArrayList<>();
-                    leftDataSet.add(leftInstance);
-                }
-
-                Object rightInstance = instancesBinding.getInstance(rightVariableExpression.getOperandType());
-                List rightDataSet;
-                if (rightInstance instanceof List) {
-                    rightDataSet = (List) rightInstance;
-                } else {
-                    rightDataSet = new ArrayList<>();
-                    rightDataSet.add(rightInstance);
-                }
-
+                dataTypeExpression = valueListLiteral.getType();
 
                 List<Pair> pairs = new ArrayList<>();
-                Iterator leftIterator = leftDataSet.iterator();
-                Iterator rightIterator = rightDataSet.iterator();
-
                 while (leftIterator.hasNext() && rightIterator.hasNext()) {
 
-                    Object tempLeftInstance = leftIterator.next();
-                    Object tempRightInstance = rightIterator.next();
-
-
-                    Object leftValue;
-                    if (leftOperationExpression != null) {
-                        instancesBinding.addInstance(leftVariableExpression.getOperandType(), tempLeftInstance);
-                        LiteralExpression literalExpression = (LiteralExpression) leftOperationExpression.interpret(expressionBinding, instancesBinding);
-                        leftValue = literalExpression.getValue();
-                    } else {
-                        leftValue = getValue(tempLeftInstance, leftVariableExpression.getName());
-
-                    }
-
-                    Object rightValue;
-                    if (rightOperationExpression != null) {
-                        instancesBinding.addInstance(rightVariableExpression.getOperandType(), tempRightInstance);
-                        LiteralExpression literalExpression = (LiteralExpression) rightOperationExpression.interpret(expressionBinding, instancesBinding);
-                        rightValue = literalExpression.getValue();
-                        if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
-                            dataTypeExpression = literalExpression.getType();
-                        }
-
-
-                    } else {
-                        rightValue = getValue(tempRightInstance, rightVariableExpression.getName());
-
-                    }
-
-
+                    Object leftValue = leftIterator.next();
+                    Object rightValue = rightIterator.next();
+                    
                     pairs.add(Pair.of(leftValue, rightValue));
                 }
-
-
-                instancesBinding.addInstance(leftVariableExpression.getOperandType(), leftInstance);
-                instancesBinding.addInstance(rightVariableExpression.getOperandType(), rightDataSet);
 
                 return new ListLiteral(pairs, dataTypeExpression);
             }
 
 
         }
+
 
         return new NullLiteral();
     }

@@ -24,11 +24,11 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.relational;
 
 import org.dvare.annotations.Operation;
-import org.dvare.expression.operation.EqualityOperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.RelationalOperationExpression;
 
 @Operation(type = OperationType.NOT_EQUAL)
-public class NotEquals extends EqualityOperationExpression {
+public class NotEquals extends RelationalOperationExpression {
     public NotEquals() {
         super(OperationType.NOT_EQUAL);
     }

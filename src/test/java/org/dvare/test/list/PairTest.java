@@ -1,7 +1,6 @@
 package org.dvare.test.list;
 
 
-import junit.framework.TestCase;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
@@ -14,13 +13,17 @@ import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.EqualOperation;
 import org.dvare.test.dataobjects.ValuesObject;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PairTest extends TestCase {
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+public class PairTest {
 
+    @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -36,6 +39,24 @@ public class PairTest extends TestCase {
 
     }
 
+    @Test(expected = ExpressionParseException.class)
+    public void testApp1_1() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+        Expression expression = factory.getParser().fromString("Pair (Variable1)", contexts);
+
+
+        //assertNotNull(expression);
+
+    }
+
+    @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -78,16 +99,17 @@ public class PairTest extends TestCase {
         assertTrue(result);
 
 
-       /* expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> Keys() ->notEmpty() and Pair (Variable2,Variable1) -> Keys() = [1,3,2]", contexts);
+        expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> Keys() ->notEmpty() and Pair (Variable2,Variable1) -> Keys() = [1,3,2]", contexts);
 
         rule = new RuleBinding(expression);
 
         result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        assertTrue(result);*/
+        assertTrue(result);
 
 
     }
 
+    @Test
     public void testApp3() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -148,7 +170,7 @@ public class PairTest extends TestCase {
 
     }
 
-
+    @Test
     public void testApp3_1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -194,6 +216,7 @@ public class PairTest extends TestCase {
 
     }
 
+    @Test
     public void testApp4() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -238,7 +261,7 @@ public class PairTest extends TestCase {
 
     }
 
-
+    @Test
     public void testApp5() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -282,6 +305,7 @@ public class PairTest extends TestCase {
 
     }
 
+    @Test
     public void testApp6() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -324,7 +348,6 @@ public class PairTest extends TestCase {
         assertTrue(result);
 
     }
-
 
 
 }

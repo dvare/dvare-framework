@@ -10,7 +10,6 @@ import org.dvare.expression.literal.LiteralType;
 public class LiteralBuilder {
 
     private Object value;
-
     private DataType type;
 
     public LiteralBuilder() {

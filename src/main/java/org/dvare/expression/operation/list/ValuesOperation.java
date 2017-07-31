@@ -60,7 +60,7 @@ public class ValuesOperation extends ListOperationExpression {
         return new NullLiteral();
     }
 
-    protected List<?> extractPairValues(List pairList) {
+    private List<?> extractPairValues(List pairList) {
         List<Object> pairValues = new ArrayList<>();
 
         for (Object pairObject : pairList) {

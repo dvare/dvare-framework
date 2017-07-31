@@ -58,8 +58,8 @@ public class addDays extends ChainOperationExpression {
                 return new NullLiteral();
             }
 
-            LiteralExpression dayssExpression = (LiteralExpression) rightOperand.get(0);
-            Object daysValue = dayssExpression.getValue();
+            LiteralExpression daysExpression = (LiteralExpression) rightOperand.get(0);
+            Object daysValue = daysExpression.getValue();
             Object value = literalExpression.getValue();
             dataTypeExpression = literalExpression.getType();
             switch (toDataType(dataTypeExpression)) {

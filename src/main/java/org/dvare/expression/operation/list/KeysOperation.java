@@ -82,7 +82,6 @@ public class KeysOperation extends ListOperationExpression {
             return pairKeys;
         }
 
-
         return null;
     }
 

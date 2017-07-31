@@ -5,9 +5,7 @@ import org.dvare.expression.Expression;
 
 public class ExpressionBuilder {
 
-
     private Expression expression;
-
 
     public ExpressionBuilder() {
     }

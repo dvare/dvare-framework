@@ -95,7 +95,7 @@ public class FilterOperation extends ListOperationExpression {
             }
 
 
-        } else if (includeParam instanceof EqualityOperationExpression || includeParam instanceof ChainOperationExpression) {
+        } else if (includeParam instanceof RelationalOperationExpression || includeParam instanceof ChainOperationExpression) {
 
             for (Object value : values) {
 

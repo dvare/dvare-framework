@@ -64,9 +64,9 @@ public abstract class AggregationOperationExpression extends OperationExpression
         super(operationType);
     }
 
-
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding,
+                         ContextsBinding contexts) throws ExpressionParseException {
 
 
         String token = tokens[pos - 1];
@@ -105,9 +105,10 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return pos;
     }
 
-
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack,
+                                      ExpressionBinding expressionBinding, ContextsBinding contexts)
+            throws ExpressionParseException {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         Stack<Expression> localStack = new Stack<>();
@@ -134,16 +135,9 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return pos;
     }
 
-
-    /*protected List<?> extractValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding,Expression expression) throws InterpretException {
-
-        if (expression instanceof ChainOperationExpression) {
-            ChainOperationExpression operationExpression = (ChainOperationExpression) expression;
-
-    }
-*/
     @Override
-    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding)
+            throws InterpretException {
 
 
         Expression valueOperand = this.leftOperand;
@@ -215,7 +209,9 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
 
-    protected List<?> extractValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression valueOperand) throws InterpretException {
+    protected List<?> extractValues(ExpressionBinding expressionBinding,
+                                    InstancesBinding instancesBinding, Expression valueOperand)
+            throws InterpretException {
         List values = null;
 
         if (valueOperand instanceof ListOperationExpression || valueOperand instanceof GetExpOperation || valueOperand instanceof Semicolon) {
@@ -279,7 +275,9 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return values;
     }
 
-    private List<?> listLiteralValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, ListLiteralOperationExpression listLiteralOperationExpression) throws InterpretException {
+    private List<?> listLiteralValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding,
+                                      ListLiteralOperationExpression listLiteralOperationExpression)
+            throws InterpretException {
         List values = null;
 
         Object interpret = listLiteralOperationExpression.interpret(expressionBinding, instancesBinding);
@@ -291,7 +289,8 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return values;
     }
 
-    private List<?> variableExpressionValues(InstancesBinding instancesBinding, VariableExpression variableExpression) throws InterpretException {
+    private List<?> variableExpressionValues(InstancesBinding instancesBinding, VariableExpression variableExpression)
+            throws InterpretException {
         List values = null;
         if (variableExpression instanceof ListVariable) {
             dataTypeExpression = variableExpression.getType();
@@ -320,7 +319,9 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return values;
     }
 
-    private List<?> functionExpressionExpressionValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Function function) throws InterpretException {
+    private List<?> functionExpressionExpressionValues(ExpressionBinding expressionBinding,
+                                                       InstancesBinding instancesBinding, Function function)
+            throws InterpretException {
         List values;
 
 
@@ -411,7 +412,9 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
 
-    private List<?> chainOperationExpressionValuesOld(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, ChainOperationExpression operationExpression) throws InterpretException {
+    private List<?> chainOperationExpressionValuesOld(ExpressionBinding expressionBinding,
+                                                      InstancesBinding instancesBinding, ChainOperationExpression operationExpression)
+            throws InterpretException {
         List values = null;
         Expression leftOperand = operationExpression.getLeftOperand();
         while (leftOperand instanceof ChainOperationExpression) {
@@ -446,7 +449,9 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return values;
     }
 
-    private List<?> chainOperationExpressionValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, ChainOperationExpression chainOperationExpression) throws InterpretException {
+    private List<?> chainOperationExpressionValues(ExpressionBinding expressionBinding,
+                                                   InstancesBinding instancesBinding, ChainOperationExpression chainOperationExpression)
+            throws InterpretException {
         List values = null;
 
         Expression expression = chainOperationExpression.getLeftOperand();
@@ -486,7 +491,8 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return values;
     }
 
-    private List<?> pairValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression expression) throws InterpretException {
+    private List<?> pairValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression expression)
+            throws InterpretException {
         if (expression instanceof PairOperation || expression instanceof ListOperationExpression) {
             OperationExpression pairOperation = (OperationExpression) expression;
 

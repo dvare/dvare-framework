@@ -32,7 +32,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 
-public abstract class ArithmeticOperationExpression extends EqualityOperationExpression {
+public abstract class ArithmeticOperationExpression extends RelationalOperationExpression {
 
 
     public ArithmeticOperationExpression(OperationType operationType) {

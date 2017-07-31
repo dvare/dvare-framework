@@ -32,7 +32,7 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.operation.MultipleOperationExpression;
+import org.dvare.expression.operation.CompositeOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
@@ -211,7 +211,7 @@ public class ExpressionParser {
 
             if (stack.size() > 1) {
 
-                expression = new MultipleOperationExpression(new ArrayList<>(stack));
+                expression = new CompositeOperationExpression(new ArrayList<>(stack));
 
             } else {
                 expression = stack.pop();

@@ -30,13 +30,9 @@ import org.dvare.exceptions.interpreter.InterpretException;
 
 public abstract class Expression {
 
-
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
         return false;
-
-
     }
-
 
 }
 

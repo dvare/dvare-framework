@@ -47,8 +47,8 @@ public class TypeFinder {
 
 
         } else {
-            String field = name;
-            Object newType = typeBinding.getDataType(field);
+
+            Object newType = typeBinding.getDataType(name);
             if (newType instanceof DataType) {
 
                 variableType = (DataType) newType;
@@ -86,8 +86,8 @@ public class TypeFinder {
 
 
         } else {
-            String field = name;
-            Field newType = FieldUtils.getDeclaredField(type, field, true);
+
+            Field newType = FieldUtils.getDeclaredField(type, name, true);
             if (newType != null) {
                 variableType = typeMapping(newType.getType());
 
@@ -101,7 +101,6 @@ public class TypeFinder {
 
         String simpleName = type.getSimpleName();
 
-
         if (simpleName.equals("int")) {
             return DataType.IntegerType;
         }
@@ -110,9 +109,8 @@ public class TypeFinder {
                 simpleName.substring(1).toLowerCase();
         simpleName = simpleName + "Type";
 
-        DataType dataType = DataType.valueOf(simpleName);
+        return DataType.valueOf(simpleName);
 
-        return dataType;
     }
 
 

@@ -63,7 +63,7 @@ public class SortOperation extends ListOperationExpression {
 
             if (valuesResult instanceof ListLiteral) {
 
-                List<Object> values = ((ListLiteral) valuesResult).getValue();
+                List<?> values = ((ListLiteral) valuesResult).getValue();
                 dataTypeExpression = ((ListLiteral) valuesResult).getType();
 
                 List<Object> notNullList = new ArrayList<>();

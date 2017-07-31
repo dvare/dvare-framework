@@ -72,7 +72,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
 
 
             return includedValues;
-        } else if (includeParam instanceof EqualityOperationExpression || includeParam instanceof ChainOperationExpression) {
+        } else if (includeParam instanceof RelationalOperationExpression || includeParam instanceof ChainOperationExpression) {
             List<Object> includedValues = new ArrayList<>();
             for (Object value : values) {
 
@@ -131,7 +131,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
             includedValues.removeAll(excludedValues);
 
             return includedValues;
-        } else if (exculdeParam instanceof EqualityOperationExpression || exculdeParam instanceof ChainOperationExpression) {
+        } else if (exculdeParam instanceof RelationalOperationExpression || exculdeParam instanceof ChainOperationExpression) {
             List<Object> excludedValues = new ArrayList<>();
             for (Object value : includedValues) {
                 Boolean result = buildEqualityOperationExpression(exculdeParam, expressionBinding, instancesBinding, value);

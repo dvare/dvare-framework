@@ -8,12 +8,11 @@ import org.dvare.expression.Expression;
 
 import java.util.List;
 
-public class MultipleOperationExpression extends Expression {
-
+public class CompositeOperationExpression extends Expression {
 
     private List<Expression> expressions;
 
-    public MultipleOperationExpression(List<Expression> expressions) {
+    public CompositeOperationExpression(List<Expression> expressions) {
         this.expressions = expressions;
     }
 

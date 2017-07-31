@@ -50,16 +50,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class EqualityOperationExpression extends OperationExpression {
-    protected static Logger logger = LoggerFactory.getLogger(EqualityOperationExpression.class);
+public abstract class RelationalOperationExpression extends OperationExpression {
+    protected static Logger logger = LoggerFactory.getLogger(RelationalOperationExpression.class);
 
 
-    public EqualityOperationExpression(OperationType operationType) {
+    public RelationalOperationExpression(OperationType operationType) {
         super(operationType);
     }
 
 
-    protected boolean isLegalOperation(DataType dataType) {
+    private boolean isLegalOperation(DataType dataType) {
 
         Annotation annotation = this.getClass().getAnnotation(org.dvare.annotations.Operation.class);
         if (annotation != null) {
@@ -103,9 +103,11 @@ public abstract class EqualityOperationExpression extends OperationExpression {
                 stack.push(expression);
                 pos = nextOpp.parse(tokens, pos + 1, stack, expressionBinding, contexts);
                 expression = stack.pop();
+            } else {
+                break;
             }
 
-            break;
+
         }
 
         stack.push(expression);
