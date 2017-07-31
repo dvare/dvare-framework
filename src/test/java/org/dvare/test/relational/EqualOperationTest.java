@@ -21,9 +21,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.test.validation;
+package org.dvare.test.relational;
 
 import junit.framework.TestCase;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.binding.rule.RuleBinding;
@@ -36,6 +37,7 @@ import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ArithmeticOperation;
 import org.dvare.test.dataobjects.EqualOperation;
 import org.dvare.test.dataobjects.Function;
+import org.dvare.test.dataobjects.NotEqualOperation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -81,6 +83,38 @@ public class EqualOperationTest extends TestCase {
         assertTrue(result);
     }
 
+
+    public void testApp_1() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String exp = "Variable1 != 'A'" +
+                " And Variable2 != 2" +
+                " And Variable3 != 3.2" +
+                " And Variable4 != false" +
+                " And Variable5 <> date( 12-05-2016 , dd-MM-yyyy )" +
+                " And Variable6 <> dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss )" +
+                " And Variable7 != R'A1.*'";
+
+        Expression expression = factory.getParser().fromString(exp, NotEqualOperation.class);
+        RuleBinding rule = new RuleBinding(expression);
+
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        NotEqualOperation notEqualOperation = new NotEqualOperation();
+        notEqualOperation.setVariable1("'B'");
+        notEqualOperation.setVariable2(3);
+        notEqualOperation.setVariable3(3.1f);
+        notEqualOperation.setVariable4(true);
+        notEqualOperation.setVariable5(dateFormat.parse("13-05-2016"));
+        notEqualOperation.setVariable6(dateTimeFormat.parse("13-05-2016-15:30:00"));
+        notEqualOperation.setVariable7("A2B2");
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, notEqualOperation);
+        assertTrue(result);
+    }
 
     public void testApp1() throws ExpressionParseException, InterpretException {
 
@@ -161,6 +195,21 @@ public class EqualOperationTest extends TestCase {
 
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
+        assertTrue(result);
+    }
+
+
+    public void testApp5() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration configuration = new RuleConfiguration();
+
+        Expression expression = configuration.getParser().fromString("" +
+                "[2.1,2.4] = [2.1,2.4] and [2,4] = [2,4] and ['2','4'] = ['2','4'] and " +
+                "[2.1,2.3] != [2.1,2.4] and [2,4] != [2,3] and ['2','4'] != ['2','3']", new ContextsBinding());
+        RuleBinding rule = new RuleBinding(expression);
+
+        RuleEvaluator evaluator = configuration.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
         assertTrue(result);
     }
 

@@ -1,9 +1,6 @@
 package org.dvare;
 
-import org.dvare.test.list.FirstTest;
-import org.dvare.test.list.LastTest;
-import org.dvare.test.list.PairTest;
-import org.dvare.test.list.ValuesTest;
+import org.dvare.test.list.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -12,7 +9,8 @@ import org.junit.runners.Suite;
         ValuesTest.class,
         PairTest.class,
         FirstTest.class,
-        LastTest.class
+        LastTest.class,
+        MatchTest.class
 })
 public class ListTest {
 }

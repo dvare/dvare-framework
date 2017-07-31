@@ -78,4 +78,14 @@ public class DateTest extends TestCase {
     }
 
 
+    public void testApp7() throws ExpressionParseException, InterpretException {
+        RuleConfiguration factory = new RuleConfiguration();
+        String exp = "'12-05-2016' ->toDate() = date ( 12-05-2016 , dd-MM-yyyy )";
+        Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
+        RuleBinding rule = new RuleBinding(expression);
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
+        Assert.assertTrue(result);
+    }
+
 }

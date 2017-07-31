@@ -18,8 +18,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class PairTest {
 
@@ -37,6 +36,9 @@ public class PairTest {
 
         assertNotNull(expression);
 
+
+        assertEquals(expression.toString().trim(), "Pair(self.Variable1, self.Variable2)");
+
     }
 
     @Test(expected = ExpressionParseException.class)
@@ -48,11 +50,9 @@ public class PairTest {
         TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
+        factory.getParser().fromString("Pair (Variable1)", contexts);
 
-        Expression expression = factory.getParser().fromString("Pair (Variable1)", contexts);
 
-
-        //assertNotNull(expression);
 
     }
 

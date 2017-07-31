@@ -30,9 +30,6 @@ public class PairOperation extends AggregationOperationExpression {
         super(OperationType.PAIR);
     }
 
-    public PairOperation(OperationType operationType) {
-        super(operationType);
-    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
@@ -53,22 +50,6 @@ public class PairOperation extends AggregationOperationExpression {
     }
 
 
-    @Override
-    public String toString() {
-        StringBuilder toStringBuilder = new StringBuilder();
-
-
-        toStringBuilder.append(operationType.getSymbols().get(0));
-        toStringBuilder.append("( ");
-
-
-        if (rightOperand != null) {
-            toStringBuilder.append(rightOperand.toString());
-            toStringBuilder.append(" )");
-        }
-
-        return toStringBuilder.toString();
-    }
 
     protected ListLiteral buildValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
 

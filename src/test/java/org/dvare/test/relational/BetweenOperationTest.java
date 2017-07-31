@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.test.validation;
+package org.dvare.test.relational;
 
 import junit.framework.TestCase;
 import org.dvare.binding.data.InstancesBinding;

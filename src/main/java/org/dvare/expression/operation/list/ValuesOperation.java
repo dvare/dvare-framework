@@ -49,8 +49,8 @@ public class ValuesOperation extends ListOperationExpression {
 
                 } else if (rightOperand.size() == 2) {
                     Expression includeParam = rightOperand.get(0);
-                    Expression exculdeParam = rightOperand.get(1);
-                    values = excludedFilter(includeParam, exculdeParam, expressionBinding, instancesBinding, values);
+                    Expression excludeParam = rightOperand.get(1);
+                    values = excludedFilter(includeParam, excludeParam, expressionBinding, instancesBinding, values);
                 }
             }
 

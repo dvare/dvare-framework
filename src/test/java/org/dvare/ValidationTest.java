@@ -23,8 +23,15 @@ THE SOFTWARE.*/
 
 package org.dvare;
 
+import org.dvare.test.arithmetic.ArithmeticOperationTest;
+import org.dvare.test.builder.BuilderTest;
+import org.dvare.test.predefined.ChainOperationTest;
+import org.dvare.test.relational.BetweenOperationTest;
+import org.dvare.test.relational.BooleanOperationTest;
+import org.dvare.test.relational.EqualOperationTest;
+import org.dvare.test.relational.InOperationTest;
 import org.dvare.test.utility.DateTest;
-import org.dvare.test.validation.*;
+import org.dvare.test.utility.ParenthesisTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -33,7 +40,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 
         EqualOperationTest.class,
-        NotEqualOperationTest.class,
         InOperationTest.class,
         BetweenOperationTest.class,
         ParenthesisTest.class,

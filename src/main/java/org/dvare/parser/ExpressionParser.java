@@ -32,6 +32,8 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.CompositeOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
@@ -195,8 +197,12 @@ public class ExpressionParser {
                         VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
                         stack.add(variableExpression);
                     } else {
-
-                        throw new ExpressionParseException("syntax Error \"" + token + "\" at " + pos);
+                        LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
+                        if (literalExpression != null) {
+                            stack.push(literalExpression);
+                        } else {
+                            throw new ExpressionParseException("syntax Error \"" + token + "\" at " + pos);
+                        }
 
                     }
 

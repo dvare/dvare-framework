@@ -21,10 +21,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.test.validation;
+package org.dvare.test.relational;
 
 
 import junit.framework.TestCase;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.evaluator.RuleEvaluator;
@@ -160,5 +162,18 @@ public class InOperationTest extends TestCase {
         assertTrue(result);
     }
 
+    public void testApp5() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration configuration = new RuleConfiguration();
+
+        Expression expression = configuration.getParser().fromString("" +
+                "[2.1,2.4] in [2.1,2.4,2.9] and [2,4] in [2,3,4] and ['2','4'] in ['2','4'] and " +
+                "[2.1,2.3] notIn [2.1,2.2,2.5] and [2,4] notIn [2,3,7] and ['4'] notIn ['2','3']", new ContextsBinding());
+        RuleBinding rule = new RuleBinding(expression);
+
+        RuleEvaluator evaluator = configuration.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
+        assertTrue(result);
+    }
 
 }

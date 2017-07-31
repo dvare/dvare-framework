@@ -1,4 +1,4 @@
-package org.dvare.test.validation;
+package org.dvare.test.relational;
 
 import junit.framework.TestCase;
 import org.dvare.binding.data.InstancesBinding;
