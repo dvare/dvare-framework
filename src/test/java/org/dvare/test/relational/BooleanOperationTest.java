@@ -1,6 +1,5 @@
 package org.dvare.test.relational;
 
-import junit.framework.TestCase;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.rule.RuleBinding;
@@ -10,12 +9,13 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.text.ParseException;
 
 
-public class BooleanOperationTest extends TestCase {
-
+public class BooleanOperationTest {
+    @Test
     public void testApp1() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();

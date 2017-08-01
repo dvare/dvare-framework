@@ -86,7 +86,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
                 if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
                     TypeBinding typeBinding = contexts.getContext(tokenType.type);
                     DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                    this.leftOperand = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                    this.leftOperand = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
                 } else {
                     throw new ExpressionParseException("Left Operand of Aggregation Operation must be List or Variable ");
                 }

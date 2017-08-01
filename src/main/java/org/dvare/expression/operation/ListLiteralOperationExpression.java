@@ -102,7 +102,7 @@ public class ListLiteralOperationExpression extends OperationExpression {
             } else if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
                 TypeBinding typeBinding = contexts.getContext(tokenType.type);
                 DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                expression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                expression = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
             } else {
                 expression = LiteralType.getLiteralExpression(tokenType.token);
 
@@ -120,6 +120,12 @@ public class ListLiteralOperationExpression extends OperationExpression {
         stack.push(this);
 
         return newPos;
+    }
+
+
+    @Override
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+        return pos;
     }
 
 
@@ -178,12 +184,6 @@ public class ListLiteralOperationExpression extends OperationExpression {
 
     public Integer getSize() {
         return expressions.size();
-    }
-
-
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
-        return pos;
     }
 
     @Override

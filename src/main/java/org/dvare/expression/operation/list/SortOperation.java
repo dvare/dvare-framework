@@ -31,6 +31,7 @@ import java.util.List;
 @Operation(type = OperationType.SORT)
 public class SortOperation extends ListOperationExpression {
     private static Logger logger = LoggerFactory.getLogger(SortOperation.class);
+
     private Comparator<Object> pairComparator = (o1, o2) -> {
 
         if (o1 instanceof Pair && o2 instanceof Pair) {
@@ -149,7 +150,9 @@ public class SortOperation extends ListOperationExpression {
     }
 
 
-    private ValueType buildCompareValue(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, ChainOperationExpression chainOperationExpression, VariableExpression variableExpression, Object value) throws InterpretException {
+    private ValueType buildCompareValue(ExpressionBinding expressionBinding, InstancesBinding instancesBinding,
+                                        ChainOperationExpression chainOperationExpression, VariableExpression variableExpression,
+                                        Object value) throws InterpretException {
         String name = variableExpression.getName();
         String operandType = variableExpression.getOperandType();
         Object instance = instancesBinding.getInstance(operandType);

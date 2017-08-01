@@ -10,6 +10,7 @@ import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
 
 import java.util.ArrayList;
@@ -29,13 +30,13 @@ public class MeanTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
-
-        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1->mean (  )", aggregationTypes, validationTypes);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1->mean (  )", contexts);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
-        List<RuleBinding> rules = new ArrayList<>();
-        rules.add(rule);
 
 
         Map<String, Object> aggregation = new HashMap<>();
@@ -60,7 +61,10 @@ public class MeanTest extends TestCase {
         dataSet.add(new DataRow(d4));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
         boolean result = ((Float) ValueFinder.findValue("A0", resultModel)).compareTo(new Float(31.00)) == 0;
@@ -94,8 +98,6 @@ public class MeanTest extends TestCase {
 
         assertTrue(result);
     }
-
-
 
 
 }

@@ -18,8 +18,7 @@ import org.junit.runners.Suite;
         SemicolonTest.class,
         ConditionTest.class,
         SizeTest.class,
-        ConditionChainTest.class,
-        DistanceTest.class})
+        ConditionChainTest.class})
 public class AggregationTest {
 
 }

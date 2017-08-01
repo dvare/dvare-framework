@@ -47,7 +47,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -57,13 +57,24 @@ public class ExpressionParser {
     private ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
     public static TypeBinding translate(String types) {
-
-        String variables[] = types.split(",");
         TypeBinding typeBinding = new TypeBinding();
-        for (String variable : variables) {
-            if (variable != null && variable.contains(":")) {
-                String variableTokens[] = variable.split(":");
-                typeBinding.addTypes(variableTokens[0], DataType.valueOf(variableTokens[1]));
+
+
+        if (types != null) {
+
+            if (types.startsWith("{")) {
+                types = types.substring(1, types.length());
+            }
+            if (types.endsWith("}")) {
+                types = types.substring(0, types.length() - 1);
+            }
+            String variables[] = types.split(",");
+
+            for (String variable : variables) {
+                if (variable != null && variable.contains(":")) {
+                    String variableTokens[] = variable.split(":");
+                    typeBinding.addTypes(variableTokens[0], DataType.valueOf(variableTokens[1]));
+                }
             }
         }
         return typeBinding;
@@ -81,6 +92,7 @@ public class ExpressionParser {
     public static TypeBinding translate(Class types) {
         TypeBinding typeBinding = new TypeBinding();
 
+
         Field fields[] = FieldUtils.getAllFields(types);
         for (Field field : fields) {
             String type = field.getType().getSimpleName();
@@ -90,19 +102,30 @@ public class ExpressionParser {
                 typeBinding.addTypes(name, dataType);
             } else {
 
-                Type genericType = field.getGenericType();
-                if (genericType != null && genericType instanceof ParameterizedType) {
-                    ParameterizedType parameterizedType = (ParameterizedType) genericType;
-                    Class<?> parameterizedClass = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+
+                if (field.getType().equals(List.class)) {
+                    Type genericType = field.getGenericType();
+                    if (genericType != null && genericType instanceof ParameterizedType) {
+                        ParameterizedType parameterizedType = (ParameterizedType) genericType;
+                        Class<?> parameterizeClass = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+
+                        dataType = DataTypeMapping.getTypeMapping(parameterizeClass);
+                        if (dataType != null) {
+                            dataType = DataTypeMapping.getTypeMapping(parameterizeClass.getSimpleName() + "[]");
+                            if (dataType != null) {
+                                typeBinding.addTypes(name, dataType);
+                            }
+                        } else {
+                            typeBinding.addTypes(name, parameterizeClass);
+                        }
 
 
-                    typeBinding.addTypes(name, parameterizedClass);
+                    } else {
 
-                } else {
+                        typeBinding.addTypes(name, field.getType());
+                    }
 
-                    typeBinding.addTypes(name, field.getType());
                 }
-
 
             }
 
@@ -111,8 +134,8 @@ public class ExpressionParser {
     }
 
 
-    public Expression fromString(String expr, HashMap<String, String> type) throws ExpressionParseException {
-        TypeBinding typeBinding = translate(type);
+    public Expression fromString(String expr, Map<String, String> types) throws ExpressionParseException {
+        TypeBinding typeBinding = translate(types);
         return fromString(expr, typeBinding);
     }
 
@@ -122,49 +145,24 @@ public class ExpressionParser {
         return fromString(expr, typeBinding);
     }
 
+
     public Expression fromString(String expr, Class type) throws ExpressionParseException {
 
         TypeBinding typeBinding = translate(type);
         return fromString(expr, typeBinding);
     }
 
+
     public Expression fromString(String expr, TypeBinding typeBinding) throws ExpressionParseException {
-        return fromString(expr, typeBinding, null);
+        ContextsBinding contextsBinding = new ContextsBinding();
+        contextsBinding.addContext("self", typeBinding);
+
+        return fromString(expr, contextsBinding);
     }
 
-    public Expression fromString(String expr, Map<String, String> aTypes) throws ExpressionParseException {
-        TypeBinding aTypeBinding = ExpressionParser.translate(aTypes);
-        return fromString(expr, aTypeBinding, null);
-    }
-
-    public Expression fromString(String expr, Map<String, String> aTypes, Map<String, String> vTypes) throws ExpressionParseException {
-        TypeBinding vTypeBinding = ExpressionParser.translate(vTypes);
-        TypeBinding aTypeBinding = ExpressionParser.translate(aTypes);
-        return fromString(expr, aTypeBinding, vTypeBinding);
-    }
-
-    public Expression fromString(String expr, String atype, String vtype) throws ExpressionParseException {
-        TypeBinding aTypes = translate(atype);
-        TypeBinding vTypes = translate(vtype);
-        return fromString(expr, aTypes, vTypes);
-    }
-
-    public Expression fromString(String expr, Class atype, Class vtype) throws ExpressionParseException {
-
-        TypeBinding aTypes = ExpressionParser.translate(atype);
-        TypeBinding vTypes = ExpressionParser.translate(vtype);
-        return fromString(expr, aTypes, vTypes);
-    }
-
-    public Expression fromString(String expr, TypeBinding selfTypes, TypeBinding dataTypes) throws ExpressionParseException {
-        ContextsBinding contexts = new ContextsBinding();
-        contexts.addContext("self", selfTypes);
-        contexts.addContext("data", dataTypes);
-        return fromString(expr, contexts);
-    }
 
     public Expression fromString(String expr, ContextsBinding contexts) throws ExpressionParseException {
-        return fromString(expr, null, contexts);
+        return fromString(expr, new ExpressionBinding(), contexts);
     }
 
     public Expression fromString(String expr, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
@@ -194,7 +192,7 @@ public class ExpressionParser {
                     if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
                         TypeBinding typeBinding = contexts.getContext(tokenType.type);
                         DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                        VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                        VariableExpression variableExpression = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
                         stack.add(variableExpression);
                     } else {
                         LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);

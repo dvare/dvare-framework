@@ -1,7 +1,6 @@
 package org.dvare.test.list;
 
 
-import junit.framework.TestCase;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
@@ -15,12 +14,16 @@ import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.EqualOperation;
 import org.dvare.test.dataobjects.ValuesObject;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ValuesTest extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+public class ValuesTest {
+    @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -61,6 +64,7 @@ public class ValuesTest extends TestCase {
 
     }
 
+    @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -106,6 +110,7 @@ public class ValuesTest extends TestCase {
 
     }
 
+    @Test
     public void testApp3() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -151,6 +156,7 @@ public class ValuesTest extends TestCase {
 
     }
 
+    @Test
     public void testApp4() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -200,7 +206,7 @@ public class ValuesTest extends TestCase {
 
     }
 
-
+    @Test
     public void testApp5() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -241,6 +247,7 @@ public class ValuesTest extends TestCase {
 
     }
 
+    @Test
 
     public void testApp6() throws ExpressionParseException, InterpretException {
 
@@ -282,7 +289,7 @@ public class ValuesTest extends TestCase {
 
     }
 
-
+    @Test
     public void testApp7() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -323,6 +330,7 @@ public class ValuesTest extends TestCase {
 
     }
 
+    @Test
     public void testApp8() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -368,6 +376,7 @@ public class ValuesTest extends TestCase {
 
     }
 
+    @Test
     public void testApp9() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();

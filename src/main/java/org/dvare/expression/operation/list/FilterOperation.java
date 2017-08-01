@@ -24,47 +24,23 @@ public class FilterOperation extends ListOperationExpression {
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
-        if (leftOperand instanceof PairOperation) {
-            OperationExpression valuesOperation = (OperationExpression) leftOperand;
+        List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
 
-            Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
+        if (values != null) {
 
-            if (valuesResult instanceof ListLiteral) {
-
-                List values = ((ListLiteral) valuesResult).getValue();
-                dataTypeExpression = ((ListLiteral) valuesResult).getType();
-
-                if (rightOperand.size() == 1) {
-
-                    Expression includeParam = rightOperand.get(0);
-
-                    List includedValues = pairFilter(expressionBinding, instancesBinding, includeParam, values);
-                    return new ListLiteral(includedValues, dataTypeExpression);
+            List includedValues = values;
+            if (rightOperand.size() == 1) {
+                Expression includeParam = rightOperand.get(0);
+                if (isPairList(values)) {
+                    includedValues = pairFilter(expressionBinding, instancesBinding, includeParam, values);
+                } else {
+                    includedValues = includedFilter(includeParam, expressionBinding, instancesBinding, values);
                 }
 
 
             }
+            return new ListLiteral(includedValues, dataTypeExpression);
 
-        } else {
-
-            List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
-
-            if (values != null) {
-
-                List includedValues = values;
-                if (rightOperand.size() == 1) {
-                    Expression includeParam = rightOperand.get(0);
-                    if (isPairList(values)) {
-                        includedValues = pairFilter(expressionBinding, instancesBinding, includeParam, values);
-                    } else {
-                        includedValues = includedFilter(includeParam, expressionBinding, instancesBinding, values);
-                    }
-
-
-                }
-                return new ListLiteral(includedValues, dataTypeExpression);
-
-            }
         }
         return new NullLiteral();
     }

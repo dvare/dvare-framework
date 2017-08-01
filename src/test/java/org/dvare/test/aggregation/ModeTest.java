@@ -2,12 +2,15 @@ package org.dvare.test.aggregation;
 
 import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
 
 import java.util.ArrayList;
@@ -28,12 +31,15 @@ public class ModeTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
-        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1->mode (  )", aggregationTypes, validationTypes);
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+
+        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1->mode (  )", contexts);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
-        List<RuleBinding> rules = new ArrayList<>();
-        rules.add(rule);
 
 
         Map<String, Object> aggregation = new HashMap<>();
@@ -58,7 +64,10 @@ public class ModeTest extends TestCase {
         dataSet.add(new DataRow(d4));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(20);

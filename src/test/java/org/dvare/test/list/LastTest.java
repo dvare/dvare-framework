@@ -1,22 +1,27 @@
 package org.dvare.test.list;
 
-import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LastTest extends TestCase {
+import static org.junit.Assert.assertTrue;
 
+public class LastTest {
+    @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -28,13 +33,14 @@ public class LastTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
 
-        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1->last (  )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1->last (  )", contexts);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
-        List<RuleBinding> rules = new ArrayList<>();
-        rules.add(rule);
 
 
         Map<String, Object> aggregation = new HashMap<>();
@@ -55,7 +61,10 @@ public class LastTest extends TestCase {
         dataSet.add(new DataRow(d3));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(40);
@@ -63,6 +72,7 @@ public class LastTest extends TestCase {
         assertTrue(result);
     }
 
+    @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -74,13 +84,14 @@ public class LastTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
 
-        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1->values()->last (  )", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1->values()->last (  )", contexts);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
-        List<RuleBinding> rules = new ArrayList<>();
-        rules.add(rule);
 
 
         Map<String, Object> aggregation = new HashMap<>();
@@ -101,7 +112,11 @@ public class LastTest extends TestCase {
         dataSet.add(new DataRow(d3));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
+
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(40);

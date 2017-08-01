@@ -4,6 +4,7 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
@@ -29,14 +30,14 @@ public class ForEach extends ForAll {
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
 
-        Object object = instancesBinding.getInstance(referenceContext.getName());
+        Object object = instancesBinding.getInstance(((NamedExpression) referenceContext).getName());
         if (object instanceof List) {
             List instances = (List) object;
 
             List results = new ArrayList<>();
 
             for (Object instance : instances) {
-                instancesBinding.addInstance(derivedContext.getName(), instance);
+                instancesBinding.addInstance(((NamedExpression) derivedContext).getName(), instance);
 
 
                 Object interpret = leftOperand.interpret(expressionBinding, instancesBinding);
@@ -49,7 +50,7 @@ public class ForEach extends ForAll {
 
             }
 
-            instancesBinding.removeInstance(derivedContext.getName());
+            instancesBinding.removeInstance(((NamedExpression) derivedContext).getName());
 
             return new ListLiteral(results, dataTypeExpression);
 

@@ -59,7 +59,7 @@ public enum OperationType {
 
     //Condition
 
-    IF("IF", "if", "ELSEIF", "elseif"), THEN("THEN", "then"),//
+    IF("IF", "if"), THEN("THEN", "then"),//
     ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
     // List
     FORALL("forAll", "ForAll"), END_FORALL("endForAll", "EndForAll"), FOREACH("forEach", "ForEach"), END_FOREACH("endForEach", "EndForEach"), //

@@ -32,7 +32,7 @@ public class VariableBuilder {
     }
 
     public VariableExpression build() throws IllegalPropertyException {
-        return VariableType.getVariableType(name, type, operandType);
+        return VariableType.getVariableExpression(name, type, operandType);
 
     }
 }

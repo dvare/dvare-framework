@@ -38,6 +38,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -45,14 +46,14 @@ public class VariableType {
     private static Logger logger = LoggerFactory.getLogger(VariableType.class);
 
 
-    public static VariableExpression getVariableType(String name, DataType type, String operandType) throws IllegalPropertyException {
-        VariableExpression variableExpression = getVariableType(name, type);
+    public static VariableExpression getVariableExpression(String name, DataType type, String operandType) throws IllegalPropertyException {
+        VariableExpression variableExpression = getVariableExpression(name, type);
         variableExpression.setOperandType(operandType);
         return variableExpression;
     }
 
 
-    public static VariableExpression getVariableType(String name, DataType type) throws IllegalPropertyException {
+    public static VariableExpression getVariableExpression(String name, DataType type) throws IllegalPropertyException {
         VariableExpression variableExpression;
 
         if (name == null)
@@ -141,7 +142,6 @@ public class VariableType {
     public static VariableExpression setVariableValue(VariableExpression variable, Object object) throws IllegalPropertyValueException {
         Object value = ValueFinder.findValue(variable.getName(), object);
 
-
         return setValue(variable, value);
     }
 
@@ -163,6 +163,8 @@ public class VariableType {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
                             listVariable.setValue((List) value);
+                        } else if (value.getClass().isArray()) {
+                            listVariable.setValue(Arrays.asList((Boolean[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof Boolean) {
@@ -190,6 +192,8 @@ public class VariableType {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
                             listVariable.setValue((List) value);
+                        } else if (value.getClass().isArray()) {
+                            listVariable.setValue(Arrays.asList((Float[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof Float) {
@@ -227,6 +231,8 @@ public class VariableType {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
                             listVariable.setValue((List) value);
+                        } else if (value.getClass().isArray()) {
+                            listVariable.setValue(Arrays.asList((Integer[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof Integer) {
@@ -263,6 +269,8 @@ public class VariableType {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
                             listVariable.setValue((List) value);
+                        } else if (value.getClass().isArray()) {
+                            listVariable.setValue(Arrays.asList((String[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             values.add(value);
@@ -283,6 +291,8 @@ public class VariableType {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
                             listVariable.setValue((List) value);
+                        } else if (value.getClass().isArray()) {
+                            listVariable.setValue(Arrays.asList((LocalDateTime[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof LocalDateTime) {
@@ -327,6 +337,8 @@ public class VariableType {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
                             listVariable.setValue((List) value);
+                        } else if (value.getClass().isArray()) {
+                            listVariable.setValue(Arrays.asList((LocalDate[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof LocalDate) {
@@ -374,6 +386,8 @@ public class VariableType {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
                             listVariable.setValue((List) value);
+                        } else if (value.getClass().isArray()) {
+                            listVariable.setValue(Arrays.asList((Date[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof Date) {

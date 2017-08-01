@@ -83,7 +83,7 @@ public class DefOperation extends OperationExpression {
                 }
 
 
-                VariableExpression variableExpression = VariableType.getVariableType(tokenType.token, dataType, tokenType.type);
+                VariableExpression variableExpression = VariableType.getVariableExpression(tokenType.token, dataType, tokenType.type);
                 stack.push(variableExpression);
 
             } else {

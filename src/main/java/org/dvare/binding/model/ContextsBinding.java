@@ -24,6 +24,8 @@ THE SOFTWARE.*/
 package org.dvare.binding.model;
 
 
+import org.dvare.parser.ExpressionParser;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +35,27 @@ public class ContextsBinding {
 
 
     private Map<String, TypeBinding> contexts = new HashMap<>();
+
+
+    public void addContext(String name, String types) {
+        if (name != null) {
+            contexts.put(name, ExpressionParser.translate(types));
+        }
+    }
+
+
+    public void addContext(String name, Map<String, String> types) {
+        if (name != null) {
+            contexts.put(name, ExpressionParser.translate(types));
+        }
+    }
+
+
+    public void addContext(String name, Class types) {
+        if (name != null) {
+            contexts.put(name, ExpressionParser.translate(types));
+        }
+    }
 
 
     public void addContext(String name, TypeBinding typeBinding) {

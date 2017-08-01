@@ -135,7 +135,7 @@ public abstract class OperationExpression extends Expression {
         if (tokenType.type != null && contextsBinding.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contextsBinding.getContext(tokenType.type)) != null) {
             TypeBinding typeBinding = contextsBinding.getContext(tokenType.type);
             DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-            return VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+            return VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
 
 
         } else {

@@ -89,7 +89,7 @@ public abstract class RelationalOperationExpression extends OperationExpression 
             TypeBinding typeBinding = contexts.getContext(tokenType.type);
 
             DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-            expression = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+            expression = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
 
         } else {
             expression = LiteralType.getLiteralExpression(tokenType.token);

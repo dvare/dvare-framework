@@ -69,12 +69,13 @@ public class ConditionChainTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
 
-        Expression aggregate = factory.getParser().fromString("IF data.V1 -> values()->hasItem(20) THEN self.A1 := data.V1->sum () ENDIF", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("IF data.V1 -> values()->hasItem(20) THEN self.A1 := data.V1->sum () ENDIF", contexts);
 
         RuleBinding rule = new RuleBinding(aggregate);
-        List<RuleBinding> rules = new ArrayList<>();
-        rules.add(rule);
 
 
         List<Object> dataSet = new ArrayList<>();
@@ -92,7 +93,10 @@ public class ConditionChainTest extends TestCase {
         dataSet.add(new DataRow(d3));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rules, new DataRow(new HashMap<>()), dataSet);
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow());
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(70);
 
@@ -111,8 +115,11 @@ public class ConditionChainTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
 
-        Expression aggregate = factory.getParser().fromString("self.A1 := data.V1->values()->getItem(data.V1 -> size())", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("self.A1 := data.V1->values()->getItem(data.V1 -> size())", contexts);
 
         RuleBinding rule = new RuleBinding(aggregate);
 
@@ -132,7 +139,12 @@ public class ConditionChainTest extends TestCase {
         dataSet.add(new DataRow(d3));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rule, new DataRow(new HashMap<>()), dataSet);
+
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow());
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
+
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(40);
 
@@ -151,8 +163,11 @@ public class ConditionChainTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
 
-        Expression aggregate = factory.getParser().fromString("self.A1 := data.V1->values()->getItem(data.V1 -> size() - 1)", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("self.A1 := data.V1->values()->getItem(data.V1 -> size() - 1)", contexts);
 
         RuleBinding rule = new RuleBinding(aggregate);
 
@@ -172,7 +187,11 @@ public class ConditionChainTest extends TestCase {
         dataSet.add(new DataRow(d3));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rule, new DataRow(new HashMap<>()), dataSet);
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow());
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
+
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(20);
 

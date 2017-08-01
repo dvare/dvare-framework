@@ -33,21 +33,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class RuleEvaluator {
     static Logger logger = LoggerFactory.getLogger(RuleEvaluator.class);
 
+
     public Object evaluate(RuleBinding rule, Object object) throws InterpretException {
-
-        return evaluate(rule, object, null);
-    }
-
-    public Object evaluate(RuleBinding rule, Object self, Object data) throws InterpretException {
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
-        instancesBinding.addInstance("self", self);
-        instancesBinding.addInstance("data", data);
-
+        instancesBinding.addInstance("self", object);
         return evaluate(rule, instancesBinding);
     }
 
@@ -58,7 +51,6 @@ public class RuleEvaluator {
     }
 
     public Object evaluate(RuleBinding rule, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-
 
         Object result = null;
         Object ruleRawResult = rule.getExpression().interpret(expressionBinding, instancesBinding);
@@ -74,48 +66,19 @@ public class RuleEvaluator {
     }
 
 
-    public InstancesBinding aggregate(List<RuleBinding> rules, InstancesBinding instancesBinding) throws InterpretException {
-        return aggregate(rules, null, instancesBinding);
+    public InstancesBinding aggregate(RuleBinding rule, Object object) throws InterpretException {
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", object);
+
+        return aggregate(rule, instancesBinding);
     }
 
 
-    public InstancesBinding aggregate(List<RuleBinding> rules, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-
-
-        for (RuleBinding rule : rules) {
-            rule.getExpression().interpret(expressionBinding, instancesBinding);
-        }
-
-        return instancesBinding;
-    }
-
-
-    public Object aggregate(RuleBinding rule, InstancesBinding instancesBinding) throws InterpretException {
+    public InstancesBinding aggregate(RuleBinding rule, InstancesBinding instancesBinding) throws InterpretException {
         return aggregate(rule, null, instancesBinding);
     }
 
-
-    public Object aggregate(List<RuleBinding> rules, Object aggregate, Object dataset) throws InterpretException {
-        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
-        instancesBinding.addInstance("self", aggregate);
-        instancesBinding.addInstance("data", dataset);
-
-        for (RuleBinding rule : rules) {
-            rule.getExpression().interpret(null, instancesBinding);
-        }
-
-        return instancesBinding.getInstance("self");
-    }
-
-    public Object aggregate(RuleBinding rule, Object aggregate, Object dataset) throws InterpretException {
-        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
-        instancesBinding.addInstance("self", aggregate);
-        instancesBinding.addInstance("data", dataset);
-        rule.getExpression().interpret(null, instancesBinding);
-        return instancesBinding.getInstance("self");
-    }
-
-    public Object aggregate(RuleBinding rule, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public InstancesBinding aggregate(RuleBinding rule, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         rule.getExpression().interpret(expressionBinding, instancesBinding);
         return instancesBinding;

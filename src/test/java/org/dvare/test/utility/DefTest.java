@@ -11,6 +11,7 @@ import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
 import org.junit.Assert;
 
@@ -50,14 +51,16 @@ public class DefTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
         validationTypes.put("V2", "IntegerType");
 
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+
         Expression aggregate = factory.getParser().fromString("" +
                         "def temp.variable:IntegerType :=  data.V1->first() * 10 " +
                         "self.A0 := temp.variable"
-                , aggregationTypes, validationTypes);
+                , contexts);
 
         RuleBinding rule = new RuleBinding(aggregate);
-        List<RuleBinding> rules = new ArrayList<>();
-        rules.add(rule);
 
 
         Map<String, Object> aggregation = new HashMap<>();
@@ -70,7 +73,10 @@ public class DefTest extends TestCase {
 
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), new DataRow(dataset));
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", new DataRow(dataset));
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(50);
@@ -91,13 +97,16 @@ public class DefTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
         validationTypes.put("V2", "IntegerType");
 
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+
         //Expression aggregate = factory.getParser().fromString("def temp.variable:IntegerType :=  10 * (data.V1->first()) ; self.A0 := temp.variable", aggregationTypes, validationTypes);
         Expression aggregate = factory.getParser().fromString("def temp.variable:IntegerType :=  10 * data.V1->first() * data.V2->first() - 100  / 10 * self.A0" +
-                " self.A0 := temp.variable", aggregationTypes, validationTypes);
+                " self.A0 := temp.variable", contexts);
 
         RuleBinding rule = new RuleBinding(aggregate);
-        List<RuleBinding> rules = new ArrayList<>();
-        rules.add(rule);
 
 
         Map<String, Object> aggregation = new HashMap<>();
@@ -110,7 +119,10 @@ public class DefTest extends TestCase {
 
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), new DataRow(dataset));
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", new DataRow(dataset));
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(10);
@@ -130,11 +142,16 @@ public class DefTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
         validationTypes.put("V2", "IntegerType");
 
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+
         Expression aggregate = factory.getParser().fromString("" +
                 "def temp.variable:BooleanType := true " +
                 "IF temp.variable = true " +
                 "THEN A0 := 25 " +
-                "ENDIF", aggregationTypes, validationTypes);
+                "ENDIF", contexts);
 
         RuleBinding rule = new RuleBinding(aggregate);
         List<RuleBinding> rules = new ArrayList<>();
@@ -151,7 +168,10 @@ public class DefTest extends TestCase {
 
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), new DataRow(dataset));
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", new DataRow(dataset));
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(25);

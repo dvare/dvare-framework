@@ -47,30 +47,20 @@ public class ListLiteral extends LiteralExpression<List> {
 
     public Class<? extends DataTypeExpression> getListType() {
 
-
         if (getType() != null) {
 
             Type type = getType().getAnnotation(Type.class);
             switch (type.dataType()) {
-
                 case IntegerType:
                     return IntegerListType.class;
-                case FloatListType:
+                case FloatType:
                     return FloatListType.class;
                 case StringType:
                     return StringListType.class;
-                case BooleanType:
+                default:
                     return ListType.class;
-                case DateTimeType:
-                    return ListType.class;
-                case DateType:
-                    return ListType.class;
-
             }
-
-
         }
-
         return ListType.class;
     }
 

@@ -78,7 +78,6 @@ public class Mode extends AggregationOperationExpression {
         if (valuesList != null && type != null) {
 
 
-
             switch (type) {
 
                 case FloatType: {

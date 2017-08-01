@@ -23,7 +23,6 @@ THE SOFTWARE.*/
 
 package org.dvare.test.relational;
 
-import junit.framework.TestCase;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
@@ -38,12 +37,16 @@ import org.dvare.test.dataobjects.ArithmeticOperation;
 import org.dvare.test.dataobjects.EqualOperation;
 import org.dvare.test.dataobjects.Function;
 import org.dvare.test.dataobjects.NotEqualOperation;
+import org.junit.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class EqualOperationTest extends TestCase {
+import static org.junit.Assert.assertTrue;
 
+public class EqualOperationTest {
+
+    @Test
     public void testApp() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -58,9 +61,8 @@ public class EqualOperationTest extends TestCase {
                 " And Variable7 = {A1.*}";
 
 
-        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
         ContextsBinding contexts = new ContextsBinding();
-        contexts.addContext("self", typeBinding);
+        contexts.addContext("self", EqualOperation.class);
 
         Expression expression = factory.getParser().fromString(exp, contexts);
         RuleBinding rule = new RuleBinding(expression);
@@ -83,7 +85,7 @@ public class EqualOperationTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp_1() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -116,6 +118,7 @@ public class EqualOperationTest extends TestCase {
         assertTrue(result);
     }
 
+    @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration();
@@ -133,7 +136,7 @@ public class EqualOperationTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration();
@@ -151,7 +154,7 @@ public class EqualOperationTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp3() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -180,7 +183,7 @@ public class EqualOperationTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp4() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration();
@@ -198,7 +201,7 @@ public class EqualOperationTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp5() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration();

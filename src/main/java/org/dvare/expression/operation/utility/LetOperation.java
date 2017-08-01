@@ -78,7 +78,7 @@ public class LetOperation extends OperationExpression {
                 }
 
 
-                VariableExpression variableExpression = VariableType.getVariableType(name, dataType, "temp");
+                VariableExpression variableExpression = VariableType.getVariableExpression(name, dataType, "temp");
                 stack.push(variableExpression);
 
             }

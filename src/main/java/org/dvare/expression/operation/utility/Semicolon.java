@@ -36,7 +36,7 @@ public class Semicolon extends OperationExpression {
                     != null) {
                 TypeBinding typeBinding = contexts.getContext(tokenType.type);
                 DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                left = VariableType.getVariableType(tokenType.token, variableType, tokenType.type);
+                left = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
             }
 
 

@@ -34,7 +34,6 @@ public class FunctionProvider {
     private static Logger logger = LoggerFactory.getLogger(FunctionProvider.class);
 
 
-
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.IntegerType})
     public Integer addFunction(Integer variable, Integer variable2) {
         if (logger.isDebugEnabled()) {

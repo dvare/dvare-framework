@@ -1,22 +1,28 @@
 package org.dvare.test.list;
 
-import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SizeTest extends TestCase {
+import static org.junit.Assert.assertTrue;
 
+public class SizeTest {
+
+    @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -29,8 +35,13 @@ public class SizeTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+
+
 //        Expression aggregate = factory.getParser().fromString("A0 := value(data.V1->values()->size())", aggregationTypes, validationTypes);
-        Expression aggregate = factory.getParser().fromString("A0 := data.V1->values()->size()", aggregationTypes, validationTypes);
+        Expression aggregate = factory.getParser().fromString("A0 := data.V1->values()->size()", contexts);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
@@ -58,7 +69,12 @@ public class SizeTest extends TestCase {
         dataSet.add(new DataRow(d4));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rule, new DataRow(aggregation), dataSet);
+
+
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
         System.out.println(ValueFinder.findValue("A0", resultModel));
@@ -67,7 +83,7 @@ public class SizeTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -79,8 +95,10 @@ public class SizeTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
-
-        Expression aggregate = factory.getParser().fromString("A0 := data.V1->size()", aggregationTypes, validationTypes);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+        Expression aggregate = factory.getParser().fromString("A0 := data.V1->size()", contexts);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
@@ -108,7 +126,12 @@ public class SizeTest extends TestCase {
         dataSet.add(new DataRow(d4));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rule, new DataRow(aggregation), dataSet);
+
+
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
         System.out.println(ValueFinder.findValue("A0", resultModel));

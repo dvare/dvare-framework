@@ -10,6 +10,7 @@ import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
 
 import java.util.ArrayList;
@@ -30,8 +31,10 @@ public class MaxTest extends TestCase {
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
-
-        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1 -> maximum ()", aggregationTypes, validationTypes);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1 -> maximum ()", contexts);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
@@ -58,7 +61,10 @@ public class MaxTest extends TestCase {
         dataSet.add(new DataRow(d3));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rules, new DataRow(aggregation), dataSet);
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(40);
 
@@ -78,8 +84,6 @@ public class MaxTest extends TestCase {
 
         assertTrue(result);
     }
-
-
 
 
 }

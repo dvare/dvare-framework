@@ -81,7 +81,7 @@ public class Function extends OperationExpression {
 
         if (this.leftOperand == null) {
 
-            String error = null;
+            String error;
             if (!functionExpression.getParameters().isEmpty()) {
                 error = String.format("No Table Expression Found, %s is not  TableExpression", functionExpression.getParameters().get(functionExpression.getParameters().size() - 1).getClass().getSimpleName());
             } else {
@@ -174,12 +174,12 @@ public class Function extends OperationExpression {
 
 
         int counter = 0;
-        for (Expression expression : functionExpression.getParameters()) {
-            DataType dataType = parameters.get(counter);
-            Class originalType = DataTypeMapping.getDataTypeMapping(dataType);
+        for (Expression parameterExpression : functionExpression.getParameters()) {
+            DataType parameter = parameters.get(counter);
+            Class originalType = DataTypeMapping.getDataTypeMapping(parameter);
 
-            if (expression instanceof OperationExpression) {
-                OperationExpression operation = (OperationExpression) expression;
+            if (parameterExpression instanceof OperationExpression) {
+                OperationExpression operation = (OperationExpression) parameterExpression;
                 LiteralExpression literalExpression;
                 literalExpression = (LiteralExpression) operation.interpret(expressionBinding, instancesBinding);
 
@@ -187,72 +187,16 @@ public class Function extends OperationExpression {
                 params[counter] = paramsValue.param;
                 values[counter] = paramsValue.value;
 
-            } else if (expression instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) expression;
-                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+            } else if (parameterExpression instanceof VariableExpression) {
+                VariableExpression variableExpression = (VariableExpression) parameterExpression;
 
-                try {
-                    DataType variableDataType = toDataType(variableExpression.getType());
+                ParamValue paramsValue = buildVariableExpression(expressionBinding, instancesBinding, variableExpression, originalType);
+                params[counter] = paramsValue.param;
+                values[counter] = paramsValue.value;
 
-                    if (originalType != null) {
-                        if (originalType.isArray()) {
+            } else if (parameterExpression instanceof LiteralExpression) {
 
-
-                            List<Object> listValues = new ArrayList<>();
-
-                            List dataSet;
-                            if (instance instanceof Collection) {
-                                dataSet = (List) instance;
-                            } else {
-                                dataSet = new ArrayList();
-                                dataSet.add(instance);
-                            }
-
-                            for (Object dataRow : dataSet) {
-                                variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
-                                listValues.add(variableExpression.getValue());
-                            }
-
-                            Class type = DataTypeMapping.getDataTypeMapping(variableDataType);
-                            Object[] typedArray = (Object[]) Array.newInstance(type, dataSet.size());
-                            Object value = listValues.toArray(typedArray);
-                            params[counter] = originalType;
-                            values[counter] = value;
-
-                        } else {
-
-
-                            List dataSet;
-                            if (instance instanceof Collection) {
-                                dataSet = (List) instance;
-                                if (!dataSet.isEmpty()) {
-                                    variableExpression = VariableType.setVariableValue(variableExpression, dataSet.get(0));
-                                }
-                            } else {
-                                variableExpression = VariableType.setVariableValue(variableExpression, instance);
-                            }
-
-
-
-                        /*
-                            variableExpression = VariableType.setVariableValue(variableExpression, DATA_ROW);
-                        */
-
-                            Object value = variableExpression.getValue();
-                            params[counter] = originalType;
-                            values[counter] = value;
-                        }
-
-                    }
-
-                } catch (Exception e) {
-                    throw new InterpretException(e);
-                }
-
-
-            } else if (expression instanceof LiteralExpression) {
-
-                ParamValue paramsValue = buildLiteralParam(expression, originalType);
+                ParamValue paramsValue = buildLiteralParam(parameterExpression, originalType);
                 params[counter] = paramsValue.param;
                 values[counter] = paramsValue.value;
             }
@@ -266,6 +210,62 @@ public class Function extends OperationExpression {
 
     }
 
+    private ParamValue buildVariableExpression(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, VariableExpression variableExpression, Class originalType) throws InterpretException {
+        ParamValue paramsValue = new ParamValue();
+
+        Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
+
+        try {
+            DataType variableDataType = toDataType(variableExpression.getType());
+
+            if (originalType != null) {
+                if (originalType.isArray()) {
+
+                    List<Object> listValues = new ArrayList<>();
+
+                    List dataSet;
+                    if (instance instanceof Collection) {
+                        dataSet = (List) instance;
+                    } else {
+                        dataSet = new ArrayList();
+                        dataSet.add(instance);
+                    }
+
+                    for (Object dataRow : dataSet) {
+                        variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
+                        listValues.add(variableExpression.getValue());
+                    }
+
+                    Class type = DataTypeMapping.getDataTypeMapping(variableDataType);
+                    Object[] typedArray = (Object[]) Array.newInstance(type, dataSet.size());
+                    Object value = listValues.toArray(typedArray);
+                    paramsValue.param = originalType;
+                    paramsValue.value = value;
+
+                } else {
+
+                    List dataSet;
+                    if (instance instanceof List) {
+                        dataSet = (List) instance;
+                        if (!dataSet.isEmpty()) {
+                            variableExpression = VariableType.setVariableValue(variableExpression, dataSet.get(0));
+                        }
+                    } else {
+                        variableExpression = VariableType.setVariableValue(variableExpression, instance);
+                    }
+
+                    Object value = variableExpression.getValue();
+                    paramsValue.param = originalType;
+                    paramsValue.value = value;
+                }
+
+            }
+
+        } catch (Exception e) {
+            throw new InterpretException(e);
+        }
+        return paramsValue;
+    }
 
     private ParamValue buildLiteralParam(Expression expression, Class originalType) throws InterpretException {
         ParamValue paramsValue = new ParamValue();
@@ -349,7 +349,6 @@ public class Function extends OperationExpression {
         }
         return paramsValue;
     }
-
 
     private Object invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) throws InterpretException {
 

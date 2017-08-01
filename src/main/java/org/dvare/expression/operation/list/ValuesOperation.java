@@ -27,9 +27,6 @@ public class ValuesOperation extends ListOperationExpression {
         super(OperationType.VALUES);
     }
 
-    public ValuesOperation(OperationType operationType) {
-        super(operationType);
-    }
 
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {

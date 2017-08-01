@@ -50,8 +50,7 @@ public class PairOperation extends AggregationOperationExpression {
     }
 
 
-
-    protected ListLiteral buildValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
+    private ListLiteral buildValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
 
         OperationExpression operationExpression = new ValuesOperation();
         operationExpression.setLeftOperand(valueParam);
@@ -95,7 +94,7 @@ public class PairOperation extends AggregationOperationExpression {
 
                     Object leftValue = leftIterator.next();
                     Object rightValue = rightIterator.next();
-                    
+
                     pairs.add(Pair.of(leftValue, rightValue));
                 }
 

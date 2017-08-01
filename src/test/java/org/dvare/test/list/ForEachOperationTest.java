@@ -23,7 +23,6 @@ THE SOFTWARE.*/
 
 package org.dvare.test.list;
 
-import junit.framework.TestCase;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
@@ -36,14 +35,15 @@ import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ForEachOperation;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ForEachOperationTest extends TestCase {
+public class ForEachOperationTest {
 
-
+    @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();

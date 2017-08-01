@@ -26,12 +26,15 @@ package org.dvare.test.utility;
 
 import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.Function;
 import org.dvare.util.ValueFinder;
 
@@ -161,12 +164,15 @@ public class FunctionTest extends TestCase {
         validationTypes.put("V1", "IntegerType");
 
 
-        Expression aggregate = factory.getParser().fromString("A0 := fun ( addRowsFunction , V1  )", aggregationTypes, validationTypes);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+
+        Expression aggregate = factory.getParser().fromString("A0 := fun ( addRowsFunction , V1  )", contexts);
 
 
         RuleBinding rule = new RuleBinding(aggregate);
-        List<RuleBinding> rules = new ArrayList<>();
-        rules.add(rule);
+
 
         Map<String, Object> bindings = new HashMap<>();
         bindings.put("A0", "0");
@@ -182,7 +188,10 @@ public class FunctionTest extends TestCase {
         dataSet.add(new DataRow(d2));
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        Object resultModel = evaluator.aggregate(rules, new DataRow(bindings), dataSet);
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(bindings));
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
         System.out.println(ValueFinder.findValue("A0", resultModel));
 
@@ -196,7 +205,8 @@ public class FunctionTest extends TestCase {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
 
-        Expression expression = configuration.getParser().fromString("Variable2 := fun( addTenFunction , 5, data.Variable1 )", Function.class, Function.class);
+
+        Expression expression = configuration.getParser().fromString("Variable2 := fun( addTenFunction , 5, self.Variable1 )", Function.class);
         RuleBinding rule = new RuleBinding(expression);
 
 
@@ -219,9 +229,15 @@ public class FunctionTest extends TestCase {
         dataSet.add(function3);
 
         RuleEvaluator evaluator = configuration.getEvaluator();
-        Object resultModel = evaluator.aggregate(rule, function, dataSet);
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", function);
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
+
         boolean result = ValueFinder.findValue("Variable2", resultModel).equals(15);
 
         assertTrue(result);
     }
+
+
 }

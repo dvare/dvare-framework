@@ -24,7 +24,8 @@ THE SOFTWARE.*/
 package org.dvare.expression.veriable;
 
 
-import org.dvare.expression.datatype.DataTypeExpression;
+import org.dvare.annotations.Type;
+import org.dvare.expression.datatype.*;
 
 import java.util.List;
 
@@ -41,5 +42,24 @@ public class ListVariable extends VariableExpression<List> {
     public Integer getSize() {
         return value != null ? value.size() : 0;
     }
+
+    public Class<? extends DataTypeExpression> getListType() {
+
+        if (getType() != null) {
+            switch (getType().getAnnotation(Type.class).dataType()) {
+                case IntegerType:
+                    return IntegerListType.class;
+                case FloatType:
+                    return FloatListType.class;
+                case StringType:
+                    return StringListType.class;
+                default:
+                    return ListType.class;
+
+            }
+        }
+        return ListType.class;
+    }
+
 
 }
