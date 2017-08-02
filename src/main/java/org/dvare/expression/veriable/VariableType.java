@@ -24,6 +24,7 @@ THE SOFTWARE.*/
 package org.dvare.expression.veriable;
 
 
+import javafx.util.Pair;
 import org.dvare.annotations.Type;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.parser.IllegalPropertyException;
@@ -121,6 +122,16 @@ public class VariableType {
                 variableExpression = new ListVariable(name, SimpleDateType.class);
                 break;
             }
+            case PairType: {
+                variableExpression = new PairVariable(name);
+                break;
+            }
+
+            case PairListType: {
+                variableExpression = new ListVariable(name, PairType.class);
+                break;
+            }
+
             case RegexType: {
                 variableExpression = new StringVariable(name);
                 break;
@@ -282,6 +293,28 @@ public class VariableType {
                             stringVariable.setValue((String) value);
                         } else {
                             stringVariable.setValue(value.toString());
+                        }
+                    }
+                    break;
+                }
+
+
+                case PairType: {
+                    if (variable instanceof ListVariable) {
+                        ListVariable listVariable = (ListVariable) variable;
+                        if (value instanceof List) {
+                            listVariable.setValue((List) value);
+                        } else if (value.getClass().isArray()) {
+                            listVariable.setValue(Arrays.asList((Pair[]) value));
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            values.add(value);
+                            listVariable.setValue(values);
+                        }
+                    } else if (variable instanceof PairVariable) {
+                        PairVariable pairVariable = (PairVariable) variable;
+                        if (value instanceof Pair) {
+                            pairVariable.setValue((Pair) value);
                         }
                     }
                     break;

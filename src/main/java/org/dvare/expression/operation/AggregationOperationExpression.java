@@ -72,7 +72,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
         String token = tokens[pos - 1];
         //pos = pos + 1;
 
-        if (stack.isEmpty()) {
+        if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression) {
             ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
             OperationExpression operationExpression = configurationRegistry.getOperation(token);
 
@@ -291,7 +291,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
     private List<?> variableExpressionValues(InstancesBinding instancesBinding, VariableExpression variableExpression)
             throws InterpretException {
-        List values = null;
+        List values;
         if (variableExpression instanceof ListVariable) {
             dataTypeExpression = variableExpression.getType();
             Object instance = instancesBinding.getInstance(variableExpression.getOperandType());

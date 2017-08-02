@@ -39,10 +39,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Operation(type = OperationType.ADD_DAYS)
-public class addDays extends ChainOperationExpression {
+public class AddDays extends ChainOperationExpression {
 
 
-    public addDays() {
+    public AddDays() {
         super(OperationType.ADD_DAYS);
     }
 

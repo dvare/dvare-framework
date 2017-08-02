@@ -261,6 +261,26 @@ public class AssignOperationExpression extends OperationExpression {
                     break;
                 }
 
+                case PairType: {
+                    if (variableExpression instanceof ListVariable) {
+                        if (value instanceof List) {
+                            aggregation = setValue(aggregation, variableName, value);
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            values.add(value);
+                            aggregation = setValue(aggregation, variableName, values);
+                        }
+
+                    } else if (variableExpression instanceof PairVariable) {
+                        if (value instanceof String) {
+                            aggregation = setValue(aggregation, variableName, value);
+                        } else {
+                            aggregation = setValue(aggregation, variableName, value);
+                        }
+                    }
+                    break;
+                }
+
                 default: {
                     aggregation = setValue(aggregation, variableName, literalExpression.getValue());
                 }

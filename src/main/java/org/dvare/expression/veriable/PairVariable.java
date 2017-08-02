@@ -21,13 +21,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-package org.dvare.expression.datatype;
+package org.dvare.expression.veriable;
 
 
-public enum DataType {
+import javafx.util.Pair;
+import org.dvare.expression.datatype.PairType;
 
-    IntegerType, FloatType, StringType, BooleanType, DateTimeType, DateType, NullType, UnknownType, ListType,
-    RegexType, IntegerListType, FloatListType, StringListType, BooleanListType, DateTimeListType, DateListType,
-    PairType, PairListType,
-    SimpleDateType, SimpleDateListType;
+public class PairVariable extends VariableExpression<Pair> {
+
+
+    public PairVariable(String name) {
+        this(name, null);
+    }
+
+    public PairVariable(String name, Pair value) {
+        super(name, PairType.class, value);
+    }
+
+
 }

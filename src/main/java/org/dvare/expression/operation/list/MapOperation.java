@@ -1,7 +1,6 @@
 package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -33,7 +32,8 @@ public class MapOperation extends ListOperationExpression {
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
         if (leftOperand instanceof PairOperation) {
-
+            List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
+            return new ListLiteral(values, dataTypeExpression);
         } else {
             List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
             if (values != null) {
@@ -60,19 +60,11 @@ public class MapOperation extends ListOperationExpression {
 
                         for (Object value : values) {
 
-
-                            Object instance = instancesBinding.getInstance(operandType);
-                            if (instance == null || !(instance instanceof DataRow)) {
-                                DataRow dataRow = new DataRow();
-                                dataRow.addData(name, value);
-                                instancesBinding.addInstance(operandType, dataRow);
-                            } else {
-                                DataRow dataRow = (DataRow) instance;
-                                dataRow.addData(name, value);
-                                instancesBinding.addInstance(operandType, dataRow);
-                            }
+                            instancesBinding.addInstanceItem(operandType, name, value);
 
                             Object chainOperationInterpret = chainOperationExpression.interpret(expressionBinding, instancesBinding);
+                            instancesBinding.removeInstanceItem(operandType, name);
+
 
                             if (chainOperationInterpret instanceof LiteralExpression) {
 
@@ -82,8 +74,8 @@ public class MapOperation extends ListOperationExpression {
 
                                 }
 
-                                Object mapdedvalue = literalExpression.getValue();
-                                mappedValues.add(mapdedvalue);
+                                Object mappedValue = literalExpression.getValue();
+                                mappedValues.add(mappedValue);
 
 
                             }

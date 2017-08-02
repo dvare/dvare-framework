@@ -50,8 +50,6 @@ public class ENDIF extends ConditionOperationExpression {
             return thenOperand.interpret(expressionBinding, instancesBinding);
         } else if (elseOperand != null) {
             return elseOperand.interpret(expressionBinding, instancesBinding);
-        } else {
-
         }
         return null;
     }

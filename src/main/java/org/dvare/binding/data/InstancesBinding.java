@@ -24,6 +24,23 @@ public class InstancesBinding {
 
     }
 
+
+    public void addInstanceItem(String instanceName, String itemName, Object value) {
+        if (instanceName != null) {
+            Object instance = instances.get(instanceName);
+            if (instance == null) {
+                instance = new DataRow();
+            }
+            if (instance instanceof DataRow) {
+                DataRow dataRow = (DataRow) instance;
+                dataRow.addData(itemName, value);
+                instances.put(instanceName, instance);
+
+            }
+        }
+
+    }
+
     public Object getInstance(String name) {
         if (instances.containsKey(name)) {
             return instances.get(name);
@@ -37,6 +54,16 @@ public class InstancesBinding {
         }
     }
 
+    public void removeInstanceItem(String instanceName, String itemName) {
+        if (instanceName != null) {
+            Object instance = instances.get(instanceName);
+            if (instance != null) {
+                DataRow dataRow = (DataRow) instance;
+                dataRow.getData().remove(itemName);
+                instances.put(instanceName, instance);
+            }
+        }
+    }
 
     public Map<String, Object> getInstances() {
         return instances;

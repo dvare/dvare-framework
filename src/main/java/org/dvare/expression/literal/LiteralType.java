@@ -23,6 +23,7 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.literal;
 
+import javafx.util.Pair;
 import org.dvare.annotations.Type;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalValueException;
@@ -227,6 +228,11 @@ public class LiteralType {
             case NullType: {
                 literalExpression = new NullLiteral();
                 break;
+            }
+            case PairType: {
+                if (value instanceof Pair) {
+                    literalExpression = new PairLiteral((Pair) value);
+                }
             }
 
 

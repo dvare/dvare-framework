@@ -23,7 +23,6 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.operation;
 
-import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -52,7 +51,6 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
 
         if (includeParam instanceof LogicalOperationExpression) {
 
-
             OperationExpression operationExpression = (OperationExpression) includeParam;
 
             Expression left = operationExpression.getLeftOperand();
@@ -60,8 +58,8 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
 
             List<Object> includedValues = new ArrayList<>();
             for (Object value : values) {
-                Boolean result = solveLogical(operationExpression, expressionBinding, instancesBinding, value);
-                if (result) {
+
+                if (solveLogical(operationExpression, expressionBinding, instancesBinding, value)) {
                     includedValues.add(value);
                 }
                 operationExpression.setLeftOperand(left);
@@ -69,12 +67,10 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
 
             }
 
-
             return includedValues;
         } else if (includeParam instanceof RelationalOperationExpression || includeParam instanceof ChainOperationExpression) {
             List<Object> includedValues = new ArrayList<>();
             for (Object value : values) {
-
 
                 Boolean result = buildEqualityOperationExpression(includeParam, expressionBinding, instancesBinding, value);
                 if (result) {
@@ -166,19 +162,12 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
             String name = variableExpression.getName();
             String operandType = variableExpression.getOperandType();
 
-
-            Object instance = instancesBinding.getInstance(operandType);
-            if (instance == null || !(instance instanceof DataRow)) {
-                DataRow dataRow = new DataRow();
-                dataRow.addData(name, value);
-                instancesBinding.addInstance(operandType, dataRow);
-            } else {
-                DataRow dataRow = (DataRow) instance;
-                dataRow.addData(name, value);
-                instancesBinding.addInstance(operandType, dataRow);
-            }
+            instancesBinding.addInstanceItem(operandType, name, value);
 
             Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+
+            instancesBinding.removeInstanceItem(operandType, name);
+
             return toBoolean(interpret);
         }
 
@@ -186,7 +175,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
 
     }
 
-    protected Boolean solveLogical(OperationExpression operationExpression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Object value) throws InterpretException {
+    protected boolean solveLogical(OperationExpression operationExpression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Object value) throws InterpretException {
 
 
         Expression left = operationExpression.getLeftOperand();
@@ -213,7 +202,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
             }
         }
 
-        Boolean result = toBoolean(operationExpression.interpret(expressionBinding, instancesBinding));
+        boolean result = toBoolean(operationExpression.interpret(expressionBinding, instancesBinding));
         operationExpression.setLeftOperand(left);
         operationExpression.setRightOperand(right);
         return result;

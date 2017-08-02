@@ -23,11 +23,12 @@ THE SOFTWARE.*/
 
 package org.dvare.expression.datatype;
 
+import org.dvare.annotations.Type;
 
-public enum DataType {
+@Type(dataType = DataType.PairType)
+public class PairType extends DataTypeExpression {
+    public PairType() {
+        super(DataType.PairType);
 
-    IntegerType, FloatType, StringType, BooleanType, DateTimeType, DateType, NullType, UnknownType, ListType,
-    RegexType, IntegerListType, FloatListType, StringListType, BooleanListType, DateTimeListType, DateListType,
-    PairType, PairListType,
-    SimpleDateType, SimpleDateListType;
+    }
 }

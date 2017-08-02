@@ -392,4 +392,44 @@ public class PairTest {
         assertTrue(result);
 
     }
+
+
+    @Test
+    public void testApp8() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", EqualOperation.class);
+
+
+        Expression expression = factory.getParser().fromString("" +
+                "def temp.pairList:PairListType := Pair (Variable2,Variable1) ->filter(let temp:IntegerType != 3) " +
+                "temp.pairList ->values() ->notEmpty() and temp.pairList ->values() = ['42964','42459']", contexts);
+
+        List<ValuesObject> dataSet = new ArrayList<>();
+        ValuesObject valuesObject1 = new ValuesObject();
+        valuesObject1.setVariable1("42964");
+        valuesObject1.setVariable2(1);
+        dataSet.add(valuesObject1);
+
+        ValuesObject valuesObject2 = new ValuesObject();
+        valuesObject2.setVariable1("42456");
+        valuesObject2.setVariable2(3);
+        dataSet.add(valuesObject2);
+
+
+        ValuesObject valuesObject3 = new ValuesObject();
+        valuesObject3.setVariable1("42459");
+        valuesObject3.setVariable2(2);
+        dataSet.add(valuesObject3);
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
+        assertTrue(result);
+    }
 }

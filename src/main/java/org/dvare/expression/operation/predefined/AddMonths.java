@@ -38,12 +38,12 @@ import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
-@Operation(type = OperationType.ADD_YEARS)
-public class addYears extends ChainOperationExpression {
+@Operation(type = OperationType.ADD_MONTHS)
+public class AddMonths extends ChainOperationExpression {
 
 
-    public addYears() {
-        super(OperationType.ADD_YEARS);
+    public AddMonths() {
+        super(OperationType.ADD_MONTHS);
     }
 
 
@@ -58,17 +58,17 @@ public class addYears extends ChainOperationExpression {
                 return new NullLiteral();
             }
 
-            LiteralExpression yearsExpression = (LiteralExpression) rightOperand.get(0);
-            Object yearValue = yearsExpression.getValue();
+            LiteralExpression monthssExpression = (LiteralExpression) rightOperand.get(0);
+            Object monthsValue = monthssExpression.getValue();
             Object value = literalExpression.getValue();
             dataTypeExpression = literalExpression.getType();
             switch (toDataType(dataTypeExpression)) {
                 case DateType: {
-                    if (value instanceof LocalDate && yearValue instanceof Integer) {
+                    if (value instanceof LocalDate && monthsValue instanceof Integer) {
 
                         LocalDate localDate = (LocalDate) value;
-                        Integer year = (Integer) yearValue;
-                        localDate = localDate.plusYears(year);
+                        Integer months = (Integer) monthsValue;
+                        localDate = localDate.plusMonths(months);
 
                         return LiteralType.getLiteralExpression(localDate, dataTypeExpression);
 
@@ -77,11 +77,11 @@ public class addYears extends ChainOperationExpression {
                 }
 
                 case DateTimeType: {
-                    if (value instanceof LocalDateTime && yearValue instanceof Integer) {
+                    if (value instanceof LocalDateTime && monthsValue instanceof Integer) {
 
                         LocalDateTime localDateTime = (LocalDateTime) value;
-                        Integer year = (Integer) yearValue;
-                        localDateTime = localDateTime.plusYears(year);
+                        Integer months = (Integer) monthsValue;
+                        localDateTime = localDateTime.plusMonths(months);
                         return LiteralType.getLiteralExpression(localDateTime, dataTypeExpression);
 
                     }
@@ -89,13 +89,13 @@ public class addYears extends ChainOperationExpression {
                 }
 
                 case SimpleDateType: {
-                    if (value instanceof Date && yearValue instanceof Integer) {
+                    if (value instanceof Date && monthsValue instanceof Integer) {
 
                         Date date = (Date) value;
-                        Integer year = (Integer) yearValue;
+                        Integer months = (Integer) monthsValue;
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(date);
-                        calendar.add(Calendar.YEAR, year);
+                        calendar.add(Calendar.MONTH, months);
                         return LiteralType.getLiteralExpression(calendar.getTime(), dataTypeExpression);
                     }
                     break;
