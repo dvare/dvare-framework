@@ -24,7 +24,6 @@ THE SOFTWARE.*/
 package org.dvare.test.utility;
 
 
-import junit.framework.TestCase;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
 import org.dvare.evaluator.RuleEvaluator;
@@ -33,11 +32,15 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionTokenizer;
 import org.dvare.test.dataobjects.Parenthesis;
+import org.junit.Test;
 
 import java.util.Arrays;
 
-public class ParenthesisTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+public class ParenthesisTest {
+    @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
 
@@ -66,7 +69,7 @@ public class ParenthesisTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
 
 
@@ -78,7 +81,7 @@ public class ParenthesisTest extends TestCase {
 
     }
 
-
+    @Test
     public void testApp3() throws ExpressionParseException, InterpretException {
 
 
@@ -90,6 +93,7 @@ public class ParenthesisTest extends TestCase {
 
     }
 
+    @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
 
 

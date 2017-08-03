@@ -1,7 +1,6 @@
 package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -75,19 +74,10 @@ public class HasItem extends AggregationOperationExpression {
 
 
                     for (Object value : values) {
-                        Object instance = instancesBinding.getInstance(operandType);
-                        if (instance == null || !(instance instanceof DataRow)) {
-                            DataRow dataRow = new DataRow();
-                            dataRow.addData(name, value);
-                            instancesBinding.addInstance(operandType, dataRow);
-                        } else {
-                            DataRow dataRow = (DataRow) instance;
-                            dataRow.addData(name, value);
-                            instancesBinding.addInstance(operandType, dataRow);
-                        }
+                        instancesBinding.addInstanceItem(operandType, name, value);
                         Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
-                        Boolean result = toBoolean(interpret);
-                        if (result) {
+                        instancesBinding.removeInstanceItem(operandType, name);
+                        if (toBoolean(interpret)) {
                             return LiteralType.getLiteralExpression(true, BooleanType.class);
                         }
                     }

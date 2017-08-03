@@ -8,6 +8,7 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.PairType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
@@ -87,7 +88,7 @@ public class PairOperation extends AggregationOperationExpression {
                 Iterator leftIterator = keys.iterator();
                 Iterator rightIterator = values.iterator();
 
-                dataTypeExpression = valueListLiteral.getType();
+                // dataTypeExpression = valueListLiteral.getType();
 
                 List<Pair> pairs = new ArrayList<>();
                 while (leftIterator.hasNext() && rightIterator.hasNext()) {
@@ -98,7 +99,7 @@ public class PairOperation extends AggregationOperationExpression {
                     pairs.add(Pair.of(leftValue, rightValue));
                 }
 
-                return new ListLiteral(pairs, dataTypeExpression);
+                return new ListLiteral(pairs, PairType.class);
             }
 
 

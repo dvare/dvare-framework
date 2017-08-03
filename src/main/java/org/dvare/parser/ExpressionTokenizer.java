@@ -27,7 +27,6 @@ package org.dvare.parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -37,7 +36,7 @@ public class ExpressionTokenizer {
     private static Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
 
 
-    public static void main(String args[]) throws IOException {
+   /* public static void main(String args[]) throws IOException {
         //String exp = "V1 in ['A','B'] ; V2 in [2,3] ; V3 in [3.1,3.2] ; V4 in [true,false] ; V5 in [12-05-2016,13-05-2016] ; V6 in [12-05-2016-15:30:00,13-05-2016-15:30:00] ; V7 in [R'B1.*',R'A1.*']";
         String exp = "Variable1 = (7 + 3)" +
                 " And Variable1 <> ( 30 - 10)" +
@@ -51,7 +50,7 @@ public class ExpressionTokenizer {
             System.out.println(token);
         }
 
-    }
+    }*/
 
 
     // private String operators[] = new String[]{"(", ")", "[", "]", "<>", "||", "&&", "=>", "!=", "<=", ">=", "=", ">", "<", "!", "+"};

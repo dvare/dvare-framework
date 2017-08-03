@@ -214,8 +214,8 @@ public abstract class OperationExpression extends Expression {
         return leftExpression;
     }
 
-    protected Boolean toBoolean(Object interpret) {
-        Boolean result = false;
+    protected boolean toBoolean(Object interpret) {
+        boolean result = false;
         if (interpret instanceof LiteralExpression) {
 
 

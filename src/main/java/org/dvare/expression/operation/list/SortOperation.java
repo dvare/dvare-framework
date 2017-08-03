@@ -2,7 +2,6 @@ package org.dvare.expression.operation.list;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.annotations.Operation;
-import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -32,28 +31,27 @@ import java.util.List;
 public class SortOperation extends ListOperationExpression {
     private static Logger logger = LoggerFactory.getLogger(SortOperation.class);
 
-    private Comparator<Object> pairComparator = (o1, o2) -> {
-
-        if (o1 instanceof Pair && o2 instanceof Pair) {
-
-            Object c1 = ((Pair) o1).getLeft();
-            Object c2 = ((Pair) o2).getLeft();
-            if (c1 != null && c2 != null) {
-                DataType type = DataTypeMapping.getTypeMapping(c1.getClass());
-                return compare(c1, c2, type);
-            }
-
-        }
-        return -1;
-    };
-
-
     public SortOperation() {
         super(OperationType.SORT);
     }
 
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+
+        Comparator<Object> pairComparator = (o1, o2) -> {
+
+            if (o1 instanceof Pair && o2 instanceof Pair) {
+
+                Object c1 = ((Pair) o1).getLeft();
+                Object c2 = ((Pair) o2).getLeft();
+                if (c1 != null && c2 != null) {
+                    DataType type = DataTypeMapping.getTypeMapping(c1.getClass());
+                    return compare(c1, c2, type);
+                }
+
+            }
+            return -1;
+        };
 
 
         if (leftOperand instanceof PairOperation) {
@@ -137,9 +135,7 @@ public class SortOperation extends ListOperationExpression {
                             return -1;
                         });
 
-
                         return new ListLiteral(values, dataTypeExpression);
-
 
                     }
 
@@ -155,18 +151,13 @@ public class SortOperation extends ListOperationExpression {
                                         Object value) throws InterpretException {
         String name = variableExpression.getName();
         String operandType = variableExpression.getOperandType();
-        Object instance = instancesBinding.getInstance(operandType);
-        if (instance == null || !(instance instanceof DataRow)) {
-            DataRow dataRow = new DataRow();
-            dataRow.addData(name, value);
-            instancesBinding.addInstance(operandType, dataRow);
-        } else {
-            DataRow dataRow = (DataRow) instance;
-            dataRow.addData(name, value);
-            instancesBinding.addInstance(operandType, dataRow);
-        }
 
+        instancesBinding.addInstanceItem(operandType, name, value);
+
+
+        instancesBinding.addInstanceItem(operandType, name, value);
         Object chainOperationInterpret = chainOperationExpression.interpret(expressionBinding, instancesBinding);
+        instancesBinding.removeInstanceItem(operandType, name);
 
         if (chainOperationInterpret instanceof LiteralExpression) {
 
@@ -178,15 +169,12 @@ public class SortOperation extends ListOperationExpression {
             paramValue.type = literalExpression.getType();
 
             return paramValue;
-
-
         }
         return null;
     }
 
     private int compare(Object o1, Object o2, DataType type) {
         switch (type) {
-
 
             case StringType: {
 

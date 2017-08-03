@@ -81,7 +81,7 @@ public class FunctionProvider {
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerType, DataType.IntegerListType})
     public Integer addTenFunction(Integer variable, Integer[] values) {
         if (logger.isDebugEnabled()) {
-            logger.debug("inside addFiveFuntion with arguments : " + variable + " and " + values.length + " list arguments");
+            logger.debug("addTenFunction with arguments : " + variable + " and " + values.length + " list arguments");
         }
         return variable + 10;
     }

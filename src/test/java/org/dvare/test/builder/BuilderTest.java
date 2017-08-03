@@ -23,7 +23,6 @@ THE SOFTWARE.*/
 
 package org.dvare.test.builder;
 
-import junit.framework.TestCase;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.builder.ExpressionBuilder;
 import org.dvare.builder.LiteralBuilder;
@@ -39,6 +38,7 @@ import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.test.dataobjects.ArithmeticOperation;
 import org.dvare.test.dataobjects.EqualOperation;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +46,12 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class BuilderTest extends TestCase {
+import static org.junit.Assert.assertTrue;
+
+public class BuilderTest {
     private static Logger logger = LoggerFactory.getLogger(BuilderTest.class);
 
+    @Test
 
     public void testApp() throws ExpressionParseException, InterpretException, ParseException {
         RuleConfiguration factory = new RuleConfiguration();
@@ -109,6 +112,7 @@ public class BuilderTest extends TestCase {
         assertTrue(result);
     }
 
+    @Test
     public void testApp2() throws ExpressionParseException, InterpretException, ParseException {
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -152,6 +156,7 @@ public class BuilderTest extends TestCase {
         assertTrue(result);
     }
 
+    @Test
     public void testApp3() throws ExpressionParseException, InterpretException, ParseException {
         RuleConfiguration factory = new RuleConfiguration();
         Expression left = new LiteralBuilder().literalType(DataType.BooleanType).literalValue("true").build();

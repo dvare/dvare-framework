@@ -1,6 +1,5 @@
 package org.dvare.test.aggregation;
 
-import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
@@ -16,15 +15,18 @@ import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.EqualOperation;
 import org.dvare.test.dataobjects.ValuesObject;
 import org.dvare.util.ValueFinder;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConditionChainTest extends TestCase {
+import static org.junit.Assert.assertTrue;
 
+public class ConditionChainTest {
 
+    @Test
     public void testApp0() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -57,7 +59,7 @@ public class ConditionChainTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -103,7 +105,7 @@ public class ConditionChainTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -151,7 +153,7 @@ public class ConditionChainTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp21() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -198,7 +200,7 @@ public class ConditionChainTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp3() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -239,7 +241,7 @@ public class ConditionChainTest extends TestCase {
 
     }
 
-
+    @Test
     public void testApp4() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();

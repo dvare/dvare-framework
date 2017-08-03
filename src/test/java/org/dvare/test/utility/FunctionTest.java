@@ -24,7 +24,6 @@ THE SOFTWARE.*/
 package org.dvare.test.utility;
 
 
-import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
@@ -37,16 +36,20 @@ import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.Function;
 import org.dvare.util.ValueFinder;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertTrue;
 
-public class FunctionTest extends TestCase {
+
+public class FunctionTest {
 
 
+    @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -64,7 +67,7 @@ public class FunctionTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -82,7 +85,7 @@ public class FunctionTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -99,7 +102,7 @@ public class FunctionTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp21() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -116,7 +119,7 @@ public class FunctionTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp3() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -133,7 +136,7 @@ public class FunctionTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp31() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -150,7 +153,7 @@ public class FunctionTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp4() throws ExpressionParseException, InterpretException, ClassNotFoundException {
 
         RuleConfiguration factory = new RuleConfiguration(new String[]{"org.dvare.util"});
@@ -193,45 +196,29 @@ public class FunctionTest extends TestCase {
         instancesBinding.addInstance("data", dataSet);
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
-        System.out.println(ValueFinder.findValue("A0", resultModel));
+        // System.out.println(ValueFinder.findValue("A0", resultModel));
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(30);
 
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp5() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
 
 
-        Expression expression = configuration.getParser().fromString("Variable2 := fun( addTenFunction , 5, self.Variable1 )", Function.class);
+        Expression expression = configuration.getParser().fromString("Variable2 := fun( addTenFunction , 5, [self.Variable1] )", Function.class);
         RuleBinding rule = new RuleBinding(expression);
 
 
         Function function = new Function();
 
-
-        List<Object> dataSet = new ArrayList<>();
-        Function function1 = new Function();
-        function1.setVariable1(4);
-        dataSet.add(function1);
-
-
-        Function function2 = new Function();
-        function2.setVariable1(5);
-        dataSet.add(function2);
-
-
-        Function function3 = new Function();
-        function3.setVariable1(6);
-        dataSet.add(function3);
-
         RuleEvaluator evaluator = configuration.getEvaluator();
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", function);
-        instancesBinding.addInstance("data", dataSet);
+
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
         boolean result = ValueFinder.findValue("Variable2", resultModel).equals(15);

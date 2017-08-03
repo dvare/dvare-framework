@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -39,14 +40,16 @@ public class AssignOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding,
+                         ContextsBinding contexts) throws ExpressionParseException {
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
 
             String leftString = tokens[pos - 1];
 
             if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof Semicolon) {
                 TokenType tokenType = findDataObject(leftString, contexts);
-                if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+                if (tokenType.type != null && contexts.getContext(tokenType.type) != null &&
+                        TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
                     TypeBinding typeBinding = contexts.getContext(tokenType.type);
                     DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
                     this.leftOperand = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
@@ -61,12 +64,11 @@ public class AssignOperationExpression extends OperationExpression {
                 this.rightOperand = stack.pop();
             }
 
-
             Expression left = this.leftOperand;
 
-
             if (!(left instanceof VariableExpression)) {
-                String message = String.format("Left operand of aggregation operation is not variable  near %s", ExpressionTokenizer.toString(tokens, pos, pos - 5));
+                String message = String.format("Left operand of aggregation operation is not variable  near %s",
+                        ExpressionTokenizer.toString(tokens, pos, pos - 5));
                 logger.error(message);
                 throw new IllegalPropertyException(message);
             }
@@ -74,7 +76,6 @@ public class AssignOperationExpression extends OperationExpression {
             if (logger.isDebugEnabled()) {
                 logger.debug("Aggregation OperationExpression Call Expression : {}", getClass().getSimpleName());
             }
-
 
             stack.push(this);
         }
@@ -85,40 +86,27 @@ public class AssignOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding,
+                                      ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (; pos < tokens.length; pos++) {
             String token = tokens[pos];
-
             OperationExpression op = configurationRegistry.getOperation(token);
-
-
             if (op != null) {
-
 
                 if (op instanceof Semicolon || op instanceof ConditionOperationExpression || op instanceof DefOperation) {
                     return pos - 1;
                 }
-
                 pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
-
-
             } else {
-
                 Expression expression = buildExpression(token, contexts);
-
-
                 if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof Semicolon) {
                     stack.add(expression);
                 } else {
                     return pos;
                 }
-
-
             }
-
-
         }
 
         return pos;
@@ -135,21 +123,19 @@ public class AssignOperationExpression extends OperationExpression {
         if (left instanceof VariableExpression) {
             variable = (VariableExpression) left;
 
-            Object aggregation = instancesBinding.getInstance(variable.getOperandType());
+            Object assignmentInstance = instancesBinding.getInstance(variable.getOperandType());
 
-            if (aggregation == null) {
-                aggregation = new DataRow();
-                instancesBinding.addInstance(variable.getOperandType(), aggregation);
+            if (assignmentInstance == null) {
+                assignmentInstance = new DataRow();
+                instancesBinding.addInstance(variable.getOperandType(), assignmentInstance);
             }
 
+            variable = VariableType.setVariableValue(variable, assignmentInstance);
 
-            variable = VariableType.setVariableValue(variable, aggregation);
-
-
-            Expression right = this.rightOperand;
+            Expression valueOperand = this.rightOperand;
             LiteralExpression literalExpression = null;
-            if (right instanceof OperationExpression) {
-                OperationExpression operation = (OperationExpression) right;
+            if (valueOperand instanceof OperationExpression) {
+                OperationExpression operation = (OperationExpression) valueOperand;
 
                 Object interpret = operation.interpret(expressionBinding, instancesBinding);
                 if (interpret instanceof LiteralExpression) {
@@ -161,22 +147,20 @@ public class AssignOperationExpression extends OperationExpression {
                         throw new InterpretException(e);
                     }
                 }
-            } else if (right instanceof LiteralExpression) {
-                literalExpression = (LiteralExpression) right;
-            } else if (right instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) right;
+            } else if (valueOperand instanceof VariableExpression) {
+                VariableExpression variableExpression = (VariableExpression) valueOperand;
                 variableExpression = VariableType.setVariableValue(variableExpression, instancesBinding.getInstance(variableExpression.getOperandType()));
-                literalExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
+                literalExpression = (LiteralExpression) variableExpression.interpret(expressionBinding, instancesBinding);
+            } else if (valueOperand instanceof LiteralExpression) {
+                literalExpression = (LiteralExpression) valueOperand;
             }
-
 
             if (variable.getType().isAnnotationPresent(Type.class)) {
                 Type type = (Type) variable.getType().getAnnotation(Type.class);
                 DataType dataType = type.dataType();
 
-
-                aggregation = updateValue(aggregation, dataType, variable, literalExpression);
-                instancesBinding.addInstance(variable.getOperandType(), aggregation);
+                assignmentInstance = updateValue(assignmentInstance, dataType, variable, literalExpression);
+                instancesBinding.addInstance(variable.getOperandType(), assignmentInstance);
             }
         }
 
@@ -220,7 +204,6 @@ public class AssignOperationExpression extends OperationExpression {
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof Float) {
-
                                 values.add(value);
                             } else {
                                 values.add(new Float("" + value));
@@ -244,9 +227,7 @@ public class AssignOperationExpression extends OperationExpression {
                         if (value instanceof List) {
                             aggregation = setValue(aggregation, variableName, value);
                         } else {
-                            List<Object> values = new ArrayList<>();
-                            values.add(value);
-                            aggregation = setValue(aggregation, variableName, values);
+                            aggregation = setValue(aggregation, variableName, Arrays.asList(TrimString.trim(value.toString())));
                         }
 
                     } else if (variableExpression instanceof StringVariable) {
@@ -266,9 +247,7 @@ public class AssignOperationExpression extends OperationExpression {
                         if (value instanceof List) {
                             aggregation = setValue(aggregation, variableName, value);
                         } else {
-                            List<Object> values = new ArrayList<>();
-                            values.add(value);
-                            aggregation = setValue(aggregation, variableName, values);
+                            aggregation = setValue(aggregation, variableName, Arrays.asList(value));
                         }
 
                     } else if (variableExpression instanceof PairVariable) {
@@ -282,7 +261,17 @@ public class AssignOperationExpression extends OperationExpression {
                 }
 
                 default: {
-                    aggregation = setValue(aggregation, variableName, literalExpression.getValue());
+
+                    if (variableExpression instanceof ListVariable) {
+                        if (value instanceof List) {
+                            aggregation = setValue(aggregation, variableName, value);
+                        } else {
+                            aggregation = setValue(aggregation, variableName, Arrays.asList(value));
+                        }
+
+                    } else {
+                        aggregation = setValue(aggregation, variableName, literalExpression.getValue());
+                    }
                 }
             }
         } else {

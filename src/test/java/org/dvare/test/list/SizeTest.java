@@ -77,7 +77,7 @@ public class SizeTest {
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
-        System.out.println(ValueFinder.findValue("A0", resultModel));
+        //System.out.println(ValueFinder.findValue("A0", resultModel));
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(4);
         assertTrue(result);
@@ -134,7 +134,7 @@ public class SizeTest {
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
-        System.out.println(ValueFinder.findValue("A0", resultModel));
+        //System.out.println(ValueFinder.findValue("A0", resultModel));
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(4);
         assertTrue(result);

@@ -59,7 +59,7 @@ public class ValuesOperation extends ListOperationExpression {
 
     private List<?> extractPairValues(List pairList) {
         List<Object> pairValues = new ArrayList<>();
-
+        dataTypeExpression = null;
         for (Object pairObject : pairList) {
             if (pairObject instanceof Pair) {
                 Pair pair = (Pair) pairObject;

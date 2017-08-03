@@ -1,7 +1,6 @@
 package org.dvare.test.utility;
 
 
-import junit.framework.TestCase;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
@@ -13,15 +12,17 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
-import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DefTest extends TestCase {
+import static org.junit.Assert.assertTrue;
 
+public class DefTest {
+    @Test
     public void testApp() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = " def newVariable:IntegerType "
@@ -35,10 +36,10 @@ public class DefTest extends TestCase {
         RuleBinding rule = new RuleBinding(expression);
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
-        Assert.assertTrue(result);
+        assertTrue(result);
     }
 
-
+    @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -84,7 +85,7 @@ public class DefTest extends TestCase {
         assertTrue(result);
     }
 
-
+    @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -130,6 +131,7 @@ public class DefTest extends TestCase {
         assertTrue(result);
     }
 
+    @Test
     public void testApp3() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();

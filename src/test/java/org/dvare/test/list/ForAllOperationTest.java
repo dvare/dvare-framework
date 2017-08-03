@@ -139,7 +139,7 @@ public class ForAllOperationTest {
 
         Expression expression = factory.getParser().fromString(exp, contexts);
 
-        System.out.println(expression);
+        //System.out.println(expression);
 
         Assert.assertNotNull(expression);
 

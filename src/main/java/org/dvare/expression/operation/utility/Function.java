@@ -83,7 +83,7 @@ public class Function extends OperationExpression {
 
             String error;
             if (!functionExpression.getParameters().isEmpty()) {
-                error = String.format("No Table Expression Found, %s is not  TableExpression", functionExpression.getParameters().get(functionExpression.getParameters().size() - 1).getClass().getSimpleName());
+                error = String.format("No Function Expression Found, %s is not  Function Expression", functionExpression.getParameters().get(functionExpression.getParameters().size() - 1).getClass().getSimpleName());
             } else {
                 error = "No Table Expression Found";
             }
@@ -221,7 +221,6 @@ public class Function extends OperationExpression {
             if (originalType != null) {
                 if (originalType.isArray()) {
 
-                    List<Object> listValues = new ArrayList<>();
 
                     List dataSet;
                     if (instance instanceof Collection) {
@@ -230,7 +229,7 @@ public class Function extends OperationExpression {
                         dataSet = new ArrayList();
                         dataSet.add(instance);
                     }
-
+                    List<Object> listValues = new ArrayList<>();
                     for (Object dataRow : dataSet) {
                         variableExpression = VariableType.setVariableValue(variableExpression, dataRow);
                         listValues.add(variableExpression.getValue());
@@ -279,7 +278,7 @@ public class Function extends OperationExpression {
                 if (originalType.isArray()) {
 
                     Class type = DataTypeMapping.getDataTypeMapping(literalDataType);
-                    Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, listLiteral.getSize());
+                    Object[] typedArray = Object[].class.cast(java.lang.reflect.Array.newInstance(type, listLiteral.getSize()));
                     Object value = listLiteral.getValue().toArray(typedArray);
 
                     paramsValue.param = originalType;
@@ -357,30 +356,35 @@ public class Function extends OperationExpression {
             String functionName = functionExpression.getName();
             Class<?> functionClass = functionBinding.getFunctionClass();
             Object classInstance = functionBinding.getFunctionInstance();
-            Object value;
-            if (functionClass != null && classInstance == null) {
-                classInstance = functionClass.newInstance();
+            Object value = null;
+
+
+            if (functionClass == null && classInstance != null) {
+                functionClass = classInstance.getClass();
+            }
+
+
+            if (functionClass != null) {
+
+
                 Method method = MethodUtils.getAccessibleMethod(functionClass, functionName, params);
                 if (method == null) {
-                    method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), castParams(params));
+                    params = castParams(params);
+                    method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), params);
                 }
                 if (method != null) {
+
+                    // Modifier.isStatic(method.getModifiers()
+                    if (classInstance == null) {
+                        classInstance = functionClass.newInstance();
+                    }
                     value = method.invoke(classInstance, values);
+
+
                 } else {
                     throw new InterpretException("Function \"" + functionName + "\" parameter not match near " + this.toString());
                 }
-            } else {
 
-                Method method = MethodUtils.getAccessibleMethod(classInstance.getClass(), functionName, params);
-                if (method == null) {
-                    method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), castParams(params));
-                }
-
-                if (method != null) {
-                    value = method.invoke(classInstance, values);
-                } else {
-                    throw new InterpretException("Function \"" + functionName + "\" parameter not match near " + this.toString());
-                }
             }
 
             if (value == null) {
@@ -391,7 +395,7 @@ public class Function extends OperationExpression {
                 List list = (List) value;
                 return new ListLiteral(list, functionExpression.binding.getReturnType());
             } else if (value.getClass().isArray()) {
-                return new ListLiteral(Arrays.asList(value), functionExpression.binding.getReturnType());
+                return new ListLiteral(Arrays.asList(Object[].class.cast(value)), functionExpression.binding.getReturnType());
             } else {
                 return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType());
             }
@@ -415,7 +419,7 @@ public class Function extends OperationExpression {
         for (int i = 0; i < params.length; i++) {
 
             Class param = params[i];
-            if (!param.isPrimitive() && (param.equals(Integer.class) || param.equals(Float.class) || param.equals(Boolean.class) || param.equals(Double.class) || param.getClass().equals(Long.class))) {
+            if (!param.isPrimitive() && (param.equals(Integer.class) || param.equals(Float.class) || param.equals(Boolean.class) || param.equals(Double.class) || param.equals(Long.class))) {
                 Class aClass = (Class) FieldUtils.readStaticField(params[i], "TYPE", true);
                 if (aClass != null) {
                     params[i] = aClass;

@@ -24,7 +24,6 @@ THE SOFTWARE.*/
 package org.dvare.test.predefined;
 
 
-import junit.framework.TestCase;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
@@ -38,12 +37,13 @@ import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ArithmeticOperation;
 import org.dvare.test.dataobjects.ForEachOperation;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.text.ParseException;
 
-public class ChainOperationTest extends TestCase {
+public class ChainOperationTest {
 
-
+    @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
 
@@ -62,7 +62,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
 
 
@@ -81,7 +81,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
 
 
@@ -100,7 +100,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp2_1() throws ExpressionParseException, InterpretException {
 
 
@@ -119,7 +119,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp3() throws ExpressionParseException, InterpretException {
 
 
@@ -138,7 +138,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp4() throws ExpressionParseException, InterpretException {
 
 
@@ -157,7 +157,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp5() throws ExpressionParseException, InterpretException {
 
 
@@ -176,7 +176,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp6() throws ExpressionParseException, InterpretException {
 
 
@@ -197,6 +197,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
+    @Test
 
     public void testApp7() throws ExpressionParseException, InterpretException {
 
@@ -218,7 +219,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp8() throws ExpressionParseException, InterpretException {
 
 
@@ -239,7 +240,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp9() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String expr = "Variable5->substring(2,2)->toInteger() between [80,90] and Variable5->substring(3,2)->toInteger() in [45,46]";
@@ -260,7 +261,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp10() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -275,7 +276,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp11() throws ExpressionParseException, InterpretException {
 
 
@@ -296,7 +297,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp12() throws ExpressionParseException, InterpretException {
 
 
@@ -317,7 +318,7 @@ public class ChainOperationTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp14() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();

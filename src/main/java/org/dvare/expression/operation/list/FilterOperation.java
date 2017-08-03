@@ -46,7 +46,8 @@ public class FilterOperation extends ListOperationExpression {
     }
 
 
-    private List pairFilter(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression includeParam, List values) throws InterpretException {
+    private List pairFilter(ExpressionBinding expressionBinding, InstancesBinding instancesBinding,
+                            Expression includeParam, List values) throws InterpretException {
         List<Pair> includedValues = new ArrayList<>();
         if (includeParam instanceof LogicalOperationExpression) {
 
@@ -74,17 +75,15 @@ public class FilterOperation extends ListOperationExpression {
         } else if (includeParam instanceof RelationalOperationExpression || includeParam instanceof ChainOperationExpression) {
 
             for (Object value : values) {
-
                 if (value instanceof Pair) {
                     Pair valuePair = (Pair) value;
-                    Boolean result = buildEqualityOperationExpression(includeParam, expressionBinding, instancesBinding, valuePair.getLeft());
+                    Boolean result = buildEqualityOperationExpression(includeParam, expressionBinding,
+                            instancesBinding, valuePair.getLeft());
                     if (result) {
                         includedValues.add(valuePair);
                     }
                 }
             }
-
-
         }
         return includedValues;
     }

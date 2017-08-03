@@ -1,7 +1,6 @@
 package org.dvare.test.utility;
 
 
-import junit.framework.TestCase;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
@@ -14,11 +13,15 @@ import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.EqualOperation;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.lang.reflect.Method;
 
-public class InvokeTest extends TestCase {
+import static org.junit.Assert.assertNotNull;
 
+public class InvokeTest {
+
+    @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -43,6 +46,7 @@ public class InvokeTest extends TestCase {
         Assert.assertTrue(result);
     }
 
+    @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -66,7 +70,7 @@ public class InvokeTest extends TestCase {
         Assert.assertTrue(result);
     }
 
-
+    @Test
     public void testApp3() throws ExpressionParseException, InterpretException {
 
         Method method = MethodUtils.getAccessibleMethod(String.class, "substring", int.class, int.class);
