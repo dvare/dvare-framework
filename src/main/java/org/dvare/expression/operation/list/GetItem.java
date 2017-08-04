@@ -10,6 +10,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.*;
+import org.dvare.expression.operation.utility.LetOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,10 +52,14 @@ public class GetItem extends AggregationOperationExpression {
 
                 Expression leftExpression = operationExpression.getLeftOperand();
 
-                while (leftExpression instanceof OperationExpression) {
+                while (leftExpression instanceof OperationExpression && !(leftExpression instanceof LetOperation)) {
                     leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
                 }
 
+
+                if (leftExpression instanceof LetOperation) {
+                    leftExpression = LetOperation.class.cast(leftExpression).getVariableExpression();
+                }
 
                 if (leftExpression instanceof VariableExpression) {
                     VariableExpression variableExpression = (VariableExpression) leftExpression;

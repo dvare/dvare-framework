@@ -15,6 +15,7 @@ import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.utility.LetOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
@@ -107,8 +108,13 @@ public class SortOperation extends ListOperationExpression {
 
                     Expression leftExpression = chainOperationExpression.getLeftOperand();
 
-                    while (leftExpression instanceof OperationExpression) {
+                    while (leftExpression instanceof OperationExpression && !(leftExpression instanceof LetOperation)) {
                         leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+                    }
+
+
+                    if (leftExpression instanceof LetOperation) {
+                        leftExpression = LetOperation.class.cast(leftExpression).getVariableExpression();
                     }
 
 
@@ -151,8 +157,6 @@ public class SortOperation extends ListOperationExpression {
                                         Object value) throws InterpretException {
         String name = variableExpression.getName();
         String operandType = variableExpression.getOperandType();
-
-        instancesBinding.addInstanceItem(operandType, name, value);
 
 
         instancesBinding.addInstanceItem(operandType, name, value);

@@ -27,6 +27,7 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -49,7 +50,7 @@ public class AddMonths extends ChainOperationExpression {
 
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        leftValueOperand = super.interpretOperand(this.leftOperand, expressionBinding, instancesBinding);
+        Expression leftValueOperand = super.interpretOperand(this.leftOperand, expressionBinding, instancesBinding);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if ((literalExpression != null && !(literalExpression instanceof NullLiteral)) && (rightOperand != null && rightOperand.size() == 1)) {
 

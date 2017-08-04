@@ -12,6 +12,7 @@ import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.expression.operation.utility.LetOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +46,13 @@ public class MapOperation extends ListOperationExpression {
 
                     Expression leftExpression = chainOperationExpression.getLeftOperand();
 
-                    while (leftExpression instanceof OperationExpression) {
+                    while (leftExpression instanceof OperationExpression && !(leftExpression instanceof LetOperation)) {
                         leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+                    }
+
+
+                    if (leftExpression instanceof LetOperation) {
+                        leftExpression = LetOperation.class.cast(leftExpression).getVariableExpression();
                     }
 
 

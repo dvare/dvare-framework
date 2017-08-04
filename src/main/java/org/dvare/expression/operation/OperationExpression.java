@@ -56,8 +56,6 @@ public abstract class OperationExpression extends Expression {
     protected Expression leftOperand = null;
     protected Expression rightOperand = null;
     protected Class<? extends DataTypeExpression> dataTypeExpression;
-    protected Expression leftValueOperand;
-    protected Expression rightValueOperand;
 
 
     public OperationExpression(OperationType operationType) {

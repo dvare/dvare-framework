@@ -31,6 +31,7 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.literal.BooleanLiteral;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.utility.LetOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,8 +153,13 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
         OperationExpression operationExpression = (OperationExpression) includeParam;
         Expression leftExpression = operationExpression.getLeftOperand();
 
-        while (leftExpression instanceof OperationExpression) {
+        while (leftExpression instanceof OperationExpression && !(leftExpression instanceof LetOperation)) {
             leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+        }
+
+
+        if (leftExpression instanceof LetOperation) {
+            leftExpression = LetOperation.class.cast(leftExpression).getVariableExpression();
         }
 
 

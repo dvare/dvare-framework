@@ -78,19 +78,14 @@ public abstract class RelationalOperationExpression extends OperationExpression 
         OperationExpression op = ConfigurationRegistry.INSTANCE.getOperation(tokenType.token);
         if (op != null) {
 
-
             pos = op.parse(tokens, pos + 1, stack, expressionBinding, contexts);
 
             expression = stack.pop();
 
-
         } else if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
-
             TypeBinding typeBinding = contexts.getContext(tokenType.type);
-
             DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
             expression = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
-
         } else {
             expression = LiteralType.getLiteralExpression(tokenType.token);
         }
@@ -253,20 +248,21 @@ public abstract class RelationalOperationExpression extends OperationExpression 
     }
 
 
-    public void interpretOperand(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    protected Expression interpretOperandLeft(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression leftOperand) throws InterpretException {
+        return super.interpretOperand(leftOperand, expressionBinding, instancesBinding);
+    }
 
-        Expression leftExpression = super.interpretOperand(leftOperand, expressionBinding, instancesBinding);
 
-        Expression right = this.rightOperand;
+    protected Expression interpretOperandRight(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression rightOperand) throws InterpretException {
         LiteralExpression<?> rightExpression = null;
-        if (right instanceof OperationExpression) {
-            OperationExpression operation = (OperationExpression) right;
+        if (rightOperand instanceof OperationExpression) {
+            OperationExpression operation = (OperationExpression) rightOperand;
             rightExpression = (LiteralExpression) operation.interpret(expressionBinding, instancesBinding);
-        } else if (right instanceof LiteralExpression) {
-            rightExpression = (LiteralExpression<?>) right;
-        } else if (right instanceof VariableExpression) {
+        } else if (rightOperand instanceof LiteralExpression) {
+            rightExpression = (LiteralExpression<?>) rightOperand;
+        } else if (rightOperand instanceof VariableExpression) {
 
-            VariableExpression variableExpression = (VariableExpression) right;
+            VariableExpression variableExpression = (VariableExpression) rightOperand;
             Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
 
             if (instance instanceof List) {
@@ -279,17 +275,15 @@ public abstract class RelationalOperationExpression extends OperationExpression 
         if (dataTypeExpression == null && rightExpression != null) {
             dataTypeExpression = rightExpression.getType();
         }
-
-        this.leftValueOperand = leftExpression;
-        this.rightValueOperand = rightExpression;
-
+        return rightExpression;
     }
-
 
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
-        interpretOperand(expressionBinding, instancesBinding);
+        Expression leftValueOperand = interpretOperandLeft(expressionBinding, instancesBinding, leftOperand);
+        Expression rightValueOperand = interpretOperandRight(expressionBinding, instancesBinding, rightOperand);
+
 
         if (leftValueOperand != null && rightValueOperand != null) {
 

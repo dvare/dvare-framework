@@ -28,6 +28,7 @@ import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalValueException;
+import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -45,7 +46,7 @@ public class StartsWith extends ChainOperationExpression {
 
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        leftValueOperand = super.interpretOperand(this.leftOperand, expressionBinding, instancesBinding);
+        Expression leftValueOperand = super.interpretOperand(this.leftOperand, expressionBinding, instancesBinding);
 
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {

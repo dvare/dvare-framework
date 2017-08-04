@@ -42,11 +42,14 @@ public abstract class ArithmeticOperationExpression extends RelationalOperationE
 
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        interpretOperand(expressionBinding, instancesBinding);
-        Expression leftExpression = leftValueOperand;
+        Expression leftExpression = interpretOperandLeft(expressionBinding, instancesBinding, leftOperand);
+
         if (leftExpression == null)
             return new NullLiteral();
-        LiteralExpression<?> rightExpression = (LiteralExpression) rightValueOperand;
+
+
+        LiteralExpression<?> rightExpression = (LiteralExpression) interpretOperandRight(expressionBinding, instancesBinding, rightOperand);
+        ;
 
         LiteralExpression left = toLiteralExpression(leftExpression);
         LiteralExpression right = toLiteralExpression(rightExpression);

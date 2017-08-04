@@ -65,7 +65,7 @@ public class Substring extends ChainOperationExpression {
 
     @Override
     public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        leftValueOperand = super.interpretOperand(this.leftOperand, expressionBinding, instancesBinding);
+        Expression leftValueOperand = super.interpretOperand(leftOperand, expressionBinding, instancesBinding);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if ((literalExpression != null && !(literalExpression instanceof NullLiteral) && rightOperand.size() >= 2)) {
 

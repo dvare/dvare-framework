@@ -24,12 +24,17 @@ THE SOFTWARE.*/
 package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
+import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
+import org.dvare.exceptions.parser.IllegalPropertyException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
@@ -78,14 +83,65 @@ public class LetOperation extends OperationExpression {
                 }
 
 
-                VariableExpression variableExpression = VariableType.getVariableExpression(name, dataType, "temp");
-                stack.push(variableExpression);
+                leftOperand = new NamedExpression(token);
+
+                /*VariableExpression variableExpression = VariableType.getVariableExpression(name, dataType, "temp");
+                stack.push(variableExpression);*/
+
+                stack.push(this);
 
             }
         }
 
 
         return pos;
+    }
+
+
+    public VariableExpression getVariableExpression() throws InterpretException {
+
+
+        if (NamedExpression.class.cast(leftOperand).getName().contains(":")) {
+            String parts[] = NamedExpression.class.cast(leftOperand).getName().split(":");
+            String name = parts[0].trim();
+            String type = parts[1].trim();
+            DataType dataType = DataType.valueOf(type);
+            try {
+                return VariableType.getVariableExpression(name, dataType, "temp");
+            } catch (IllegalPropertyException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        return null;
+    }
+
+
+    @Override
+    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+
+        VariableExpression variableExpression = getVariableExpression();
+
+        if (variableExpression != null) {
+            variableExpression = VariableType.setVariableValue(variableExpression, instancesBinding.getInstance(variableExpression.getOperandType()));
+            return variableExpression.interpret(expressionBinding, instancesBinding);
+        }
+        return new NullLiteral();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+
+        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(" ");
+
+        if (leftOperand != null) {
+            toStringBuilder.append(leftOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+
+        return toStringBuilder.toString();
     }
 
 

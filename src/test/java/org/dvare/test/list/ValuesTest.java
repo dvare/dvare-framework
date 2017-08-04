@@ -15,14 +15,18 @@ import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.EqualOperation;
 import org.dvare.test.dataobjects.ValuesObject;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ValuesTest {
+
+    private static Logger logger = LoggerFactory.getLogger(ValuesTest.class);
+
     @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
 
@@ -35,6 +39,7 @@ public class ValuesTest {
 
 
         Expression expression = factory.getParser().fromString("Variable1->substring(2,2)->values()->map(let item:StringType -> substring(2,1) ->toInteger())->hasItem(9)", contexts);
+
 
         RuleBinding rule = new RuleBinding(expression);
 
@@ -60,7 +65,11 @@ public class ValuesTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+
+        System.out.println(expression);
+
         assertTrue(result);
+
 
     }
 
@@ -300,7 +309,58 @@ public class ValuesTest {
         contexts.addContext("self", typeBinding);
 
 
-        Expression expression = factory.getParser().fromString("Variable1->toInteger()->values(let item:IntegerType ->toString()->substring(5,1) = '6')->isEmpty()", contexts);
+        Expression expression = factory.getParser().fromString("" +
+                "Variable1->toInteger()" +
+                "->values(let item:IntegerType ->toString()->substring(5,1) = '3' " +
+                "or let item:IntegerType ->toString()->substring(5,1) = '4')" +
+                "->notEmpty()", contexts);
+
+        Expression expression1 = factory.getParser().fromString(expression.toString(), contexts);
+        assertNotNull(expression1);
+        logger.info(expression1.toString());
+        assertEquals(expression.toString(), expression1.toString());
+
+
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        List<ValuesObject> dataSet = new ArrayList<>();
+
+
+        ValuesObject valuesObject1 = new ValuesObject();
+        valuesObject1.setVariable1("42964");
+        dataSet.add(valuesObject1);
+
+        ValuesObject valuesObject2 = new ValuesObject();
+        valuesObject2.setVariable1("42453");
+        dataSet.add(valuesObject2);
+
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertTrue(result);
+
+
+    }
+
+    @Test
+    public void testApp8() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+
+        Expression expression = factory.getParser().fromString("Variable1->toInteger()" +
+                "->values(let item:IntegerType ->toString()->substring(5,1) in ['3','4','9'], " +
+                "let item:IntegerType ->toString()->substring(4,1)->toInteger() != 5 )" +
+                "->size() = 2", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
 
@@ -331,7 +391,7 @@ public class ValuesTest {
     }
 
     @Test
-    public void testApp8() throws ExpressionParseException, InterpretException {
+    public void testApp9() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration(new String[]{"org.dvare.util"});
 
@@ -377,7 +437,7 @@ public class ValuesTest {
     }
 
     @Test
-    public void testApp9() throws ExpressionParseException, InterpretException {
+    public void testApp10() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -391,7 +451,7 @@ public class ValuesTest {
 
 
 
-   /* public void testApp10() throws ExpressionParseException, InterpretException {
+   /* public void testApp11() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
