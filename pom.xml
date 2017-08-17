@@ -43,6 +43,7 @@
         <spring.version>4.3.9.RELEASE</spring.version>
         <slf4j.version>1.7.25</slf4j.version>
         <commons.lang.version>3.5</commons.lang.version>
+        <maven-license-plugin.version>3.0</maven-license-plugin.version>
 
     </properties>
 
@@ -193,6 +194,30 @@
                 <version>${maven-jar-plugin.version}</version>
             </plugin>
 
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${maven-license-plugin.version}</version>
+                <configuration>
+                    <header>${project.basedir}/licence-template.txt</header>
+                    <properties>
+                        <currentYear>2016-2017</currentYear>
+                    </properties>
+                    <strictCheck>true</strictCheck>
+                    <includes>
+                        <include>src/**/*.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>format</goal>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
         </plugins>
     </build>

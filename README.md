@@ -5,8 +5,6 @@ A Lightweight Java business rule expression language.
 
 ## Example
 
-##### Arithmetic Operation..
-
 ```java
 public class ArithmeticOperationTest {
     
