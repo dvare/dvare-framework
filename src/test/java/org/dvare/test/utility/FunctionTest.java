@@ -64,8 +64,10 @@ public class FunctionTest {
 
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
-        System.out.println(result);
+
         assertTrue(result);
+
+
     }
 
     @Test
@@ -83,7 +85,7 @@ public class FunctionTest {
 
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
-        System.out.println(result);
+
         assertTrue(result);
     }
 
@@ -101,7 +103,7 @@ public class FunctionTest {
 
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
-        System.out.println(result);
+
         assertTrue(result);
     }
 
@@ -119,7 +121,7 @@ public class FunctionTest {
 
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
-        System.out.println(result);
+
         assertTrue(result);
     }
 
@@ -137,7 +139,7 @@ public class FunctionTest {
 
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
-        System.out.println(result);
+
         assertTrue(result);
     }
 
@@ -155,7 +157,7 @@ public class FunctionTest {
 
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
-        System.out.println(result);
+
         assertTrue(result);
     }
 
@@ -205,7 +207,7 @@ public class FunctionTest {
         // System.out.println(ValueFinder.findValue("A0", resultModel));
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(30);
-        System.out.println(result);
+
         assertTrue(result);
     }
 
@@ -228,7 +230,7 @@ public class FunctionTest {
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
         boolean result = ValueFinder.findValue("Variable2", resultModel).equals(15);
-        System.out.println(result);
+
         assertTrue(result);
     }
 

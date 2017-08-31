@@ -52,9 +52,6 @@ public class FunctionProvider {
     }
 
 
-
-
-
     @FunctionMethod(returnType = DataType.IntegerType, parameters = {DataType.IntegerListType})
     public Integer addRowsFunction(Integer[] rows) {
         if (logger.isDebugEnabled()) {

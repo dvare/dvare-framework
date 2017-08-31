@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * <p>
+ *
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.dvare.expression.operation;
 
 import org.dvare.annotations.Operation;
@@ -40,6 +39,7 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.utility.DefOperation;
 import org.dvare.expression.operation.utility.Semicolon;
 import org.dvare.expression.veriable.*;
@@ -139,7 +139,7 @@ public class AssignOperationExpression extends OperationExpression {
 
 
     @Override
-    public Object interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
 
         VariableExpression variable;
         Expression left = this.leftOperand;
@@ -185,10 +185,11 @@ public class AssignOperationExpression extends OperationExpression {
 
                 assignmentInstance = updateValue(assignmentInstance, dataType, variable, literalExpression);
                 instancesBinding.addInstance(variable.getOperandType(), assignmentInstance);
+                return literalExpression;
             }
         }
 
-        return instancesBinding;
+        return new NullLiteral();
     }
 
     private Object updateValue(Object aggregation, DataType dataType, VariableExpression variableExpression, LiteralExpression<?> literalExpression) throws InterpretException {

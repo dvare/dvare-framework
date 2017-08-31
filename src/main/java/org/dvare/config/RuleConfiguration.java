@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * <p>
+ *
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,20 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.dvare.config;
 
 
-import org.apache.log4j.Level;
+/*import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.log4j.Logger;*/
+
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.parser.ExpressionParser;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.List;
 
 public class RuleConfiguration {
 
@@ -57,7 +54,7 @@ public class RuleConfiguration {
     public RuleConfiguration(String[] functionBasePackages, boolean silentMode) {
 
         if (silentMode) {
-            try {
+            /*try {
 
                 Class.forName("org.apache.log4j.LogManager");
                 List<Logger> loggers = Collections.<Logger>list(LogManager.getCurrentLoggers());
@@ -69,7 +66,7 @@ public class RuleConfiguration {
                 }
             } catch (ClassNotFoundException e) {
                 logger.error(e.getMessage());
-            }
+            }*/
         }
 
 
