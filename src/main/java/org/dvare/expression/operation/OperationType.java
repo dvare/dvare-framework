@@ -78,9 +78,7 @@ public enum OperationType {
     PAIR("Pair", "pair"), KEYS("Keys", "keys"),
 
     // initialization
-    DEF("Def", "def"), LET("let", "Let"),
-
-    PUT_EXP("PutExp", "putExp"), GET_EXP("GetExp", "getExp");
+    DEF("Def", "def"), LET("let", "Let");
 
 
     private List<String> symbols = new ArrayList<>();

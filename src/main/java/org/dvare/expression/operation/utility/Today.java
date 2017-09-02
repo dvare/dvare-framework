@@ -25,7 +25,6 @@ package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -49,9 +48,9 @@ public class Today extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
-        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
         stack.push(this);
 
@@ -61,7 +60,7 @@ public class Today extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (int i = pos; i < tokens.length; i++) {
             String token = tokens[i];
@@ -77,7 +76,7 @@ public class Today extends OperationExpression {
     }
 
 
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
         LocalDate date = LocalDate.now();
         return new DateLiteral(date);
     }

@@ -25,7 +25,6 @@ package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.NullType;
@@ -50,7 +49,7 @@ public class ForEach extends ForAll {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
         Object object = instancesBinding.getInstance(((NamedExpression) referenceContext).getName());
@@ -63,7 +62,7 @@ public class ForEach extends ForAll {
                 instancesBinding.addInstance(((NamedExpression) derivedContext).getName(), instance);
 
 
-                Object interpret = leftOperand.interpret(expressionBinding, instancesBinding);
+                Object interpret = leftOperand.interpret(instancesBinding);
                 LiteralExpression literalExpression = (LiteralExpression) interpret;
                 if (literalExpression.getType() != null && !(literalExpression.getType().equals(NullType.class))) {
                     dataTypeExpression = literalExpression.getType();

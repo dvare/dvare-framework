@@ -21,10 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.dvare.expression.operation;
 
-import org.dvare.binding.expression.ExpressionBinding;
+
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -84,9 +83,9 @@ public abstract class ChainOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         pos = parseOperands(tokens, pos, stack, contexts);
-        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
         if (logger.isDebugEnabled()) {
             logger.debug("Operation Expression Call Expression : {}", getClass().getSimpleName());
         }
@@ -96,7 +95,7 @@ public abstract class ChainOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         Stack<Expression> localStack = new Stack<>();
@@ -110,7 +109,7 @@ public abstract class ChainOperationExpression extends OperationExpression {
                     return newPos;
                 } else {
 
-                    newPos = op.parse(tokens, newPos, localStack, expressionBinding, contexts);
+                    newPos = op.parse(tokens, newPos, localStack, contexts);
                 }
 
 

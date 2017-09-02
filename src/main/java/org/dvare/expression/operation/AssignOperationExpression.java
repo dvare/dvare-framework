@@ -27,7 +27,6 @@ import org.dvare.annotations.Operation;
 import org.dvare.annotations.Type;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -64,7 +63,7 @@ public class AssignOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding,
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack,
                          ContextsBinding contexts) throws ExpressionParseException {
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
 
@@ -83,7 +82,7 @@ public class AssignOperationExpression extends OperationExpression {
                 this.leftOperand = stack.pop();
             }
 
-            pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
+            pos = findNextExpression(tokens, pos + 1, stack, contexts);
             if (!stack.isEmpty()) {
                 this.rightOperand = stack.pop();
             }
@@ -110,7 +109,7 @@ public class AssignOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding,
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack,
                                       ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
@@ -122,7 +121,7 @@ public class AssignOperationExpression extends OperationExpression {
                 if (op instanceof Semicolon || op instanceof ConditionOperationExpression || op instanceof DefOperation) {
                     return pos - 1;
                 }
-                pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
+                pos = op.parse(tokens, pos, stack, contexts);
             } else {
                 Expression expression = buildExpression(token, contexts);
                 if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof Semicolon) {
@@ -139,7 +138,7 @@ public class AssignOperationExpression extends OperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         VariableExpression variable;
         Expression left = this.leftOperand;
@@ -161,7 +160,7 @@ public class AssignOperationExpression extends OperationExpression {
             if (valueOperand instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) valueOperand;
 
-                Object interpret = operation.interpret(expressionBinding, instancesBinding);
+                Object interpret = operation.interpret(instancesBinding);
                 if (interpret instanceof LiteralExpression) {
                     literalExpression = (LiteralExpression) interpret;
                 } else {
@@ -174,7 +173,7 @@ public class AssignOperationExpression extends OperationExpression {
             } else if (valueOperand instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) valueOperand;
                 variableExpression = VariableType.setVariableValue(variableExpression, instancesBinding.getInstance(variableExpression.getOperandType()));
-                literalExpression = (LiteralExpression) variableExpression.interpret(expressionBinding, instancesBinding);
+                literalExpression = (LiteralExpression) variableExpression.interpret(instancesBinding);
             } else if (valueOperand instanceof LiteralExpression) {
                 literalExpression = (LiteralExpression) valueOperand;
             }

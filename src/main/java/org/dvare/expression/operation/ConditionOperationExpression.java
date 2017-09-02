@@ -24,7 +24,6 @@
 package org.dvare.expression.operation;
 
 
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -45,20 +44,20 @@ public abstract class ConditionOperationExpression extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
-        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
         return pos;
     }
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (int i = pos; i < tokens.length; i++) {
             OperationExpression op = configurationRegistry.getOperation(tokens[i]);
             if (op != null) {
 
-                i = op.parse(tokens, i, stack, expressionBinding, contexts);
+                i = op.parse(tokens, i, stack, contexts);
                 return i;
             }
 

@@ -25,7 +25,6 @@ package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -50,9 +49,9 @@ public class CombinationExists extends Match {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contextss) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contextss) throws ExpressionParseException {
 
-        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contextss);
+        pos = findNextExpression(tokens, pos + 1, stack, contextss);
 
         computeParam(leftOperand);
         stack.push(this);
@@ -78,19 +77,19 @@ public class CombinationExists extends Match {
     }
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         List<Expression> expressions = this.leftOperand;
 
         /* values to match */
 
         Expression valueParam = expressions.get(0);
-        List values = buildValues(expressionBinding, instancesBinding, valueParam);
+        List values = buildValues(instancesBinding, valueParam);
         DataType dataType = toDataType(dataTypeExpression);
 
         /*match params*/
         Expression paramsExpression = expressions.get(1);
-        List matchParams = buildMatchParams(expressionBinding, instancesBinding, paramsExpression);
+        List matchParams = buildMatchParams(instancesBinding, paramsExpression);
 
 
         return match(dataType, values, matchParams, false, true);

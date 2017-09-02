@@ -25,7 +25,6 @@ package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -48,8 +47,8 @@ public class Last extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+        List<?> values = extractValues(instancesBinding, leftOperand);
         if (values != null && !values.isEmpty()) {
             return LiteralType.getLiteralExpression(values.get(values.size() - 1), dataTypeExpression);
         }

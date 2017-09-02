@@ -25,7 +25,6 @@ package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -65,9 +64,9 @@ public class Match extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contextss) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contextss) throws ExpressionParseException {
 
-        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contextss);
+        pos = findNextExpression(tokens, pos + 1, stack, contextss);
 
         computeParam(leftOperand);
         stack.push(this);
@@ -92,7 +91,7 @@ public class Match extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         Stack<Expression> localStack = new Stack<>();
@@ -105,7 +104,7 @@ public class Match extends OperationExpression {
                     this.leftOperand = new ArrayList<>(localStack);
                     return pos;
                 } else if (!(op instanceof LeftPriority)) {
-                    pos = op.parse(tokens, pos, localStack, expressionBinding, contexts);
+                    pos = op.parse(tokens, pos, localStack, contexts);
                 }
             } else {
 
@@ -118,7 +117,7 @@ public class Match extends OperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
         List<Expression> expressions = this.leftOperand;
@@ -128,13 +127,13 @@ public class Match extends OperationExpression {
         /* values to match */
 
         Expression valueParam = expressions.get(0);
-        List values = buildValues(expressionBinding, instancesBinding, valueParam);
+        List values = buildValues(instancesBinding, valueParam);
         DataType dataType = toDataType(dataTypeExpression);
 
         
         /*match params*/
         Expression paramsExpression = expressions.get(1);
-        List matchParams = buildMatchParams(expressionBinding, instancesBinding, paramsExpression);
+        List matchParams = buildMatchParams(instancesBinding, paramsExpression);
 
 
         Boolean insideCombination = false;
@@ -166,12 +165,12 @@ public class Match extends OperationExpression {
     }
 
 
-    protected List buildValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
+    protected List buildValues(InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
 
         OperationExpression operationExpression = new ValuesOperation();
         operationExpression.setLeftOperand(valueParam);
 
-        Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+        Object interpret = operationExpression.interpret(instancesBinding);
 
         if (interpret instanceof ListLiteral) {
 
@@ -184,7 +183,7 @@ public class Match extends OperationExpression {
     }
 
 
-    protected List buildMatchParams(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression paramsExpression) throws InterpretException {
+    protected List buildMatchParams(InstancesBinding instancesBinding, Expression paramsExpression) throws InterpretException {
         List matchParams = null;
         if (paramsExpression instanceof LiteralExpression) {
             matchParams = buildMatchParams((LiteralExpression) paramsExpression);
@@ -192,7 +191,7 @@ public class Match extends OperationExpression {
 
         } else if (paramsExpression instanceof OperationExpression) {
             OperationExpression operationExpression = (OperationExpression) paramsExpression;
-            Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+            Object interpret = operationExpression.interpret(instancesBinding);
             if (interpret instanceof LiteralExpression) {
                 matchParams = buildMatchParams((LiteralExpression) interpret);
             }

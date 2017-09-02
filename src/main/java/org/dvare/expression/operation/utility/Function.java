@@ -27,7 +27,6 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -70,9 +69,9 @@ public class Function extends OperationExpression {
     }
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
-        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
         FunctionExpression functionExpression = (FunctionExpression) stack.pop();
 
 
@@ -102,7 +101,7 @@ public class Function extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
@@ -135,7 +134,7 @@ public class Function extends OperationExpression {
 
                     return pos;
                 } else if (!op.getClass().equals(LeftPriority.class)) {
-                    pos = op.parse(tokens, pos, localStack, expressionBinding, contexts);
+                    pos = op.parse(tokens, pos, localStack, contexts);
                 }
             } else if (configurationRegistry.getFunction(token) != null) {
                 FunctionBinding functionBinding = configurationRegistry.getFunction(token);
@@ -155,13 +154,13 @@ public class Function extends OperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        return interpretFunction(expressionBinding, instancesBinding);
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+        return interpretFunction(instancesBinding);
 
     }
 
 
-    protected LiteralExpression interpretFunction(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    protected LiteralExpression interpretFunction(InstancesBinding instancesBinding) throws InterpretException {
 
         FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
 
@@ -181,7 +180,7 @@ public class Function extends OperationExpression {
             if (parameterExpression instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) parameterExpression;
                 LiteralExpression literalExpression;
-                literalExpression = (LiteralExpression) operation.interpret(expressionBinding, instancesBinding);
+                literalExpression = (LiteralExpression) operation.interpret(instancesBinding);
 
                 ParamValue paramsValue = buildLiteralParam(literalExpression, originalType);
                 params[counter] = paramsValue.param;
@@ -190,7 +189,7 @@ public class Function extends OperationExpression {
             } else if (parameterExpression instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) parameterExpression;
 
-                ParamValue paramsValue = buildVariableExpression(expressionBinding, instancesBinding, variableExpression, originalType);
+                ParamValue paramsValue = buildVariableExpression(instancesBinding, variableExpression, originalType);
                 params[counter] = paramsValue.param;
                 values[counter] = paramsValue.value;
 
@@ -210,7 +209,7 @@ public class Function extends OperationExpression {
 
     }
 
-    private ParamValue buildVariableExpression(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, VariableExpression variableExpression, Class originalType) throws InterpretException {
+    private ParamValue buildVariableExpression(InstancesBinding instancesBinding, VariableExpression variableExpression, Class originalType) throws InterpretException {
         ParamValue paramsValue = new ParamValue();
 
         Object instance = instancesBinding.getInstance(variableExpression.getOperandType());

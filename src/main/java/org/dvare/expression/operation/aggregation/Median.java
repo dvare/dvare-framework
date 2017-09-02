@@ -25,7 +25,6 @@ package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
@@ -55,7 +54,7 @@ public class Median extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
         Expression valueOperand = this.leftOperand;
@@ -68,7 +67,7 @@ public class Median extends AggregationOperationExpression {
         OperationExpression operationExpression = new ValuesOperation();
         operationExpression.setLeftOperand(valueOperand);
 
-        Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+        Object interpret = operationExpression.interpret(instancesBinding);
 
         if (interpret instanceof ListLiteral) {
 

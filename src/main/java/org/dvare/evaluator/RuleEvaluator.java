@@ -25,7 +25,6 @@ package org.dvare.evaluator;
 
 
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.literal.LiteralExpression;
@@ -44,16 +43,10 @@ public class RuleEvaluator {
         return evaluate(rule, instancesBinding);
     }
 
-
     public Object evaluate(RuleBinding rule, InstancesBinding instancesBinding) throws InterpretException {
 
-        return evaluate(rule, null, instancesBinding);
-    }
-
-    public Object evaluate(RuleBinding rule, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-
         Object result = null;
-        Object ruleRawResult = rule.getExpression().interpret(expressionBinding, instancesBinding);
+        Object ruleRawResult = rule.getExpression().interpret(instancesBinding);
         if (ruleRawResult instanceof LiteralExpression) {
             LiteralExpression literalExpression = (LiteralExpression) ruleRawResult;
             if (literalExpression.getValue() != null) {
@@ -75,12 +68,8 @@ public class RuleEvaluator {
 
 
     public InstancesBinding aggregate(RuleBinding rule, InstancesBinding instancesBinding) throws InterpretException {
-        return aggregate(rule, null, instancesBinding);
-    }
 
-    public InstancesBinding aggregate(RuleBinding rule, ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-
-        rule.getExpression().interpret(expressionBinding, instancesBinding);
+        rule.getExpression().interpret(instancesBinding);
         return instancesBinding;
     }
 }

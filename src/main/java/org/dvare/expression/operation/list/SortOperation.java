@@ -26,7 +26,6 @@ package org.dvare.expression.operation.list;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
@@ -60,7 +59,7 @@ public class SortOperation extends ListOperationExpression {
     }
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         Comparator<Object> pairComparator = (o1, o2) -> {
 
@@ -82,7 +81,7 @@ public class SortOperation extends ListOperationExpression {
 
             OperationExpression valuesOperation = (OperationExpression) leftOperand;
 
-            Object valuesResult = valuesOperation.interpret(expressionBinding, instancesBinding);
+            Object valuesResult = valuesOperation.interpret(instancesBinding);
 
             if (valuesResult instanceof ListLiteral) {
 
@@ -104,7 +103,7 @@ public class SortOperation extends ListOperationExpression {
 
 
         } else {
-            List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
+            List<?> values = extractValues(instancesBinding, leftOperand);
             if (values != null) {
 
                 List<Object> notNullList = new ArrayList<>();
@@ -148,9 +147,9 @@ public class SortOperation extends ListOperationExpression {
                         values.sort((o1, o2) -> {
 
                             try {
-                                ValueType c1 = buildCompareValue(expressionBinding, instancesBinding, chainOperationExpression, variableExpression, o1);
+                                ValueType c1 = buildCompareValue(instancesBinding, chainOperationExpression, variableExpression, o1);
 
-                                ValueType c2 = buildCompareValue(expressionBinding, instancesBinding, chainOperationExpression, variableExpression, o2);
+                                ValueType c2 = buildCompareValue(instancesBinding, chainOperationExpression, variableExpression, o2);
 
                                 if (c1 != null && c1.value != null && c2 != null && c2.value != null) {
 
@@ -175,7 +174,7 @@ public class SortOperation extends ListOperationExpression {
     }
 
 
-    private ValueType buildCompareValue(ExpressionBinding expressionBinding, InstancesBinding instancesBinding,
+    private ValueType buildCompareValue(InstancesBinding instancesBinding,
                                         ChainOperationExpression chainOperationExpression, VariableExpression variableExpression,
                                         Object value) throws InterpretException {
         String name = variableExpression.getName();
@@ -183,7 +182,7 @@ public class SortOperation extends ListOperationExpression {
 
 
         instancesBinding.addInstanceItem(operandType, name, value);
-        Object chainOperationInterpret = chainOperationExpression.interpret(expressionBinding, instancesBinding);
+        Object chainOperationInterpret = chainOperationExpression.interpret(instancesBinding);
         instancesBinding.removeInstanceItem(operandType, name);
 
         if (chainOperationInterpret instanceof LiteralExpression) {

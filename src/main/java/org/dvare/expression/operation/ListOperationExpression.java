@@ -24,12 +24,12 @@
 package org.dvare.expression.operation;
 
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.literal.BooleanLiteral;
+import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.utility.LetOperation;
 import org.dvare.expression.veriable.VariableExpression;
@@ -48,7 +48,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
     }
 
 
-    protected List<?> includedFilter(Expression includeParam, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, List<?> values) throws InterpretException {
+    protected List<?> includedFilter(Expression includeParam, InstancesBinding instancesBinding, List<?> values) throws InterpretException {
 
         if (includeParam instanceof LogicalOperationExpression) {
 
@@ -60,7 +60,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
             List<Object> includedValues = new ArrayList<>();
             for (Object value : values) {
 
-                if (solveLogical(operationExpression, expressionBinding, instancesBinding, value)) {
+                if (solveLogical(operationExpression, instancesBinding, value)) {
                     includedValues.add(value);
                 }
                 operationExpression.setLeftOperand(left);
@@ -73,7 +73,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
             List<Object> includedValues = new ArrayList<>();
             for (Object value : values) {
 
-                Boolean result = buildEqualityOperationExpression(includeParam, expressionBinding, instancesBinding, value);
+                Boolean result = buildEqualityOperationExpression(includeParam, instancesBinding, value);
                 if (result) {
                     includedValues.add(value);
                 }
@@ -87,7 +87,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
 
             BooleanExpression booleanExpression = (BooleanExpression) includeParam;
 
-            Boolean result = toBoolean(booleanExpression.interpret(expressionBinding, instancesBinding));
+            Boolean result = toBoolean(booleanExpression.interpret(instancesBinding));
 
             if (!result) {
                 return new ArrayList<>();
@@ -99,9 +99,9 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
     }
 
 
-    protected List<?> excludedFilter(Expression includeParam, Expression exculdeParam, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, List<?> values) throws InterpretException {
+    protected List<?> excludedFilter(Expression includeParam, Expression exculdeParam, InstancesBinding instancesBinding, List<?> values) throws InterpretException {
 
-        List<?> includedValues = includedFilter(includeParam, expressionBinding, instancesBinding, values);
+        List<?> includedValues = includedFilter(includeParam, instancesBinding, values);
 
 
         if (exculdeParam instanceof LogicalOperationExpression) {
@@ -115,7 +115,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
             List<Object> excludedValues = new ArrayList<>();
             for (Object value : values) {
 
-                Boolean result = solveLogical(operationExpression, expressionBinding, instancesBinding, value);
+                Boolean result = solveLogical(operationExpression, instancesBinding, value);
                 if (result) {
                     excludedValues.add(value);
                 }
@@ -130,7 +130,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
         } else if (exculdeParam instanceof RelationalOperationExpression || exculdeParam instanceof ChainOperationExpression) {
             List<Object> excludedValues = new ArrayList<>();
             for (Object value : includedValues) {
-                Boolean result = buildEqualityOperationExpression(exculdeParam, expressionBinding, instancesBinding, value);
+                Boolean result = buildEqualityOperationExpression(exculdeParam, instancesBinding, value);
                 if (result) {
                     excludedValues.add(value);
                 }
@@ -143,10 +143,10 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
     }
 
 
-    protected Boolean buildEqualityOperationExpression(Expression includeParam, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Object value) throws InterpretException {
+    protected Boolean buildEqualityOperationExpression(Expression includeParam, InstancesBinding instancesBinding, Object value) throws InterpretException {
 
         if (includeParam instanceof BooleanLiteral) {
-            return toBoolean(includeParam);
+            return toBoolean((LiteralExpression) includeParam);
         }
 
 
@@ -170,7 +170,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
 
             instancesBinding.addInstanceItem(operandType, name, value);
 
-            Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+            LiteralExpression interpret = operationExpression.interpret(instancesBinding);
 
             instancesBinding.removeInstanceItem(operandType, name);
 
@@ -181,7 +181,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
 
     }
 
-    protected boolean solveLogical(OperationExpression operationExpression, ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Object value) throws InterpretException {
+    protected boolean solveLogical(OperationExpression operationExpression, InstancesBinding instancesBinding, Object value) throws InterpretException {
 
 
         Expression left = operationExpression.getLeftOperand();
@@ -189,10 +189,10 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
         if (left != null) {
             if (left instanceof LogicalOperationExpression) {
 
-                Boolean result = solveLogical((OperationExpression) left, expressionBinding, instancesBinding, value);
+                Boolean result = solveLogical((OperationExpression) left, instancesBinding, value);
                 operationExpression.setLeftOperand(LiteralType.getLiteralExpression(result, BooleanType.class));
             } else {
-                Boolean result = buildEqualityOperationExpression(left, expressionBinding, instancesBinding, value);
+                Boolean result = buildEqualityOperationExpression(left, instancesBinding, value);
                 operationExpression.setLeftOperand(LiteralType.getLiteralExpression(result, BooleanType.class));
             }
         }
@@ -200,15 +200,15 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
 
         if (right != null) {
             if (right instanceof LogicalOperationExpression) {
-                Boolean result = solveLogical((OperationExpression) right, expressionBinding, instancesBinding, value);
+                Boolean result = solveLogical((OperationExpression) right, instancesBinding, value);
                 operationExpression.setRightOperand(LiteralType.getLiteralExpression(result, BooleanType.class));
             } else {
-                Boolean result = buildEqualityOperationExpression(right, expressionBinding, instancesBinding, value);
+                Boolean result = buildEqualityOperationExpression(right, instancesBinding, value);
                 operationExpression.setRightOperand(LiteralType.getLiteralExpression(result, BooleanType.class));
             }
         }
 
-        boolean result = toBoolean(operationExpression.interpret(expressionBinding, instancesBinding));
+        boolean result = toBoolean(operationExpression.interpret(instancesBinding));
         operationExpression.setLeftOperand(left);
         operationExpression.setRightOperand(right);
         return result;

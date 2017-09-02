@@ -25,7 +25,6 @@ package org.dvare.expression.operation.predefined;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -51,8 +50,8 @@ public class Substring extends ChainOperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
-        pos = super.parse(tokens, pos, stack, expressionBinding, contexts);
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+        pos = super.parse(tokens, pos, stack, contexts);
 
         if (rightOperand.size() != 2) {
             throw new ExpressionParseException(String.format("%s must contain two parameters at %d", getClass().getSimpleName(), pos));
@@ -64,8 +63,8 @@ public class Substring extends ChainOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        Expression leftValueOperand = super.interpretOperand(leftOperand, expressionBinding, instancesBinding);
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+        Expression leftValueOperand = super.interpretOperand(leftOperand, instancesBinding);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if ((literalExpression != null && !(literalExpression instanceof NullLiteral) && rightOperand.size() >= 2)) {
 

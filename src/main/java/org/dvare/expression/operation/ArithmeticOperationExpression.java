@@ -21,12 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.dvare.expression.operation;
 
 import org.dvare.annotations.Type;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.NullType;
@@ -43,14 +41,14 @@ public abstract class ArithmeticOperationExpression extends RelationalOperationE
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        Expression leftExpression = interpretOperandLeft(expressionBinding, instancesBinding, leftOperand);
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+        Expression leftExpression = interpretOperandLeft(instancesBinding, leftOperand);
 
         if (leftExpression == null)
             return new NullLiteral();
 
 
-        LiteralExpression<?> rightExpression = (LiteralExpression) interpretOperandRight(expressionBinding, instancesBinding, rightOperand);
+        LiteralExpression<?> rightExpression = (LiteralExpression) interpretOperandRight(instancesBinding, rightOperand);
         ;
 
         LiteralExpression left = toLiteralExpression(leftExpression);

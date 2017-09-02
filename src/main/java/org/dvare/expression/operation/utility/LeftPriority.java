@@ -21,11 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -43,12 +41,12 @@ public class LeftPriority extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
-        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
         while (!stack.peek().getClass().equals(RightPriority.class)) {
-            pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
+            pos = findNextExpression(tokens, pos + 1, stack, contexts);
         }
 
         if (stack.peek().getClass().equals(RightPriority.class)) {
@@ -60,7 +58,7 @@ public class LeftPriority extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (; pos < tokens.length; pos++) {
@@ -74,7 +72,7 @@ public class LeftPriority extends OperationExpression {
                     return pos;
 
                 } else {
-                    pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
+                    pos = op.parse(tokens, pos, stack, contexts);
                 }
 
 

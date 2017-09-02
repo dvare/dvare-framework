@@ -24,7 +24,6 @@
 package org.dvare.expression.veriable;
 
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataTypeExpression;
@@ -51,7 +50,7 @@ public abstract class VariableExpression<T> extends Expression {
     }
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
         return LiteralType.getLiteralExpression(value, type);
     }
 

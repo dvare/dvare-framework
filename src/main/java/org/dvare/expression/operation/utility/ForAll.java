@@ -26,7 +26,6 @@ package org.dvare.expression.operation.utility;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -70,7 +69,7 @@ public class ForAll extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contextsBinding) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contextsBinding) throws ExpressionParseException {
 
         String derivedContextsBinding = null;
 
@@ -131,7 +130,7 @@ public class ForAll extends OperationExpression {
             }
         }
 
-        pos = findNextExpression(tokens, pos, stack, expressionBinding, contextsBinding);
+        pos = findNextExpression(tokens, pos, stack, contextsBinding);
 
         this.leftOperand = stack.pop();
 
@@ -150,8 +149,8 @@ public class ForAll extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding
-            expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack
+            , ContextsBinding contexts) throws ExpressionParseException {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
@@ -164,7 +163,7 @@ public class ForAll extends OperationExpression {
                 if (op.getClass().equals(EndForAll.class) || op.getClass().equals(EndForEach.class)) {
                     return pos;
                 } else if (!op.getClass().equals(LeftPriority.class)) {
-                    pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
+                    pos = op.parse(tokens, pos, stack, contexts);
                 }
             } else {
 
@@ -179,8 +178,8 @@ public class ForAll extends OperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding,
-                                       InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(
+            InstancesBinding instancesBinding) throws InterpretException {
 
         if (derivedContext != null) {
             if (referenceContext instanceof NamedExpression) {
@@ -195,7 +194,7 @@ public class ForAll extends OperationExpression {
                     for (Object instance : instances) {
                         instancesBinding.addInstance(derivedInstanceBinding, instance);
 
-                        Object result = leftOperand.interpret(expressionBinding, instancesBinding);
+                        LiteralExpression result = leftOperand.interpret(instancesBinding);
                         results.add(toBoolean(result));
 
                     }
@@ -213,7 +212,7 @@ public class ForAll extends OperationExpression {
 
                 ValuesOperation valuesOperation = new ValuesOperation();
                 valuesOperation.setLeftOperand(referenceContext);
-                Object interpret = valuesOperation.interpret(expressionBinding, instancesBinding);
+                Object interpret = valuesOperation.interpret(instancesBinding);
 
                 if (interpret instanceof ListLiteral) {
                     List<Boolean> results = new ArrayList<>();
@@ -225,7 +224,7 @@ public class ForAll extends OperationExpression {
 
                         instancesBinding.addInstance(derivedInstanceBinding, instance);
 
-                        Object result = leftOperand.interpret(expressionBinding, instancesBinding);
+                        LiteralExpression result = leftOperand.interpret(instancesBinding);
                         results.add(toBoolean(result));
 
                     }

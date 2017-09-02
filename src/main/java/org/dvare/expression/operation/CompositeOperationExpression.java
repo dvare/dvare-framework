@@ -24,7 +24,6 @@
 package org.dvare.expression.operation;
 
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
@@ -40,11 +39,11 @@ public class CompositeOperationExpression extends Expression {
     }
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         LiteralExpression result = null;
         for (Expression expression : expressions) {
-            result = expression.interpret(expressionBinding, instancesBinding);
+            result = expression.interpret(instancesBinding);
         }
         return result;
     }

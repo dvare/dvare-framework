@@ -25,7 +25,6 @@ package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.IntegerLiteral;
@@ -51,9 +50,9 @@ public class GetItem extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
+        List<?> values = extractValues(instancesBinding, leftOperand);
 
         if (values != null && !rightOperand.isEmpty()) {
             Expression expression = rightOperand.get(0);
@@ -61,7 +60,7 @@ public class GetItem extends AggregationOperationExpression {
             if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
 
                 OperationExpression operationExpression = (OperationExpression) expression;
-                Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+                Object interpret = operationExpression.interpret(instancesBinding);
                 if (interpret instanceof IntegerLiteral) {
                     return buildItem(values, (IntegerLiteral) interpret, dataTypeExpression);
                 }
@@ -92,7 +91,7 @@ public class GetItem extends AggregationOperationExpression {
                     for (Object value : values) {
 
                         instancesBinding.addInstanceItem(operandType, name, value);
-                        Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+                        LiteralExpression interpret = operationExpression.interpret(instancesBinding);
                         instancesBinding.removeInstanceItem(operandType, name);
 
                         if (toBoolean(interpret)) {

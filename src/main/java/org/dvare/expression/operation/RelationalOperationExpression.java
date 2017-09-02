@@ -21,11 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.dvare.expression.operation;
 
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -72,12 +70,12 @@ public abstract class RelationalOperationExpression extends OperationExpression 
     }
 
 
-    private int expression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts, TokenType tokenType) throws ExpressionParseException {
+    private int expression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts, TokenType tokenType) throws ExpressionParseException {
         Expression expression;
         OperationExpression op = ConfigurationRegistry.INSTANCE.getOperation(tokenType.token);
         if (op != null) {
 
-            pos = op.parse(tokens, pos + 1, stack, expressionBinding, contexts);
+            pos = op.parse(tokens, pos + 1, stack, contexts);
 
             expression = stack.pop();
 
@@ -95,7 +93,7 @@ public abstract class RelationalOperationExpression extends OperationExpression 
             OperationExpression nextOpp = configurationRegistry.getOperation(tokens[pos + 1]);
             if (nextOpp instanceof ChainOperationExpression || nextOpp instanceof AggregationOperationExpression) {
                 stack.push(expression);
-                pos = nextOpp.parse(tokens, pos + 1, stack, expressionBinding, contexts);
+                pos = nextOpp.parse(tokens, pos + 1, stack, contexts);
                 expression = stack.pop();
             } else {
                 break;
@@ -109,7 +107,7 @@ public abstract class RelationalOperationExpression extends OperationExpression 
     }
 
 
-    protected int parseOperands(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    protected int parseOperands(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         String leftString = tokens[pos - 1];
 
@@ -120,7 +118,7 @@ public abstract class RelationalOperationExpression extends OperationExpression 
         // computing expression left side̵
 
         if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof Semicolon) {
-            pos = expression(tokens, pos, stack, expressionBinding, contexts, leftTokenType);
+            pos = expression(tokens, pos, stack, contexts, leftTokenType);
         }
 
         this.leftOperand = stack.pop();
@@ -134,7 +132,7 @@ public abstract class RelationalOperationExpression extends OperationExpression 
 
 
         // computing expression right side̵
-        pos = expression(tokens, pos, stack, expressionBinding, contexts, rightTokenType);
+        pos = expression(tokens, pos, stack, contexts, rightTokenType);
         this.rightOperand = stack.pop();
 
 
@@ -212,11 +210,11 @@ public abstract class RelationalOperationExpression extends OperationExpression 
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         if (pos - 1 >= 0 && tokens.length >= pos + 1) {
 
-            pos = parseOperands(tokens, pos, stack, expressionBinding, contexts);
+            pos = parseOperands(tokens, pos, stack, contexts);
 
             Expression left = this.leftOperand;
             Expression right = this.rightOperand;
@@ -233,12 +231,12 @@ public abstract class RelationalOperationExpression extends OperationExpression 
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (; pos < tokens.length; pos++) {
             OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
-                pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
+                pos = op.parse(tokens, pos, stack, contexts);
                 return pos;
 
             }
@@ -247,16 +245,16 @@ public abstract class RelationalOperationExpression extends OperationExpression 
     }
 
 
-    protected Expression interpretOperandLeft(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression leftOperand) throws InterpretException {
-        return super.interpretOperand(leftOperand, expressionBinding, instancesBinding);
+    protected Expression interpretOperandLeft(InstancesBinding instancesBinding, Expression leftOperand) throws InterpretException {
+        return super.interpretOperand(leftOperand, instancesBinding);
     }
 
 
-    protected Expression interpretOperandRight(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression rightOperand) throws InterpretException {
+    protected Expression interpretOperandRight(InstancesBinding instancesBinding, Expression rightOperand) throws InterpretException {
         LiteralExpression<?> rightExpression = null;
         if (rightOperand instanceof OperationExpression) {
             OperationExpression operation = (OperationExpression) rightOperand;
-            rightExpression = (LiteralExpression) operation.interpret(expressionBinding, instancesBinding);
+            rightExpression = (LiteralExpression) operation.interpret(instancesBinding);
         } else if (rightOperand instanceof LiteralExpression) {
             rightExpression = (LiteralExpression<?>) rightOperand;
         } else if (rightOperand instanceof VariableExpression) {
@@ -278,10 +276,10 @@ public abstract class RelationalOperationExpression extends OperationExpression 
     }
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        Expression leftValueOperand = interpretOperandLeft(expressionBinding, instancesBinding, leftOperand);
-        Expression rightValueOperand = interpretOperandRight(expressionBinding, instancesBinding, rightOperand);
+        Expression leftValueOperand = interpretOperandLeft(instancesBinding, leftOperand);
+        Expression rightValueOperand = interpretOperandRight(instancesBinding, rightOperand);
 
 
         if (leftValueOperand != null && rightValueOperand != null) {

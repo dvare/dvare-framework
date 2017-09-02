@@ -25,7 +25,6 @@ package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -50,7 +49,7 @@ public class Semicolon extends OperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         Expression left = null;
         if (stack.isEmpty()) {
@@ -73,7 +72,7 @@ public class Semicolon extends OperationExpression {
 
 
         // right side
-        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
         if (!stack.isEmpty()) {
             this.rightOperand = stack.pop();
@@ -85,12 +84,12 @@ public class Semicolon extends OperationExpression {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (; pos < tokens.length; pos++) {
             OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
-                pos = op.parse(tokens, pos, stack, expressionBinding, contexts);
+                pos = op.parse(tokens, pos, stack, contexts);
                 if (!(stack.peek() instanceof VariableExpression)) {
                     return pos;
                 }
@@ -103,9 +102,9 @@ public class Semicolon extends OperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        leftOperand.interpret(expressionBinding, instancesBinding);
-        return rightOperand.interpret(expressionBinding, instancesBinding);
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+        leftOperand.interpret(instancesBinding);
+        return rightOperand.interpret(instancesBinding);
 
     }
 

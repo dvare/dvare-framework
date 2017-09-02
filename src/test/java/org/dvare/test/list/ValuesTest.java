@@ -25,7 +25,6 @@ package org.dvare.test.list;
 
 
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.binding.rule.RuleBinding;
@@ -89,6 +88,9 @@ public class ValuesTest {
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
 
+
+        System.out.println();
+
         System.out.println(expression);
 
         assertTrue(result);
@@ -106,11 +108,10 @@ public class ValuesTest {
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
 
-        ExpressionBinding expressionBinding = new ExpressionBinding();
 
         Expression expression = factory.getParser().fromString(
-                "putExp(testExpression,Variable1->substring(2,2)->values()->map(let item:StringType -> substring(2,1) ->toInteger()))" +
-                        "getExp(testExpression)->hasItem(9)", expressionBinding, contexts);
+                "Variable1->substring(2,2)-" +
+                        ">values()->map(let item:StringType -> substring(2,1) ->toInteger())->hasItem(9)", contexts);
 
 
         RuleBinding rule = new RuleBinding(expression);
@@ -137,7 +138,7 @@ public class ValuesTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
 
-        boolean result = (Boolean) evaluator.evaluate(rule, expressionBinding, instancesBinding);
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
         assertTrue(result);
 
     }
@@ -152,11 +153,9 @@ public class ValuesTest {
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
 
-        ExpressionBinding expressionBinding = new ExpressionBinding();
-
         Expression expression = factory.getParser().fromString(
-                "putExp(testExpression,Variable1->substring(2,2)->values())" +
-                        "getExp(testExpression)->map(let item:StringType -> substring(2,1) ->toInteger())->hasItem(9)", expressionBinding, contexts);
+                "Variable1->substring(2,2)->values()" +
+                        "->map(let item:StringType -> substring(2,1) ->toInteger())->hasItem(9)", contexts);
 
 
         RuleBinding rule = new RuleBinding(expression);
@@ -183,7 +182,7 @@ public class ValuesTest {
 
 
         RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(rule, expressionBinding, instancesBinding);
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
         assertTrue(result);
 
     }
@@ -199,7 +198,8 @@ public class ValuesTest {
         contexts.addContext("self", typeBinding);
 
 
-        Expression expression = factory.getParser().fromString("Variable1->substring(2,2)->toInteger()->values()->hasItem(29)", contexts);
+        Expression expression = factory.getParser().fromString("Variable1->substring(2,2)" +
+                "->toInteger()->values()->hasItem(29)", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
 
@@ -291,7 +291,8 @@ public class ValuesTest {
         contexts.addContext("self", typeBinding);
 
 
-        Expression expression = factory.getParser().fromString("Variable1->toInteger()->values()->Sort(let item:IntegerType ->toString()->substring(5,1))->first() = 42453", contexts);
+        Expression expression = factory.getParser().fromString("Variable1->toInteger()->values()" +
+                "->Sort(let item:IntegerType ->toString()->substring(5,1))->first() = 42453", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
 
@@ -424,7 +425,8 @@ public class ValuesTest {
         contexts.addContext("self", typeBinding);
 
 
-        Expression expression = factory.getParser().fromString(" fun ( addFunction , self.Variable2,self.Variable1-> substring(2,2) ->toInteger()) -> values()->notEmpty()", contexts);
+        Expression expression = factory.getParser().fromString(" fun ( addFunction , self.Variable2," +
+                "self.Variable1-> substring(2,2) ->toInteger()) -> values()->notEmpty()", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
 
@@ -464,7 +466,8 @@ public class ValuesTest {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        RuleBinding rule = new RuleBinding(factory.getParser().fromString("[2 ,6 , 8] -> values() -> notEmpty() ", new ContextsBinding()));
+        RuleBinding rule = new RuleBinding(factory.getParser().fromString("[2 ,6 , 8] -> values() -> notEmpty() ",
+                new ContextsBinding()));
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());

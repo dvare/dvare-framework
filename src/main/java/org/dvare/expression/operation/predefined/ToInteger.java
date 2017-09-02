@@ -25,7 +25,6 @@ package org.dvare.expression.operation.predefined;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
@@ -47,8 +46,8 @@ public class ToInteger extends ChainOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        Expression leftValueOperand = super.interpretOperand(leftOperand, expressionBinding, instancesBinding);
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+        Expression leftValueOperand = super.interpretOperand(leftOperand, instancesBinding);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 

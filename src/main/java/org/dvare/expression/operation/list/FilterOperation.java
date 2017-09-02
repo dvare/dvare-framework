@@ -26,7 +26,6 @@ package org.dvare.expression.operation.list;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.ListLiteral;
@@ -46,9 +45,9 @@ public class FilterOperation extends ListOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
+        List<?> values = extractValues(instancesBinding, leftOperand);
 
         if (values != null) {
 
@@ -56,9 +55,9 @@ public class FilterOperation extends ListOperationExpression {
             if (rightOperand.size() == 1) {
                 Expression includeParam = rightOperand.get(0);
                 if (isPairList(values)) {
-                    includedValues = pairFilter(expressionBinding, instancesBinding, includeParam, values);
+                    includedValues = pairFilter(instancesBinding, includeParam, values);
                 } else {
-                    includedValues = includedFilter(includeParam, expressionBinding, instancesBinding, values);
+                    includedValues = includedFilter(includeParam, instancesBinding, values);
                 }
 
 
@@ -70,7 +69,7 @@ public class FilterOperation extends ListOperationExpression {
     }
 
 
-    private List pairFilter(ExpressionBinding expressionBinding, InstancesBinding instancesBinding,
+    private List pairFilter(InstancesBinding instancesBinding,
                             Expression includeParam, List values) throws InterpretException {
         List<Pair> includedValues = new ArrayList<>();
         if (includeParam instanceof LogicalOperationExpression) {
@@ -85,7 +84,7 @@ public class FilterOperation extends ListOperationExpression {
             for (Object value : values) {
                 if (value instanceof Pair) {
                     Pair valuePair = (Pair) value;
-                    Boolean result = solveLogical(operationExpression, expressionBinding, instancesBinding, valuePair.getLeft());
+                    Boolean result = solveLogical(operationExpression, instancesBinding, valuePair.getLeft());
                     if (result) {
                         includedValues.add(valuePair);
                     }
@@ -101,7 +100,7 @@ public class FilterOperation extends ListOperationExpression {
             for (Object value : values) {
                 if (value instanceof Pair) {
                     Pair valuePair = (Pair) value;
-                    Boolean result = buildEqualityOperationExpression(includeParam, expressionBinding,
+                    Boolean result = buildEqualityOperationExpression(includeParam,
                             instancesBinding, valuePair.getLeft());
                     if (result) {
                         includedValues.add(valuePair);

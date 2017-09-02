@@ -25,7 +25,6 @@ package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.ListLiteral;
@@ -54,12 +53,12 @@ public class MapOperation extends ListOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
         if (leftOperand instanceof PairOperation) {
-            List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
+            List<?> values = extractValues(instancesBinding, leftOperand);
             return new ListLiteral(values, dataTypeExpression);
         } else {
-            List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
+            List<?> values = extractValues(instancesBinding, leftOperand);
             if (values != null) {
                 if (rightOperand.isEmpty() || !(rightOperand.get(0) instanceof ChainOperationExpression)) {
                     return new ListLiteral(values, dataTypeExpression);
@@ -91,7 +90,7 @@ public class MapOperation extends ListOperationExpression {
 
                             instancesBinding.addInstanceItem(operandType, name, value);
 
-                            Object chainOperationInterpret = chainOperationExpression.interpret(expressionBinding, instancesBinding);
+                            Object chainOperationInterpret = chainOperationExpression.interpret(instancesBinding);
                             instancesBinding.removeInstanceItem(operandType, name);
 
 

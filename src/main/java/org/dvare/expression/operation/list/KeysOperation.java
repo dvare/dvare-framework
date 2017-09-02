@@ -26,7 +26,6 @@ package org.dvare.expression.operation.list;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
@@ -52,9 +51,9 @@ public class KeysOperation extends ListOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        List<?> pairs = extractValues(expressionBinding, instancesBinding, leftOperand);
+        List<?> pairs = extractValues(instancesBinding, leftOperand);
 
         if (pairs != null && isPairList(pairs)) {
             List pairKeys = extractPairKeys(pairs);

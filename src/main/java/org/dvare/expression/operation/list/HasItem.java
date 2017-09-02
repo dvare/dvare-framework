@@ -25,7 +25,6 @@ package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.BooleanType;
@@ -50,10 +49,10 @@ public class HasItem extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
-        List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
+        List<?> values = extractValues(instancesBinding, leftOperand);
 
 
         if (values != null && !rightOperand.isEmpty()) {
@@ -63,7 +62,7 @@ public class HasItem extends AggregationOperationExpression {
             if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
 
                 OperationExpression operationExpression = (OperationExpression) expression;
-                Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+                Object interpret = operationExpression.interpret(instancesBinding);
                 if (interpret instanceof LiteralExpression) {
 
                     LiteralExpression literalExpression = (LiteralExpression) interpret;
@@ -103,7 +102,7 @@ public class HasItem extends AggregationOperationExpression {
 
                     for (Object value : values) {
                         instancesBinding.addInstanceItem(operandType, name, value);
-                        Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+                        LiteralExpression interpret = operationExpression.interpret(instancesBinding);
                         instancesBinding.removeInstanceItem(operandType, name);
                         if (toBoolean(interpret)) {
                             return LiteralType.getLiteralExpression(true, BooleanType.class);

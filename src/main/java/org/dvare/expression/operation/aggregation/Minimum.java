@@ -25,7 +25,6 @@ package org.dvare.expression.operation.aggregation;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
@@ -49,7 +48,7 @@ public class Minimum extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         Expression right = this.leftOperand;
         if (right instanceof VariableExpression) {
@@ -76,7 +75,7 @@ public class Minimum extends AggregationOperationExpression {
         }
 
 
-        return super.interpret(expressionBinding, instancesBinding);
+        return super.interpret(instancesBinding);
     }
 
 }

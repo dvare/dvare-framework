@@ -25,7 +25,6 @@ package org.dvare.expression.operation.flow;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.ConditionOperationExpression;
@@ -44,13 +43,13 @@ public class ENDIF extends ConditionOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        Boolean result = toBoolean(condition.interpret(expressionBinding, instancesBinding));
+        Boolean result = toBoolean(condition.interpret(instancesBinding));
         if (result) {
-            return thenOperand.interpret(expressionBinding, instancesBinding);
+            return thenOperand.interpret(instancesBinding);
         } else if (elseOperand != null) {
-            return elseOperand.interpret(expressionBinding, instancesBinding);
+            return elseOperand.interpret(instancesBinding);
         }
         return null;
     }

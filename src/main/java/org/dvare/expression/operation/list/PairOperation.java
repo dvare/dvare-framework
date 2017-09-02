@@ -26,7 +26,6 @@ package org.dvare.expression.operation.list;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
@@ -57,10 +56,10 @@ public class PairOperation extends AggregationOperationExpression {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
 
-        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
         if (rightOperand.size() != 2) {
             throw new ExpressionParseException(" Pair Operation must contains 2 params ");
@@ -75,12 +74,12 @@ public class PairOperation extends AggregationOperationExpression {
     }
 
 
-    private ListLiteral buildValues(ExpressionBinding expressionBinding, InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
+    private ListLiteral buildValues(InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
 
         OperationExpression operationExpression = new ValuesOperation();
         operationExpression.setLeftOperand(valueParam);
 
-        Object interpret = operationExpression.interpret(expressionBinding, instancesBinding);
+        Object interpret = operationExpression.interpret(instancesBinding);
 
         if (interpret instanceof ListLiteral) {
 
@@ -92,7 +91,7 @@ public class PairOperation extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         if (rightOperand.size() == 2) {
 
@@ -100,8 +99,8 @@ public class PairOperation extends AggregationOperationExpression {
             Expression valueParam = rightOperand.get(1);
 
 
-            ListLiteral keyListLiteral = buildValues(expressionBinding, instancesBinding, keyParam);
-            ListLiteral valueListLiteral = buildValues(expressionBinding, instancesBinding, valueParam);
+            ListLiteral keyListLiteral = buildValues(instancesBinding, keyParam);
+            ListLiteral valueListLiteral = buildValues(instancesBinding, valueParam);
 
             if (keyListLiteral != null && valueListLiteral != null) {
 

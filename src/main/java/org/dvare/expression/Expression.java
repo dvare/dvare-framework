@@ -24,7 +24,6 @@
 package org.dvare.expression;
 
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.literal.BooleanLiteral;
 import org.dvare.expression.literal.LiteralExpression;
@@ -32,7 +31,7 @@ import org.dvare.expression.literal.LiteralExpression;
 
 public abstract class Expression {
 
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
         return new BooleanLiteral(false);
     }
 

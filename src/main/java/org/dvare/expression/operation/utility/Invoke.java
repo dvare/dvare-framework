@@ -27,7 +27,6 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -61,9 +60,9 @@ public class Invoke extends Function {
 
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
-        pos = findNextExpression(tokens, pos + 1, stack, expressionBinding, contexts);
+        pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
 
         if (logger.isDebugEnabled()) {
@@ -77,7 +76,7 @@ public class Invoke extends Function {
 
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ExpressionBinding expressionBinding, ContextsBinding contexts) throws ExpressionParseException {
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
@@ -124,7 +123,7 @@ public class Invoke extends Function {
 
                     return pos;
                 } else if (!op.getClass().equals(LeftPriority.class)) {
-                    pos = op.parse(tokens, pos, localStack, expressionBinding, contexts);
+                    pos = op.parse(tokens, pos, localStack, contexts);
                 }
             } else {
 
@@ -139,7 +138,7 @@ public class Invoke extends Function {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
         Object value = null;
         if (rightOperand instanceof VariableExpression) {
 
@@ -169,7 +168,7 @@ public class Invoke extends Function {
             if (method == null) {
                 List<Class> parameters = new ArrayList<>();
                 for (Expression expression : functionExpression.getParameters()) {
-                    Object interpret = expression.interpret(expressionBinding, instancesBinding);
+                    Object interpret = expression.interpret(instancesBinding);
                     if (interpret instanceof LiteralExpression) {
                         Object value1 = ((LiteralExpression) interpret).getValue();
                         parameters.add(value1.getClass());
@@ -221,7 +220,7 @@ public class Invoke extends Function {
 
 
         }
-        return interpretFunction(expressionBinding, instancesBinding);
+        return interpretFunction(instancesBinding);
 
     }
 

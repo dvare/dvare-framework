@@ -26,7 +26,6 @@ package org.dvare.expression.operation.list;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
@@ -53,9 +52,9 @@ public class ValuesOperation extends ListOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
+        List<?> values = extractValues(instancesBinding, leftOperand);
 
         if (values != null) {
 
@@ -66,12 +65,12 @@ public class ValuesOperation extends ListOperationExpression {
             if (!rightOperand.isEmpty()) {
                 if (rightOperand.size() == 1) {
                     Expression includeParam = rightOperand.get(0);
-                    values = includedFilter(includeParam, expressionBinding, instancesBinding, values);
+                    values = includedFilter(includeParam, instancesBinding, values);
 
                 } else if (rightOperand.size() == 2) {
                     Expression includeParam = rightOperand.get(0);
                     Expression excludeParam = rightOperand.get(1);
-                    values = excludedFilter(includeParam, excludeParam, expressionBinding, instancesBinding, values);
+                    values = excludedFilter(includeParam, excludeParam, instancesBinding, values);
                 }
             }
 

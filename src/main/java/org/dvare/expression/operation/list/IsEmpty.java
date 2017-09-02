@@ -25,7 +25,6 @@ package org.dvare.expression.operation.list;
 
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
-import org.dvare.binding.expression.ExpressionBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.literal.LiteralExpression;
@@ -48,8 +47,8 @@ public class IsEmpty extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(ExpressionBinding expressionBinding, InstancesBinding instancesBinding) throws InterpretException {
-        List<?> values = extractValues(expressionBinding, instancesBinding, leftOperand);
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+        List<?> values = extractValues(instancesBinding, leftOperand);
 
         if (values != null) {
             return LiteralType.getLiteralExpression(values.size() == 0, BooleanType.class);
