@@ -40,6 +40,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.utility.DefOperation;
+import org.dvare.expression.operation.utility.EndForAll;
 import org.dvare.expression.operation.utility.Semicolon;
 import org.dvare.expression.veriable.*;
 import org.dvare.parser.ExpressionTokenizer;
@@ -82,19 +83,38 @@ public class AssignOperationExpression extends OperationExpression {
                 this.leftOperand = stack.pop();
             }
 
+
+            if (!(this.leftOperand instanceof VariableExpression)) {
+
+                TokenType tokenType = findDataObject(leftString, contexts);
+                if (tokenType.type != null && contexts.getContext(tokenType.type) != null &&
+                        TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                    DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+
+                    // push back
+                    stack.push(this.leftOperand);
+
+                    this.leftOperand = VariableType.getVariableExpression(
+                            tokenType.token, variableType, tokenType.type);
+
+
+                } else {
+
+                    String message = String.format("Left operand of aggregation operation is not variable  near %s",
+                            ExpressionTokenizer.toString(tokens, pos, pos - 5));
+                    logger.error(message);
+                    throw new IllegalPropertyException(message);
+                }
+
+
+            }
+
             pos = findNextExpression(tokens, pos + 1, stack, contexts);
             if (!stack.isEmpty()) {
                 this.rightOperand = stack.pop();
             }
 
-            Expression left = this.leftOperand;
-
-            if (!(left instanceof VariableExpression)) {
-                String message = String.format("Left operand of aggregation operation is not variable  near %s",
-                        ExpressionTokenizer.toString(tokens, pos, pos - 5));
-                logger.error(message);
-                throw new IllegalPropertyException(message);
-            }
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Aggregation OperationExpression Call Expression : {}", getClass().getSimpleName());
@@ -117,8 +137,8 @@ public class AssignOperationExpression extends OperationExpression {
             String token = tokens[pos];
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
-
-                if (op instanceof Semicolon || op instanceof ConditionOperationExpression || op instanceof DefOperation) {
+                if (op instanceof Semicolon || op instanceof ConditionOperationExpression ||
+                        op instanceof EndForAll || op instanceof DefOperation) {
                     return pos - 1;
                 }
                 pos = op.parse(tokens, pos, stack, contexts);

@@ -115,6 +115,7 @@ public class IntegerType extends DataTypeExpression {
         } else {
             Integer rightValue = (Integer) right.getValue();
             return leftValue > rightValue;
+
         }
 
     }

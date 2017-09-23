@@ -40,6 +40,7 @@ public class ClassFinder {
     private static final char PKG_SEPARATOR = '.';
     private static final char DIR_SEPARATOR = '/';
     private static final String CLASS_FILE_SUFFIX = ".class";
+    private static final String JAR_FILE_SUFFIX = ".jar";
     private static final String BAD_PACKAGE_ERROR = "Unable to get resources from path '%s'. Are you sure the package '%s' exists?";
     private static Logger logger = LoggerFactory.getLogger(ClassFinder.class);
 
@@ -65,10 +66,10 @@ public class ClassFinder {
             }
         } else {
             String pathToJar;
-            if (scannedUrl.getPath().contains("file:")) {
-                pathToJar = scannedUrl.getPath().substring(5, scannedUrl.getPath().indexOf(".jar") + 4);
+            if (scannedUrl.getProtocol().equals("file") || scannedUrl.getPath().contains("file:")) {
+                pathToJar = scannedUrl.getPath().substring(5, scannedUrl.getPath().indexOf(JAR_FILE_SUFFIX) + JAR_FILE_SUFFIX.length());
             } else {
-                pathToJar = scannedUrl.getPath().substring(0, scannedUrl.getPath().indexOf(".jar") + 4);
+                pathToJar = scannedUrl.getPath().substring(0, scannedUrl.getPath().indexOf(JAR_FILE_SUFFIX) + JAR_FILE_SUFFIX.length());
             }
             classes.addAll(findJar(pathToJar, scannedPath, annotation));
         }

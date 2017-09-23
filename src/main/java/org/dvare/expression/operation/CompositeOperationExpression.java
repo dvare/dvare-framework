@@ -48,5 +48,16 @@ public class CompositeOperationExpression extends Expression {
         return result;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+        if (expressions != null) {
+            for (Expression expression : expressions) {
+                toStringBuilder.append(expression);
+                toStringBuilder.append(" ");
+            }
+        }
 
+        return toStringBuilder.toString();
+    }
 }

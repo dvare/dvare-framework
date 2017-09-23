@@ -38,6 +38,7 @@ import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.CompositeOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.list.ValuesOperation;
@@ -90,6 +91,7 @@ public class ForAll extends OperationExpression {
 
         TokenType tokenType = findDataObject(((NamedExpression) referenceContext).getName(), contextsBinding);
 
+        //variableForAll
         if (tokenType.type != null && contextsBinding.getContext(tokenType.type) != null &&
                 TypeFinder.findType(tokenType.token, contextsBinding.getContext(tokenType.type)) != null) {
 
@@ -110,16 +112,31 @@ public class ForAll extends OperationExpression {
 
                 DataType dataType = DataType.valueOf(type);
 
-                TypeBinding typeBinding = new TypeBinding();                             // new context
-                typeBinding.addTypes(name, dataType);
-                contextsBinding.addContext(derivedContextsBinding, typeBinding);
+                final String selfPatten = ".{1,}\\..{1,}";
+                if (!name.matches(selfPatten)) {
+                    TypeBinding typeBinding = contextsBinding.getContext(name);
+                    if (typeBinding == null) {
+                        typeBinding = new TypeBinding();
+                    }
+                    typeBinding.addTypes(name, dataType);
+                    contextsBinding.addContext(derivedContextsBinding, typeBinding);
+                } else {
+                    TokenType derivedTokenType = buildTokenType(name);
+                    TypeBinding typeBinding = contextsBinding.getContext(derivedTokenType.type);
+                    if (typeBinding == null) {
+                        typeBinding = new TypeBinding();
+                    }
+                    typeBinding.addTypes(derivedTokenType.token, dataType);
+                    contextsBinding.addContext(derivedTokenType.type, typeBinding);
+                }
+
 
                 derivedContext = new NamedExpression(name);
             }
 
 
         } else {
-
+            //context forALL
             TypeBinding typeBinding = contextsBinding.getContext(((NamedExpression) referenceContext).getName());
             if (contextsBinding.getContext(((NamedExpression) referenceContext).getName()) != null) {
 
@@ -152,8 +169,8 @@ public class ForAll extends OperationExpression {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack
             , ContextsBinding contexts) throws ExpressionParseException {
 
+        Stack<Expression> localStack = new Stack<>();
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-
 
         for (; pos < tokens.length; pos++) {
             String token = tokens[pos];
@@ -161,14 +178,16 @@ public class ForAll extends OperationExpression {
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
                 if (op.getClass().equals(EndForAll.class) || op.getClass().equals(EndForEach.class)) {
+                    stack.add(new CompositeOperationExpression(new ArrayList<>(localStack)));
+                    //stack.push(localStack.pop());
                     return pos;
                 } else if (!op.getClass().equals(LeftPriority.class)) {
-                    pos = op.parse(tokens, pos, stack, contexts);
+                    pos = op.parse(tokens, pos, localStack, contexts);
                 }
             } else {
 
 
-                stack.add(buildExpression(token, contexts));
+                localStack.add(buildExpression(token, contexts));
 
             }
         }
@@ -181,6 +200,7 @@ public class ForAll extends OperationExpression {
     public LiteralExpression interpret(
             InstancesBinding instancesBinding) throws InterpretException {
 
+        //context forALL
         if (derivedContext != null) {
             if (referenceContext instanceof NamedExpression) {
                 Object object = instancesBinding.getInstance(((NamedExpression) referenceContext).getName());
@@ -205,10 +225,10 @@ public class ForAll extends OperationExpression {
 
                 }
 
+                //variableForAll
             } else if (referenceContext instanceof VariableExpression) {
 
                 String derivedInstanceBinding = ((VariableExpression) referenceContext).getName();
-
 
                 ValuesOperation valuesOperation = new ValuesOperation();
                 valuesOperation.setLeftOperand(referenceContext);
@@ -219,10 +239,34 @@ public class ForAll extends OperationExpression {
                     List<?> values = ((ListLiteral) interpret).getValue();
                     for (Object value : values) {
 
-                        DataRow instance = new DataRow();
-                        instance.addData(derivedContext.getName(), value);
 
-                        instancesBinding.addInstance(derivedInstanceBinding, instance);
+                        final String selfPatten = ".{1,}\\..{1,}";
+                        if (!derivedContext.getName().matches(selfPatten)) {
+
+                            Object instance = instancesBinding.getInstance(derivedContext.getName());
+                            if (instance == null) {
+                                instance = new DataRow();
+                            }
+                            if (instance instanceof DataRow) {
+                                DataRow dataRow = DataRow.class.cast(instance);
+                                dataRow.addData(derivedContext.getName(), value);
+                                instancesBinding.addInstance(derivedInstanceBinding, dataRow);
+                            }
+
+                        } else {
+                            TokenType derivedTokenType = buildTokenType(derivedContext.getName());
+                            Object instance = instancesBinding.getInstance(derivedTokenType.type);
+                            if (instance == null) {
+                                instance = new DataRow();
+                            }
+                            if (instance instanceof DataRow) {
+                                DataRow dataRow = DataRow.class.cast(instance);
+                                dataRow.addData(derivedTokenType.token, value);
+                                instancesBinding.addInstance(derivedTokenType.type, dataRow);
+                            }
+
+                        }
+
 
                         LiteralExpression result = leftOperand.interpret(instancesBinding);
                         results.add(toBoolean(result));

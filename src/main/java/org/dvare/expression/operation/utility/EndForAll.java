@@ -39,6 +39,9 @@ public class EndForAll extends OperationExpression {
         super(OperationType.END_FORALL);
     }
 
+    public EndForAll(OperationType operationType) {
+        super(operationType);
+    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {

@@ -29,42 +29,39 @@ import org.dvare.expression.datatype.DataType;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class TypeBinding {
-    private Map<String, Object> types = new LinkedHashMap<>();
+public class TypeBinding extends LinkedHashMap<String, Object> {
 
     public TypeBinding() {
     }
 
     public TypeBinding(Map<String, Object> types) {
         if (types != null) {
-            this.types = types;
+            putAll(types);
         }
     }
 
     public Object getDataType(String name) {
-        if (types.get(name) instanceof String) {
-            return DataType.valueOf((String) types.get(name));
+        if (get(name) instanceof String) {
+            return DataType.valueOf((String) get(name));
         }
-        return types.get(name);
+        return get(name);
     }
 
     public void addTypes(String name, Object type) {
-        this.types.put(name, type);
+        put(name, type);
     }
 
-    @Override
-    public String toString() {
-        return types != null ? types.toString() : "";
-    }
 
 /*Getter and Setters*/
 
     public Map<String, Object> getTypes() {
-        return types;
+        return this;
     }
 
     public void setTypes(Map<String, Object> types) {
-        this.types = types;
+        if (types != null) {
+            putAll(types);
+        }
     }
 
 

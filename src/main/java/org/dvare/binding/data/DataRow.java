@@ -49,6 +49,7 @@ public class DataRow extends LinkedHashMap<String, Object> {
         put(name, value);
     }
 
+    /*Getter and Setters*/
 
     public Map<String, Object> getData() {
         return this;
