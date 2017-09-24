@@ -49,7 +49,7 @@ public enum OperationType {
 
     //Chain Operations
 
-    TO_INTEGER("toInteger", "ToInteger"), TO_STRING("toString", "ToString"),
+    TO_INTEGER("toInteger", "ToInteger"), TO_STRING("toString", "ToString"), TO_Boolean("toBoolean", "ToBoolean"),
     TO_DATE("ToDate", "toDate"), ADD_YEARS("AddYears", "addYears"), ADD_MONTHS("AddMonths", "addMonths"), ADD_DAYS("AddDays", "addDays"),//
     GET_YEARS("GetYears", "getYears"), //
 

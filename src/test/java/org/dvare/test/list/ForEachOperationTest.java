@@ -38,6 +38,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -80,6 +81,43 @@ public class ForEachOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        Assert.assertTrue(result);
+
+    }
+
+
+    @Test
+    public void testApp1() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String exp = "forEach Variable1 tmp.value:StringType | " +
+                "tmp.value->substring(2,2)->toInteger() endForEach  = [81,45,89]";
+
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(ForEachOperation.class));
+
+        Expression expression = factory.getParser().fromString(exp, contexts);
+
+
+        ForEachOperation eachOperation1 = new ForEachOperation();
+        eachOperation1.setVariable1("D81");
+
+
+        ForEachOperation eachOperation2 = new ForEachOperation();
+        eachOperation2.setVariable1("D45F");
+
+
+        ForEachOperation eachOperation3 = new ForEachOperation();
+        eachOperation3.setVariable1("D89");
+
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", Arrays.asList(eachOperation1, eachOperation2, eachOperation3));
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
         Assert.assertTrue(result);
 
     }
