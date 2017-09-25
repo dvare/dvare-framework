@@ -72,7 +72,7 @@ public class DefOperation extends OperationExpression {
                         typeBinding.addTypes(tokenType.token, dataType);
                         contexts.addContext(tokenType.type, typeBinding);
                     } else {
-                        throw new ExpressionParseException(tokenType.type + " already contains " + tokenType.token + "variable ");
+                        throw new ExpressionParseException(tokenType.type + "context already contains " + tokenType.token + " variable ");
                     }
 
                 } else {

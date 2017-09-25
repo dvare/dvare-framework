@@ -69,18 +69,26 @@ public class LetOperation extends OperationExpression {
 
                 String name = parts[0].trim();
                 String type = parts[1].trim();
+                TokenType tokenType = buildTokenType(name);
+
                 DataType dataType = DataType.valueOf(type);
-                if (contexts.getContext("temp") == null) {
 
-                    TypeBinding typeBinding = new TypeBinding();
-                    typeBinding.addTypes(name, dataType);
 
-                    contexts.addContext("temp", typeBinding);
-                } else {
-                    TypeBinding typeBinding = contexts.getContext("temp");
-                    typeBinding.addTypes(name, dataType);
-                    contexts.addContext("temp", typeBinding);
+                if (tokenType.type.equals("self")) {
+                    tokenType.type = "tmp";
                 }
+
+                TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                if (typeBinding == null) {
+                    typeBinding = new TypeBinding();
+                }
+
+                if (typeBinding.getDataType(tokenType.token) == null) {
+                    typeBinding.addTypes(tokenType.token, dataType);
+                    contexts.addContext(tokenType.type, typeBinding);
+                }/*else {
+                    throw new ExpressionParseException(tokenType.type + "context already contains " + tokenType.token + " variable ");
+                }*/
 
 
                 leftOperand = new NamedExpression(token);
@@ -105,9 +113,13 @@ public class LetOperation extends OperationExpression {
             String parts[] = NamedExpression.class.cast(leftOperand).getName().split(":");
             String name = parts[0].trim();
             String type = parts[1].trim();
+            TokenType tokenType = buildTokenType(name);
             DataType dataType = DataType.valueOf(type);
             try {
-                return VariableType.getVariableExpression(name, dataType, "temp");
+                if (tokenType.type.equals("self")) {
+                    tokenType.type = "tmp";
+                }
+                return VariableType.getVariableExpression(tokenType.token, dataType, tokenType.type);
             } catch (IllegalPropertyException e) {
                 logger.error(e.getMessage(), e);
             }
@@ -122,7 +134,8 @@ public class LetOperation extends OperationExpression {
         VariableExpression variableExpression = getVariableExpression();
 
         if (variableExpression != null) {
-            variableExpression = VariableType.setVariableValue(variableExpression, instancesBinding.getInstance(variableExpression.getOperandType()));
+            variableExpression = VariableType.setVariableValue(variableExpression,
+                    instancesBinding.getInstance(variableExpression.getOperandType()));
             return variableExpression.interpret(instancesBinding);
         }
         return new NullLiteral();

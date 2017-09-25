@@ -151,7 +151,7 @@ public class ForAll extends OperationExpression {
 
         this.leftOperand = stack.pop();
 
-        contextsBinding.removeContext(derivedContextsBinding);
+        //contextsBinding.removeContext(derivedContextsBinding);
 
 
         if (logger.isDebugEnabled()) {

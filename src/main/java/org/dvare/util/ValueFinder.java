@@ -34,6 +34,9 @@ import java.util.Iterator;
 public class ValueFinder {
     public static Object findValue(String name, Object object) throws IllegalPropertyValueException {
 
+        if (object == null) {
+            return null;
+        }
         if (object instanceof DataRow) {
             DataRow dataRow = (DataRow) object;
             return dataRow.getValue(name);

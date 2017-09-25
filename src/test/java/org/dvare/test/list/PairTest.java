@@ -81,6 +81,40 @@ public class PairTest {
 
     }
 
+    @Test
+    public void testApp2_1() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+        Expression expression = factory.getParser().fromString("toPair(Variable1,Variable2) -> toKey() = '42964'", contexts);
+
+        assertNotNull(expression);
+
+
+        EqualOperation dataRow = new EqualOperation();
+        dataRow.setVariable1("42964");
+        dataRow.setVariable2(1);
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataRow);
+
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
+        assertTrue(result);
+
+        expression = factory.getParser().fromString("toPair(Variable1,Variable2) -> toValue() = 1", contexts);
+        assertNotNull(expression);
+
+        evaluator = factory.getEvaluator();
+        result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
+        assertTrue(result);
+    }
 
     @Test(expected = ExpressionParseException.class)
     public void testApp3() throws ExpressionParseException, InterpretException {

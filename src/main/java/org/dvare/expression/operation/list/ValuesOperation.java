@@ -86,7 +86,7 @@ public class ValuesOperation extends ListOperationExpression {
         for (Object pairObject : pairList) {
             if (pairObject instanceof Pair) {
                 Pair pair = (Pair) pairObject;
-                if (dataTypeExpression == null) {
+                if (dataTypeExpression == null && pair.getValue() != null) {
                     DataType dataType = DataTypeMapping.getTypeMapping(pair.getValue().getClass());
                     dataTypeExpression = DataTypeMapping.getDataTypeClass(dataType);
                 }
