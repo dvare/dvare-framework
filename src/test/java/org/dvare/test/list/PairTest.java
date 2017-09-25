@@ -64,8 +64,26 @@ public class PairTest {
 
     }
 
+    @Test
+    public void testApp2() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+        Expression expression = factory.getParser().fromString("toPair(Variable1,Variable2)", contexts);
+
+        assertNotNull(expression);
+
+
+    }
+
+
     @Test(expected = ExpressionParseException.class)
-    public void testApp1_1() throws ExpressionParseException, InterpretException {
+    public void testApp3() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -79,7 +97,7 @@ public class PairTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void testApp4() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -132,7 +150,7 @@ public class PairTest {
     }
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void testApp5() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -193,7 +211,7 @@ public class PairTest {
     }
 
     @Test
-    public void testApp3_1() throws ExpressionParseException, InterpretException {
+    public void testApp6() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -239,7 +257,7 @@ public class PairTest {
     }
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException {
+    public void testApp7() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -284,7 +302,7 @@ public class PairTest {
     }
 
     @Test
-    public void testApp5() throws ExpressionParseException, InterpretException {
+    public void testApp8() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -328,7 +346,7 @@ public class PairTest {
     }
 
     @Test
-    public void testApp6() throws ExpressionParseException, InterpretException {
+    public void testApp9() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -372,7 +390,7 @@ public class PairTest {
     }
 
     @Test
-    public void testApp7() throws ExpressionParseException, InterpretException {
+    public void testApp10() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -418,7 +436,7 @@ public class PairTest {
 
 
     @Test
-    public void testApp8() throws ExpressionParseException, InterpretException {
+    public void testApp11() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

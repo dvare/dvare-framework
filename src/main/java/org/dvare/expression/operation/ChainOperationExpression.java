@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -31,6 +31,7 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.expression.operation.utility.LeftPriority;
 import org.dvare.expression.operation.utility.RightPriority;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TypeFinder;
@@ -104,22 +105,18 @@ public abstract class ChainOperationExpression extends OperationExpression {
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
 
-                if (op.getClass().equals(RightPriority.class)) {
+                if (op instanceof RightPriority) {
                     this.rightOperand = new ArrayList<>(localStack);
                     return newPos;
-                } else {
+                } else if (!(op instanceof LeftPriority)) {
 
                     newPos = op.parse(tokens, newPos, localStack, contexts);
                 }
 
 
             } else {
-
-
                 Expression expression = buildExpression(token, contexts);
                 localStack.add(expression);
-
-
             }
         }
         throw new ExpressionParseException(getClass().getSimpleName() + " Closing Bracket Not Found at " + pos);

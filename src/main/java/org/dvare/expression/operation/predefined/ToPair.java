@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.dvare.expression.operation.list;
+package org.dvare.expression.operation.predefined;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.annotations.Operation;
@@ -31,41 +31,29 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.PairType;
-import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
-import org.dvare.expression.operation.AggregationOperationExpression;
-import org.dvare.expression.operation.OperationExpression;
+import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Stack;
 
-@Operation(type = OperationType.PAIR_List)
-public class PairOperation extends AggregationOperationExpression {
-    private static Logger logger = LoggerFactory.getLogger(PairOperation.class);
+@Operation(type = OperationType.TO_PAIR)
+public class ToPair extends ChainOperationExpression {
+    private static Logger logger = LoggerFactory.getLogger(ToPair.class);
 
 
-    public PairOperation() {
-        super(OperationType.PAIR_List);
+    public ToPair() {
+        super(OperationType.TO_PAIR);
     }
 
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
-
-
         pos = findNextExpression(tokens, pos + 1, stack, contexts);
-
-        if (rightOperand.size() != 2) {
-            throw new ExpressionParseException(" Pair Operation must contains 2 params ");
-        }
-
-
         if (logger.isDebugEnabled()) {
             logger.debug("Operation Expression Call Expression : {}", getClass().getSimpleName());
         }
@@ -73,61 +61,21 @@ public class PairOperation extends AggregationOperationExpression {
         return pos;
     }
 
-
-    private ListLiteral buildValues(InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
-
-        OperationExpression operationExpression = new ValuesOperation();
-        operationExpression.setLeftOperand(valueParam);
-
-        Object interpret = operationExpression.interpret(instancesBinding);
-
-        if (interpret instanceof ListLiteral) {
-
-            return (ListLiteral) interpret;
-        }
-
-        return null;
-    }
-
-
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         if (rightOperand.size() == 2) {
-
-            Expression keyParam = rightOperand.get(0);
-            Expression valueParam = rightOperand.get(1);
-
-
-            ListLiteral keyListLiteral = buildValues(instancesBinding, keyParam);
-            ListLiteral valueListLiteral = buildValues(instancesBinding, valueParam);
-
-            if (keyListLiteral != null && valueListLiteral != null) {
-
-                List keys = keyListLiteral.getValue();
-                List values = valueListLiteral.getValue();
+            Expression leftValueOperand = super.interpretOperand(rightOperand.get(0), instancesBinding);
+            Expression rightValueOperand = super.interpretOperand(rightOperand.get(1), instancesBinding);
 
 
-                Iterator leftIterator = keys.iterator();
-                Iterator rightIterator = values.iterator();
+            LiteralExpression keyParam = toLiteralExpression(leftValueOperand);
+            LiteralExpression valueParam = toLiteralExpression(rightValueOperand);
 
-                // dataTypeExpression = valueListLiteral.getType();
+            Pair pair = Pair.of(keyParam.getValue(), valueParam.getValue());
 
-                List<Pair> pairs = new ArrayList<>();
-                while (leftIterator.hasNext() && rightIterator.hasNext()) {
-
-                    Object leftValue = leftIterator.next();
-                    Object rightValue = rightIterator.next();
-
-                    pairs.add(Pair.of(leftValue, rightValue));
-                }
-
-                return new ListLiteral(pairs, PairType.class);
-            }
-
-
+            return LiteralType.getLiteralExpression(pair, PairType.class);
         }
-
 
         return new NullLiteral();
     }
