@@ -24,7 +24,7 @@
 package org.dvare.expression.veriable;
 
 
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.annotations.Type;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.parser.IllegalPropertyException;

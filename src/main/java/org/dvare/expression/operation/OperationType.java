@@ -79,8 +79,9 @@ public enum OperationType {
     TO_KEY("toKey", "ToKey", "getKey", "GetKey"), TO_VALUE("toValue", "ToValue", "getValue", "GetValue"),
 
     // initialization
-    DEF("Def", "def"), LET("let", "Let");
+    DEF("Def", "def"), LET("let", "Let"),
 
+    PRINT("print", "Print", "Log", "log");
 
     private List<String> symbols = new ArrayList<>();
 

@@ -434,7 +434,7 @@ public class PairTest {
 
 
         Expression expression = factory.getParser().fromString("" +
-                "Pair (Variable2,Variable1) ->filter(let temp:IntegerType != 3) " +
+                "Pair (Variable2,Variable1) ->filter(let temp:PairType ->getKey() ->toInteger() != 3) " +
                 "->sort() -> values() ->last() = '42459'", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
@@ -480,8 +480,8 @@ public class PairTest {
 
 
         Expression expression = factory.getParser().fromString("" +
-                "def temp.pairList:PairListType := Pair (Variable2,Variable1) ->filter(let temp:IntegerType != 3) " +
-                "temp.pairList ->values() ->notEmpty() and temp.pairList ->values() = ['42964','42459']", contexts);
+                "def tmp.pairList:PairListType := Pair (Variable2,Variable1) ->filter(let tmp:PairType ->getKey() ->toInteger() != 3) " +
+                "tmp.pairList ->values() ->notEmpty() and tmp.pairList ->values() = ['42964','42459']", contexts);
 
         List<ValuesObject> dataSet = new ArrayList<>();
         ValuesObject valuesObject1 = new ValuesObject();

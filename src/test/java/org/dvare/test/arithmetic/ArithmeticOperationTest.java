@@ -126,4 +126,31 @@ public class ArithmeticOperationTest {
         Assert.assertTrue(result);
     }
 
+
+    @Test
+    public void testApp4() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        String exp = "Variable1 = (Variable2 pow 4)";
+
+        TypeBinding typeBinding = ExpressionParser.translate(ArithmeticOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+        Expression expression = factory.getParser().fromString(exp, contexts);
+        RuleBinding rule = new RuleBinding(expression);
+
+        ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
+        arithmeticOperation.setVariable1(16);
+        arithmeticOperation.setVariable2(2);
+
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", arithmeticOperation);
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        Assert.assertTrue(result);
+    }
+
 }

@@ -84,7 +84,7 @@ public class FilterOperation extends ListOperationExpression {
             for (Object value : values) {
                 if (value instanceof Pair) {
                     Pair valuePair = (Pair) value;
-                    Boolean result = solveLogical(operationExpression, instancesBinding, valuePair.getLeft());
+                    Boolean result = solveLogical(operationExpression, instancesBinding, valuePair);
                     if (result) {
                         includedValues.add(valuePair);
                     }
@@ -101,7 +101,7 @@ public class FilterOperation extends ListOperationExpression {
                 if (value instanceof Pair) {
                     Pair valuePair = (Pair) value;
                     Boolean result = buildEqualityOperationExpression(includeParam,
-                            instancesBinding, valuePair.getLeft());
+                            instancesBinding, valuePair);
                     if (result) {
                         includedValues.add(valuePair);
                     }

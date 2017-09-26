@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.dvare.expression.operation.utility;
+package org.dvare.expression.operation.arithmetic;
 
 
 import org.dvare.annotations.Operation;

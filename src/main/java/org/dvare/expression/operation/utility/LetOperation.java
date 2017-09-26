@@ -63,42 +63,43 @@ public class LetOperation extends OperationExpression {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         String token = tokens[pos];
 
-        if (token.contains(":")) {
-            String parts[] = token.split(":");
-            if (parts.length == 2) {
 
-                String name = parts[0].trim();
-                String type = parts[1].trim();
-                TokenType tokenType = buildTokenType(name);
+        String parts[] = token.split(":");
+        if (parts.length == 2) {
 
-                DataType dataType = DataType.valueOf(type);
+            String name = parts[0].trim();
+            String type = parts[1].trim();
+            TokenType tokenType = buildTokenType(name);
+
+            DataType dataType = DataType.valueOf(type);
 
 
-                if (tokenType.type.equals("self")) {
-                    tokenType.type = "tmp";
-                }
+            if (tokenType.type.equals("self")) {
+                tokenType.type = "tmp";
+            }
 
-                TypeBinding typeBinding = contexts.getContext(tokenType.type);
-                if (typeBinding == null) {
-                    typeBinding = new TypeBinding();
-                }
+            TypeBinding typeBinding = contexts.getContext(tokenType.type);
+            if (typeBinding == null) {
+                typeBinding = new TypeBinding();
+            }
 
-                if (typeBinding.getDataType(tokenType.token) == null) {
-                    typeBinding.addTypes(tokenType.token, dataType);
-                    contexts.addContext(tokenType.type, typeBinding);
-                }/*else {
+            if (typeBinding.getDataType(tokenType.token) == null) {
+                typeBinding.addTypes(tokenType.token, dataType);
+                contexts.addContext(tokenType.type, typeBinding);
+            }/*else {
                     throw new ExpressionParseException(tokenType.type + "context already contains " + tokenType.token + " variable ");
                 }*/
 
 
-                leftOperand = new NamedExpression(token);
+            leftOperand = new NamedExpression(token);
 
                 /*VariableExpression variableExpression = VariableType.getVariableExpression(name, dataType, "temp");
                 stack.push(variableExpression);*/
 
-                stack.push(this);
+            stack.push(this);
 
-            }
+        } else {
+            throw new ExpressionParseException("\"" + token + "\" DataType is missing");
         }
 
 

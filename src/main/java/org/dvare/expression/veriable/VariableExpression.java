@@ -51,6 +51,11 @@ public abstract class VariableExpression<T> extends Expression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+        if (value == null) {
+            Object instance = instancesBinding.getInstance(operandType);
+            VariableType.setVariableValue(this, instance);
+        }
+
         return LiteralType.getLiteralExpression(value, type);
     }
 

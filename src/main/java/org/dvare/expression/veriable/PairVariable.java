@@ -24,7 +24,7 @@
 package org.dvare.expression.veriable;
 
 
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.expression.datatype.PairType;
 
 public class PairVariable extends VariableExpression<Pair> {

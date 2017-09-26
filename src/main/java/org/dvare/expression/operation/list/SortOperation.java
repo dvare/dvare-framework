@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -77,99 +77,74 @@ public class SortOperation extends ListOperationExpression {
         };
 
 
-        if (leftOperand instanceof PairOperation) {
+        List<?> values = extractValues(instancesBinding, leftOperand);
+        if (values != null) {
 
-            OperationExpression valuesOperation = (OperationExpression) leftOperand;
-
-            Object valuesResult = valuesOperation.interpret(instancesBinding);
-
-            if (valuesResult instanceof ListLiteral) {
-
-                List<?> values = ((ListLiteral) valuesResult).getValue();
-                dataTypeExpression = ((ListLiteral) valuesResult).getType();
-
-                List<Object> notNullList = new ArrayList<>();
-                for (Object value : values) {
-                    if (value instanceof Pair && ((Pair) value).getLeft() != null) {
-                        notNullList.add(value);
-                    }
+            List<Object> notNullList = new ArrayList<>();
+            for (Object value : values) {
+                if (value != null) {
+                    notNullList.add(value);
                 }
-                values = notNullList;
-
-
-                values.sort(pairComparator);
-                return new ListLiteral(values, dataTypeExpression);
             }
+            values = notNullList;
 
+            if (rightOperand.isEmpty()) {
 
-        } else {
-            List<?> values = extractValues(instancesBinding, leftOperand);
-            if (values != null) {
-
-                List<Object> notNullList = new ArrayList<>();
-                for (Object value : values) {
-                    if (value != null) {
-                        notNullList.add(value);
-                    }
-                }
-                values = notNullList;
-
-                if (rightOperand.isEmpty()) {
+                if (isPairList(values)) {
+                    values.sort(pairComparator);
+                } else {
                     values.sort(null);
+                }
 
-                    if (isPairList(values)) {
-                        values.sort(pairComparator);
-                    }
+                return new ListLiteral(values, dataTypeExpression);
+
+            } else if (rightOperand.get(0) instanceof ChainOperationExpression) {
+
+                ChainOperationExpression chainOperationExpression = (ChainOperationExpression) rightOperand.get(0);
+
+
+                Expression leftExpression = chainOperationExpression.getLeftOperand();
+
+                while (leftExpression instanceof OperationExpression && !(leftExpression instanceof LetOperation)) {
+                    leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
+                }
+
+
+                if (leftExpression instanceof LetOperation) {
+                    leftExpression = LetOperation.class.cast(leftExpression).getVariableExpression();
+                }
+
+
+                if (leftExpression instanceof VariableExpression) {
+                    VariableExpression variableExpression = (VariableExpression) leftExpression;
+
+
+                    values.sort((o1, o2) -> {
+
+                        try {
+                            ValueType c1 = buildCompareValue(instancesBinding, chainOperationExpression, variableExpression, o1);
+
+                            ValueType c2 = buildCompareValue(instancesBinding, chainOperationExpression, variableExpression, o2);
+
+                            if (c1 != null && c1.value != null && c2 != null && c2.value != null) {
+
+                                return compare(c1.value, c2.value, toDataType(c1.type));
+                            }
+
+
+                        } catch (Exception e) {
+                            return -1;
+                        }
+                        return -1;
+                    });
 
                     return new ListLiteral(values, dataTypeExpression);
 
-                } else if (rightOperand.get(0) instanceof ChainOperationExpression) {
-
-                    ChainOperationExpression chainOperationExpression = (ChainOperationExpression) rightOperand.get(0);
-
-
-                    Expression leftExpression = chainOperationExpression.getLeftOperand();
-
-                    while (leftExpression instanceof OperationExpression && !(leftExpression instanceof LetOperation)) {
-                        leftExpression = ((OperationExpression) leftExpression).getLeftOperand();
-                    }
-
-
-                    if (leftExpression instanceof LetOperation) {
-                        leftExpression = LetOperation.class.cast(leftExpression).getVariableExpression();
-                    }
-
-
-                    if (leftExpression instanceof VariableExpression) {
-                        VariableExpression variableExpression = (VariableExpression) leftExpression;
-
-
-                        values.sort((o1, o2) -> {
-
-                            try {
-                                ValueType c1 = buildCompareValue(instancesBinding, chainOperationExpression, variableExpression, o1);
-
-                                ValueType c2 = buildCompareValue(instancesBinding, chainOperationExpression, variableExpression, o2);
-
-                                if (c1 != null && c1.value != null && c2 != null && c2.value != null) {
-
-                                    return compare(c1.value, c2.value, toDataType(c1.type));
-                                }
-
-
-                            } catch (Exception e) {
-                                return -1;
-                            }
-                            return -1;
-                        });
-
-                        return new ListLiteral(values, dataTypeExpression);
-
-                    }
-
                 }
+
             }
         }
+
         return new NullLiteral();
     }
 

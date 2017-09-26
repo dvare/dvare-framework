@@ -56,38 +56,37 @@ public class DefOperation extends OperationExpression {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         String token = tokens[pos];
 
-        if (token.contains(":")) {
-            String parts[] = token.split(":");
-            if (parts.length == 2) {
 
-                String name = parts[0].trim();
-                String type = parts[1].trim();
-                DataType dataType = DataType.valueOf(type);
+        String parts[] = token.split(":");
+        if (parts.length == 2) {
 
-                TokenType tokenType = buildTokenType(name);
+            String name = parts[0].trim();
+            String type = parts[1].trim();
+            DataType dataType = DataType.valueOf(type);
 
-                if (contexts.getContext(tokenType.type) != null) {
-                    TypeBinding typeBinding = contexts.getContext(tokenType.type);
-                    if (typeBinding.getDataType(tokenType.token) == null) {
-                        typeBinding.addTypes(tokenType.token, dataType);
-                        contexts.addContext(tokenType.type, typeBinding);
-                    } else {
-                        throw new ExpressionParseException(tokenType.type + "context already contains " + tokenType.token + " variable ");
-                    }
+            TokenType tokenType = buildTokenType(name);
 
-                } else {
-                    TypeBinding typeBinding = new TypeBinding();
+            if (contexts.getContext(tokenType.type) != null) {
+                TypeBinding typeBinding = contexts.getContext(tokenType.type);
+                if (typeBinding.getDataType(tokenType.token) == null) {
                     typeBinding.addTypes(tokenType.token, dataType);
                     contexts.addContext(tokenType.type, typeBinding);
+                } else {
+                    throw new ExpressionParseException(tokenType.type + " context already contains \"" + tokenType.token + "\" variable ");
                 }
 
-
-                VariableExpression variableExpression = VariableType.getVariableExpression(tokenType.token, dataType, tokenType.type);
-                stack.push(variableExpression);
-
             } else {
-                throw new ExpressionParseException("variable type not found");
+                TypeBinding typeBinding = new TypeBinding();
+                typeBinding.addTypes(tokenType.token, dataType);
+                contexts.addContext(tokenType.type, typeBinding);
             }
+
+
+            VariableExpression variableExpression = VariableType.getVariableExpression(tokenType.token, dataType, tokenType.type);
+            stack.push(variableExpression);
+
+        } else {
+            throw new ExpressionParseException("\"" + token + "\" DataType is missing");
         }
 
 
