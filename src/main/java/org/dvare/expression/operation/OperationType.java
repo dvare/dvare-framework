@@ -33,7 +33,6 @@ public enum OperationType {
     INVOKE("Invoke", "invoke"),
     FUNCTION("Function", "function", "fun"),//
 
-    ABSOLUTE("Abs", "abs"), //
     Match("Match", "match"),//
     INSIDE_COMB("InsideComb", "insideComb"), COMB_EXISTS("CombExists", "combExists"),//
     BOTH_INSIDE_EXISTS_COMB("InsideExistsComb", "insideExistsComb"), //
@@ -51,6 +50,8 @@ public enum OperationType {
 
     TO_INTEGER("toInteger", "ToInteger"), TO_STRING("toString", "ToString"), TO_Boolean("toBoolean", "ToBoolean"),
     TO_DATE("ToDate", "toDate"), ADD_YEARS("AddYears", "addYears"), ADD_MONTHS("AddMonths", "addMonths"), ADD_DAYS("AddDays", "addDays"),//
+    SET_YEAR("SetYear", "setYear"), SET_MONTH("SetMonth", "setMonth"), SET_DAY("SetDay", "setDay"),//
+
     GET_YEARS("GetYears", "getYears"), //
 
     LENGTH("Length", "length"),//

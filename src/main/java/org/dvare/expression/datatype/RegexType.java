@@ -49,11 +49,8 @@ public class RegexType extends DataTypeExpression {
         String leftValue = (String) left.getValue();
         String rightValue = (String) right.getValue();
 
-        if (!leftValue.matches(rightValue)) {
-            return true;
-        }
+        return !leftValue.matches(rightValue);
 
-        return false;
     }
 
     @OperationMapping(operations = {
@@ -63,11 +60,28 @@ public class RegexType extends DataTypeExpression {
         String leftValue = (String) left.getValue();
         String rightValue = (String) right.getValue();
 
-        if (!leftValue.matches(rightValue)) {
-            return true;
-        }
+        return !leftValue.matches(rightValue);
 
-        return false;
+    }
+
+    @Override
+    public boolean less(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean greater(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
     }
 
     @OperationMapping(operations = {
@@ -97,5 +111,10 @@ public class RegexType extends DataTypeExpression {
     })
     public boolean notIn(LiteralExpression left, LiteralExpression right) {
         return !in(left, right);
+    }
+
+    @Override
+    public boolean between(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
     }
 }

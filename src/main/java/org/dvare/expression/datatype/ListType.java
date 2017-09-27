@@ -67,6 +67,26 @@ public class ListType extends DataTypeExpression {
         return !equal(left, right);
     }
 
+    @Override
+    public boolean less(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean greater(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
 
     @OperationMapping(operations = {
             In.class
@@ -87,6 +107,11 @@ public class ListType extends DataTypeExpression {
     })
     public boolean notIn(LiteralExpression left, LiteralExpression right) {
         return !in(left, right);
+    }
+
+    @Override
+    public boolean between(LiteralExpression left, LiteralExpression right) {
+        return false;
     }
 }
 

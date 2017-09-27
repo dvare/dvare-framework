@@ -34,28 +34,33 @@ import java.util.List;
 public class FunctionExpression extends Expression {
     private static Logger logger = LoggerFactory.getLogger(FunctionExpression.class);
     public FunctionBinding binding;
-    private String name;
+    public Expression name;
     private List<Expression> parameters = new ArrayList<>();
 
-
     public FunctionExpression(String name, FunctionBinding binding) {
+        this(new NamedExpression(name), binding);
+    }
+
+    public FunctionExpression(Expression name, FunctionBinding binding) {
         this.name = name;
         this.binding = binding;
         if (logger.isDebugEnabled()) {
-            logger.debug("FunctionService Name  Expression :  [{}]", name);
+            logger.debug("Function Expression Name  Expression : [{}]", name);
         }
     }
+
+    /*getter and Setters*/
+
 
     public void addParameter(Expression parameter) {
         this.parameters.add(parameter);
     }
 
-
-    public String getName() {
+    public Expression getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(Expression name) {
         this.name = name;
     }
 

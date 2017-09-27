@@ -164,4 +164,9 @@ public class StringType extends DataTypeExpression {
     public boolean notIn(LiteralExpression left, LiteralExpression right) {
         return !in(left, right);
     }
+
+    @Override
+    public boolean between(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
 }

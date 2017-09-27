@@ -61,10 +61,12 @@ public class ToKey extends ChainOperationExpression {
 
             if (pairValue instanceof Pair) {
                 Object key = Pair.class.cast(pairValue).getKey();
-                try {
-                    return LiteralType.getLiteralExpression(key, DataTypeMapping.getTypeMapping(key.getClass()));
-                } catch (IllegalValueException e) {
-                    logger.error(e.getMessage(), e);
+                if (key != null) {
+                    try {
+                        return LiteralType.getLiteralExpression(key, DataTypeMapping.getTypeMapping(key.getClass()));
+                    } catch (IllegalValueException e) {
+                        logger.error(e.getMessage(), e);
+                    }
                 }
             }
         }

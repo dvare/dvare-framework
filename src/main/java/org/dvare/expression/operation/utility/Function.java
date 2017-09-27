@@ -106,7 +106,7 @@ public class Function extends OperationExpression {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         Stack<Expression> localStack = new Stack<>();
-
+        boolean first = true;
         for (; pos < tokens.length; pos++) {
             String token = tokens[pos];
 
@@ -136,15 +136,22 @@ public class Function extends OperationExpression {
                 } else if (!op.getClass().equals(LeftPriority.class)) {
                     pos = op.parse(tokens, pos, localStack, contexts);
                 }
-            } else if (configurationRegistry.getFunction(token) != null) {
+            } else if (configurationRegistry.getFunction(token) != null && first) {
                 FunctionBinding functionBinding = configurationRegistry.getFunction(token);
-                FunctionExpression tableExpression = new FunctionExpression(token, functionBinding);
-                localStack.add(tableExpression);
-
+                FunctionExpression functionExpression = new FunctionExpression(token, functionBinding);
+                localStack.add(functionExpression);
+                first = false;
             } else {
 
+                Expression expression = buildExpression(token, contexts);
+                if (first && expression instanceof VariableExpression) {
+                    FunctionExpression functionExpression = new FunctionExpression(expression, null);
+                    localStack.add(functionExpression);
+                    first = false;
+                } else {
+                    localStack.add(expression);
+                }
 
-                localStack.add(buildExpression(token, contexts));
 
             }
         }
@@ -164,23 +171,38 @@ public class Function extends OperationExpression {
 
         FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
 
+        FunctionBinding functionBinding = functionExpression.getBinding();
 
-        Class<?> params[] = new Class[functionExpression.getParameters().size()];
-        Object values[] = new Object[functionExpression.getParameters().size()];
+        if (functionBinding == null) {
+            LiteralExpression literalExpression = functionExpression.getName().interpret(instancesBinding);
+            ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+            functionBinding = configurationRegistry.getFunction(literalExpression.getValue().toString());
+        }
 
 
-        List<DataType> parameters = functionExpression.getBinding().getParameters();
+        if (functionBinding == null) {
+            return new NullLiteral();
+        }
+
+        List<Expression> functionParameters = functionExpression.getParameters();
+
+        int parmsSize = functionParameters.size();
+        Class<?> params[] = new Class[parmsSize];
+        Object values[] = new Object[parmsSize];
+
+
+        List<DataType> parameters = functionBinding.getParameters();
 
 
         int counter = 0;
-        for (Expression parameterExpression : functionExpression.getParameters()) {
+        for (Expression parameterExpression : functionParameters) {
             DataType parameter = parameters.get(counter);
             Class originalType = DataTypeMapping.getDataTypeMapping(parameter);
 
             if (parameterExpression instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) parameterExpression;
                 LiteralExpression literalExpression;
-                literalExpression = (LiteralExpression) operation.interpret(instancesBinding);
+                literalExpression = operation.interpret(instancesBinding);
 
                 ParamValue paramsValue = buildLiteralParam(literalExpression, originalType);
                 params[counter] = paramsValue.param;
@@ -205,7 +227,7 @@ public class Function extends OperationExpression {
         }
 
 
-        return invokeFunction(functionExpression, params, values);
+        return invokeFunction(functionBinding, params, values);
 
     }
 
@@ -348,11 +370,12 @@ public class Function extends OperationExpression {
         return paramsValue;
     }
 
-    private LiteralExpression invokeFunction(FunctionExpression functionExpression, Class<?> params[], Object values[]) throws InterpretException {
+    private LiteralExpression invokeFunction(FunctionBinding functionBinding, Class<?> params[], Object values[]) throws InterpretException {
 
         try {
-            FunctionBinding functionBinding = functionExpression.getBinding();
-            String functionName = functionExpression.getName();
+
+            String functionName = functionBinding.getMethodName();
+            Class returnType = functionBinding.getReturnType();
             Class<?> functionClass = functionBinding.getFunctionClass();
             Object classInstance = functionBinding.getFunctionInstance();
             Object value = null;
@@ -392,11 +415,11 @@ public class Function extends OperationExpression {
 
             if (value instanceof List) {
                 List list = (List) value;
-                return new ListLiteral(list, functionExpression.binding.getReturnType());
+                return new ListLiteral(list, returnType);
             } else if (value.getClass().isArray()) {
-                return new ListLiteral(Arrays.asList(Object[].class.cast(value)), functionExpression.binding.getReturnType());
+                return new ListLiteral(Arrays.asList(Object[].class.cast(value)), returnType);
             } else {
-                return LiteralType.getLiteralExpression(value, functionExpression.binding.getReturnType());
+                return LiteralType.getLiteralExpression(value, returnType);
             }
         } catch (InvocationTargetException e) {
             Throwable target = e.getTargetException();

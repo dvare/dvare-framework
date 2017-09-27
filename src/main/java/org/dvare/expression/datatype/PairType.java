@@ -24,11 +24,57 @@
 package org.dvare.expression.datatype;
 
 import org.dvare.annotations.Type;
+import org.dvare.expression.literal.LiteralExpression;
 
 @Type(dataType = DataType.PairType)
 public class PairType extends DataTypeExpression {
     public PairType() {
         super(DataType.PairType);
 
+    }
+
+    @Override
+    public boolean equal(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean less(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean greater(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean in(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean between(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
     }
 }

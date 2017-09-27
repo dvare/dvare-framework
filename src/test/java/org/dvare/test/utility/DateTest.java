@@ -115,4 +115,15 @@ public class DateTest {
         Assert.assertTrue(result);
     }
 
+
+    @Test
+    public void testApp8() throws ExpressionParseException, InterpretException {
+        RuleConfiguration factory = new RuleConfiguration();
+        String exp = "date ( 12-05-2016 , dd-MM-yyyy )->setYear(2016)->setMonth(6)->setDay(15) = date ( 15-06-2016 , dd-MM-yyyy )";
+        Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
+        RuleBinding rule = new RuleBinding(expression);
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
+        Assert.assertTrue(result);
+    }
 }

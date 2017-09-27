@@ -23,7 +23,6 @@
  */
 package org.dvare.expression.datatype;
 
-
 import org.dvare.annotations.OperationMapping;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
@@ -36,6 +35,7 @@ import org.dvare.util.DataTypeMapping;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+
 
 public abstract class DataTypeExpression extends Expression {
 
@@ -87,8 +87,9 @@ public abstract class DataTypeExpression extends Expression {
 
     private String getMethodName(Class operation) {
         for (Method method : this.getClass().getMethods()) {
-            Annotation annotation = method.getAnnotation(OperationMapping.class);
-            if (annotation != null) {
+
+            if (method.isAnnotationPresent(OperationMapping.class)) {
+                Annotation annotation = method.getAnnotation(OperationMapping.class);
                 OperationMapping operationMapping = (OperationMapping) annotation;
                 if (Arrays.asList(operationMapping.operations()).contains(operation)) {
                     return method.getName();
@@ -98,6 +99,33 @@ public abstract class DataTypeExpression extends Expression {
         }
         return null;
     }
+
+
+    public abstract boolean equal(LiteralExpression left, LiteralExpression right);
+
+
+    public abstract boolean notEqual(LiteralExpression left, LiteralExpression right);
+
+
+    public abstract boolean less(LiteralExpression left, LiteralExpression right);
+
+
+    public abstract boolean lessEqual(LiteralExpression left, LiteralExpression right);
+
+
+    public abstract boolean greater(LiteralExpression left, LiteralExpression right);
+
+
+    public abstract boolean greaterEqual(LiteralExpression left, LiteralExpression right);
+
+
+    public abstract boolean in(LiteralExpression left, LiteralExpression right);
+
+
+    public abstract boolean notIn(LiteralExpression left, LiteralExpression right);
+
+
+    public abstract boolean between(LiteralExpression left, LiteralExpression right);
 
 
 }

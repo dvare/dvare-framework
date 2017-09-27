@@ -60,11 +60,13 @@ public class ToValue extends ChainOperationExpression {
 
 
             if (pairValue instanceof Pair) {
-                Object key = Pair.class.cast(pairValue).getValue();
-                try {
-                    return LiteralType.getLiteralExpression(key, DataTypeMapping.getTypeMapping(key.getClass()));
-                } catch (IllegalValueException e) {
-                    logger.error(e.getMessage(), e);
+                Object value = Pair.class.cast(pairValue).getValue();
+                if (value != null) {
+                    try {
+                        return LiteralType.getLiteralExpression(value, DataTypeMapping.getTypeMapping(value.getClass()));
+                    } catch (IllegalValueException e) {
+                        logger.error(e.getMessage(), e);
+                    }
                 }
             }
         }
