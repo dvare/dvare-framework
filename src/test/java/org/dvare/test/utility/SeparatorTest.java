@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.dvare.test.aggregation;
+package org.dvare.test.utility;
 
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
@@ -36,12 +36,14 @@ import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
-public class ValueTest {
+public class SeparatorTest {
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
@@ -49,44 +51,52 @@ public class ValueTest {
 
         Map<String, String> aggregationTypes = new HashMap<>();
         aggregationTypes.put("A0", "IntegerType");
-
+        aggregationTypes.put("A1", "IntegerType");
 
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
-        validationTypes.put("V2", "IntegerType");
-
 
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
         contexts.addContext("data", ExpressionParser.translate(validationTypes));
 
-        Expression aggregate = factory.getParser().fromString("A0 := value ( data.V1 * data.V2 * self.A0)", contexts);
+        Expression aggregate = factory.getParser().fromString("self.A0 :=  data.V1 ->sum () ; self.A1 :=data.V1-> maximum (  )", contexts);
+
 
         RuleBinding rule = new RuleBinding(aggregate);
 
 
         Map<String, Object> aggregation = new HashMap<>();
-        aggregation.put("A0", 2);
+        aggregation.put("A0", 0);
+        aggregation.put("A1", 0);
 
 
-        Map<String, Object> dataset = new HashMap<>();
-        dataset.put("V1", 5);
-        dataset.put("V2", 5);
+        List<Object> dataSet = new ArrayList<>();
+        Map<String, Object> d1 = new HashMap<>();
+        d1.put("V1", 10);
+        dataSet.add(new DataRow(d1));
+
+
+        Map<String, Object> d2 = new HashMap<>();
+        d2.put("V1", 20);
+        dataSet.add(new DataRow(d2));
+
+        Map<String, Object> d3 = new HashMap<>();
+        d3.put("V1", 40);
+        dataSet.add(new DataRow(d3));
 
 
         RuleEvaluator evaluator = factory.getEvaluator();
-
-
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", new DataRow(aggregation));
-        instancesBinding.addInstance("data", new DataRow(dataset));
+        instancesBinding.addInstance("data", dataSet);
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
-        boolean result = ValueFinder.findValue("A0", resultModel).equals(50);
-
+        boolean result1 = ValueFinder.findValue("A0", resultModel).equals(70);
+        boolean result2 = ValueFinder.findValue("A1", resultModel).equals(40);
+        boolean result = result1 & result2;
         assertTrue(result);
     }
-
 
 }

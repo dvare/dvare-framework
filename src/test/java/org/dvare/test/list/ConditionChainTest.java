@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.dvare.test.aggregation;
+package org.dvare.test.list;
 
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;

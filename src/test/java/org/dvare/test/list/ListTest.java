@@ -21,33 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.dvare;
+package org.dvare.test.list;
 
-import org.dvare.test.arithmetic.ArithmeticOperationTest;
-import org.dvare.test.builder.BuilderTest;
-import org.dvare.test.predefined.ChainOperationTest;
-import org.dvare.test.relational.BetweenOperationTest;
-import org.dvare.test.relational.BooleanOperationTest;
-import org.dvare.test.relational.EqualOperationTest;
-import org.dvare.test.relational.InOperationTest;
-import org.dvare.test.utility.DateTest;
-import org.dvare.test.utility.ParenthesisTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-
-        EqualOperationTest.class,
-        InOperationTest.class,
-        BetweenOperationTest.class,
-        ParenthesisTest.class,
-        ChainOperationTest.class,
-        BuilderTest.class,
-        BooleanOperationTest.class,
-        ArithmeticOperationTest.class,
-        DateTest.class})
-public class ValidationTest {
-
+        FirstTest.class,
+        ForAllOperationTest.class,
+        ForEachOperationTest.class,
+        LastTest.class,
+        ListLiteralOperationTest.class,
+        ListVariableTest.class,
+        MatchTest.class,
+        PairListTest.class,
+        SizeTest.class,
+        ValuesTest.class,
+        FilterTest.class,
+        MapTest.class,
+})
+public class ListTest {
 }

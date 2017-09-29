@@ -135,7 +135,7 @@ public class ForAllOperationTest {
 
 
         ContextsBinding contexts = new ContextsBinding();
-        contexts.addContext("self", ExpressionParser.translate("{variable:StringListType}"));
+        contexts.addContext("self", "{variable:StringListType}");
 
         Expression expression = factory.getParser().fromString(exp, contexts);
 

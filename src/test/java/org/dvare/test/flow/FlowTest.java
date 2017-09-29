@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.dvare.test.aggregation;
+package org.dvare.test.flow;
 
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
@@ -43,7 +43,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
-public class ConditionTest {
+public class FlowTest {
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
@@ -59,7 +59,8 @@ public class ConditionTest {
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
         contexts.addContext("data", ExpressionParser.translate(validationTypes));
-        Expression aggregate = factory.getParser().fromString("IF data.V1 > 5 THEN self.A1 := data.V1->sum () ELSE self.A1 := data.V1->maximum () ENDIF", contexts);
+        Expression aggregate = factory.getParser().fromString("IF data.V1 > 5 THEN self.A1 := data.V1->sum () " +
+                "ELSE self.A1 := data.V1->maximum () ENDIF", contexts);
 
         RuleBinding rule = new RuleBinding(aggregate);
 
@@ -199,5 +200,54 @@ public class ConditionTest {
 
         assertTrue(result);
     }
+
+
+    /* public void testApp11() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        TypeBinding typeBinding = ExpressionParser.translate(EqualOperation.class);
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", typeBinding);
+
+
+        Expression expression = factory.getParser().fromString("" +
+                "IF self.Variable1 -> length() = 5 " +
+                "THEN (self.Variable1 -> substring(3,2) -> toInteger()) " +
+                "ELSE IF self.Variable1 -> length() = 4 "  +
+                "THEN (self.Variable1 -> substring(2,2) -> toInteger()) " +
+                "ENDIF " +
+                "-> values() -> notEmpty()", contexts);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        List<ValuesObject> dataSet = new ArrayList<>();
+
+
+        ValuesObject valuesObject1 = new ValuesObject();
+        valuesObject1.setVariable1("42964");
+        dataSet.add(valuesObject1);
+
+        ValuesObject valuesObject2 = new ValuesObject();
+        valuesObject2.setVariable1("42453");
+        dataSet.add(valuesObject2);
+
+
+        ValuesObject valuesObject3 = new ValuesObject();
+        valuesObject3.setVariable1("4245");
+        dataSet.add(valuesObject3);
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+
+
+        assertTrue(result);
+
+    }*/
 
 }

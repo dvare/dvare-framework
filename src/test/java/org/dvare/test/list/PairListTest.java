@@ -43,7 +43,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class PairTest {
+public class PairListTest {
 
     @Test
     public void testApp1() throws ExpressionParseException, InterpretException {

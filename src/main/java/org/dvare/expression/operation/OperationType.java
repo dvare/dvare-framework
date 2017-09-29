@@ -73,7 +73,7 @@ public enum OperationType {
 
     MAXIMUM("Maximum", "maximum"), MINIMUM("Minimum", "minimum"),//
     MEAN("Mean", "mean", "Avg", "avg"), MEDIAN("Median", "median"), MODE("Mode", "mode"),//
-    SUM("Sum", "sum"), VALUE("Value", "value"), COLON(";"),//
+    SUM("Sum", "sum"),//
 
 
     PAIR_List("Pair", "pair", "PairList", "pairList"), TO_PAIR("toPair", "ToPair"), KEYS("Keys", "keys"),
@@ -82,6 +82,7 @@ public enum OperationType {
     // initialization
     DEF("Def", "def"), LET("let", "Let"),
 
+    SEPARATOR(";"),//
     PRINT("print", "Print", "Log", "log");
 
     private List<String> symbols = new ArrayList<>();

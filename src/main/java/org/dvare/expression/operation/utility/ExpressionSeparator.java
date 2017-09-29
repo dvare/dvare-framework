@@ -41,10 +41,10 @@ import org.dvare.util.TypeFinder;
 
 import java.util.Stack;
 
-@Operation(type = OperationType.COLON)
-public class Semicolon extends OperationExpression {
-    public Semicolon() {
-        super(OperationType.COLON);
+@Operation(type = OperationType.SEPARATOR)
+public class ExpressionSeparator extends OperationExpression {
+    public ExpressionSeparator() {
+        super(OperationType.SEPARATOR);
     }
 
 

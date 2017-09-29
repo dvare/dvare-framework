@@ -38,7 +38,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
-public class ListLiteralTest {
+public class ListLiteralOperationTest {
 
 
     @Test

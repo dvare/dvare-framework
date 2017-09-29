@@ -41,7 +41,7 @@ import org.junit.Test;
 
 import java.text.ParseException;
 
-public class ChainOperationTest {
+public class PredefinedOperationTest {
 
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {

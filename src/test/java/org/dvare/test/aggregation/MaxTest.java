@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,7 +28,6 @@ import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
-import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
@@ -46,21 +45,18 @@ import static org.junit.Assert.assertTrue;
 public class MaxTest {
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {
-
         RuleConfiguration factory = new RuleConfiguration();
+        final String exp = "self.A0 := data.V1 -> maximum ()";
 
         Map<String, String> aggregationTypes = new HashMap<>();
         aggregationTypes.put("A0", "IntegerType");
-
-
         Map<String, String> validationTypes = new HashMap<>();
         validationTypes.put("V1", "IntegerType");
 
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
         contexts.addContext("data", ExpressionParser.translate(validationTypes));
-        Expression aggregate = factory.getParser().fromString("self.A0 := data.V1 -> maximum ()", contexts);
-
+        Expression aggregate = factory.getParser().fromString(exp, contexts);
 
         RuleBinding rule = new RuleBinding(aggregate);
 
@@ -74,7 +70,6 @@ public class MaxTest {
         d1.put("V1", 10);
         dataSet.add(new DataRow(d1));
 
-
         Map<String, Object> d2 = new HashMap<>();
         d2.put("V1", 20);
         dataSet.add(new DataRow(d2));
@@ -83,11 +78,10 @@ public class MaxTest {
         d3.put("V1", 40);
         dataSet.add(new DataRow(d3));
 
-        RuleEvaluator evaluator = factory.getEvaluator();
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", new DataRow(aggregation));
         instancesBinding.addInstance("data", dataSet);
-        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
+        Object resultModel = factory.getEvaluator().aggregate(rule, instancesBinding).getInstance("self");
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(40);
 
@@ -103,7 +97,7 @@ public class MaxTest {
         Expression expression = factory.getParser().fromString("[1,9,5] -> maximum () = 9", new ContextsBinding());
 
 
-        boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding(new HashMap<>()));
+        boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding());
 
         assertTrue(result);
     }

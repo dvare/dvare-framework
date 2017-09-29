@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -41,7 +41,7 @@ import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.utility.DefOperation;
 import org.dvare.expression.operation.utility.EndForAll;
-import org.dvare.expression.operation.utility.Semicolon;
+import org.dvare.expression.operation.utility.ExpressionSeparator;
 import org.dvare.expression.veriable.*;
 import org.dvare.parser.ExpressionTokenizer;
 import org.dvare.util.TrimString;
@@ -70,7 +70,7 @@ public class AssignOperationExpression extends OperationExpression {
 
             String leftString = tokens[pos - 1];
 
-            if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof Semicolon) {
+            if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof ExpressionSeparator) {
                 TokenType tokenType = findDataObject(leftString, contexts);
                 if (tokenType.type != null && contexts.getContext(tokenType.type) != null &&
                         TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
@@ -137,14 +137,14 @@ public class AssignOperationExpression extends OperationExpression {
             String token = tokens[pos];
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
-                if (op instanceof Semicolon || op instanceof ConditionOperationExpression ||
+                if (op instanceof ExpressionSeparator || op instanceof ConditionOperationExpression ||
                         op instanceof EndForAll || op instanceof DefOperation) {
                     return pos - 1;
                 }
                 pos = op.parse(tokens, pos, stack, contexts);
             } else {
                 Expression expression = buildExpression(token, contexts);
-                if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof Semicolon) {
+                if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof ExpressionSeparator) {
                     stack.add(expression);
                 } else {
                     return pos;
