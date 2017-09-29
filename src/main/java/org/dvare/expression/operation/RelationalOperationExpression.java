@@ -47,6 +47,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * @author Muhammad Hammad
+ * @since 2016-06-30
+ */
 public abstract class RelationalOperationExpression extends OperationExpression {
     protected static Logger logger = LoggerFactory.getLogger(RelationalOperationExpression.class);
 

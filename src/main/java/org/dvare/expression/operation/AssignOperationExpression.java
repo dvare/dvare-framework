@@ -54,6 +54,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * @author Muhammad Hammad
+ * @since 2016-06-30
+ */
 @Operation(type = OperationType.ASSIGN)
 public class AssignOperationExpression extends OperationExpression {
     private static Logger logger = LoggerFactory.getLogger(AssignOperationExpression.class);

@@ -57,6 +57,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * @author Muhammad Hammad
+ * @since 2016-06-30
+ */
 public abstract class AggregationOperationExpression extends OperationExpression {
     private static Logger logger = LoggerFactory.getLogger(AggregationOperationExpression.class);
     protected List<Expression> rightOperand = new ArrayList<>();
