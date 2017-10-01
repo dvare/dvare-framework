@@ -66,24 +66,20 @@ public class HasItem extends AggregationOperationExpression {
             if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
 
                 OperationExpression operationExpression = (OperationExpression) expression;
-                Object interpret = operationExpression.interpret(instancesBinding);
-                if (interpret instanceof LiteralExpression) {
+                LiteralExpression literalExpression = operationExpression.interpret(instancesBinding);
 
-                    LiteralExpression literalExpression = (LiteralExpression) interpret;
-                    Object item = literalExpression.getValue();
+                Object item = literalExpression.getValue();
 
-                    if (item != null && !values.isEmpty() && (dataTypeExpression.equals(literalExpression.getType()))) {
-                        for (Object value : values) {
-                            if (value != null && value.equals(item)) {
-                                return LiteralType.getLiteralExpression(true, BooleanType.class);
-                            }
+                if (item != null && !values.isEmpty() && (dataTypeExpression.equals(literalExpression.getType()))) {
+                    for (Object value : values) {
+                        if (value != null && value.equals(item)) {
+                            return LiteralType.getLiteralExpression(true, BooleanType.class);
                         }
                     }
-
                 }
 
 
-            } else if (expression instanceof RelationalOperationExpression) {
+            } else if (expression instanceof RelationalOperationExpression || expression instanceof ChainOperationExpression) {
                 OperationExpression operationExpression = (OperationExpression) expression;
 
 

@@ -28,7 +28,6 @@ import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.IntegerType;
-import org.dvare.expression.literal.IntegerLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -63,19 +62,14 @@ public class ItemPosition extends AggregationOperationExpression {
             if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
 
                 OperationExpression operationExpression = (OperationExpression) expression;
-                Object interpret = operationExpression.interpret(instancesBinding);
-                if (interpret instanceof LiteralExpression) {
+                LiteralExpression interpret = operationExpression.interpret(instancesBinding);
 
-                    Object item = ((LiteralExpression) interpret).getValue();
-                    if (item != null) {
-
-                        return LiteralType.getLiteralExpression(values.indexOf(item), IntegerType.class);
-                    }
-
+                Object item = interpret.getValue();
+                if (item != null) {
+                    return LiteralType.getLiteralExpression(values.indexOf(item) + 1, IntegerType.class);
                 }
 
-
-            } else if (expression instanceof RelationalOperationExpression) {
+            } else if (expression instanceof RelationalOperationExpression || expression instanceof ChainOperationExpression) {
 
 
                 OperationExpression operationExpression = (OperationExpression) expression;
@@ -98,9 +92,7 @@ public class ItemPosition extends AggregationOperationExpression {
                     String name = variableExpression.getName();
                     String operandType = variableExpression.getOperandType();
 
-
                     for (Object value : values) {
-
 
                         instancesBinding.addInstanceItem(operandType, name, value);
                         LiteralExpression interpret = operationExpression.interpret(instancesBinding);
@@ -111,7 +103,7 @@ public class ItemPosition extends AggregationOperationExpression {
                         if (result) {
 
 
-                            return LiteralType.getLiteralExpression(values.indexOf(value), IntegerType.class);
+                            return LiteralType.getLiteralExpression(values.indexOf(value) + 1, IntegerType.class);
 
                         }
 
@@ -119,11 +111,11 @@ public class ItemPosition extends AggregationOperationExpression {
 
                 }
 
-            } else if (expression instanceof IntegerLiteral) {
+            } else if (expression instanceof LiteralExpression) {
                 Object item = ((LiteralExpression) expression).getValue();
                 if (item != null) {
 
-                    return LiteralType.getLiteralExpression(values.indexOf(item), IntegerType.class);
+                    return LiteralType.getLiteralExpression(values.indexOf(item) + 1, IntegerType.class);
                 }
 
             }

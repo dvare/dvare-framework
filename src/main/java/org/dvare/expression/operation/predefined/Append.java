@@ -53,30 +53,24 @@ public class Append extends ChainOperationExpression {
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
-            if (literalExpression.getValue() == null) {
-                return new NullLiteral<>();
+            if (literalExpression.getValue() != null) {
+
+
+                String value = literalExpression.getValue().toString();
+                value = TrimString.trim(value);
+
+
+                LiteralExpression appendExpression = (LiteralExpression) rightOperand.get(0);
+
+                String append = appendExpression.getValue().toString();
+
+                append = TrimString.trim(append);
+
+                value = value.concat(append);
+
+                return LiteralType.getLiteralExpression(value, StringType.class);
+
             }
-
-            String value = literalExpression.getValue().toString();
-            value = TrimString.trim(value);
-
-
-            LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
-
-            String start;
-            if (startExpression.getValue() instanceof Integer) {
-                start = (String) startExpression.getValue();
-            } else {
-                start = startExpression.getValue().toString();
-            }
-
-            start = TrimString.trim(start);
-
-            value = value.concat(start);
-
-            return LiteralType.getLiteralExpression(value, StringType.class);
-
-
         }
 
         return new NullLiteral<>();

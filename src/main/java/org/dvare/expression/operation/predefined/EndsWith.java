@@ -26,8 +26,8 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -53,33 +53,22 @@ public class EndsWith extends ChainOperationExpression {
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
-            if (literalExpression.getValue() == null) {
-                return new NullLiteral<>();
-            }
-
-            String value = literalExpression.getValue().toString();
-            value = TrimString.trim(value);
+            if (literalExpression.getValue() != null) {
 
 
-            LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
+                String value = literalExpression.getValue().toString();
+                value = TrimString.trim(value);
 
-            String end;
-            if (startExpression.getValue() instanceof Integer) {
-                end = (String) startExpression.getValue();
-            } else {
-                end = startExpression.getValue().toString();
-            }
+                LiteralExpression endswithExpression = (LiteralExpression) rightOperand.get(0);
 
-            end = TrimString.trim(end);
+                String endswith = endswithExpression.getValue().toString();
 
-            Boolean result = value.endsWith(end);
-            try {
-                return LiteralType.getLiteralExpression(result.toString(), DataType.BooleanType);
+                endswith = TrimString.trim(endswith);
 
-            } catch (IllegalValueException e) {
+                Boolean result = value.endsWith(endswith);
+                return LiteralType.getLiteralExpression(result.toString(), BooleanType.class);
 
             }
-
         }
 
         return new NullLiteral<>();

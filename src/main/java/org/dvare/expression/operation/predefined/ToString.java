@@ -55,27 +55,23 @@ public class ToString extends ChainOperationExpression {
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
+            if (literalExpression.getValue() != null) {
 
-            if (literalExpression.getValue() == null) {
-                return new NullLiteral();
+                Object value = literalExpression.getValue();
+                String valueString;
+
+                if (value instanceof LocalDate) {
+                    LocalDate localDate = (LocalDate) value;
+                    valueString = LiteralType.dateFormat.format(localDate);
+                } else {
+                    valueString = value.toString();
+                }
+
+                if (valueString != null) {
+                    return LiteralType.getLiteralExpression(valueString, StringType.class);
+                }
+
             }
-
-            Object value = literalExpression.getValue();
-            String valueString;
-
-
-            if (value instanceof LocalDate) {
-                LocalDate localDate = (LocalDate) value;
-                valueString = LiteralType.dateFormat.format(localDate);
-            } else {
-                valueString = value.toString();
-            }
-
-            if (valueString != null) {
-                return LiteralType.getLiteralExpression(valueString, StringType.class);
-            }
-
-
         }
 
         return new NullLiteral<>();

@@ -53,22 +53,19 @@ public class Length extends ChainOperationExpression {
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-
         Expression leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
+            if (literalExpression.getValue() != null) {
 
-            if (literalExpression.getValue() == null) {
-                return new NullLiteral();
-            }
-
-            switch (toDataType(literalExpression.getType())) {
-                case StringType: {
-                    return LiteralType.getLiteralExpression(literalExpression.getValue().toString().length(), IntegerType.class);
+                switch (toDataType(literalExpression.getType())) {
+                    case StringType: {
+                        return LiteralType.getLiteralExpression(literalExpression.getValue().toString().length(), IntegerType.class);
+                    }
                 }
-            }
 
+            }
         }
 
         return new NullLiteral<>();

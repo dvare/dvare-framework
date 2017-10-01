@@ -70,7 +70,7 @@ public enum OperationType {
     FORALL("forAll", "ForAll"), END_FORALL("endForAll", "EndForAll"), FOREACH("forEach", "ForEach"), END_FOREACH("endForEach", "EndForEach"), //
 
     VALUES("Values", "values"), FILTER("Filter", "filter"), MAP("Map", "map"), SORT("Sort", "sort"), //
-    GET_ITEM("GetItem", "getItem"), HAS_ITEM("HasItem", "hasItem"), ITEM_POSITION("ItemPosition", "itemPosition"),//
+    GET_ITEM("GetItem", "getItem"), HAS_ITEM("HasItem", "hasItem"), ITEM_POSITION("ItemPosition", "itemPosition", "itemPos"),//
 
     FIRST("First", "first"), LAST("Last", "last"),//
     SIZE("Size", "size"), NOT_EMPTY("notEmpty", "NotEMPTY"), IS_EMPTY("isEmpty", "ISEMPTY"),//

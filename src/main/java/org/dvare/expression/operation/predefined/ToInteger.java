@@ -55,82 +55,75 @@ public class ToInteger extends ChainOperationExpression {
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
-            if (literalExpression.getValue() == null) {
-                return new NullLiteral();
-            }
+            if (literalExpression.getValue() != null) {
 
 
-            Object value = literalExpression.getValue();
+                Object value = literalExpression.getValue();
 
-            switch (toDataType(literalExpression.getType())) {
-                case StringType: {
-
-
-                    String stringValue = TrimString.trim(value.toString());
-
-                    try {
-                        LiteralExpression returnExpression = LiteralType.getLiteralExpression(Integer.parseInt(stringValue), DataType.IntegerType);
-                        return returnExpression;
-                    } catch (IllegalValueException e) {
-                        logger.error(e.getMessage(), e);
-                    } catch (NumberFormatException e) {
-                        logger.error(e.getMessage(), e);
-                    }
-                }
-
-                case IntegerType: {
-
-                    Integer integer = null;
-                    if (value instanceof Integer) {
-                        integer = (Integer) value;
+                switch (toDataType(literalExpression.getType())) {
+                    case StringType: {
 
 
-                    } else {
-                        if (value != null) {
-                            integer = Integer.parseInt(value.toString());
+                        String stringValue = TrimString.trim(value.toString());
 
-                        }
-                    }
-
-                    if (integer != null) {
                         try {
-                            LiteralExpression returnExpression = LiteralType.getLiteralExpression(integer, DataType.IntegerType);
-                            return returnExpression;
+                            return LiteralType.getLiteralExpression(Integer.parseInt(stringValue), DataType.IntegerType);
                         } catch (IllegalValueException | NumberFormatException e) {
                             logger.error(e.getMessage(), e);
                         }
                     }
 
-                }
-                case FloatType: {
-                    Float aFloat = null;
-                    if (value instanceof Float) {
-                        aFloat = (Float) value;
+                    case IntegerType: {
+
+                        Integer integer = null;
+                        if (value instanceof Integer) {
+                            integer = (Integer) value;
 
 
-                    } else {
-                        if (value != null) {
-                            aFloat = Float.parseFloat(value.toString());
+                        } else {
+                            if (value != null) {
+                                integer = Integer.parseInt(value.toString());
 
+                            }
                         }
-                    }
 
-                    if (aFloat != null) {
-                        try {
-                            LiteralExpression returnExpression = LiteralType.getLiteralExpression(Math.round(aFloat), DataType.IntegerType);
-                            return returnExpression;
-                        } catch (IllegalValueException | NumberFormatException e) {
-                            logger.error(e.getMessage(), e);
+                        if (integer != null) {
+                            try {
+                                return LiteralType.getLiteralExpression(integer, DataType.IntegerType);
+                            } catch (IllegalValueException | NumberFormatException e) {
+                                logger.error(e.getMessage(), e);
+                            }
                         }
-                    }
 
+                    }
+                    case FloatType: {
+                        Float aFloat = null;
+                        if (value instanceof Float) {
+                            aFloat = (Float) value;
+
+
+                        } else {
+                            if (value != null) {
+                                aFloat = Float.parseFloat(value.toString());
+
+                            }
+                        }
+
+                        if (aFloat != null) {
+                            try {
+                                return LiteralType.getLiteralExpression(Math.round(aFloat), DataType.IntegerType);
+                            } catch (IllegalValueException | NumberFormatException e) {
+                                logger.error(e.getMessage(), e);
+                            }
+                        }
+
+                    }
                 }
+
             }
 
 
         }
-
         return new NullLiteral<>();
     }
-
 }

@@ -49,17 +49,13 @@ public class RuleEvaluator {
 
     public Object evaluate(RuleBinding rule, InstancesBinding instancesBinding) throws InterpretException {
 
-        Object result = null;
-        Object ruleRawResult = rule.getExpression().interpret(instancesBinding);
-        if (ruleRawResult instanceof LiteralExpression) {
-            LiteralExpression literalExpression = (LiteralExpression) ruleRawResult;
-            if (literalExpression.getValue() != null) {
-                result = literalExpression.getValue();
-            }
-        } else {
-            result = ruleRawResult;
+        LiteralExpression literalExpression = rule.getExpression().interpret(instancesBinding);
+
+        if (literalExpression.getValue() != null) {
+            return literalExpression.getValue();
         }
-        return result;
+
+        return null;
     }
 
 

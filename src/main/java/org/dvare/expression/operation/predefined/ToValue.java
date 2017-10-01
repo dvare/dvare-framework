@@ -55,21 +55,18 @@ public class ToValue extends ChainOperationExpression {
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
+            if (literalExpression.getValue() != null) {
 
-            if (literalExpression.getValue() == null) {
-                return new NullLiteral();
-            }
+                Object pairValue = literalExpression.getValue();
 
-            Object pairValue = literalExpression.getValue();
-
-
-            if (pairValue instanceof Pair) {
-                Object value = Pair.class.cast(pairValue).getValue();
-                if (value != null) {
-                    try {
-                        return LiteralType.getLiteralExpression(value, DataTypeMapping.getTypeMapping(value.getClass()));
-                    } catch (IllegalValueException e) {
-                        logger.error(e.getMessage(), e);
+                if (pairValue instanceof Pair) {
+                    Object value = Pair.class.cast(pairValue).getValue();
+                    if (value != null) {
+                        try {
+                            return LiteralType.getLiteralExpression(value, DataTypeMapping.getTypeMapping(value.getClass()));
+                        } catch (IllegalValueException e) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                 }
             }

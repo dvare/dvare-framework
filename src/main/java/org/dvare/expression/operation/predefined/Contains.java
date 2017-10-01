@@ -26,8 +26,8 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -53,33 +53,24 @@ public class Contains extends ChainOperationExpression {
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
-            if (literalExpression.getValue() == null) {
-                return new NullLiteral<>();
-            }
+            if (literalExpression.getValue() != null) {
 
-            String value = literalExpression.getValue().toString();
-            value = TrimString.trim(value);
+                String value = literalExpression.getValue().toString();
+                value = TrimString.trim(value);
 
 
-            LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
+                LiteralExpression containsExpression = (LiteralExpression) rightOperand.get(0);
 
-            String start;
-            if (startExpression.getValue() instanceof Integer) {
-                start = (String) startExpression.getValue();
+                String contains = containsExpression.getValue().toString();
+
+                contains = TrimString.trim(contains);
+
+                Boolean result = value.contains(contains);
+                return LiteralType.getLiteralExpression(result, BooleanType.class);
+
             } else {
-                start = startExpression.getValue().toString();
+                return LiteralType.getLiteralExpression(false, BooleanType.class);
             }
-
-            start = TrimString.trim(start);
-
-            Boolean result = value.contains(start);
-
-            try {
-                LiteralExpression returnExpression = LiteralType.getLiteralExpression(result.toString(), DataType.BooleanType);
-                return returnExpression;
-            } catch (IllegalValueException e) {
-            }
-
         }
 
         return new NullLiteral<>();

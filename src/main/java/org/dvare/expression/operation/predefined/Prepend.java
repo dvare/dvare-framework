@@ -52,30 +52,25 @@ public class Prepend extends ChainOperationExpression {
         LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
         if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
-            if (literalExpression.getValue() == null) {
-                return new NullLiteral<>();
+            if (literalExpression.getValue() != null) {
+
+                String value = literalExpression.getValue().toString();
+                value = TrimString.trim(value);
+
+
+                LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
+
+                String prepend = startExpression.getValue().toString();
+
+                prepend = TrimString.trim(prepend);
+                if (prepend != null && !prepend.isEmpty()) {
+                    value = prepend + value;
+                }
+                return LiteralType.getLiteralExpression(value, StringType.class);
+
             }
-
-            String value = literalExpression.getValue().toString();
-            value = TrimString.trim(value);
-
-
-            LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
-
-            String prepend;
-            if (startExpression.getValue() instanceof Integer) {
-                prepend = (String) startExpression.getValue();
-            } else {
-                prepend = startExpression.getValue().toString();
-            }
-            prepend = TrimString.trim(prepend);
-            if (prepend != null && !prepend.isEmpty()) {
-                value = new String(prepend + value);
-            }
-            LiteralExpression returnExpression = LiteralType.getLiteralExpression(value, StringType.class);
-            return returnExpression;
-
         }
+
 
         return new NullLiteral<>();
     }
