@@ -72,28 +72,17 @@ public class IF extends ConditionOperationExpression {
 
 
                     if (operation instanceof THEN) {
+                        pos = operation.parse(tokens, pos, stack, contexts);
+                        this.thenOperand = stack.pop();
 
-                        for (; pos < tokens.length; pos++) {
-                            token = tokens[pos];
-                            operation = configurationRegistry.getOperation(token);
-
-                            if (operation instanceof ELSE || operation instanceof ENDIF) {
-                                this.thenOperand = stack.pop();
-                                pos--;
-                                break;
-                            } else if (operation != null) {
-                                pos = operation.parse(tokens, pos, stack, contexts);
-                            }
-                        }
-
-                        if (thenOperand == null) {
-                            throw new ExpressionParseException("ENDIF not found");
-                        }
 
                     } else if (operation instanceof ELSE) {
                         pos = operation.parse(tokens, pos, stack, contexts);
                         this.elseOperand = stack.pop();
 
+                        if (elseOperand instanceof ConditionOperationExpression) {
+                            return pos;
+                        }
 
                     } else if (operation instanceof ENDIF) {
                         return pos;
@@ -111,9 +100,6 @@ public class IF extends ConditionOperationExpression {
                         } else if (operation != null) {
                             pos = operation.parse(tokens, pos, stack, contexts);
                         }
-                    }
-                    if (condition == null) {
-                        throw new ExpressionParseException("THEN Operand not found");
                     }
                 }
             }

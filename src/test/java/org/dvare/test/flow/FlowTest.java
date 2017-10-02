@@ -155,61 +155,6 @@ public class FlowTest {
 
         assertTrue(result);
     }
-
-    @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
-
-        RuleConfiguration factory = new RuleConfiguration();
-
-        Map<String, String> aggregationTypes = new HashMap<>();
-        aggregationTypes.put("A0", "IntegerType");
-        aggregationTypes.put("A1", "IntegerType");
-
-        Map<String, String> validationTypes = new HashMap<>();
-        validationTypes.put("V1", "IntegerType");
-
-        ContextsBinding contexts = new ContextsBinding();
-        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
-        contexts.addContext("data", ExpressionParser.translate(validationTypes));
-
-        Expression aggregate = factory.getParser().fromString("" +
-                "IF self.A0 <= 5  THEN A1 := data.V1->sum () ELSE IF self.A0 > 10 " +
-                "THEN A1 := data.V1->maximum () ELSE A1 := data.V1->minimum ()" +
-                " ENDIF", contexts);
-
-        RuleBinding rule = new RuleBinding(aggregate);
-
-
-        Map<String, Object> aggregation = new HashMap<>();
-        aggregation.put("A0", 7);
-        aggregation.put("A1", 0);
-
-        List<Object> dataSet = new ArrayList<>();
-        Map<String, Object> d1 = new HashMap<>();
-        d1.put("V1", 10);
-        dataSet.add(new DataRow(d1));
-
-
-        Map<String, Object> d2 = new HashMap<>();
-        d2.put("V1", 20);
-        dataSet.add(new DataRow(d2));
-
-        Map<String, Object> d3 = new HashMap<>();
-        d3.put("V1", 40);
-        dataSet.add(new DataRow(d3));
-
-        RuleEvaluator evaluator = factory.getEvaluator();
-        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
-        instancesBinding.addInstance("self", new DataRow(aggregation));
-        instancesBinding.addInstance("data", dataSet);
-        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
-
-        boolean result = ValueFinder.findValue("A1", resultModel).equals(10);
-
-        assertTrue(result);
-    }
-
-
     @Test
     public void testApp4() throws ExpressionParseException, InterpretException {
 
@@ -267,6 +212,109 @@ public class FlowTest {
 
         assertEquals(result, 40);
     }
+
+
+    @Test
+    public void testApp5() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        Map<String, String> aggregationTypes = new HashMap<>();
+        aggregationTypes.put("A0", "IntegerType");
+        aggregationTypes.put("A1", "IntegerType");
+
+        Map<String, String> validationTypes = new HashMap<>();
+        validationTypes.put("V1", "IntegerType");
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+
+        Expression aggregate = factory.getParser().fromString("" +
+                "IF self.A0 <= 5  THEN A1 := data.V1->sum () ELSE IF self.A0 > 10 " +
+                "THEN A1 := data.V1->maximum () ELSE A1 := data.V1->minimum ()" +
+                " ENDIF", contexts);
+
+        RuleBinding rule = new RuleBinding(aggregate);
+
+
+        Map<String, Object> aggregation = new HashMap<>();
+        aggregation.put("A0", 7);
+        aggregation.put("A1", 0);
+
+        List<Object> dataSet = new ArrayList<>();
+        Map<String, Object> d1 = new HashMap<>();
+        d1.put("V1", 10);
+        dataSet.add(new DataRow(d1));
+
+
+        Map<String, Object> d2 = new HashMap<>();
+        d2.put("V1", 20);
+        dataSet.add(new DataRow(d2));
+
+        Map<String, Object> d3 = new HashMap<>();
+        d3.put("V1", 40);
+        dataSet.add(new DataRow(d3));
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", dataSet);
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
+
+        boolean result = ValueFinder.findValue("A1", resultModel).equals(10);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testApp6() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        Map<String, String> aggregationTypes = new HashMap<>();
+        aggregationTypes.put("A0", "IntegerType");
+
+
+        Map<String, String> validationTypes = new HashMap<>();
+        validationTypes.put("V1", "IntegerType");
+        validationTypes.put("V2", "IntegerType");
+
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+
+        Expression aggregate = factory.getParser().fromString("" +
+                "def temp.variable:BooleanType := true " +
+                "IF temp.variable = true " +
+                "THEN A0 := 25 ; A0 := 10 " +
+                "ENDIF", contexts);
+
+        RuleBinding rule = new RuleBinding(aggregate);
+
+
+        Map<String, Object> aggregation = new HashMap<>();
+        aggregation.put("A0", 2);
+
+
+        Map<String, Object> dataset = new HashMap<>();
+        dataset.put("V1", 5);
+        dataset.put("V2", 5);
+
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", new DataRow(dataset));
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
+
+
+        boolean result = ValueFinder.findValue("A0", resultModel).equals(10);
+
+        assertTrue(result);
+    }
+
 
     //@Test
     public void testApp11() throws ExpressionParseException, InterpretException {

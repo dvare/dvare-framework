@@ -233,51 +233,5 @@ public class DefTest {
         assertTrue(result);
     }
 
-    @Test
-    public void testApp6() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration factory = new RuleConfiguration();
-
-        Map<String, String> aggregationTypes = new HashMap<>();
-        aggregationTypes.put("A0", "IntegerType");
-
-
-        Map<String, String> validationTypes = new HashMap<>();
-        validationTypes.put("V1", "IntegerType");
-        validationTypes.put("V2", "IntegerType");
-
-
-        ContextsBinding contexts = new ContextsBinding();
-        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
-        contexts.addContext("data", ExpressionParser.translate(validationTypes));
-
-        Expression aggregate = factory.getParser().fromString("" +
-                "def temp.variable:BooleanType := true " +
-                "IF temp.variable = true " +
-                "THEN A0 := 25 ; A0 := 10 " +
-                "ENDIF", contexts);
-
-        RuleBinding rule = new RuleBinding(aggregate);
-
-
-        Map<String, Object> aggregation = new HashMap<>();
-        aggregation.put("A0", 2);
-
-
-        Map<String, Object> dataset = new HashMap<>();
-        dataset.put("V1", 5);
-        dataset.put("V2", 5);
-
-
-        RuleEvaluator evaluator = factory.getEvaluator();
-        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
-        instancesBinding.addInstance("self", new DataRow(aggregation));
-        instancesBinding.addInstance("data", new DataRow(dataset));
-        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
-
-
-        boolean result = ValueFinder.findValue("A0", resultModel).equals(10);
-
-        assertTrue(result);
-    }
 }
