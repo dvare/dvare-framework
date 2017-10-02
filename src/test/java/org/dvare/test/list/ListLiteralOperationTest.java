@@ -36,6 +36,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ListLiteralOperationTest {
@@ -62,6 +63,29 @@ public class ListLiteralOperationTest {
 
         assertTrue(result);
     }
+
+    @Test
+    public void testApp2() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        Map<String, String> types = new HashMap<>();
+        types.put("variable", "IntegerType");
+
+        Expression expression = factory.getParser().fromString("[5,variable,15] -> isEmpty()", types);
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("variable", 10);
+
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(values));
+
+        boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(expression), instancesBinding);
+
+
+        assertFalse(result);
+    }
+
 
 
 }

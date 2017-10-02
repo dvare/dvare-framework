@@ -93,6 +93,35 @@ public class ListVariableTest {
 
     }
 
+
+    @Test
+    public void testApp2() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ListVariableTestObject.class);
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", new ListVariableTestObject());
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+
+        String exp = "testStringListVariable -> isEmpty()";
+        Expression expression = factory.getParser().fromString(exp, contexts);
+
+        boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
+        Assert.assertTrue(result);
+
+        exp = "testStringListVariable -> notEmpty()";
+        expression = factory.getParser().fromString(exp, contexts);
+
+        result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
+        Assert.assertFalse(result);
+    }
+
+
     public class ListVariableTestObject {
 
         private String[] testStringArrayVariable;

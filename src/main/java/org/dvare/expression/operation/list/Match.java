@@ -63,7 +63,6 @@ public class Match extends OperationExpression {
 
     public Match(OperationType operationType) {
         super(operationType);
-
     }
 
 
@@ -195,10 +194,10 @@ public class Match extends OperationExpression {
 
         } else if (paramsExpression instanceof OperationExpression) {
             OperationExpression operationExpression = (OperationExpression) paramsExpression;
-            Object interpret = operationExpression.interpret(instancesBinding);
-            if (interpret instanceof LiteralExpression) {
-                matchParams = buildMatchParams((LiteralExpression) interpret);
-            }
+            LiteralExpression interpret = operationExpression.interpret(instancesBinding);
+
+            matchParams = buildMatchParams(interpret);
+
         } else if (paramsExpression instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) paramsExpression;
             Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
@@ -224,119 +223,98 @@ public class Match extends OperationExpression {
                 case StringType: {
 
 
-                    try {
-                        List<String> stringValues = (List<String>) values;
-                        List<String> matchParamsStringValues = (List<String>) matchParams;
+                    List<String> stringValues = (List<String>) values;
+                    List<String> matchParamsStringValues = (List<String>) matchParams;
 
 
-                        if (insideCombination && combinationExist) {
-                            return LiteralType.getLiteralExpression(
-                                    insideCombinationString(stringValues, matchParamsStringValues) &&
-                                            combinationExistString(stringValues, matchParamsStringValues),
-                                    BooleanType.class);
+                    if (insideCombination && combinationExist) {
+                        boolean result = insideCombinationString(stringValues, matchParamsStringValues) &&
+                                combinationExistString(stringValues, matchParamsStringValues);
+                        return LiteralType.getLiteralExpression(result, BooleanType.class);
 
-                        } else if (insideCombination) {
-                            return LiteralType.getLiteralExpression(insideCombinationString(stringValues, matchParamsStringValues), BooleanType.class);
-                        } else if (combinationExist) {
-
-                            return LiteralType.getLiteralExpression(combinationExistString(stringValues, matchParamsStringValues), BooleanType.class);
-                        }
-
-
-                    } catch (ClassCastException e) {
-                        logger.error(e.getMessage(), e);
+                    } else if (insideCombination) {
+                        boolean result = insideCombinationString(stringValues, matchParamsStringValues);
+                        return LiteralType.getLiteralExpression(result, BooleanType.class);
+                    } else if (combinationExist) {
+                        boolean result = combinationExistString(stringValues, matchParamsStringValues);
+                        return LiteralType.getLiteralExpression(result, BooleanType.class);
                     }
+
 
                 }
 
-                case BooleanType: {
 
-                    try {
-                        List<Boolean> booleanValues = (List<Boolean>) values;
-                        List<Boolean> matchParamsBooleanValues = (List<Boolean>) matchParams;
-
-                        if (insideCombination && combinationExist) {
-                            return LiteralType.getLiteralExpression(
-                                    insideCombinationBoolean(booleanValues, matchParamsBooleanValues)
-                                            && booleanValues.containsAll(matchParamsBooleanValues), BooleanType.class);
-                        } else if (insideCombination) {
-                            return LiteralType.getLiteralExpression(insideCombinationBoolean(booleanValues, matchParamsBooleanValues), BooleanType.class);
-                        } else if (combinationExist) {
-
-                            boolean result = booleanValues.containsAll(matchParamsBooleanValues);
-                            return LiteralType.getLiteralExpression(result, BooleanType.class);
-                        }
-                    } catch (ClassCastException e) {
-                        logger.error(e.getMessage(), e);
-                    }
-
-                }
                 case IntegerType: {
 
 
                     List<Integer> integerValues = (List<Integer>) values;
-                    try {
-
-                        List<Integer> matchParamsIntegerValues = (List<Integer>) matchParams;
-
-                        if (insideCombination && combinationExist) {
-                            return LiteralType.getLiteralExpression(
-                                    insideCombinationInteger(integerValues, matchParamsIntegerValues) &&
-                                            integerValues.containsAll(matchParamsIntegerValues)
-                                    , BooleanType.class);
-                        } else if (insideCombination) {
-
-                            return LiteralType.getLiteralExpression(
-                                    insideCombinationInteger(integerValues, matchParamsIntegerValues), BooleanType.class);
-                        } else if (combinationExist) {
-                            boolean result = integerValues.containsAll(matchParamsIntegerValues);
-                            return LiteralType.getLiteralExpression(result, BooleanType.class);
-                        }
 
 
-                    } catch (ClassCastException e) {
-                        List<Float> combList = (List<Float>) matchParams;
+                    List<Integer> matchParamsIntegerValues = (List<Integer>) matchParams;
 
-                        boolean result = integerValues.containsAll(combList);
+                    if (insideCombination && combinationExist) {
+                        boolean result = insideCombinationInteger(integerValues, matchParamsIntegerValues) &&
+                                integerValues.containsAll(matchParamsIntegerValues);
+                        return LiteralType.getLiteralExpression(result, BooleanType.class);
+                    } else if (insideCombination) {
+                        boolean result = insideCombinationInteger(integerValues, matchParamsIntegerValues);
+                        return LiteralType.getLiteralExpression(result, BooleanType.class);
+                    } else if (combinationExist) {
+                        boolean result = integerValues.containsAll(matchParamsIntegerValues);
                         return LiteralType.getLiteralExpression(result, BooleanType.class);
                     }
+
 
                 }
 
                 case FloatType: {
                     List<Float> floatValues = (List<Float>) values;
 
+                    List<Float> matchParamsFloatValues = (List<Float>) matchParams;
 
-                    try {
-                        List<Float> matchParamsFloatValues = (List<Float>) matchParams;
-
-                        if (insideCombination && combinationExist) {
-                            return LiteralType.getLiteralExpression(
-                                    insideCombinationFloat(floatValues, matchParamsFloatValues) &&
-                                            floatValues.containsAll(matchParamsFloatValues)
-                                    , BooleanType.class);
-                        } else if (insideCombination) {
-                            return LiteralType.getLiteralExpression(insideCombinationFloat(floatValues, matchParamsFloatValues), BooleanType.class);
-                        } else if (combinationExist) {
-                            boolean result = floatValues.containsAll(matchParamsFloatValues);
-                            return LiteralType.getLiteralExpression(result, BooleanType.class);
-                        }
-
-
-                    } catch (ClassCastException e) {
-                        List<Integer> combList = (List<Integer>) matchParams;
-                        boolean result = floatValues.containsAll(combList);
+                    if (insideCombination && combinationExist) {
+                        boolean result = insideCombinationFloat(floatValues, matchParamsFloatValues) &&
+                                floatValues.containsAll(matchParamsFloatValues);
+                        return LiteralType.getLiteralExpression(result, BooleanType.class);
+                    } else if (insideCombination) {
+                        boolean result = insideCombinationFloat(floatValues, matchParamsFloatValues);
+                        return LiteralType.getLiteralExpression(result, BooleanType.class);
+                    } else if (combinationExist) {
+                        boolean result = floatValues.containsAll(matchParamsFloatValues);
                         return LiteralType.getLiteralExpression(result, BooleanType.class);
                     }
+
                 }
 
+                default: {
+
+
+                    List<Object> objectValues = (List<Object>) values;
+                    List<Object> matchParamsValues = (List<Object>) matchParams;
+
+                    if (insideCombination && combinationExist) {
+                        return LiteralType.getLiteralExpression(
+                                insideCombination(objectValues, matchParamsValues)
+                                        && objectValues.containsAll(matchParamsValues), BooleanType.class);
+                    } else if (insideCombination) {
+                        return LiteralType.getLiteralExpression(
+                                insideCombination(objectValues, matchParamsValues), BooleanType.class);
+                    } else if (combinationExist) {
+
+                        boolean result = objectValues.containsAll(matchParamsValues);
+                        return LiteralType.getLiteralExpression(result, BooleanType.class);
+                    }
+
+
+                }
             }
         }
         return LiteralType.getLiteralExpression(false, BooleanType.class);
     }
 
 
-    private Boolean insideCombinationString(List<String> stringValues, List<String> matchParamsStringValues) throws InterpretException {
+    private Boolean insideCombinationString(List<String> stringValues, List<String> matchParamsStringValues)
+            throws InterpretException {
 
         for (String value : stringValues) {
             value = TrimString.trim(value);
@@ -347,7 +325,8 @@ public class Match extends OperationExpression {
         return true;
     }
 
-    private Boolean combinationExistString(List<String> stringValues, List<String> matchParamsStringValues) throws InterpretException {
+    private Boolean combinationExistString(List<String> stringValues, List<String> matchParamsStringValues)
+            throws InterpretException {
 
         List<String> stringValuesTrimed = new ArrayList<>();
         for (String value : stringValues) {
@@ -371,10 +350,10 @@ public class Match extends OperationExpression {
 
     }
 
-    private Boolean insideCombinationBoolean(List<Boolean> booleanValues, List<Boolean> matchParamsBooleanValues) throws InterpretException {
-        for (Boolean value : booleanValues) {
+    private Boolean insideCombination(List Values, List matchParamsBValues) throws InterpretException {
+        for (Object value : Values) {
 
-            if (!matchParamsBooleanValues.contains(value)) {
+            if (!matchParamsBValues.contains(value)) {
                 return false;
             }
         }

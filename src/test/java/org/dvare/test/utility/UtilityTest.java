@@ -37,6 +37,7 @@ import org.junit.runners.Suite;
         PrintTest.class,
         SeparatorTest.class,
         ExpressionTest.class,
+        BooleanExpressionTest.class,
 })
 public class UtilityTest {
 

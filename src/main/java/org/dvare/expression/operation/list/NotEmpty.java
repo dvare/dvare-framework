@@ -57,7 +57,6 @@ public class NotEmpty extends AggregationOperationExpression {
         if (values != null) {
             return LiteralType.getLiteralExpression(values.size() != 0, BooleanType.class);
         }
-
         return LiteralType.getLiteralExpression(false, BooleanType.class);
     }
 
