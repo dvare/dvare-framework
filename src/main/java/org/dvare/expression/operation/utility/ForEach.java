@@ -32,6 +32,7 @@ import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.expression.operation.IterationOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.list.ValuesOperation;
 import org.dvare.expression.veriable.VariableExpression;
@@ -46,7 +47,7 @@ import java.util.List;
  * @since 2016-06-30
  */
 @Operation(type = OperationType.FOREACH)
-public class ForEach extends ForAll {
+public class ForEach extends IterationOperationExpression {
     private static Logger logger = LoggerFactory.getLogger(ForEach.class);
 
 
@@ -65,7 +66,7 @@ public class ForEach extends ForAll {
                 if (object instanceof List) {
                     List instances = (List) object;
 
-                    List results = new ArrayList<>();
+                    List<Object> results = new ArrayList<>();
 
                     for (Object instance : instances) {
                         instancesBinding.addInstance(derivedContext.getName(), instance);
@@ -97,7 +98,7 @@ public class ForEach extends ForAll {
                 Object interpret = valuesOperation.interpret(instancesBinding);
 
                 if (interpret instanceof ListLiteral) {
-                    List results = new ArrayList<>();
+                    List<Object> results = new ArrayList<>();
                     List<?> values = ((ListLiteral) interpret).getValue();
                     for (Object value : values) {
 
@@ -143,7 +144,7 @@ public class ForEach extends ForAll {
                 }
 
 
-                instancesBinding.removeInstance(derivedInstanceBinding);
+                //instancesBinding.removeInstance(derivedInstanceBinding);
             }
         }
         return new NullLiteral();

@@ -36,6 +36,8 @@ import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ForEachOperation;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +45,7 @@ import java.util.List;
 
 
 public class ForAllOperationTest {
+    private static Logger logger = LoggerFactory.getLogger(ForAllOperationTest.class);
 
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {
@@ -57,6 +60,9 @@ public class ForAllOperationTest {
         contexts.addContext("self", typeBinding);
 
         Expression expression = factory.getParser().fromString(exp, contexts);
+
+        logger.info(expression.toString());
+
         RuleBinding rule = new RuleBinding(expression);
 
 
@@ -180,5 +186,39 @@ public class ForAllOperationTest {
 
     }
 
+    @Test
+    public void testApp5() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        String exp = "forAll Variable1 tmp.value:StringType | tmp.value in ['D81','D45F','D89'] endForAll";
+
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(ForEachOperation.class));
+
+        Expression expression = factory.getParser().fromString(exp, contexts);
+
+
+        ForEachOperation eachOperation1 = new ForEachOperation();
+        eachOperation1.setVariable1("D81");
+
+
+        ForEachOperation eachOperation2 = new ForEachOperation();
+        eachOperation2.setVariable1("D45F");
+
+
+        ForEachOperation eachOperation3 = new ForEachOperation();
+        eachOperation3.setVariable1("D89");
+
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", Arrays.asList(eachOperation1, eachOperation2, eachOperation3));
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
+        Assert.assertTrue(result);
+
+    }
 }
 

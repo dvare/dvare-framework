@@ -312,5 +312,4 @@ public abstract class RelationalOperationExpression extends OperationExpression 
         return new BooleanLiteral(false);
     }
 
-
 }

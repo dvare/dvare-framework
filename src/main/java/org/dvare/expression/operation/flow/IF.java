@@ -63,43 +63,58 @@ public class IF extends ConditionOperationExpression {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
         for (; pos < tokens.length; pos++) {
-
-            OperationExpression operation = configurationRegistry.getOperation(tokens[pos]);
+            String token = tokens[pos];
+            OperationExpression operation = configurationRegistry.getOperation(token);
             if (operation != null) {
 
 
                 if (operation instanceof IF || operation instanceof ELSE || operation instanceof THEN || operation instanceof ENDIF) {
 
+
                     if (operation instanceof THEN) {
-                        pos = operation.parse(tokens, pos, stack, contexts);
-                        this.thenOperand = stack.pop();
-                        continue;
-                    }
 
-                    if (operation instanceof ELSE) {
+                        for (; pos < tokens.length; pos++) {
+                            token = tokens[pos];
+                            operation = configurationRegistry.getOperation(token);
+
+                            if (operation instanceof ELSE || operation instanceof ENDIF) {
+                                this.thenOperand = stack.pop();
+                                pos--;
+                                break;
+                            } else if (operation != null) {
+                                pos = operation.parse(tokens, pos, stack, contexts);
+                            }
+                        }
+
+                        if (thenOperand == null) {
+                            throw new ExpressionParseException("ENDIF not found");
+                        }
+
+                    } else if (operation instanceof ELSE) {
                         pos = operation.parse(tokens, pos, stack, contexts);
                         this.elseOperand = stack.pop();
-                        return pos;
-                    }
 
-                    /*if (operation instanceof IF) {
-                        pos = operation.parse(tokens, pos, stack, contexts);
-                        this.elseOperand = stack.pop();
-                        return pos;
-                    }*/
 
-                    if (operation instanceof ENDIF) {
+                    } else if (operation instanceof ENDIF) {
                         return pos;
                     }
 
                 } else {
+                    for (; pos < tokens.length; pos++) {
+                        token = tokens[pos];
+                        operation = configurationRegistry.getOperation(token);
 
-
-                    if (condition != null) {
-                        stack.push(condition);
+                        if (operation instanceof THEN) {
+                            this.condition = stack.pop();
+                            pos--;
+                            break;
+                        } else if (operation != null) {
+                            pos = operation.parse(tokens, pos, stack, contexts);
+                        }
                     }
-                    pos = operation.parse(tokens, pos, stack, contexts);
-                    this.condition = stack.pop();
+                    if (condition == null) {
+                        throw new ExpressionParseException("THEN Operand not found");
+                    }
                 }
             }
         }

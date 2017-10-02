@@ -416,41 +416,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
 
-    private List<?> chainOperationExpressionValuesOld(InstancesBinding instancesBinding, ChainOperationExpression operationExpression)
-            throws InterpretException {
-        List values = null;
-        Expression leftOperand = operationExpression.getLeftOperand();
-        while (leftOperand instanceof ChainOperationExpression) {
-            leftOperand = ((ChainOperationExpression) leftOperand).getLeftOperand();
-        }
-        if (leftOperand instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) leftOperand;
-            String operandType = variableExpression.getOperandType();
-            dataTypeExpression = variableExpression.getType();
-            Object instance = instancesBinding.getInstance(operandType);
-            List dataSet;
-            if (instance instanceof List) {
-                dataSet = (List) instance;
-            } else {
-                dataSet = new ArrayList<>();
-                dataSet.add(instance);
-            }
-            values = new ArrayList<>();
-            for (Object object : dataSet) {
-                instancesBinding.addInstance(operandType, object);
-                LiteralExpression literalExpression = (LiteralExpression) operationExpression.interpret(instancesBinding);
-                if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
-                    dataTypeExpression = literalExpression.getType();
-                }
-                values.add(literalExpression.getValue());
-            }
-            instancesBinding.addInstance(operandType, instance);
 
-        }
-
-
-        return values;
-    }
 
     private List<?> chainOperationExpressionValues(InstancesBinding instancesBinding,
                                                    ChainOperationExpression chainOperationExpression)

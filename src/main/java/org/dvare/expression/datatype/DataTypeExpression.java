@@ -60,7 +60,8 @@ public abstract class DataTypeExpression extends Expression {
     }
 
 
-    public LiteralExpression evaluate(OperationExpression operationExpression, LiteralExpression left, LiteralExpression right) throws InterpretException {
+    public LiteralExpression evaluate(OperationExpression operationExpression,
+                                      LiteralExpression left, LiteralExpression right) throws InterpretException {
 
 
         try {

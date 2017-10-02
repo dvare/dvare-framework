@@ -37,9 +37,7 @@ import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
@@ -62,8 +60,41 @@ public class DefTest {
         assertTrue(result);
     }
 
+
+    @Test(expected = ExpressionParseException.class)
+    public void testApp2() throws ExpressionParseException, InterpretException {
+        RuleConfiguration factory = new RuleConfiguration();
+        String exp = " def newVariable:IntegerType := 4 + 5 ; " +
+                "def result:BooleanType := false ; " +
+                "def result:BooleanType := newVariable > 7";
+
+
+        factory.getParser().fromString(exp, new ContextsBinding());
+
+
+        exp = " def newVariable:IntegerType := 4 + 5 ; " +
+                "def result:BooleanType := false ; " +
+                "def result := newVariable > 7";
+
+
+        factory.getParser().fromString(exp, new ContextsBinding());
+
+    }
+
+    @Test(expected = ExpressionParseException.class)
+    public void testApp2_1() throws ExpressionParseException, InterpretException {
+        RuleConfiguration factory = new RuleConfiguration();
+        String exp = " def newVariable:IntegerType := 4 + 5 ; " +
+                "def result:BooleanType := false ; " +
+                "def result := newVariable > 7";
+
+
+        factory.getParser().fromString(exp, new ContextsBinding());
+
+    }
+
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void testApp3() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -109,7 +140,7 @@ public class DefTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void testApp4() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -155,7 +186,7 @@ public class DefTest {
     }
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void testApp5() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -179,8 +210,6 @@ public class DefTest {
                 "ENDIF", contexts);
 
         RuleBinding rule = new RuleBinding(aggregate);
-        List<RuleBinding> rules = new ArrayList<>();
-        rules.add(rule);
 
 
         Map<String, Object> aggregation = new HashMap<>();
@@ -204,5 +233,51 @@ public class DefTest {
         assertTrue(result);
     }
 
+    @Test
+    public void testApp6() throws ExpressionParseException, InterpretException {
 
+        RuleConfiguration factory = new RuleConfiguration();
+
+        Map<String, String> aggregationTypes = new HashMap<>();
+        aggregationTypes.put("A0", "IntegerType");
+
+
+        Map<String, String> validationTypes = new HashMap<>();
+        validationTypes.put("V1", "IntegerType");
+        validationTypes.put("V2", "IntegerType");
+
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+
+        Expression aggregate = factory.getParser().fromString("" +
+                "def temp.variable:BooleanType := true " +
+                "IF temp.variable = true " +
+                "THEN A0 := 25 ; A0 := 10 " +
+                "ENDIF", contexts);
+
+        RuleBinding rule = new RuleBinding(aggregate);
+
+
+        Map<String, Object> aggregation = new HashMap<>();
+        aggregation.put("A0", 2);
+
+
+        Map<String, Object> dataset = new HashMap<>();
+        dataset.put("V1", 5);
+        dataset.put("V2", 5);
+
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        instancesBinding.addInstance("data", new DataRow(dataset));
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
+
+
+        boolean result = ValueFinder.findValue("A0", resultModel).equals(10);
+
+        assertTrue(result);
+    }
 }

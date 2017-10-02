@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FirstTest {
@@ -150,24 +151,36 @@ public class FirstTest {
     }
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void testApp3() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        Map<String, String> aggregationTypes = new HashMap<>();
-        aggregationTypes.put("A0", "IntegerType");
 
-        Expression expression = factory.getParser().fromString("A0 :=  ([10,9,5] -> first ())", aggregationTypes);
+        Expression expression = factory.getParser().fromString("[10,9,5] -> first ()", new ContextsBinding());
 
 
-        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
-        instancesBinding.addInstance("self", new DataRow());
-        instancesBinding.addInstance("data", null);
-        Object resultModel = factory.getEvaluator().aggregate(new RuleBinding(expression), instancesBinding).getInstance("self");
+        InstancesBinding instancesBinding = new InstancesBinding();
 
-        boolean result = ValueFinder.findValue("A0", resultModel).equals(10);
+        Object result = factory.getEvaluator().evaluate(new RuleBinding(expression), instancesBinding);
 
-        assertTrue(result);
+
+        assertEquals(result, 10);
     }
 
+    @Test
+    public void testApp4() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        Expression expression = factory.getParser().fromString("10 -> first ()", new ContextsBinding());
+
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+
+        Object result = factory.getEvaluator().evaluate(new RuleBinding(expression), instancesBinding);
+
+
+        assertEquals(result, 10);
+    }
 }

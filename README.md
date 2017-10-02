@@ -1,6 +1,5 @@
 ## Dvare Framework
 A Lightweight Java business rule expression language.
-[http://dvare.org](http://dvare.org)
 
 
 ## Example

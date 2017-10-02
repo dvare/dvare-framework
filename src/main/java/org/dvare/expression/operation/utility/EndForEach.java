@@ -24,6 +24,7 @@
 package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
+import org.dvare.expression.operation.IterationOperationExpression;
 import org.dvare.expression.operation.OperationType;
 
 /**
@@ -31,7 +32,7 @@ import org.dvare.expression.operation.OperationType;
  * @since 2016-06-30
  */
 @Operation(type = OperationType.END_FOREACH)
-public class EndForEach extends EndForAll {
+public class EndForEach extends IterationOperationExpression {
 
     public EndForEach() {
         super(OperationType.END_FOREACH);

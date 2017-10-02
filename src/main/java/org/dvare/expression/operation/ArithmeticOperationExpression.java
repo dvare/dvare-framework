@@ -27,22 +27,35 @@ import org.dvare.annotations.Type;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
 public abstract class ArithmeticOperationExpression extends RelationalOperationExpression {
-
+    protected static Logger logger = LoggerFactory.getLogger(ArithmeticOperationExpression.class);
 
     public ArithmeticOperationExpression(OperationType operationType) {
         super(operationType);
     }
 
+    public static LiteralExpression evaluate(Class<? extends DataTypeExpression> dataTypeExpression,
+                                             OperationExpression operationExpression, LiteralExpression left, LiteralExpression right) throws InterpretException {
+
+        try {
+            return dataTypeExpression.newInstance().evaluate(operationExpression, left, right);
+        } catch (InstantiationException | IllegalAccessException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return new NullLiteral();
+    }
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
@@ -53,14 +66,11 @@ public abstract class ArithmeticOperationExpression extends RelationalOperationE
 
 
         LiteralExpression<?> rightExpression = (LiteralExpression) interpretOperandRight(instancesBinding, rightOperand);
-        ;
+
 
         LiteralExpression left = toLiteralExpression(leftExpression);
         LiteralExpression right = toLiteralExpression(rightExpression);
 
-        if (left instanceof NullLiteral && right instanceof NullLiteral) {
-            return new NullLiteral();
-        }
 
         if (left instanceof NullLiteral && right.getType().isAnnotationPresent(Type.class)) {
             Type type = (Type) right.getType().getAnnotation(Type.class);
@@ -88,13 +98,8 @@ public abstract class ArithmeticOperationExpression extends RelationalOperationE
             dataTypeExpression = NullType.class;
         }
 
-        try {
-            return dataTypeExpression.newInstance().evaluate(this, left, right);
-        } catch (InstantiationException | IllegalAccessException e) {
-            logger.error(e.getMessage(), e);
-        }
-        return null;
+        return evaluate(dataTypeExpression, this, left, right);
+
+
     }
-
-
 }
