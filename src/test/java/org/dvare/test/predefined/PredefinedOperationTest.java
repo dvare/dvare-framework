@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -35,7 +35,6 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ArithmeticOperation;
-import org.dvare.test.dataobjects.ForEachOperation;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -276,26 +275,6 @@ public class PredefinedOperationTest {
         Assert.assertTrue(result);
     }
 
-    @Test
-    public void testApp11() throws ExpressionParseException, InterpretException {
-
-
-        RuleConfiguration factory = new RuleConfiguration();
-
-
-        String expr = "Variable5->substring(2,2)->toInteger() between [80,90] and Variable5->substring(3,2)->toInteger() between [30,50]";
-
-        Expression expression = factory.getParser().fromString(expr, ArithmeticOperation.class);
-
-        RuleBinding rule = new RuleBinding(expression);
-
-        ArithmeticOperation ArithmeticOperation = new ArithmeticOperation();
-        ArithmeticOperation.setVariable5("9845");
-
-        RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
-        Assert.assertTrue(result);
-    }
 
     @Test
     public void testApp12() throws ExpressionParseException, InterpretException {
@@ -323,10 +302,12 @@ public class PredefinedOperationTest {
 
         RuleConfiguration factory = new RuleConfiguration();
 
-        String exp = "not self.Variable1->substring(2,2)->toInteger() between [80,90] and not self.Variable1->substring(2,2)->toInteger() between [40,50] and  not self.Variable1->substring(2,2)->toInteger() between [30,40]";
+        String exp = "not self.Variable5->substring(2,2)->toInteger() " +
+                "between [80,90] and not self.Variable5->substring(2,2)->toInteger() " +
+                "between [40,50] and  not self.Variable5->substring(2,2)->toInteger() between [30,40]";
 
 
-        TypeBinding typeBinding = ExpressionParser.translate(ForEachOperation.class);
+        TypeBinding typeBinding = ExpressionParser.translate(ArithmeticOperation.class);
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
 
@@ -334,12 +315,12 @@ public class PredefinedOperationTest {
         RuleBinding rule = new RuleBinding(expression);
 
 
-        ForEachOperation eachOperation1 = new ForEachOperation();
-        eachOperation1.setVariable1("D74F");
+        ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
+        arithmeticOperation.setVariable5("D74F");
 
 
         InstancesBinding instancesBinding = new InstancesBinding();
-        instancesBinding.addInstance("self", eachOperation1);
+        instancesBinding.addInstance("self", arithmeticOperation);
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);

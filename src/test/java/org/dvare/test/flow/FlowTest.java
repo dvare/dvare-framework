@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,7 +33,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
-import org.dvare.test.dataobjects.ValuesObject;
+import org.dvare.test.dataobjects.ListTestModel;
 import org.dvare.util.ValueFinder;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -155,6 +155,7 @@ public class FlowTest {
 
         assertTrue(result);
     }
+
     @Test
     public void testApp4() throws ExpressionParseException, InterpretException {
 
@@ -323,7 +324,7 @@ public class FlowTest {
 
 
         ContextsBinding contexts = new ContextsBinding();
-        contexts.addContext("self", ValuesObject.class);
+        contexts.addContext("self", ListTestModel.class);
 
 
         Expression expression = factory.getParser().fromString("" +
@@ -337,15 +338,15 @@ public class FlowTest {
         RuleBinding rule = new RuleBinding(expression);
 
 
-        ValuesObject valuesObject1 = new ValuesObject();
+        ListTestModel valuesObject1 = new ListTestModel();
         valuesObject1.setVariable1("42964");
 
 
-        ValuesObject valuesObject2 = new ValuesObject();
+        ListTestModel valuesObject2 = new ListTestModel();
         valuesObject2.setVariable1("42453");
 
 
-        ValuesObject valuesObject3 = new ValuesObject();
+        ListTestModel valuesObject3 = new ListTestModel();
         valuesObject3.setVariable1("4245");
 
 

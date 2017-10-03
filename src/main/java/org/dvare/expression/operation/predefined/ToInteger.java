@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,9 +26,9 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.IntegerType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -57,64 +57,41 @@ public class ToInteger extends ChainOperationExpression {
 
             if (literalExpression.getValue() != null) {
 
-
                 Object value = literalExpression.getValue();
 
                 switch (toDataType(literalExpression.getType())) {
                     case StringType: {
-
-
                         String stringValue = TrimString.trim(value.toString());
+                        DataType valueType = LiteralType.computeDataType(stringValue);
 
-                        try {
-                            return LiteralType.getLiteralExpression(Integer.parseInt(stringValue), DataType.IntegerType);
-                        } catch (IllegalValueException | NumberFormatException e) {
-                            logger.error(e.getMessage(), e);
+                        switch (valueType) {
+                            case IntegerType:
+                                return LiteralType.getLiteralExpression(Integer.parseInt(stringValue), IntegerType.class);
+                            case FloatType:
+                                return LiteralType.getLiteralExpression(Math.round(Float.parseFloat(stringValue)), IntegerType.class);
                         }
                     }
 
                     case IntegerType: {
-
-                        Integer integer = null;
                         if (value instanceof Integer) {
-                            integer = (Integer) value;
-
-
+                            return LiteralType.getLiteralExpression(Integer.class.cast(value), IntegerType.class);
                         } else {
-                            if (value != null) {
-                                integer = Integer.parseInt(value.toString());
-
-                            }
-                        }
-
-                        if (integer != null) {
-                            try {
-                                return LiteralType.getLiteralExpression(integer, DataType.IntegerType);
-                            } catch (IllegalValueException | NumberFormatException e) {
-                                logger.error(e.getMessage(), e);
+                            DataType valueType = LiteralType.computeDataType(value.toString());
+                            if (valueType.equals(DataType.IntegerType)) {
+                                return LiteralType.getLiteralExpression(Integer.parseInt(value.toString()), IntegerType.class);
                             }
                         }
 
                     }
                     case FloatType: {
-                        Float aFloat = null;
                         if (value instanceof Float) {
-                            aFloat = (Float) value;
-
-
-                        } else {
-                            if (value != null) {
-                                aFloat = Float.parseFloat(value.toString());
-
+                            return LiteralType.getLiteralExpression(Math.round(Float.class.cast(value)), IntegerType.class);
+                        } else if (value != null) {
+                            DataType valueType = LiteralType.computeDataType(value.toString());
+                            if (valueType.equals(DataType.FloatType)) {
+                                return LiteralType.getLiteralExpression(Math.round(Float.parseFloat(value.toString())), IntegerType.class);
                             }
-                        }
 
-                        if (aFloat != null) {
-                            try {
-                                return LiteralType.getLiteralExpression(Math.round(aFloat), DataType.IntegerType);
-                            } catch (IllegalValueException | NumberFormatException e) {
-                                logger.error(e.getMessage(), e);
-                            }
                         }
 
                     }

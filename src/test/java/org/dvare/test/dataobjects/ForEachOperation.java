@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,15 +23,9 @@
  */
 package org.dvare.test.dataobjects;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ForEachOperation {
     public String Variable1;
     public Integer Variable2;
-    public ArithmeticOperation Variable3;
-    public List<ArithmeticOperation> Variable4 = new ArrayList<>();
-
 
     public String getVariable1() {
         return Variable1;
@@ -49,20 +43,5 @@ public class ForEachOperation {
         Variable2 = variable2;
     }
 
-    public ArithmeticOperation getVariable3() {
-        return Variable3;
-    }
-
-    public void setVariable3(ArithmeticOperation variable3) {
-        Variable3 = variable3;
-    }
-
-    public List<ArithmeticOperation> getVariable4() {
-        return Variable4;
-    }
-
-    public void setVariable4(List<ArithmeticOperation> variable4) {
-        Variable4 = variable4;
-    }
 
 }
