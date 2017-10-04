@@ -163,8 +163,7 @@ public class VariableType {
 
     private static VariableExpression setValue(VariableExpression variable, Object value) throws IllegalPropertyValueException {
 
-        if (value == null) {
-            variable.setValue(null);
+        if (value == null || variable == null) {
             return variable;
         }
 

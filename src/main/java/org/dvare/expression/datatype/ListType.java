@@ -59,8 +59,6 @@ public class ListType extends DataTypeExpression {
             return leftValues.equals(rightValues);
 
         }
-
-
         return false;
     }
 

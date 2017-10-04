@@ -172,8 +172,7 @@ public abstract class OperationExpression extends Expression {
         if (expression instanceof OperationExpression) {
             OperationExpression operation = (OperationExpression) expression;
 
-            LiteralExpression literalExpression;
-            literalExpression = (LiteralExpression) operation.interpret(instancesBinding);
+            LiteralExpression literalExpression = operation.interpret(instancesBinding);
 
             if (literalExpression != null) {
                 dataTypeExpression = literalExpression.getType();
@@ -204,11 +203,10 @@ public abstract class OperationExpression extends Expression {
 
     protected LiteralExpression toLiteralExpression(Expression expression) throws InterpretException {
 
-
         LiteralExpression leftExpression = null;
         if (expression instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) expression;
-            leftExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
+            leftExpression = variableExpression.interpret(null);
         } else if (expression instanceof LiteralExpression) {
             leftExpression = (LiteralExpression) expression;
         }
@@ -251,7 +249,14 @@ public abstract class OperationExpression extends Expression {
     }
 
 
+    protected enum Side {
+        Left, Right;
+    }
 
+    public static class TokenType {
+        public String type;
+        public String token;
+    }
 
     /*Getter and Setters*/
 
@@ -273,11 +278,6 @@ public abstract class OperationExpression extends Expression {
 
     public List<String> getSymbols() {
         return this.operationType.getSymbols();
-    }
-
-    public static class TokenType {
-        public String type;
-        public String token;
     }
 
 }

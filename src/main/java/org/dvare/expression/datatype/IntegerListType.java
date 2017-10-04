@@ -39,7 +39,7 @@ import java.util.List;
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
-@Type(dataType = DataType.IntegerType)
+@Type(dataType = DataType.IntegerListType)
 public class IntegerListType extends ListType {
     public IntegerListType() {
 

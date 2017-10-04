@@ -74,7 +74,8 @@ public abstract class RelationalOperationExpression extends OperationExpression 
     }
 
 
-    private int expression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts, TokenType tokenType) throws ExpressionParseException {
+    private int expression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts, TokenType tokenType, Side side)
+            throws ExpressionParseException {
         Expression expression;
         OperationExpression op = ConfigurationRegistry.INSTANCE.getOperation(tokenType.token);
         if (op != null) {
@@ -91,19 +92,20 @@ public abstract class RelationalOperationExpression extends OperationExpression 
             expression = LiteralType.getLiteralExpression(tokenType.token);
         }
 
+        if (side.equals(Side.Right)) {
+            while (pos + 1 < tokens.length) {
+                ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+                OperationExpression nextOpp = configurationRegistry.getOperation(tokens[pos + 1]);
+                if (nextOpp instanceof ChainOperationExpression || nextOpp instanceof AggregationOperationExpression) {
+                    stack.push(expression);
+                    pos = nextOpp.parse(tokens, pos + 1, stack, contexts);
+                    expression = stack.pop();
+                } else {
+                    break;
+                }
 
-        while (pos + 1 < tokens.length) {
-            ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-            OperationExpression nextOpp = configurationRegistry.getOperation(tokens[pos + 1]);
-            if (nextOpp instanceof ChainOperationExpression || nextOpp instanceof AggregationOperationExpression) {
-                stack.push(expression);
-                pos = nextOpp.parse(tokens, pos + 1, stack, contexts);
-                expression = stack.pop();
-            } else {
-                break;
+
             }
-
-
         }
 
         stack.push(expression);
@@ -115,14 +117,13 @@ public abstract class RelationalOperationExpression extends OperationExpression 
 
         String leftString = tokens[pos - 1];
 
-
         TokenType leftTokenType = findDataObject(leftString, contexts);
 
 
         // computing expression left side̵
 
         if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof ExpressionSeparator) {
-            pos = expression(tokens, pos, stack, contexts, leftTokenType);
+            pos = expression(tokens, pos, stack, contexts, leftTokenType, Side.Left);
         }
 
         this.leftOperand = stack.pop();
@@ -136,7 +137,7 @@ public abstract class RelationalOperationExpression extends OperationExpression 
 
 
         // computing expression right side̵
-        pos = expression(tokens, pos, stack, contexts, rightTokenType);
+        pos = expression(tokens, pos, stack, contexts, rightTokenType, Side.Right);
         this.rightOperand = stack.pop();
 
 
@@ -311,5 +312,6 @@ public abstract class RelationalOperationExpression extends OperationExpression 
         }
         return new BooleanLiteral(false);
     }
+
 
 }

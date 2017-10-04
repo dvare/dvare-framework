@@ -55,7 +55,7 @@ public abstract class VariableExpression<T> extends Expression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        if (value == null) {
+        if (value == null && instancesBinding != null) {
             Object instance = instancesBinding.getInstance(operandType);
             VariableType.setVariableValue(this, instance);
         }

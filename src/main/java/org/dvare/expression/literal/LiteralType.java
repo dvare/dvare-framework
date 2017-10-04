@@ -108,7 +108,6 @@ public class LiteralType {
         String valueString = value.toString();
         switch (type) {
 
-
             case BooleanType: {
                 if (value instanceof Boolean) {
                     literalExpression = new BooleanLiteral((Boolean) value);
@@ -235,17 +234,20 @@ public class LiteralType {
             case PairType: {
                 if (value instanceof Pair) {
                     literalExpression = new PairLiteral((Pair) value);
+                    break;
                 }
             }
 
 
+            case ListType:
             case IntegerListType:
             case FloatListType:
             case StringListType:
             case BooleanListType:
             case DateTimeListType:
             case DateListType:
-            case ListType: {
+            case PairListType:
+            case SimpleDateListType: {
                 if (value.getClass().isArray()) {
                     literalExpression = new ListLiteral(Arrays.asList(Object[].class.cast(value)), DataTypeMapping.getDataTypeClass(type));
                 } else if (value instanceof List) {
@@ -257,7 +259,8 @@ public class LiteralType {
 
         if (literalExpression != null) {
             if (logger.isDebugEnabled()) {
-                logger.debug("{} Expression : {} [{}]", literalExpression.getClass().getSimpleName(), literalExpression.getType().getSimpleName(), literalExpression.getValue());
+                logger.debug("{} Expression : {} [{}]", literalExpression.getClass().getSimpleName(),
+                        literalExpression.getType().getSimpleName(), literalExpression.getValue());
             }
             return literalExpression;
         } else {
@@ -312,6 +315,7 @@ public class LiteralType {
             return DataType.IntegerType;
         } catch (NumberFormatException e) {
         }
+
 
         return DataType.UnknownType;
     }

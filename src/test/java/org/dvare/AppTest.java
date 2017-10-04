@@ -34,6 +34,7 @@ import org.dvare.test.predefined.PredefinedTest;
 import org.dvare.test.relational.RelationalTest;
 import org.dvare.test.spring.SpringTest;
 import org.dvare.test.utility.UtilityTest;
+import org.dvare.test.variable.VariableTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -49,6 +50,7 @@ import org.junit.runners.Suite;
         RelationalTest.class,
         SpringTest.class,
         UtilityTest.class,
+        VariableTest.class,
         ClassFinderTest.class,
 })
 public class AppTest {

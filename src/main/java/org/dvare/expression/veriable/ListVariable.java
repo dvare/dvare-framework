@@ -25,7 +25,11 @@ package org.dvare.expression.veriable;
 
 
 import org.dvare.annotations.Type;
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.datatype.*;
+import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.literal.LiteralType;
 
 import java.util.List;
 
@@ -51,20 +55,36 @@ public class ListVariable extends VariableExpression<List> {
     public Class<? extends DataTypeExpression> getListType() {
 
         if (getType() != null) {
-            switch (getType().getAnnotation(Type.class).dataType()) {
+            DataType dataType = getType().getAnnotation(Type.class).dataType();
+            switch (dataType) {
                 case IntegerType:
                     return IntegerListType.class;
                 case FloatType:
                     return FloatListType.class;
                 case StringType:
                     return StringListType.class;
-                default:
-                    return ListType.class;
-
+                case BooleanType:
+                    return BooleanListType.class;
+                case DateType:
+                    return DateListType.class;
+                case DateTimeType:
+                    return DateTimeListType.class;
+                case SimpleDateType:
+                    return SimpleDateListType.class;
+                case PairType:
+                    return PairListType.class;
             }
         }
         return ListType.class;
     }
 
+    @Override
+    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+        if (value == null && instancesBinding != null) {
+            Object instance = instancesBinding.getInstance(operandType);
+            VariableType.setVariableValue(this, instance);
+        }
+        return LiteralType.getLiteralExpression(value, getListType());
+    }
 
 }

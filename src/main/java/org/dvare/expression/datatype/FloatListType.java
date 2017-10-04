@@ -39,7 +39,7 @@ import java.util.List;
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
-@Type(dataType = DataType.FloatType)
+@Type(dataType = DataType.FloatListType)
 public class FloatListType extends ListType {
     public FloatListType() {
 

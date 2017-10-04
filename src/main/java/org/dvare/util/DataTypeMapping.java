@@ -23,6 +23,7 @@
  */
 package org.dvare.util;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.expression.datatype.*;
 
 import java.time.LocalDate;
@@ -72,6 +73,20 @@ public class DataTypeMapping {
                 return DateType.class;
 
             }
+
+
+            case SimpleDateType:
+            case SimpleDateListType: {
+                return SimpleDateType.class;
+
+            }
+
+            case PairType:
+            case PairListType: {
+                return PairType.class;
+
+            }
+
             case RegexType: {
 
                 return RegexType.class;
@@ -176,6 +191,18 @@ public class DataTypeMapping {
                 return DataType.DateTimeListType;
             }
 
+
+            case "Pair":
+            case "ImmutablePair":
+            case "MutablePair": {
+                return DataType.PairType;
+            }
+
+            case "Pair[]":
+            case "ImmutablePair[]":
+            case "MutablePair[]": {
+                return DataType.PairListType;
+            }
         }
         return null;
 
@@ -197,7 +224,6 @@ public class DataTypeMapping {
 
             }
             case FloatType: {
-
                 return Float.class;
             }
             case FloatListType: {
@@ -244,6 +270,16 @@ public class DataTypeMapping {
                 return Date[].class;
 
             }
+
+
+            case PairType: {
+                return Pair.class;
+            }
+            case PairListType: {
+                return Pair[].class;
+
+            }
+
 
             case RegexType: {
 

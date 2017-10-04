@@ -40,7 +40,7 @@ import java.util.List;
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
-@Type(dataType = DataType.StringType)
+@Type(dataType = DataType.StringListType)
 public class StringListType extends ListType {
     public StringListType() {
 

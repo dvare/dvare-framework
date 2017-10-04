@@ -21,27 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.dvare.annotations;
+package org.dvare.expression.datatype;
 
-import org.dvare.expression.datatype.DataType;
-import org.dvare.expression.operation.OperationType;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dvare.annotations.OperationMapping;
+import org.dvare.annotations.Type;
+import org.dvare.expression.literal.LiteralExpression;
+import org.dvare.expression.operation.relational.Equals;
+import org.dvare.expression.operation.relational.NotEquals;
 
 /**
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface Operation {
+@Type(dataType = DataType.DateTimeListType)
+public class DateTimeListType extends ListType {
+    public DateTimeListType() {
+        super(DataType.DateTimeListType);
+    }
 
-    OperationType type();
+    @OperationMapping(operations = {
+            Equals.class
+    })
+    public boolean equal(LiteralExpression left, LiteralExpression right) {
+        return super.equal(left, right);
+    }
 
-    DataType[] dataTypes() default {DataType.IntegerType, DataType.FloatType, DataType.StringType, DataType.BooleanType,
-            DataType.DateTimeType, DataType.DateType, DataType.SimpleDateType,
-            DataType.RegexType, DataType.NullType, DataType.ListType, DataType.PairType};
+    @OperationMapping(operations = {
+            NotEquals.class
+    })
+    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+        return super.notEqual(left, right);
+    }
 }
