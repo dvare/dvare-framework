@@ -27,7 +27,7 @@ public class ArithmeticOperationTest {
 ## Current version
 
 * The current stable version is `2.2` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|2.2|) [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.dvare/dvare-framework/badge.svg)](http://www.javadoc.io/doc/org.dvare/dvare-framework)
-* The current snapshot version is `2.3-SNAPSHOT` : [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework) [![Coverage Status](https://coveralls.io/repos/github/dvare/dvare-framework/badge.svg?branch=master)](https://coveralls.io/github/dvare/dvare-framework?branch=master)
+* The current snapshot version is `2.3-SNAPSHOT` : [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework) [![Coverage Status](https://coveralls.io/repos/github/dvare/dvare-framework/badge.svg?branch=master)](https://coveralls.io/github/dvare/dvare-framework?branch=master)[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4c684251c3984e33a88bbfd0cd4e4df8)](https://www.codacy.com/app/hammadirshad/dvare-framework?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dvare/dvare-framework&amp;utm_campaign=Badge_Grade)
 
 In order to use snapshot versions, you need to add the following maven repository in your `pom.xml`:
 

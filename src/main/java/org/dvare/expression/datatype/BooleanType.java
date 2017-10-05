@@ -63,25 +63,6 @@ public class BooleanType extends DataTypeExpression {
         return !leftValue.equals(rightValue);
     }
 
-    @Override
-    public boolean less(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean greater(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
 
     @OperationMapping(operations = {
             In.class
@@ -100,11 +81,6 @@ public class BooleanType extends DataTypeExpression {
         Boolean leftValue = (Boolean) left.getValue();
         List<Boolean> rightValues = buildIntegerBoolean((List<Object>) right.getValue());
         return !rightValues.contains(leftValue);
-    }
-
-    @Override
-    public boolean between(LiteralExpression left, LiteralExpression right) {
-        return false;
     }
 
     private List<Boolean> buildIntegerBoolean(List<Object> tempValues) {

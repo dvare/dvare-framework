@@ -45,8 +45,9 @@ public abstract class ArithmeticOperationExpression extends RelationalOperationE
         super(operationType);
     }
 
-    public static LiteralExpression evaluate(Class<? extends DataTypeExpression> dataTypeExpression,
-                                             OperationExpression operationExpression, LiteralExpression left, LiteralExpression right) throws InterpretException {
+    public static LiteralExpression evaluate(
+            Class<? extends DataTypeExpression> dataTypeExpression, OperationExpression operationExpression,
+            LiteralExpression left, LiteralExpression right) throws InterpretException {
 
         try {
             return dataTypeExpression.newInstance().evaluate(operationExpression, left, right);

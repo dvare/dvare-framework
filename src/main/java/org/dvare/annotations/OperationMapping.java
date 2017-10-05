@@ -32,6 +32,7 @@ import java.lang.annotation.Target;
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface OperationMapping {

@@ -60,38 +60,5 @@ public class PairType extends DataTypeExpression {
         return !leftValue.equals(rightValue);
     }
 
-    @Override
-    public boolean less(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
 
-    @Override
-    public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean greater(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean in(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean notIn(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean between(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
 }

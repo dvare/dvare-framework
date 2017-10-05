@@ -106,31 +106,48 @@ public abstract class DataTypeExpression extends Expression {
     }
 
 
-    public abstract boolean equal(LiteralExpression left, LiteralExpression right);
+    /*public boolean equal(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
 
 
-    public abstract boolean notEqual(LiteralExpression left, LiteralExpression right);
+    public boolean less(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
 
 
-    public abstract boolean less(LiteralExpression left, LiteralExpression right);
+    public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
 
 
-    public abstract boolean lessEqual(LiteralExpression left, LiteralExpression right);
+    public boolean greater(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
 
 
-    public abstract boolean greater(LiteralExpression left, LiteralExpression right);
+    public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
 
 
-    public abstract boolean greaterEqual(LiteralExpression left, LiteralExpression right);
+    public boolean in(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
 
 
-    public abstract boolean in(LiteralExpression left, LiteralExpression right);
+    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }
 
 
-    public abstract boolean notIn(LiteralExpression left, LiteralExpression right);
-
-
-    public abstract boolean between(LiteralExpression left, LiteralExpression right);
+    public boolean between(LiteralExpression left, LiteralExpression right) {
+        throw new UnsupportedOperationException();
+    }*/
 
 
 }
