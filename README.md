@@ -26,6 +26,7 @@ public class ArithmeticOperationTest {
 
 ## Current version
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4c684251c3984e33a88bbfd0cd4e4df8)](https://www.codacy.com/app/hammadirshad/dvare-framework?utm_source=github.com&utm_medium=referral&utm_content=dvare/dvare-framework&utm_campaign=badger)
 * The current stable version is `2.2` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|2.2|) [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.dvare/dvare-framework/badge.svg)](http://www.javadoc.io/doc/org.dvare/dvare-framework)
 * The current snapshot version is `2.3-SNAPSHOT` : [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework) [![Coverage Status](https://coveralls.io/repos/github/dvare/dvare-framework/badge.svg?branch=master)](https://coveralls.io/github/dvare/dvare-framework?branch=master)
 
