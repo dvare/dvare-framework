@@ -82,7 +82,7 @@ public class DefTest {
     }
 
     @Test(expected = ExpressionParseException.class)
-    public void testApp2_1() throws ExpressionParseException, InterpretException {
+    public void testApp2P1() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = " def newVariable:IntegerType := 4 + 5 ; " +
                 "def result:BooleanType := false ; " +

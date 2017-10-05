@@ -86,7 +86,7 @@ public class EqualOperationTest {
     }
 
     @Test
-    public void testApp_1() throws ExpressionParseException, InterpretException, ParseException {
+    public void testAppP1() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

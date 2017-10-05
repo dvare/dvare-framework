@@ -44,7 +44,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Stack;
 
 /**
@@ -250,31 +249,25 @@ public abstract class RelationalOperationExpression extends OperationExpression 
     }
 
 
-    protected Expression interpretOperandLeft(InstancesBinding instancesBinding, Expression leftOperand) throws InterpretException {
+    protected LiteralExpression interpretOperandLeft(InstancesBinding instancesBinding, Expression leftOperand) throws InterpretException {
         return super.interpretOperand(leftOperand, instancesBinding);
     }
 
 
-    protected Expression interpretOperandRight(InstancesBinding instancesBinding, Expression rightOperand) throws InterpretException {
-        LiteralExpression<?> rightExpression = null;
+    protected LiteralExpression interpretOperandRight(InstancesBinding instancesBinding, Expression rightOperand) throws InterpretException {
+        LiteralExpression<?> rightExpression;
         if (rightOperand instanceof OperationExpression) {
             OperationExpression operation = (OperationExpression) rightOperand;
-            rightExpression = (LiteralExpression) operation.interpret(instancesBinding);
+            rightExpression = operation.interpret(instancesBinding);
         } else if (rightOperand instanceof LiteralExpression) {
             rightExpression = (LiteralExpression<?>) rightOperand;
         } else if (rightOperand instanceof VariableExpression) {
-
             VariableExpression variableExpression = (VariableExpression) rightOperand;
-            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-
-            if (instance instanceof List) {
-                instance = ((List) instance).isEmpty() ? null : ((List) instance).get(0);
-            }
-            variableExpression = VariableType.setVariableValue(variableExpression, instance);
-            rightExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
+            rightExpression = variableExpression.interpret(instancesBinding);
+        } else {
+            rightExpression = new NullLiteral<>();
         }
-
-        if (dataTypeExpression == null && rightExpression != null) {
+        if (dataTypeExpression == null && !(rightExpression instanceof NullLiteral)) {
             dataTypeExpression = rightExpression.getType();
         }
         return rightExpression;
@@ -283,14 +276,11 @@ public abstract class RelationalOperationExpression extends OperationExpression 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        Expression leftValueOperand = interpretOperandLeft(instancesBinding, leftOperand);
-        Expression rightValueOperand = interpretOperandRight(instancesBinding, rightOperand);
+        LiteralExpression leftLiteralExpression = interpretOperandLeft(instancesBinding, leftOperand);
+        LiteralExpression rightLiteralExpression = interpretOperandRight(instancesBinding, rightOperand);
 
 
-        if (leftValueOperand != null && rightValueOperand != null) {
-
-            LiteralExpression leftLiteralExpression = toLiteralExpression(leftValueOperand);
-            LiteralExpression rightLiteralExpression = toLiteralExpression(rightValueOperand);
+        if (leftLiteralExpression != null && rightLiteralExpression != null) {
 
             if (leftLiteralExpression instanceof ListLiteral && rightLiteralExpression instanceof ListLiteral) {
 

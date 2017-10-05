@@ -26,7 +26,6 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.StringType;
 import org.dvare.expression.literal.LiteralExpression;
@@ -48,29 +47,24 @@ public class Prepend extends ChainOperationExpression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        Expression leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
-        LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
+        if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null) {
 
-            if (literalExpression.getValue() != null) {
-
-                String value = literalExpression.getValue().toString();
-                value = TrimString.trim(value);
+            String value = literalExpression.getValue().toString();
+            value = TrimString.trim(value);
 
 
-                LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
+            LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
 
-                String prepend = startExpression.getValue().toString();
+            String prepend = startExpression.getValue().toString();
 
-                prepend = TrimString.trim(prepend);
-                if (prepend != null && !prepend.isEmpty()) {
-                    value = prepend + value;
-                }
-                return LiteralType.getLiteralExpression(value, StringType.class);
-
+            prepend = TrimString.trim(prepend);
+            if (prepend != null && !prepend.isEmpty()) {
+                value = prepend + value;
             }
-        }
+            return LiteralType.getLiteralExpression(value, StringType.class);
 
+        }
 
         return new NullLiteral<>();
     }

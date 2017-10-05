@@ -139,8 +139,6 @@ public class LetOperation extends OperationExpression {
         VariableExpression variableExpression = getVariableExpression();
 
         if (variableExpression != null) {
-            variableExpression = VariableType.setVariableValue(variableExpression,
-                    instancesBinding.getInstance(variableExpression.getOperandType()));
             return variableExpression.interpret(instancesBinding);
         }
         return new NullLiteral();

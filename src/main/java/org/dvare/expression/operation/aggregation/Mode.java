@@ -49,7 +49,7 @@ import java.util.List;
  */
 @Operation(type = OperationType.MODE, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Mode extends AggregationOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Mode.class);
+    private static Logger logger = LoggerFactory.getLogger(Mode.class);
 
 
     public Mode() {

@@ -39,7 +39,6 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
-import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,13 +146,11 @@ public class Invoke extends Function {
         if (rightOperand instanceof VariableExpression) {
 
             VariableExpression variableExpression = (VariableExpression) rightOperand;
-            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-            variableExpression = VariableType.setVariableValue(variableExpression, instance);
-
-            value = variableExpression.getValue();
+            LiteralExpression literalExpression = variableExpression.interpret(instancesBinding);
+            value = literalExpression.getValue();
 
         } else if (rightOperand instanceof LiteralExpression) {
-            value = ((LiteralExpression) rightOperand).getValue();
+            value = LiteralExpression.class.cast(rightOperand).getValue();
         }
 
         if (value != null) {
@@ -172,11 +169,9 @@ public class Invoke extends Function {
             if (method == null) {
                 List<Class> parameters = new ArrayList<>();
                 for (Expression expression : functionExpression.getParameters()) {
-                    Object interpret = expression.interpret(instancesBinding);
-                    if (interpret instanceof LiteralExpression) {
-                        Object value1 = ((LiteralExpression) interpret).getValue();
-                        parameters.add(value1.getClass());
-                    }
+                    LiteralExpression literalExpression = expression.interpret(instancesBinding);
+                    Object value1 = literalExpression.getValue();
+                    parameters.add(value1.getClass());
                 }
 
                 Class[] params = parameters.toArray(new Class[parameters.size()]);
@@ -190,7 +185,7 @@ public class Invoke extends Function {
                             try {
                                 Class aClass = (Class) FieldUtils.readStaticField(params[i], "TYPE", true);
                                 params[i] = aClass;
-                            } catch (IllegalAccessException e) {
+                            } catch (IllegalAccessException ignored) {
                             }
                         }
                     }

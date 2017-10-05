@@ -111,7 +111,7 @@ public class MatchTest {
     }
 
     @Test(expected = ExpressionParseException.class)
-    public void testApp2_1() throws ExpressionParseException, InterpretException {
+    public void testApp2P1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -125,7 +125,7 @@ public class MatchTest {
     }
 
     @Test(expected = ExpressionParseException.class)
-    public void testApp2_2() throws ExpressionParseException, InterpretException {
+    public void testApp2P2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -139,7 +139,7 @@ public class MatchTest {
     }
 
     @Test(expected = ExpressionParseException.class)
-    public void testApp2_3() throws ExpressionParseException, InterpretException {
+    public void testApp2P3() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

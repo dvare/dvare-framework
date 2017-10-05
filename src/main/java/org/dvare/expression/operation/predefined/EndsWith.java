@@ -26,7 +26,6 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
@@ -49,29 +48,25 @@ public class EndsWith extends ChainOperationExpression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        Expression leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
-        LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
-
-            if (literalExpression.getValue() != null) {
+        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
+        if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null) {
 
 
-                String value = literalExpression.getValue().toString();
-                value = TrimString.trim(value);
+            String value = literalExpression.getValue().toString();
+            value = TrimString.trim(value);
 
-                LiteralExpression endswithExpression = (LiteralExpression) rightOperand.get(0);
+            LiteralExpression endswithExpression = (LiteralExpression) rightOperand.get(0);
 
-                String endswith = endswithExpression.getValue().toString();
+            String endswith = endswithExpression.getValue().toString();
 
-                endswith = TrimString.trim(endswith);
+            endswith = TrimString.trim(endswith);
 
-                Boolean result = value.endsWith(endswith);
-                return LiteralType.getLiteralExpression(result.toString(), BooleanType.class);
+            Boolean result = value.endsWith(endswith);
+            return LiteralType.getLiteralExpression(result, BooleanType.class);
 
-            }
         }
 
-        return new NullLiteral<>();
+        return LiteralType.getLiteralExpression(false, BooleanType.class);
     }
 
 }

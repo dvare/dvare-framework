@@ -26,7 +26,6 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -49,14 +48,9 @@ public class ToBoolean extends ChainOperationExpression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        Expression leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
-        LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+        LiteralExpression literalExpression = super.interpretOperand(this.leftOperand, instancesBinding);
+        if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null) {
 
-
-            if (literalExpression.getValue() == null) {
-                return new NullLiteral();
-            }
 
             Object value = literalExpression.getValue();
             Boolean boolValue;
@@ -69,7 +63,6 @@ public class ToBoolean extends ChainOperationExpression {
             }
 
             return LiteralType.getLiteralExpression(boolValue, BooleanType.class);
-
 
         }
 

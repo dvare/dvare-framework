@@ -26,7 +26,6 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -54,43 +53,38 @@ public class ToDate extends ChainOperationExpression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        Expression leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
-        LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
+        if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null) {
 
-            if (literalExpression.getValue() != null) {
+            Object value = literalExpression.getValue();
+            try {
+                LocalDate localDate = null;
+                if (value instanceof LocalDate) {
+                    localDate = (LocalDate) value;
+                } else if (value instanceof LocalDateTime) {
+                    localDate = LocalDateTime.class.cast(value).toLocalDate();
+                } else if (value instanceof Date) {
+                    Date date = (Date) value;
+                    localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                } else {
+                    String valueString = literalExpression.getValue().toString();
+                    valueString = TrimString.trim(valueString);
 
-                Object value = literalExpression.getValue();
-                try {
-                    LocalDate localDate = null;
-                    if (value instanceof LocalDate) {
-                        localDate = (LocalDate) value;
-                    } else if (value instanceof LocalDateTime) {
-                        localDate = LocalDateTime.class.cast(value).toLocalDate();
-                    } else if (value instanceof Date) {
-                        Date date = (Date) value;
-                        localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                    } else {
-                        String valueString = literalExpression.getValue().toString();
-                        valueString = TrimString.trim(valueString);
-
-                        if (valueString.matches(LiteralType.date)) {
-                            localDate = LocalDate.parse(valueString, LiteralType.dateFormat);
-
-                        }
+                    if (valueString.matches(LiteralType.date)) {
+                        localDate = LocalDate.parse(valueString, LiteralType.dateFormat);
 
                     }
 
-                    if (localDate != null) {
-                        return LiteralType.getLiteralExpression(localDate, DataType.DateType);
-                    }
-
-                } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
                 }
 
+                if (localDate != null) {
+                    return LiteralType.getLiteralExpression(localDate, DataType.DateType);
+                }
 
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
             }
+
         }
         return new NullLiteral<>();
     }

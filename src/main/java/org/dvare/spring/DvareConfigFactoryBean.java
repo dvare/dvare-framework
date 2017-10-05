@@ -37,22 +37,12 @@ import org.springframework.context.ApplicationContextAware;
 
 public class DvareConfigFactoryBean implements FactoryBean<RuleConfiguration>, ApplicationContextAware {
     private String[] functionPackages;
-    private boolean silentMode = false;
     private ApplicationContext applicationContext;
     private AutowireCapableBeanFactory autowireCapableBeanFactory;
 
 
-    public DvareConfigFactoryBean() {
-        this(null, false);
-    }
-
-    public DvareConfigFactoryBean(String[] functionBasePackages) {
-        this(functionBasePackages, false);
-    }
-
-    public DvareConfigFactoryBean(String[] functionPackages, boolean silentMode) {
+    public DvareConfigFactoryBean(String... functionPackages) {
         this.functionPackages = functionPackages;
-        this.silentMode = silentMode;
     }
 
 
@@ -64,7 +54,7 @@ public class DvareConfigFactoryBean implements FactoryBean<RuleConfiguration>, A
 
     @Override
     public RuleConfiguration getObject() throws Exception {
-        return new RuleConfiguration(functionPackages, silentMode);
+        return new RuleConfiguration(functionPackages);
     }
 
 
@@ -86,11 +76,4 @@ public class DvareConfigFactoryBean implements FactoryBean<RuleConfiguration>, A
         this.functionPackages = functionPackages;
     }
 
-    public boolean isSilentMode() {
-        return silentMode;
-    }
-
-    public void setSilentMode(boolean silentMode) {
-        this.silentMode = silentMode;
-    }
 }

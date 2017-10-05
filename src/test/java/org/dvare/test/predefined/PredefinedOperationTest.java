@@ -100,7 +100,7 @@ public class PredefinedOperationTest {
     }
 
     @Test
-    public void testApp2_1() throws ExpressionParseException, InterpretException {
+    public void testApp2P1() throws ExpressionParseException, InterpretException {
 
 
         RuleConfiguration factory = new RuleConfiguration();

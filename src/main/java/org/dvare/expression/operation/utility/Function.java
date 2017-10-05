@@ -251,7 +251,7 @@ public class Function extends OperationExpression {
                     if (instance instanceof Collection) {
                         dataSet = (List) instance;
                     } else {
-                        dataSet = new ArrayList();
+                        dataSet = new ArrayList<>();
                         dataSet.add(instance);
                     }
                     List<Object> listValues = new ArrayList<>();

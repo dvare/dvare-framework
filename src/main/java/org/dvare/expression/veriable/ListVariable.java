@@ -80,7 +80,7 @@ public class ListVariable extends VariableExpression<List> {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        if (value == null && instancesBinding != null) {
+        if (instancesBinding != null) {
             Object instance = instancesBinding.getInstance(operandType);
             VariableType.setVariableValue(this, instance);
         }

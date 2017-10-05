@@ -26,7 +26,6 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.StringType;
 import org.dvare.expression.literal.LiteralExpression;
@@ -49,16 +48,11 @@ public class Append extends ChainOperationExpression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        Expression leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
-        LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
-
-            if (literalExpression.getValue() != null) {
-
+        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
+        if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null) {
 
                 String value = literalExpression.getValue().toString();
                 value = TrimString.trim(value);
-
 
                 LiteralExpression appendExpression = (LiteralExpression) rightOperand.get(0);
 
@@ -71,7 +65,6 @@ public class Append extends ChainOperationExpression {
                 return LiteralType.getLiteralExpression(value, StringType.class);
 
             }
-        }
 
         return new NullLiteral<>();
     }

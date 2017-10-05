@@ -30,6 +30,8 @@ import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 
+import java.util.List;
+
 /**
  * @author Muhammad Hammad
  * @since 2016-06-30
@@ -55,11 +57,13 @@ public abstract class VariableExpression<T> extends Expression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        if (value == null && instancesBinding != null) {
+        if (instancesBinding != null) {
             Object instance = instancesBinding.getInstance(operandType);
+            if (instance instanceof List) {
+                instance = ((List) instance).isEmpty() ? null : ((List) instance).get(0);
+            }
             VariableType.setVariableValue(this, instance);
         }
-
         return LiteralType.getLiteralExpression(value, type);
     }
 

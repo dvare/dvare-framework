@@ -164,53 +164,28 @@ public abstract class OperationExpression extends Expression {
     }
 
 
-    public Expression interpretOperand(Expression expression, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression interpretOperand(Expression expression, InstancesBinding instancesBinding) throws InterpretException {
 
-
-        Expression leftExpression = null;
-
+        LiteralExpression literalExpression;
         if (expression instanceof OperationExpression) {
             OperationExpression operation = (OperationExpression) expression;
-
-            LiteralExpression literalExpression = operation.interpret(instancesBinding);
-
-            if (literalExpression != null) {
-                dataTypeExpression = literalExpression.getType();
-            }
-            leftExpression = literalExpression;
-
+            literalExpression = operation.interpret(instancesBinding);
         } else if (expression instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) expression;
-            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-            if (instance instanceof List) {
-                instance = ((List) instance).isEmpty() ? null : ((List) instance).get(0);
-            }
-            variableExpression = VariableType.setVariableValue(variableExpression, instance);
-            if (variableExpression != null) {
-                dataTypeExpression = variableExpression.getType();
-            }
-            leftExpression = variableExpression;
+            literalExpression = variableExpression.interpret(instancesBinding);
         } else if (expression instanceof LiteralExpression) {
-            LiteralExpression literalExpression = (LiteralExpression) expression;
+            literalExpression = (LiteralExpression) expression;
+        } else {
+            literalExpression = new NullLiteral<>();
+        }
+
+        if (!(literalExpression instanceof NullLiteral)) {
             dataTypeExpression = literalExpression.getType();
-            leftExpression = literalExpression;
-
         }
 
-        return leftExpression;
 
-    }
+        return literalExpression;
 
-    protected LiteralExpression toLiteralExpression(Expression expression) throws InterpretException {
-
-        LiteralExpression leftExpression = null;
-        if (expression instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) expression;
-            leftExpression = variableExpression.interpret(null);
-        } else if (expression instanceof LiteralExpression) {
-            leftExpression = (LiteralExpression) expression;
-        }
-        return leftExpression;
     }
 
     protected boolean toBoolean(LiteralExpression interpret) {

@@ -38,7 +38,6 @@ import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.utility.LeftPriority;
 import org.dvare.expression.operation.utility.RightPriority;
 import org.dvare.expression.veriable.VariableExpression;
-import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.TrimString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,7 +185,7 @@ public class Match extends OperationExpression {
     }
 
 
-    protected List buildMatchParams(InstancesBinding instancesBinding, Expression paramsExpression) throws InterpretException {
+    protected List<?> buildMatchParams(InstancesBinding instancesBinding, Expression paramsExpression) throws InterpretException {
         List matchParams = null;
         if (paramsExpression instanceof LiteralExpression) {
             matchParams = buildMatchParams((LiteralExpression) paramsExpression);
@@ -200,10 +199,9 @@ public class Match extends OperationExpression {
 
         } else if (paramsExpression instanceof VariableExpression) {
             VariableExpression variableExpression = (VariableExpression) paramsExpression;
-            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-            variableExpression = VariableType.setVariableValue(variableExpression, instance);
-            matchParams = new ArrayList();
-            matchParams.add(variableExpression.getValue());
+            LiteralExpression literalExpression = variableExpression.interpret(instancesBinding);
+            matchParams = new ArrayList<>();
+            matchParams.add(literalExpression.getValue());
 
         }
         return matchParams;

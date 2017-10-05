@@ -35,8 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 @Operation(type = OperationType.ELSE)
 public class ELSE extends ConditionOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(ELSE.class);
-
+    private static Logger logger = LoggerFactory.getLogger(ELSE.class);
 
     public ELSE() {
         super(OperationType.ELSE);

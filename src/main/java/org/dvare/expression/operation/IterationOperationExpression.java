@@ -53,7 +53,7 @@ public class IterationOperationExpression extends OperationExpression {
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contextsBinding) throws ExpressionParseException {
 
-        String derivedContextsBinding = null;
+        String derivedContextsBinding;
 
         pos++;
 
@@ -65,7 +65,6 @@ public class IterationOperationExpression extends OperationExpression {
         } else if (pos + 1 < tokens.length && tokens[pos + 1].equals("|")) {
             referenceContext = new NamedExpression("self");
             derivedContext = new NamedExpression(tokens[pos]);
-
         }
         pos++;
 

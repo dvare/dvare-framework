@@ -49,7 +49,7 @@ import java.util.List;
  */
 @Operation(type = OperationType.MEDIAN, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Median extends AggregationOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Median.class);
+    private static Logger logger = LoggerFactory.getLogger(Median.class);
 
 
     public Median() {

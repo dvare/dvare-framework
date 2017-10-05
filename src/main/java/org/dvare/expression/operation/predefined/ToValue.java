@@ -28,7 +28,6 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalValueException;
-import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -51,11 +50,8 @@ public class ToValue extends ChainOperationExpression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        Expression leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
-        LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
-
-            if (literalExpression.getValue() != null) {
+        LiteralExpression literalExpression = super.interpretOperand(this.leftOperand, instancesBinding);
+        if (literalExpression != null && literalExpression.getValue() != null) {
 
                 Object pairValue = literalExpression.getValue();
 
@@ -69,7 +65,7 @@ public class ToValue extends ChainOperationExpression {
                         }
                     }
                 }
-            }
+
         }
 
         return new NullLiteral<>();

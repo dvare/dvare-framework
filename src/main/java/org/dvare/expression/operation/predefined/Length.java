@@ -26,7 +26,6 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.IntegerType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -52,20 +51,15 @@ public class Length extends ChainOperationExpression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
+        if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null) {
 
-        Expression leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
-        LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
-
-            if (literalExpression.getValue() != null) {
-
-                switch (toDataType(literalExpression.getType())) {
-                    case StringType: {
-                        return LiteralType.getLiteralExpression(literalExpression.getValue().toString().length(), IntegerType.class);
-                    }
+            switch (toDataType(literalExpression.getType())) {
+                case StringType: {
+                    return LiteralType.getLiteralExpression(literalExpression.getValue().toString().length(), IntegerType.class);
                 }
-
             }
+
         }
 
         return new NullLiteral<>();

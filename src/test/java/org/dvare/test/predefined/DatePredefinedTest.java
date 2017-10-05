@@ -32,7 +32,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp1_1() throws ExpressionParseException, InterpretException {
+    public void testApp1P1() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "null ->toDate() = null";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -43,7 +43,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp1_2() throws ExpressionParseException, InterpretException {
+    public void testApp1P2() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "date ( 12-05-2016 , dd-MM-yyyy )->toDate()";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -54,7 +54,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp1_3() throws ExpressionParseException, InterpretException {
+    public void testApp1P3() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss ) ->toDate()";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());

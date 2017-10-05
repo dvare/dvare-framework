@@ -26,7 +26,6 @@ package org.dvare.expression.operation;
 import org.dvare.annotations.Type;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.LiteralExpression;
@@ -59,34 +58,24 @@ public abstract class ArithmeticOperationExpression extends RelationalOperationE
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        Expression leftExpression = interpretOperandLeft(instancesBinding, leftOperand);
+        LiteralExpression leftLiteralExpression = interpretOperandLeft(instancesBinding, leftOperand);
+        LiteralExpression rightLiteralExpression = interpretOperandRight(instancesBinding, rightOperand);
 
-        if (leftExpression == null)
-            return new NullLiteral();
-
-
-        LiteralExpression<?> rightExpression = (LiteralExpression) interpretOperandRight(instancesBinding, rightOperand);
-
-
-        LiteralExpression left = toLiteralExpression(leftExpression);
-        LiteralExpression right = toLiteralExpression(rightExpression);
-
-
-        if (left instanceof NullLiteral && right.getType().isAnnotationPresent(Type.class)) {
-            Type type = (Type) right.getType().getAnnotation(Type.class);
+        if (leftLiteralExpression instanceof NullLiteral && rightLiteralExpression.getType().isAnnotationPresent(Type.class)) {
+            Type type = (Type) rightLiteralExpression.getType().getAnnotation(Type.class);
 
             switch (type.dataType()) {
 
                 case FloatType: {
-                    left = LiteralType.getLiteralExpression(0f, right.getType());
+                    leftLiteralExpression = LiteralType.getLiteralExpression(0f, rightLiteralExpression.getType());
                     break;
                 }
                 case IntegerType: {
-                    left = LiteralType.getLiteralExpression(0, right.getType());
+                    leftLiteralExpression = LiteralType.getLiteralExpression(0, rightLiteralExpression.getType());
                     break;
                 }
                 case StringType: {
-                    left = LiteralType.getLiteralExpression("", right.getType());
+                    leftLiteralExpression = LiteralType.getLiteralExpression("", rightLiteralExpression.getType());
                     break;
                 }
 
@@ -94,11 +83,11 @@ public abstract class ArithmeticOperationExpression extends RelationalOperationE
 
         }
 
-        if (left instanceof NullLiteral || right instanceof NullLiteral) {
+        if (leftLiteralExpression instanceof NullLiteral || rightLiteralExpression instanceof NullLiteral) {
             dataTypeExpression = NullType.class;
         }
 
-        return evaluate(dataTypeExpression, this, left, right);
+        return evaluate(dataTypeExpression, this, leftLiteralExpression, rightLiteralExpression);
 
 
     }

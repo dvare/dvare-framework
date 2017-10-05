@@ -26,7 +26,6 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -53,59 +52,57 @@ public class SetDay extends ChainOperationExpression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        Expression leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
-        LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if ((literalExpression != null && !(literalExpression instanceof NullLiteral)) && (rightOperand != null && rightOperand.size() == 1)) {
+        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
+        if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null
+                && rightOperand != null && !rightOperand.isEmpty()) {
 
-            if (literalExpression.getValue() != null) {
+            LiteralExpression daysExpression = (LiteralExpression) rightOperand.get(0);
 
-                LiteralExpression daysExpression = (LiteralExpression) rightOperand.get(0);
-                Object daysValue = daysExpression.getValue();
-                Object value = literalExpression.getValue();
-                dataTypeExpression = literalExpression.getType();
-                switch (toDataType(dataTypeExpression)) {
-                    case DateType: {
-                        if (value instanceof LocalDate && daysValue instanceof Integer) {
+            Object daysValue = daysExpression.getValue();
+            Object value = literalExpression.getValue();
+            dataTypeExpression = literalExpression.getType();
+            switch (toDataType(dataTypeExpression)) {
+                case DateType: {
+                    if (value instanceof LocalDate && daysValue instanceof Integer) {
 
-                            LocalDate localDate = (LocalDate) value;
-                            Integer days = (Integer) daysValue;
-                            localDate = localDate.withDayOfMonth(days);
+                        LocalDate localDate = (LocalDate) value;
+                        Integer days = (Integer) daysValue;
+                        localDate = localDate.withDayOfMonth(days);
 
-                            return LiteralType.getLiteralExpression(localDate, dataTypeExpression);
+                        return LiteralType.getLiteralExpression(localDate, dataTypeExpression);
 
-                        }
-                        break;
                     }
-
-                    case DateTimeType: {
-                        if (value instanceof LocalDateTime && daysValue instanceof Integer) {
-
-                            LocalDateTime localDateTime = (LocalDateTime) value;
-                            Integer days = (Integer) daysValue;
-                            localDateTime = localDateTime.withDayOfMonth(days);
-                            return LiteralType.getLiteralExpression(localDateTime, dataTypeExpression);
-
-                        }
-                        break;
-                    }
-
-                    case SimpleDateType: {
-                        if (value instanceof Date && daysValue instanceof Integer) {
-
-                            Date date = (Date) value;
-                            Integer days = (Integer) daysValue;
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.setTime(date);
-                            calendar.set(Calendar.DATE, days);
-                            return LiteralType.getLiteralExpression(calendar.getTime(), dataTypeExpression);
-                        }
-                        break;
-                    }
-
-
+                    break;
                 }
 
+                case DateTimeType: {
+                    if (value instanceof LocalDateTime && daysValue instanceof Integer) {
+
+                        LocalDateTime localDateTime = (LocalDateTime) value;
+                        Integer days = (Integer) daysValue;
+                        localDateTime = localDateTime.withDayOfMonth(days);
+                        return LiteralType.getLiteralExpression(localDateTime, dataTypeExpression);
+
+                    }
+                    break;
+                }
+
+                case SimpleDateType: {
+                    if (value instanceof Date && daysValue instanceof Integer) {
+
+                        Date date = (Date) value;
+                        Integer days = (Integer) daysValue;
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(date);
+                        calendar.set(Calendar.DATE, days);
+                        return LiteralType.getLiteralExpression(calendar.getTime(), dataTypeExpression);
+                    }
+                    break;
+                }
+
+
             }
+
         }
 
         return new NullLiteral<>();

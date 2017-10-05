@@ -33,11 +33,9 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalPropertyException;
-import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.utility.DefOperation;
 import org.dvare.expression.operation.utility.EndForAll;
@@ -183,21 +181,10 @@ public class AssignOperationExpression extends OperationExpression {
             LiteralExpression literalExpression = null;
             if (valueOperand instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) valueOperand;
-
-                Object interpret = operation.interpret(instancesBinding);
-                if (interpret instanceof LiteralExpression) {
-                    literalExpression = (LiteralExpression) interpret;
-                } else {
-                    try {
-                        literalExpression = LiteralType.getLiteralExpression(interpret.toString());
-                    } catch (IllegalValueException e) {
-                        throw new InterpretException(e);
-                    }
-                }
+                literalExpression = operation.interpret(instancesBinding);
             } else if (valueOperand instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) valueOperand;
-                variableExpression = VariableType.setVariableValue(variableExpression, instancesBinding.getInstance(variableExpression.getOperandType()));
-                literalExpression = (LiteralExpression) variableExpression.interpret(instancesBinding);
+                literalExpression = variableExpression.interpret(instancesBinding);
             } else if (valueOperand instanceof LiteralExpression) {
                 literalExpression = (LiteralExpression) valueOperand;
             }

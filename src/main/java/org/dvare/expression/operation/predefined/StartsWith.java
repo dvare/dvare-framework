@@ -26,8 +26,7 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.exceptions.parser.IllegalValueException;
-import org.dvare.expression.Expression;
+import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -49,40 +48,25 @@ public class StartsWith extends ChainOperationExpression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        Expression leftValueOperand = super.interpretOperand(this.leftOperand, instancesBinding);
+        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
 
-        LiteralExpression literalExpression = toLiteralExpression(leftValueOperand);
-        if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+        if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null) {
 
-            if (literalExpression.getValue() == null) {
-                return new NullLiteral<>();
-            }
             String value = literalExpression.getValue().toString();
             value = TrimString.trim(value);
 
-
             LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
+            String startWith = startExpression.getValue().toString();
 
-            String start;
-            if (startExpression.getValue() instanceof Integer) {
-                start = (String) startExpression.getValue();
-            } else {
-                start = startExpression.getValue().toString();
-            }
+            startWith = TrimString.trim(startWith);
 
-            start = TrimString.trim(start);
+            Boolean result = value.startsWith(startWith);
 
-            Boolean result = value.startsWith(start);
-
-            try {
-                LiteralExpression returnExpression = LiteralType.getLiteralExpression(result.toString(), DataType.BooleanType);
-                return returnExpression;
-            } catch (IllegalValueException e) {
-            }
+            return LiteralType.getLiteralExpression(result, BooleanType.class);
 
         }
 
-        return new NullLiteral<>();
+        return LiteralType.getLiteralExpression(false, BooleanType.class);
     }
 
 }

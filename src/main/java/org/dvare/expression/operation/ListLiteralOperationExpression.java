@@ -157,9 +157,7 @@ public class ListLiteralOperationExpression extends OperationExpression {
 
             } else if (expression instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) expression;
-                Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-                variableExpression = VariableType.setVariableValue(variableExpression, instance);
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(variableExpression.getValue(), variableExpression.getType());
+                LiteralExpression literalExpression = variableExpression.interpret(instancesBinding);
                 values.add(literalExpression.getValue());
                 dataType = variableExpression.getType();
             } else if (expression instanceof LiteralExpression) {

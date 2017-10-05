@@ -179,8 +179,8 @@ public class VariableTest {
         String exp = "Variable1 = ['dvare'] " +
                 "and Variable2 = [2016] " +
                 "and Variable3 = [20.16] " +
-                "and Variable4 = [true] " /*+
-                "and Variable5 -> toDate() = date ( 12-05-2016 , dd-MM-yyyy ) " */ +
+                "and Variable4 = [true] " +
+               /* "and Variable5  = Variable5 "  +*/
                 "and Variable6  = [date ( 12-05-2016 , dd-MM-yyyy )] " +
                 "and Variable7 = [dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss )] " +
                 "and Variable8 = [toPair('dvare' , 'framework')] ";
