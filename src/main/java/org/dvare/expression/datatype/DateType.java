@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * <p>
+ *
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,17 +26,11 @@ package org.dvare.expression.datatype;
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.arithmetic.Subtract;
 import org.dvare.expression.operation.relational.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Period;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -111,12 +105,7 @@ public class DateType extends DataTypeExpression {
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
         LocalDate leftValue = toLocalDate(left.getValue());
-        List<LocalDate> rightValues = new ArrayList<>();
-
-        for (LocalDate rightValue : buildLocalDateList((List<?>) right.getValue())) {
-            rightValues.add(rightValue);
-        }
-
+        List<LocalDate> rightValues = buildLocalDateList((List<?>) right.getValue());
         return rightValues.contains(leftValue);
     }
 
@@ -125,10 +114,7 @@ public class DateType extends DataTypeExpression {
     })
     public boolean notIn(LiteralExpression left, LiteralExpression right) {
         LocalDate leftValue = toLocalDate(left.getValue());
-        List<LocalDate> rightValues = new ArrayList<>();
-        for (LocalDate rightValue : buildLocalDateList((List<?>) right.getValue())) {
-            rightValues.add(rightValue);
-        }
+        List<LocalDate> rightValues = buildLocalDateList((List<?>) right.getValue());
         return !rightValues.contains(leftValue);
     }
 
@@ -144,16 +130,6 @@ public class DateType extends DataTypeExpression {
     }
 
 
-    private LocalDate toLocalDate(Object value) {
-        if (value instanceof LocalDateTime) {
-            LocalDateTime localDateTime = (LocalDateTime) value;
-            return localDateTime.toLocalDate();
-
-        } else if (value instanceof LocalDate) {
-            return (LocalDate) value;
-        }
-        return null;
-    }
 
 
     @OperationMapping(operations = {
@@ -170,43 +146,5 @@ public class DateType extends DataTypeExpression {
 
     }
 
-    private List<LocalDate> buildLocalDateList(List<?> objectsList) {
-        List<LocalDate> localDateList = new ArrayList<>();
-        for (Object object : objectsList) {
 
-            if (object == null) {
-                localDateList.add(null);
-
-            } else if (object instanceof LocalDate) {
-                localDateList.add((LocalDate) object);
-            } else if (object instanceof Date) {
-                Date date = (Date) object;
-                LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                localDateList.add(localDate);
-            } else {
-                try {
-                    LocalDate localDate = LocalDate.parse(object.toString(), LiteralType.dateFormat);
-                    localDateList.add(localDate);
-                } catch (Exception e) {
-                    try {
-
-                        LocalDate localDate = LocalDate.parse(object.toString(), LiteralType.dateTimeFormat);
-                        localDateList.add(localDate);
-
-
-                    } catch (Exception e2) {
-                        try {
-                            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("E MMM dd hh:mm:ss Z yyyy");
-                            LocalDate localDate = LocalDate.parse(object.toString(), dateTimeFormatter);
-                            localDateList.add(localDate);
-                        } catch (Exception e3) {
-                            localDateList.add(null);
-                        }
-                    }
-
-                }
-            }
-        }
-        return localDateList;
-    }
 }

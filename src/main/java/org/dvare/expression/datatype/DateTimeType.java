@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * <p>
+ *
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,14 +26,9 @@ package org.dvare.expression.datatype;
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.relational.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,8 +46,8 @@ public class DateTimeType extends DataTypeExpression {
             Equals.class
     })
     public boolean equal(LiteralExpression left, LiteralExpression right) {
-        LocalDateTime leftValue = (LocalDateTime) left.getValue();
-        LocalDateTime rightValue = (LocalDateTime) right.getValue();
+        LocalDateTime leftValue = toLocalDateTime(left.getValue());
+        LocalDateTime rightValue = toLocalDateTime(right.getValue());
         return leftValue.compareTo(rightValue) == 0;
     }
 
@@ -60,8 +55,8 @@ public class DateTimeType extends DataTypeExpression {
             NotEquals.class
     })
     public boolean notEqual(LiteralExpression left, LiteralExpression right) {
-        LocalDateTime leftValue = (LocalDateTime) left.getValue();
-        LocalDateTime rightValue = (LocalDateTime) right.getValue();
+        LocalDateTime leftValue = toLocalDateTime(left.getValue());
+        LocalDateTime rightValue = toLocalDateTime(right.getValue());
         return leftValue.compareTo(rightValue) != 0;
     }
 
@@ -69,8 +64,8 @@ public class DateTimeType extends DataTypeExpression {
             LessThan.class
     })
     public boolean less(LiteralExpression left, LiteralExpression right) {
-        LocalDateTime leftValue = (LocalDateTime) left.getValue();
-        LocalDateTime rightValue = (LocalDateTime) right.getValue();
+        LocalDateTime leftValue = toLocalDateTime(left.getValue());
+        LocalDateTime rightValue = toLocalDateTime(right.getValue());
         return leftValue.compareTo(rightValue) < 0;
     }
 
@@ -79,8 +74,8 @@ public class DateTimeType extends DataTypeExpression {
     })
 
     public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
-        LocalDateTime leftValue = (LocalDateTime) left.getValue();
-        LocalDateTime rightValue = (LocalDateTime) right.getValue();
+        LocalDateTime leftValue = toLocalDateTime(left.getValue());
+        LocalDateTime rightValue = toLocalDateTime(right.getValue());
         return leftValue.compareTo(rightValue) <= 0;
     }
 
@@ -88,8 +83,8 @@ public class DateTimeType extends DataTypeExpression {
             GreaterThan.class
     })
     public boolean greater(LiteralExpression left, LiteralExpression right) {
-        LocalDateTime leftValue = (LocalDateTime) left.getValue();
-        LocalDateTime rightValue = (LocalDateTime) right.getValue();
+        LocalDateTime leftValue = toLocalDateTime(left.getValue());
+        LocalDateTime rightValue = toLocalDateTime(right.getValue());
         return leftValue.compareTo(rightValue) > 0;
     }
 
@@ -97,8 +92,8 @@ public class DateTimeType extends DataTypeExpression {
             GreaterEqual.class
     })
     public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
-        LocalDateTime leftValue = (LocalDateTime) left.getValue();
-        LocalDateTime rightValue = (LocalDateTime) right.getValue();
+        LocalDateTime leftValue = toLocalDateTime(left.getValue());
+        LocalDateTime rightValue = toLocalDateTime(right.getValue());
         return leftValue.compareTo(rightValue) >= 0;
     }
 
@@ -106,8 +101,8 @@ public class DateTimeType extends DataTypeExpression {
             In.class
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
-        LocalDateTime leftValue = (LocalDateTime) left.getValue();
-        List<LocalDateTime> rightValues = buildDateList((List<?>) right.getValue());
+        LocalDateTime leftValue = toLocalDateTime(left.getValue());
+        List<LocalDateTime> rightValues = buildDateTimeList((List<?>) right.getValue());
         return rightValues.contains(leftValue);
     }
 
@@ -115,8 +110,8 @@ public class DateTimeType extends DataTypeExpression {
             NotIn.class
     })
     public boolean notIn(LiteralExpression left, LiteralExpression right) {
-        LocalDateTime leftValue = (LocalDateTime) left.getValue();
-        List<LocalDateTime> rightValues = buildDateList((List<?>) right.getValue());
+        LocalDateTime leftValue = toLocalDateTime(left.getValue());
+        List<LocalDateTime> rightValues = buildDateTimeList((List<?>) right.getValue());
         return !rightValues.contains(leftValue);
     }
 
@@ -124,47 +119,12 @@ public class DateTimeType extends DataTypeExpression {
             Between.class
     })
     public boolean between(LiteralExpression left, LiteralExpression right) {
-        LocalDateTime leftValue = (LocalDateTime) left.getValue();
-        List<LocalDateTime> values = buildDateList((List<?>) right.getValue());
+        LocalDateTime leftValue = toLocalDateTime(left.getValue());
+        List<LocalDateTime> values = buildDateTimeList((List<?>) right.getValue());
         LocalDateTime lower = values.get(0);
         LocalDateTime upper = values.get(1);
         return lower.compareTo(leftValue) <= 0 && leftValue.compareTo(upper) <= 0;
     }
 
 
-    private List<LocalDateTime> buildDateList(List<?> objects) {
-        List<LocalDateTime> localDateTimeList = new ArrayList<>();
-        for (Object object : objects) {
-
-            if (object instanceof LocalDateTime) {
-                localDateTimeList.add((LocalDateTime) object);
-            } else if (object instanceof Date) {
-                Date date = (Date) object;
-                LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-                localDateTimeList.add(localDateTime);
-            } else {
-                try {
-
-                    LocalDateTime localDateTime = LocalDateTime.parse(object.toString(), LiteralType.dateTimeFormat);
-                    localDateTimeList.add(localDateTime);
-
-                } catch (Exception e) {
-                    try {
-                        LocalDateTime localDateTime = LocalDateTime.parse(object.toString(), LiteralType.dateFormat);
-                        localDateTimeList.add(localDateTime);
-                    } catch (Exception e2) {
-                        try {
-                            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("E MMM dd hh:mm:ss Z yyyy");
-                            LocalDateTime localDateTime = LocalDateTime.parse(object.toString(), dateTimeFormatter);
-                            localDateTimeList.add(localDateTime);
-                        } catch (Exception e3) {
-                            localDateTimeList.add(null);
-                        }
-                    }
-
-                }
-            }
-        }
-        return localDateTimeList;
-    }
 }

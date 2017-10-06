@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * <p>
+ *
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,6 +25,7 @@ package org.dvare.expression.datatype;
 
 import org.dvare.annotations.OperationMapping;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -33,8 +34,15 @@ import org.dvare.expression.operation.OperationExpression;
 import org.dvare.util.DataTypeMapping;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Muhammad Hammad
@@ -47,8 +55,6 @@ public abstract class DataTypeExpression extends Expression {
 
     public DataTypeExpression(DataType dataType) {
         this.dataType = dataType;
-
-
     }
 
     public DataType getDataType() {
@@ -85,7 +91,11 @@ public abstract class DataTypeExpression extends Expression {
             return new NullLiteral();
 
         } catch (Exception m) {
-            throw new InterpretException(m);
+            if (m instanceof InvocationTargetException && m.getCause() != null) {
+                throw new InterpretException(m.getCause());
+            } else {
+                throw new InterpretException(m);
+            }
         }
     }
 
@@ -149,5 +159,101 @@ public abstract class DataTypeExpression extends Expression {
         throw new UnsupportedOperationException();
     }*/
 
+    Date toDate(Object value) {
 
+        if (value instanceof LocalDate) {
+            LocalDate localDate = (LocalDate) value;
+            return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        } else if (value instanceof LocalDateTime) {
+            LocalDateTime localDateTime = (LocalDateTime) value;
+            return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        } else if (value instanceof Date) {
+            return (Date) value;
+        }
+
+        try {
+            LiteralExpression literalExpression = LiteralType.getLiteralExpression(value.toString());
+            if (literalExpression.getType().equals(DateType.class)
+                    || literalExpression.getType().equals(DateTimeType.class)
+                    || literalExpression.getType().equals(SimpleDateType.class)) {
+                return toDate(literalExpression.getValue());
+            }
+        } catch (IllegalValueException ignored) {
+
+        }
+        return null;
+    }
+
+
+    List<Date> buildDateList(List<?> tempValues) {
+
+        List<Date> values = new ArrayList<>();
+        for (Object tempValue : tempValues) {
+            values.add(toDate(tempValue));
+        }
+        return values;
+    }
+
+
+    LocalDate toLocalDate(Object value) {
+        if (value instanceof LocalDateTime) {
+            return LocalDateTime.class.cast(value).toLocalDate();
+        } else if (value instanceof LocalDate) {
+            return (LocalDate) value;
+        } else if (value instanceof Date) {
+            return Date.class.cast(value).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+        try {
+            LiteralExpression literalExpression = LiteralType.getLiteralExpression(value.toString());
+            if (literalExpression.getType().equals(DateType.class)
+                    || literalExpression.getType().equals(DateTimeType.class)
+                    || literalExpression.getType().equals(SimpleDateType.class)) {
+                return toLocalDate(literalExpression.getValue());
+            }
+        } catch (IllegalValueException ignored) {
+
+        }
+        return null;
+    }
+
+
+    List<LocalDate> buildLocalDateList(List<?> objectsList) {
+        List<LocalDate> localDateList = new ArrayList<>();
+        for (Object object : objectsList) {
+            localDateList.add(toLocalDate(object));
+        }
+        return localDateList;
+    }
+
+
+    LocalDateTime toLocalDateTime(Object value) {
+        if (value instanceof LocalDateTime) {
+            return LocalDateTime.class.cast(value);
+        } else if (value instanceof LocalDate) {
+            return LocalDate.class.cast(value).atStartOfDay(ZoneId.systemDefault()).toLocalDateTime();
+        } else if (value instanceof Date) {
+            return Date.class.cast(value).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        } else {
+            try {
+                LiteralExpression literalExpression = LiteralType.getLiteralExpression(value.toString());
+                if (literalExpression.getType().equals(DateType.class)
+                        || literalExpression.getType().equals(DateTimeType.class)
+                        || literalExpression.getType().equals(SimpleDateType.class)) {
+                    return toLocalDateTime(literalExpression.getValue());
+                }
+            } catch (IllegalValueException ignored) {
+
+            }
+        }
+        return null;
+    }
+
+    List<LocalDateTime> buildDateTimeList(List<?> objects) {
+        List<LocalDateTime> localDateTimeList = new ArrayList<>();
+        for (Object object : objects) {
+
+            localDateTimeList.add(toLocalDateTime(object));
+        }
+        return localDateTimeList;
+    }
 }

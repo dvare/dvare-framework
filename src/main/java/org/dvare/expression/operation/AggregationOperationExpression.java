@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * <p>
+ *
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -52,10 +52,7 @@ import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * @author Muhammad Hammad
@@ -267,56 +264,61 @@ public abstract class AggregationOperationExpression extends OperationExpression
         List values;
 
         if (literalExpression instanceof ListLiteral) {
-            values = ((ListLiteral) literalExpression).getValue();
-            dataTypeExpression = ((ListLiteral) literalExpression).getType();
+            ListLiteral listLiteral = ListLiteral.class.cast(literalExpression);
+            values = listLiteral.getValue();
+            dataTypeExpression = listLiteral.getType();
         } else {
             values = new ArrayList<>();
-
             values.add(literalExpression.getValue());
-
             dataTypeExpression = literalExpression.getType();
         }
 
         return values;
     }
 
-    private List<?> listLiteralValues(InstancesBinding instancesBinding,
-                                      ListLiteralOperationExpression listLiteralOperationExpression)
+    private List<?> listLiteralValues(
+            InstancesBinding instancesBinding, ListLiteralOperationExpression listLiteralOperationExpression)
             throws InterpretException {
         List values = null;
+        LiteralExpression literalExpression = listLiteralOperationExpression.interpret(instancesBinding);
 
-        Object interpret = listLiteralOperationExpression.interpret(instancesBinding);
-        if (interpret instanceof ListLiteral) {
-            values = ((ListLiteral) interpret).getValue();
-            dataTypeExpression = ((ListLiteral) interpret).getType();
+        if (literalExpression instanceof ListLiteral) {
+            values = extractValues(instancesBinding, literalExpression);
+        } else {
+            dataTypeExpression = literalExpression.getType();
         }
-
         return values;
     }
 
     private List<?> variableExpressionValues(InstancesBinding instancesBinding, VariableExpression variableExpression)
             throws InterpretException {
-        List values;
+        List values = null;
         if (variableExpression instanceof ListVariable) {
-            dataTypeExpression = variableExpression.getType();
-            Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-            variableExpression = VariableType.setVariableValue(variableExpression, instance);
-            values = ((ListVariable) variableExpression).getValue();
+            LiteralExpression literalExpression = variableExpression.interpret(instancesBinding);
+
+            if (literalExpression instanceof ListLiteral) {
+                values = extractValues(instancesBinding, literalExpression);
+            } else {
+                dataTypeExpression = literalExpression.getType();
+            }
 
         } else {
 
             dataTypeExpression = variableExpression.getType();
             Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
-            List dataSet;
+
+            List<?> dataSet;
             if (instance instanceof List) {
-                dataSet = (List) instance;
+                dataSet = (List<?>) instance;
             } else {
-                dataSet = new ArrayList<>();
-                dataSet.add(instance);
+                dataSet = Collections.singletonList(instance);
             }
+
+
             values = new ArrayList<>();
             for (Object object : dataSet) {
-                Object value = getValue(object, variableExpression.getName());
+                variableExpression = VariableType.setVariableValue(variableExpression, object);
+                Object value = variableExpression.getValue();
                 values.add(value);
             }
 
@@ -327,7 +329,6 @@ public abstract class AggregationOperationExpression extends OperationExpression
     private List<?> functionExpressionExpressionValues(InstancesBinding instancesBinding, Function function)
             throws InterpretException {
         List values;
-
 
         FunctionExpression functionValueOperand = (FunctionExpression) function.getLeftOperand();
 
