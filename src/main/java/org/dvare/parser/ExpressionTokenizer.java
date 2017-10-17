@@ -27,33 +27,16 @@ package org.dvare.parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ExpressionTokenizer {
     private static Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
-
-
-   /* public static void main(String args[]) throws IOException {
-        //String exp = "V1 in ['A','B'] ; V2 in [2,3] ; V3 in [3.1,3.2] ; V4 in [true,false] ; V5 in [12-05-2016,13-05-2016] ; V6 in [12-05-2016-15:30:00,13-05-2016-15:30:00] ; V7 in [R'B1.*',R'A1.*']";
-        String exp = "Variable1 = (7 + 3)" +
-                " And Variable1 <> ( 30 - 10)" +
-                " And Variable2 = (4 * 5)" +
-                " And Variable8 = 'A' " +
-                " And Variable1 = ( Variable2 / 2 )" +
-                " And Variable1 = ( Variable1 min Variable2 )" +
-                " And Variable2 = ( Variable1 max Variable2 )";
-        for (String token : toToken(exp)) {
-
-            System.out.println(token);
-        }
-
-    }*/
-
-
-    // private String operators[] = new String[]{"(", ")", "[", "]", "<>", "||", "&&", "=>", "!=", "<=", ">=", "=", ">", "<", "!", "+"};
+    private static String operators[] = new String[]{"<>", "\\|\\|", "&&", "=>", "!=", "<=", ">=", ":="};
+    private static String singleOperators[] = new String[]{"\\(", "\\)", "\\[", "\\]", "=", ">", "<", "!", ";", "\\+", /*"\\-", "\\*", "\\/", "\\^",*/};
+    private static Pattern operatorsPattern = Pattern.compile(buildRegex(operators));
+    private static Pattern singleOperatorsPattern = Pattern.compile(buildRegex(singleOperators));
 
 
     public static String[] toToken(String expr) {
@@ -62,192 +45,60 @@ public class ExpressionTokenizer {
     }
 
     public static String[] toToken(String expr, String splits[]) {
-
-
-        StringBuilder builder = new StringBuilder("");
-        for (String split : splits) {
-            builder.append(split);
-            builder.append("|");
-        }
-
-        String regex = builder.toString().trim();
-        if (regex.endsWith("|")) {
-            regex = regex.substring(0, regex.length() - 1);
-        }
-
+        String regex = buildRegex(splits);
         if (logger.isDebugEnabled()) {
             logger.debug("Token Pattern: {}", regex);
         }
         if (expr != null && !expr.isEmpty()) {
 
-            String expression = expr.replaceAll("  ", " ");
+            String expression = expr.replaceAll(" {2}", " ");
             expression = expression.trim();
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Parsing the expression : {}", expression);
             }
 
-            List<String> tokenArray = new ArrayList<>();
-            Iterator<String> tokenizer = Arrays.asList(expression.split(regex)).iterator();
+
+            List<Token> tokens = new LinkedList<>();
+
+            Iterator<String> it = Arrays.asList(expression.split(regex)).iterator();
+            PeekingIterator<String> iterator = new PeekingIterator<>(it);
 
 
-            while (tokenizer.hasNext()) {
-                String token = tokenizer.next();
-
+            while (iterator.hasNext()) {
+                String token = iterator.next();
 
                 if (token.equals("/*") || token.startsWith("/*")) {
-
-                    while (tokenizer.hasNext()) {
-                        token = tokenizer.next();
-
-                        if (token.equals("*/") || token.endsWith("*/")) {
-                            break;
-                        }
-                    }
-
-                } else if ((countOccurrences(token, '\'') == 2) && (!token.startsWith("'") || !token.endsWith("'"))) {
-
-
-                    if (!token.startsWith("'")) {
-
-                        String left = token.substring(0, token.indexOf("'"));
-                        left = left.trim();
-                        if (validateToken(left)) {
-                            tokenArray.addAll(parseToken(left));
-                        } else {
-                            if (left.isEmpty()) {
-                                tokenArray.add(left);
-                            }
-                        }
-
-                        token = token.substring(token.indexOf("'"), token.length());
-                        token = token.trim();
-
-                    }
-
-
-                    if (!token.endsWith("'")) {
-
-                        String left;
-                        if (!token.startsWith("'")) {
-                            left = token.substring(0, token.indexOf("'") + 1);
-                        } else {
-                            left = token.substring(0, token.indexOf("'", 1) + 1);
-                        }
-
-
-                        left = left.trim();
-                        if (validateToken(left)) {
-                            tokenArray.addAll(parseToken(left));
-                        } else {
-                            if (!left.isEmpty()) {
-                                tokenArray.add(left);
-                            }
-                        }
-
-
-                        String right;
-                        if (!token.startsWith("'")) {
-                            right = token.substring(token.indexOf("'") + 1, token.length());
-                        } else {
-                            right = token.substring(token.indexOf("'", 1) + 1, token.length());
-                        }
-
-
-                        right = right.trim();
-                        if (validateToken(right)) {
-                            tokenArray.addAll(parseToken(right));
-                        } else {
-                            if (!right.isEmpty()) {
-                                tokenArray.add(right);
-                            }
-                        }
-
-                    } else {
-                        if (validateToken(token)) {
-                            tokenArray.addAll(parseToken(token));
-                        } else {
-                            if (!token.isEmpty()) {
-                                tokenArray.add(token);
-                            }
-                        }
-                    }
-
-
+                    tokens.addAll(comments(iterator));
+                } else if ((countOccurrences(token, '\'') == 1) && (token.startsWith("'") && !token.endsWith("'"))) {
+                    tokens.addAll(completeStringLiteral(iterator));
                 } else if ((countOccurrences(token, '\'') == 1) && (!token.startsWith("'") && !token.endsWith("'"))) {
 
+                    tokens.addAll(midStartCompeleteStringLiteral(iterator));
 
-                    String left = token.substring(0, token.indexOf("'"));
-                    left = left.trim();
-                    if (validateToken(left)) {
-                        tokenArray.addAll(parseToken(left));
-                    } else {
-                        if (left.isEmpty()) {
-                            tokenArray.add(left);
-                        }
-                    }
+                } else if ((countOccurrences(token, '\'') == 2) && !token.startsWith("'") && !token.endsWith("'")) {
 
-                    token = token.substring(token.indexOf("'"), token.length());
-                    String tempToken = token.trim();
+                    tokens.addAll(midParseLiteral(iterator));
 
 
-                    while (tokenizer.hasNext()) {
-                        token = tokenizer.next();
+                } else if ((countOccurrences(token, '\'') == 2) && !token.startsWith("'")) {
 
+                    tokens.addAll(midStartParseStringLiteral(iterator));
 
-                        if (!token.startsWith("'") && token.endsWith("'")) {
-                            tempToken += " " + token;
-                            tokenArray.add(tempToken);
-                        } else if (!token.startsWith("'") && token.contains("'")) {
-
-
-                            left = token.substring(0, token.indexOf("'") + 1);
-                            left = left.trim();
-                            tempToken += " " + left;
-                            tokenArray.add(tempToken);
-
-                            String right = token.substring(token.indexOf("'") + 1, token.length());
-                            if (validateToken(right)) {
-                                tokenArray.addAll(parseToken(right));
-                            } else {
-                                if (right.isEmpty()) {
-                                    tokenArray.add(right);
-                                }
-                            }
-
-
-                        } else {
-                            tempToken += " " + token;
-                        }
-
-                    }
-
-                } else if ((countOccurrences(token, '\'') == 1) && (token.startsWith("'") && !token.endsWith("'"))) {
-
-                    StringBuilder tempToken = new StringBuilder(token);
-
-                    while (tokenizer.hasNext()) {
-                        token = tokenizer.next();
-                        tempToken.append(" ").append(token);
-
-                        if (!token.startsWith("'") && token.endsWith("'")) {
-                            tokenArray.add(tempToken.toString());
-                            break;
-                        }
-
-                    }
-
-                } else if (validateToken(token)) {
-
-                    tokenArray.addAll(parseToken(token));
-
+                } else if ((countOccurrences(token, '\'') == 2) && !token.endsWith("'")) {
+                    tokens.addAll(midEndParseStringLiteral(iterator));
                 } else {
-                    if (!token.isEmpty()) {
-                        tokenArray.add(token);
-                    }
+                    tokens.addAll(parseToken(token));
                 }
 
 
+            }
+
+            List<String> tokenArray = new ArrayList<>();
+            for (Token token : tokens) {
+                if (!token.getType().equals(TokenType.COMMENT)) {
+                    tokenArray.add(token.getValue());
+                }
             }
 
 
@@ -258,6 +109,146 @@ public class ExpressionTokenizer {
         }
 
         return null;
+    }
+
+    private static String buildRegex(String splits[]) {
+        StringBuilder regexBuilder = new StringBuilder("");
+        Iterator<String> iterator = Arrays.asList(splits).iterator();
+        while (iterator.hasNext()) {
+            String split = iterator.next();
+            regexBuilder.append(split);
+            if (iterator.hasNext()) {
+                regexBuilder.append("|");
+            }
+        }
+        return regexBuilder.toString();
+    }
+
+    private static List<Token> comments(PeekingIterator<String> iterator) {
+        List<Token> tokens = new LinkedList<>();
+
+        while (iterator.hasNext()) {
+            iterator.next();
+            String token = iterator.peek();
+            tokens.add(new Token(token, TokenType.COMMENT));
+            if (token.equals("*/") || token.endsWith("*/")) {
+                break;
+            }
+        }
+        return tokens;
+    }
+
+
+    private static List<Token> completeStringLiteral(PeekingIterator<String> iterator) {
+        List<Token> tokens = new LinkedList<>();
+        String token = iterator.peek();
+        StringBuilder literal = new StringBuilder(token);
+        while (iterator.hasNext()) {
+            token = iterator.next();
+            literal.append(" ").append(token);
+            if (!token.startsWith("'") && token.endsWith("'")) {
+                tokens.add(new Token(literal.toString(), TokenType.LITERAL));
+                break;
+            }
+        }
+        return tokens;
+    }
+
+
+    private static List<Token> midStartCompeleteStringLiteral(PeekingIterator<String> iterator) {
+        List<Token> tokens = new LinkedList<>();
+        String token = iterator.peek();
+        String left = token.substring(0, token.indexOf("'"));
+        left = left.trim();
+        tokens.addAll(parseToken(left));
+
+        token = token.substring(token.indexOf("'"), token.length());
+        String tempToken = token.trim();
+
+
+        while (iterator.hasNext()) {
+            token = iterator.next();
+
+
+            if (!token.startsWith("'") && token.endsWith("'")) {
+                tempToken += " " + token;
+                tokens.add(new Token(tempToken, TokenType.LITERAL));
+            } else if (!token.startsWith("'") && token.contains("'")) {
+
+
+                left = token.substring(0, token.indexOf("'") + 1);
+                left = left.trim();
+                tempToken += " " + left;
+                tokens.add(new Token(tempToken, TokenType.LITERAL));
+
+                String right = token.substring(token.indexOf("'") + 1, token.length());
+                tokens.addAll(parseToken(right));
+
+
+            } else {
+                tempToken += " " + token;
+            }
+
+        }
+
+        return tokens;
+    }
+
+
+    private static List<Token> midStartParseStringLiteral(PeekingIterator<String> iterator) {
+        List<Token> tokens = new LinkedList<>();
+        String token = iterator.peek();
+        String left = token.substring(0, token.indexOf("'"));
+        tokens.addAll(parseToken(left));
+        String right = token.substring(token.indexOf("'"), token.length());
+        tokens.addAll(parseToken(right));
+        return tokens;
+    }
+
+
+    private static List<Token> midEndParseStringLiteral(PeekingIterator<String> iterator) {
+        List<Token> tokens = new LinkedList<>();
+        String token = iterator.peek();
+
+
+        int literalStartPos = token.indexOf("'");
+        int literalEndPos = token.indexOf("'", literalStartPos + 1) + 1;
+
+
+        String left = token.substring(0, literalEndPos);
+        tokens.addAll(parseToken(left));
+
+
+        String right = token.substring(literalEndPos, token.length());
+        tokens.addAll(parseToken(right));
+
+
+        return tokens;
+    }
+
+
+    private static List<Token> midParseLiteral(PeekingIterator<String> iterator) {
+        List<Token> tokens = new LinkedList<>();
+        String token = iterator.peek();
+
+
+        int literalStartPos = token.indexOf("'");
+        int literalEndPos = token.indexOf("'", literalStartPos + 1) + 1;
+
+
+        String left = token.substring(0, literalStartPos);
+        tokens.addAll(parseToken(left));
+
+
+        String literal = token.substring(literalStartPos, literalEndPos);
+        tokens.addAll(parseToken(literal));
+
+        String right = token.substring(literalEndPos, token.length());
+
+        tokens.addAll(parseToken(right));
+
+
+        return tokens;
     }
 
 
@@ -271,167 +262,61 @@ public class ExpressionTokenizer {
         return count;
     }
 
-    private static boolean validateToken(String token) {
 
-        if (token.length() < 1) {
-            return false;
-        }
+    private static List<Token> parseToken(String token) {
+        List<Token> tokens = new ArrayList<>();
 
-        if (token.startsWith("'") && token.endsWith("'")) {
-            return false;
+        if (token.isEmpty()) {
+            return tokens;
         }
 
-        if (token.contains("[")) {
-            return true;
-        }
-        if (token.contains("]")) {
-            return true;
-        }
 
-        if (token.contains("(")) {
-            return true;
-        }
-        if (token.contains(")")) {
-            return true;
-        }
-        if (token.contains("<>")) {
-            return true;
-        }
-        if (token.contains("||")) {
-            return true;
-        }
-        if (token.contains("&&")) {
-            return true;
-        }
-        if (token.contains("=>")) {
-            return true;
-        }
-        if (token.contains("!=")) {
-            return true;
-        }
-        if (token.contains("<=")) {
-            return true;
-        }
-        if (token.contains(">=")) {
-            return true;
-        }
-        if (token.contains(":=")) {
-            return true;
-        }
-        if (token.contains("=")) {
-            return true;
-        }
-        if (token.contains(">")) {
-            return true;
-        }
-        if (token.contains("<")) {
-            return true;
-        }
-        if (token.contains("!")) {
-            return true;
-        }
+        if (!token.startsWith("'") || !token.endsWith("'")) {
 
-        if (token.contains(";")) {
-            return true;
-        }
-
-        /*if (token.contains("+")) {
-            return true;
-        }
-        if (token.contains("-")) {
-            return true;
-        }
-        if (token.contains("*")) {
-            return true;
-        }
-        if (token.contains("/")) {
-            return true;
-        }
-        if (token.contains("^")) {
-            return true;
-        }*/
-        return false;
-    }
-
-    private static List<String> parseToken(String token) {
-        List<String> tokenArray = new ArrayList<>();
-        if (token.contains("(")) {
-            tokenArray.addAll(parse(token, "("));
-        } else if (token.contains(")")) {
-            tokenArray.addAll(parse(token, ")"));
-        } else if (token.contains("[")) {
-            tokenArray.addAll(parse(token, "["));
-        } else if (token.contains("]")) {
-            tokenArray.addAll(parse(token, "]"));
-        } else if (token.contains("<>")) {
-            tokenArray.addAll(parse(token, "<>"));
-        } else if (token.contains("||")) {
-            tokenArray.addAll(parse(token, "||"));
-        } else if (token.contains("&&")) {
-            tokenArray.addAll(parse(token, "&&"));
-        } else if (token.contains("=>")) {
-            tokenArray.addAll(parse(token, "=>"));
-        } else if (token.contains("!=")) {
-            tokenArray.addAll(parse(token, "!="));
-        } else if (token.contains("<=")) {
-            tokenArray.addAll(parse(token, "<="));
-        } else if (token.contains(">=")) {
-            tokenArray.addAll(parse(token, ">="));
-        } else if (token.contains(":=")) {
-            tokenArray.addAll(parse(token, ":="));
-        } else if (token.contains("=")) {
-            tokenArray.addAll(parse(token, "="));
-        } else if (token.contains(">")) {
-            tokenArray.addAll(parse(token, ">"));
-        } else if (token.contains("<")) {
-            tokenArray.addAll(parse(token, "<"));
-        } else if (token.contains("!")) {
-            tokenArray.addAll(parse(token, "!"));
-        } else if (token.contains("+")) {
-            tokenArray.addAll(parse(token, "+"));
-        } else if (token.contains(";")) {
-            tokenArray.addAll(parse(token, ";"));
-        }/* else if (token.contains("-")) {
-            tokenArray.addAll(parse(token, "-"));
-        } else if (token.contains("*")) {
-            tokenArray.addAll(parse(token, "*"));
-        } else if (token.contains("/")) {
-            tokenArray.addAll(parse(token, "/"));
-        } else if (token.contains("^")) {
-            tokenArray.addAll(parse(token, "^"));
-        } */ else {
-            tokenArray.add(token);
-        }
-
-        return tokenArray;
-    }
-
-    private static List<String> parse(String token, String symbol) {
-        List<String> tokenArray = new ArrayList<>();
-        while (token.contains(symbol)) {
-
-            if (token.indexOf(symbol) == 0) {
-
-                if (!symbol.isEmpty()) {
-                    tokenArray.add(symbol);
-                }
-
-                token = token.substring(symbol.length(), token.length()).trim();
+            Matcher matcher = operatorsPattern.matcher(token);
+            Matcher matcher2 = singleOperatorsPattern.matcher(token);
+            if (matcher.find()) {
+                tokens.addAll(parse(token, matcher.group()));
+            } else if (matcher2.find()) {
+                tokens.addAll(parse(token, matcher2.group()));
             } else {
-
-                String left = token.substring(0, token.indexOf(symbol)).trim();
-                tokenArray.addAll(parseToken(left));
-                if (!symbol.isEmpty()) {
-                    tokenArray.add(symbol);
-                }
-                token = token.substring(token.indexOf(symbol) + symbol.length(), token.length()).trim();
+                tokens.add(new Token(token, TokenType.LITERAL));
             }
+
+        } else {
+            tokens.add(new Token(token, TokenType.LITERAL));
         }
 
-        if (!token.isEmpty()) {
-            tokenArray.addAll(parseToken(token));
+
+        return tokens;
+    }
+
+    private static List<Token> parse(String token, String operator) {
+
+
+        int opLength = operator.length();
+        int tokenLength = token.length();
+        int operatorPos = token.indexOf(operator);
+
+        List<Token> tokens = new ArrayList<>();
+
+
+        if (token.equals(operator)) {
+            tokens.add(new Token(operator, TokenType.OPERATOR));
+        } else if (token.indexOf(operator) == 0) {
+            tokens.add(new Token(operator, TokenType.OPERATOR));
+            String right = token.substring(opLength, tokenLength);
+            tokens.addAll(parseToken(right));
+        } else {
+            String left = token.substring(0, operatorPos);
+            tokens.addAll(parseToken(left));
+            tokens.add(new Token(operator, TokenType.OPERATOR));
+            String right = token.substring(operatorPos + opLength, tokenLength);
+            tokens.addAll(parseToken(right));
         }
-        return tokenArray;
+
+
+        return tokens;
     }
 
     public static String toString(String[] tokens, int pos) {
@@ -463,4 +348,63 @@ public class ExpressionTokenizer {
     }
 
 
+    enum TokenType {
+        OPERATOR, COMMENT, NEW_LINE, LITERAL
+    }
+
+    static class PeekingIterator<T> implements Iterator<T> {
+
+        private Iterator<T> iterator;
+        private T peek;
+
+        public PeekingIterator(Iterator<T> iterator) {
+            this.iterator = iterator;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public T next() {
+            peek = iterator.next();
+            return peek;
+        }
+
+        public T peek() {
+            if (peek == null && hasNext()) {
+                next();
+            }
+            return peek;
+        }
+    }
+
+    static class Token {
+        private String value;
+        private TokenType type;
+
+        public Token(String value, TokenType type) {
+            this.value = value;
+            this.type = type;
+        }
+
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public TokenType getType() {
+            return type;
+        }
+
+        public void setType(TokenType type) {
+            this.type = type;
+        }
+    }
 }
+

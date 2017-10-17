@@ -96,7 +96,7 @@ public class EqualOperationTest {
                 " And Variable4 != false" +
                 " And Variable5 <> date( 12-05-2016 , dd-MM-yyyy )" +
                 " And Variable6 <> dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss )" +
-                " And Variable7 != R'A1.*'";
+                " And Variable7 != {A1.*}";
 
         Expression expression = factory.getParser().fromString(exp, NotEqualOperation.class);
         RuleBinding rule = new RuleBinding(expression);

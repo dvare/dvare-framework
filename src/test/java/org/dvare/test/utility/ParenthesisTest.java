@@ -82,7 +82,33 @@ public class ParenthesisTest {
     }
 
     @Test
+    public void testApp2() throws ExpressionParseException, InterpretException {
+
+
+        String expr = "Variable1 = ('dvare(framework)' )";
+
+        String tokens[] = ExpressionTokenizer.toToken(expr);
+
+        assertEquals(tokens.length, 5);
+
+    }
+
+
+
+    @Test
     public void testApp3() throws ExpressionParseException, InterpretException {
+
+
+        String expr = "Variable1 = ( 'dvare(framework)')";
+
+        String tokens[] = ExpressionTokenizer.toToken(expr);
+
+        assertEquals(tokens.length, 5);
+
+    }
+
+    @Test
+    public void testApp4() throws ExpressionParseException, InterpretException {
 
 
         String expr = "Variable1 = ('dvare (framework)')";
@@ -94,7 +120,7 @@ public class ParenthesisTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void testApp5() throws ExpressionParseException, InterpretException {
 
 
         RuleConfiguration factory = new RuleConfiguration();
@@ -114,5 +140,6 @@ public class ParenthesisTest {
         boolean result = (Boolean) evaluator.evaluate(rule, parenthesis);
         assertTrue(result);
     }
+
 
 }

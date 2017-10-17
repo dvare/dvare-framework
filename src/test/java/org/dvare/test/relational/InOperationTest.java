@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -51,8 +51,8 @@ public class InOperationTest {
                 " And Variable2 in [2,3]" +
                 " And Variable3 in [3.1,3.2]" +
                 " And Variable4 in [true,false]" +
-               /* " And Variable5 in [12-05-2016,13-05-2016]" +*/
-               /* " And Variable6 in [12-05-2016-15:30:00,13-05-2016-15:30:00]" +*/
+                " /* And Variable5 in [12-05-2016,13-05-2016]" +
+                " And Variable6 in [12-05-2016-15:30:00,13-05-2016-15:30:00] */" +
                 " And Variable7 in [{B1.*},{A1.*}]";
 
         Expression expression = factory.getParser().fromString(exp, InOperation.class);
