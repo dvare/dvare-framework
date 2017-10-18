@@ -157,20 +157,23 @@ public class VariableType {
 
     public static VariableExpression setVariableValue(VariableExpression variable, Object object) throws IllegalPropertyValueException {
         Object value = ValueFinder.findValue(variable.getName(), object);
-
         return setValue(variable, value);
     }
 
     private static VariableExpression setValue(VariableExpression variable, Object value) throws IllegalPropertyValueException {
 
-        if (value == null || variable == null) {
+        if (variable == null) {
+            return null;
+        }
+
+        if (value == null) {
+            // for reuse rule don't remove
+            variable.setValue(null);
             return variable;
         }
 
         if (variable.getType().isAnnotationPresent(Type.class)) {
             Type type = (Type) variable.getType().getAnnotation(Type.class);
-
-
             DataType dataType = type.dataType();
             switch (dataType) {
                 case BooleanType: {
