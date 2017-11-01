@@ -162,9 +162,7 @@ public abstract class RelationalOperationExpression extends OperationExpression 
             DataType leftDataType = null;
             DataType rightDataType = null;
             if (left instanceof VariableExpression) {
-
                 leftDataType = toDataType(((VariableExpression) left).getType());
-
             } else if (left instanceof LiteralExpression) {
                 leftDataType = toDataType(((LiteralExpression) left).getType());
             }

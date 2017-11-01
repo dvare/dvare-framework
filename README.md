@@ -28,6 +28,15 @@ public class ArithmeticOperationTest {
 
 * The current stable version is `2.3` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|2.3|) [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.dvare/dvare-framework/badge.svg)](http://www.javadoc.io/doc/org.dvare/dvare-framework)
 
+In order to use snapshot versions, you need to add the following maven repository in your `pom.xml`:
+
+```xml
+<repository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+```
+
 
  Maven dependency:
 ```xml
