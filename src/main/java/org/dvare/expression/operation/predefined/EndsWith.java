@@ -55,7 +55,7 @@ public class EndsWith extends ChainOperationExpression {
             String value = literalExpression.getValue().toString();
             value = TrimString.trim(value);
 
-            LiteralExpression endswithExpression = (LiteralExpression) rightOperand.get(0);
+            LiteralExpression endswithExpression = super.interpretOperand(rightOperand.get(0), instancesBinding);
 
             String endswith = endswithExpression.getValue().toString();
 

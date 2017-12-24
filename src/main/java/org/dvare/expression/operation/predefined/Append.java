@@ -54,7 +54,7 @@ public class Append extends ChainOperationExpression {
                 String value = literalExpression.getValue().toString();
                 value = TrimString.trim(value);
 
-                LiteralExpression appendExpression = (LiteralExpression) rightOperand.get(0);
+            LiteralExpression appendExpression = super.interpretOperand(rightOperand.get(0), instancesBinding);
 
                 String append = appendExpression.getValue().toString();
 

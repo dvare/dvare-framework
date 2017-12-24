@@ -55,7 +55,7 @@ public class Contains extends ChainOperationExpression {
             value = TrimString.trim(value);
 
 
-            LiteralExpression containsExpression = (LiteralExpression) rightOperand.get(0);
+            LiteralExpression containsExpression = super.interpretOperand(rightOperand.get(0), instancesBinding);
 
             String contains = containsExpression.getValue().toString();
 

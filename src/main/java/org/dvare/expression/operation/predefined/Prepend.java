@@ -54,7 +54,7 @@ public class Prepend extends ChainOperationExpression {
             value = TrimString.trim(value);
 
 
-            LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
+            LiteralExpression startExpression = super.interpretOperand(rightOperand.get(0), instancesBinding);
 
             String prepend = startExpression.getValue().toString();
 

@@ -55,7 +55,7 @@ public class StartsWith extends ChainOperationExpression {
             String value = literalExpression.getValue().toString();
             value = TrimString.trim(value);
 
-            LiteralExpression startExpression = (LiteralExpression) rightOperand.get(0);
+            LiteralExpression startExpression = super.interpretOperand(rightOperand.get(0), instancesBinding);
             String startWith = startExpression.getValue().toString();
 
             startWith = TrimString.trim(startWith);
