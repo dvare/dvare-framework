@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Sogiftware.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -140,29 +140,32 @@ public class ListLiteralOperationExpression extends OperationExpression {
 
             if (expression instanceof OperationExpression) {
                 OperationExpression operationExpression = (OperationExpression) expression;
-
-                Object interpret = operationExpression.interpret(instancesBinding);
-
-                if (interpret instanceof LiteralExpression) {
-                    LiteralExpression literalExpression = (LiteralExpression) interpret;
-                    values.add(literalExpression.getValue());
-
-                    if (dataType == null || toDataType(dataType).equals(DataType.NullType)) {
-                        dataType = literalExpression.getType();
-                    }
+                LiteralExpression literalExpression = operationExpression.interpret(instancesBinding);
+                if (literalExpression instanceof ListLiteral) {
+                    values.addAll(ListLiteral.class.cast(literalExpression).getValue());
                 } else {
-                    values.add(interpret);
+                    values.add(literalExpression.getValue());
                 }
-
+                if (dataType == null || toDataType(dataType).equals(DataType.NullType)) {
+                    dataType = literalExpression.getType();
+                }
 
             } else if (expression instanceof VariableExpression) {
                 VariableExpression variableExpression = (VariableExpression) expression;
                 LiteralExpression literalExpression = variableExpression.interpret(instancesBinding);
-                values.add(literalExpression.getValue());
+                if (literalExpression instanceof ListLiteral) {
+                    values.addAll(ListLiteral.class.cast(literalExpression).getValue());
+                } else {
+                    values.add(literalExpression.getValue());
+                }
                 dataType = variableExpression.getType();
             } else if (expression instanceof LiteralExpression) {
                 LiteralExpression literalExpression = (LiteralExpression) expression;
-                values.add(literalExpression.getValue());
+                if (literalExpression instanceof ListLiteral) {
+                    values.addAll(ListLiteral.class.cast(literalExpression).getValue());
+                } else {
+                    values.add(literalExpression.getValue());
+                }
                 if (dataType == null || toDataType(dataType).equals(DataType.NullType)) {
                     dataType = literalExpression.getType();
                 }
