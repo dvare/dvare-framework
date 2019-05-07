@@ -70,7 +70,7 @@ public class ToInteger extends ChainOperationExpression {
 
                     case IntegerType: {
                         if (value instanceof Integer) {
-                            return LiteralType.getLiteralExpression(Integer.class.cast(value), IntegerType.class);
+                            return LiteralType.getLiteralExpression((Integer) value, IntegerType.class);
                         } else {
                             DataType valueType = LiteralType.computeDataType(value.toString());
                             if (valueType.equals(DataType.IntegerType)) {
@@ -81,7 +81,7 @@ public class ToInteger extends ChainOperationExpression {
                     }
                     case FloatType: {
                         if (value instanceof Float) {
-                            return LiteralType.getLiteralExpression(Math.round(Float.class.cast(value)), IntegerType.class);
+                            return LiteralType.getLiteralExpression(Math.round((Float) value), IntegerType.class);
                         } else if (value != null) {
                             DataType valueType = LiteralType.computeDataType(value.toString());
                             if (valueType.equals(DataType.FloatType)) {

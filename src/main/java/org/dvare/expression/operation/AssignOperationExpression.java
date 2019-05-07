@@ -47,10 +47,7 @@ import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * @author Muhammad Hammad
@@ -262,7 +259,7 @@ public class AssignOperationExpression extends OperationExpression {
                         if (value instanceof List) {
                             aggregation = setValue(aggregation, variableName, value);
                         } else {
-                            aggregation = setValue(aggregation, variableName, Arrays.asList(TrimString.trim(value.toString())));
+                            aggregation = setValue(aggregation, variableName, Collections.singletonList(TrimString.trim(value.toString())));
                         }
 
                     } else if (variableExpression instanceof StringVariable) {
@@ -282,7 +279,7 @@ public class AssignOperationExpression extends OperationExpression {
                         if (value instanceof List) {
                             aggregation = setValue(aggregation, variableName, value);
                         } else {
-                            aggregation = setValue(aggregation, variableName, Arrays.asList(value));
+                            aggregation = setValue(aggregation, variableName, Collections.singletonList(value));
                         }
 
                     } else if (variableExpression instanceof PairVariable) {

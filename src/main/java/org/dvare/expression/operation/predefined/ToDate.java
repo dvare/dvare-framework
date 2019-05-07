@@ -62,7 +62,7 @@ public class ToDate extends ChainOperationExpression {
                 if (value instanceof LocalDate) {
                     localDate = (LocalDate) value;
                 } else if (value instanceof LocalDateTime) {
-                    localDate = LocalDateTime.class.cast(value).toLocalDate();
+                    localDate = ((LocalDateTime) value).toLocalDate();
                 } else if (value instanceof Date) {
                     Date date = (Date) value;
                     localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

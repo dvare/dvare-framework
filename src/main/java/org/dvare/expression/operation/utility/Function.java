@@ -303,7 +303,7 @@ public class Function extends OperationExpression {
                 if (originalType.isArray()) {
 
                     Class type = DataTypeMapping.getDataTypeMapping(literalDataType);
-                    Object[] typedArray = Object[].class.cast(java.lang.reflect.Array.newInstance(type, listLiteral.getSize()));
+                    Object[] typedArray = (Object[]) Array.newInstance(type, listLiteral.getSize());
                     Object value = listLiteral.getValue().toArray(typedArray);
 
                     paramsValue.param = originalType;
@@ -374,7 +374,7 @@ public class Function extends OperationExpression {
         return paramsValue;
     }
 
-    private LiteralExpression invokeFunction(FunctionBinding functionBinding, Class<?> params[], Object values[]) throws InterpretException {
+    private LiteralExpression invokeFunction(FunctionBinding functionBinding, Class<?>[] params, Object[] values) throws InterpretException {
 
         try {
 
@@ -395,7 +395,7 @@ public class Function extends OperationExpression {
 
                 Method method = MethodUtils.getAccessibleMethod(functionClass, functionName, params);
                 if (method == null) {
-                    params = castParams(params);
+                    castParams(params);
                     method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), params);
                 }
                 if (method != null) {
@@ -421,7 +421,7 @@ public class Function extends OperationExpression {
                 List list = (List) value;
                 return new ListLiteral(list, returnType);
             } else if (value.getClass().isArray()) {
-                return new ListLiteral(Arrays.asList(Object[].class.cast(value)), returnType);
+                return new ListLiteral(Arrays.asList((Object[]) value), returnType);
             } else {
                 return LiteralType.getLiteralExpression(value, returnType);
             }
