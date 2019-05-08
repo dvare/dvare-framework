@@ -39,12 +39,12 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class GetItemTest {
 
     @Test
-    public void test1() throws ExpressionParseException, InterpretException {
+    public void dataSetGetItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -82,11 +82,11 @@ public class GetItemTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         String result = (String) evaluator.evaluate(rule, instancesBinding);
-        assertTrue(result.equals("42964"));
+        assertEquals("42964", result);
     }
 
     @Test
-    public void test2() throws ExpressionParseException, InterpretException {
+    public void dataSetArithmeticGetItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -124,11 +124,11 @@ public class GetItemTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         String result = (String) evaluator.evaluate(rule, instancesBinding);
-        assertTrue(result.equals("42456"));
+        assertEquals("42456", result);
     }
 
     @Test
-    public void test3() throws ExpressionParseException, InterpretException {
+    public void dataSetPredefineOperationGetItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -167,7 +167,7 @@ public class GetItemTest {
         RuleEvaluator evaluator = factory.getEvaluator();
         String result = (String) evaluator.evaluate(rule, instancesBinding);
 
-        assertTrue(result.equals("42964"));
+        assertEquals("42964", result);
     }
 
 

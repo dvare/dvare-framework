@@ -61,7 +61,7 @@ public class SpringTest {
 
     @Bean
     public DvareConfigFactoryBean ruleConfiguration() {
-        return new DvareConfigFactoryBean(new String[]{"org.dvare.util"});
+        return new DvareConfigFactoryBean("org.dvare.util");
     }
 
 }

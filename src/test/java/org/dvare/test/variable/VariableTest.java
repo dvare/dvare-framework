@@ -50,7 +50,7 @@ import static org.junit.Assert.assertTrue;
 public class VariableTest {
 
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException, ParseException {
+    public void variableLiteralComparisonTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -89,7 +89,7 @@ public class VariableTest {
 
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException, ParseException {
+    public void variableLiteralArrayComparisonTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -141,7 +141,7 @@ public class VariableTest {
     }
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException, ParseException {
+    public void variableLiteralArrayNotInTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -195,7 +195,7 @@ public class VariableTest {
 
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException, ParseException {
+    public void ListVariableTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

@@ -48,7 +48,7 @@ public class FlowTest {
     private static Logger logger = LoggerFactory.getLogger(FlowTest.class);
 
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void ifElseAssignmentTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -101,7 +101,7 @@ public class FlowTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void ifConditionalElseTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -157,7 +157,7 @@ public class FlowTest {
     }
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException {
+    public void nustedIfElseTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -216,7 +216,7 @@ public class FlowTest {
 
 
     @Test
-    public void testApp5() throws ExpressionParseException, InterpretException {
+    public void ifElseIFElseTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -269,7 +269,7 @@ public class FlowTest {
     }
 
     @Test
-    public void testApp6() throws ExpressionParseException, InterpretException {
+    public void localVariableIfElseTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

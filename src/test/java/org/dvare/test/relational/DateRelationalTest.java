@@ -44,7 +44,7 @@ import static org.junit.Assert.assertTrue;
 public class DateRelationalTest {
 
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeEqualsTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -74,7 +74,7 @@ public class DateRelationalTest {
 
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeNotEqualsTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -102,7 +102,7 @@ public class DateRelationalTest {
     }
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeLessGreaterTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -135,7 +135,7 @@ public class DateRelationalTest {
 
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeLessEqualGreaterEqualTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -167,7 +167,7 @@ public class DateRelationalTest {
     }
 
     @Test
-    public void testApp5() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeBetweenTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -197,7 +197,7 @@ public class DateRelationalTest {
     }
 
     @Test
-    public void testApp6() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeInTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -227,7 +227,7 @@ public class DateRelationalTest {
     }
 
     @Test
-    public void testApp7() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeNotInTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

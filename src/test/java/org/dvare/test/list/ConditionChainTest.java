@@ -50,7 +50,7 @@ import static org.junit.Assert.assertTrue;
 public class ConditionChainTest {
 
     @Test
-    public void testApp0() throws ExpressionParseException, InterpretException {
+    public void dataSetHasItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -83,7 +83,7 @@ public class ConditionChainTest {
     }
 
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void DataSetIfElsedHasItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -129,7 +129,7 @@ public class ConditionChainTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void dataSetGetItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -177,7 +177,7 @@ public class ConditionChainTest {
     }
 
     @Test
-    public void testApp21() throws ExpressionParseException, InterpretException {
+    public void dataSetGetLastItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -224,7 +224,7 @@ public class ConditionChainTest {
     }
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void dataSetConditionalHasItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -265,7 +265,7 @@ public class ConditionChainTest {
     }
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException {
+    public void dataSetConditionalGetItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

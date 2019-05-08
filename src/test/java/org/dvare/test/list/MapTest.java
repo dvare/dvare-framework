@@ -46,7 +46,7 @@ public class MapTest {
 
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void stringSubStringValuesToIntegerMapHasItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -87,7 +87,7 @@ public class MapTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void stringValuesToIntegerMapHasItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -132,7 +132,7 @@ public class MapTest {
 
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void stringValuesToIntegerMapTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -143,8 +143,8 @@ public class MapTest {
 
 
         Expression expression = factory.getParser().fromString(
-                "Variable1->substring(2,2)-" +
-                        ">values()->map(let item:StringType -> substring(2,1) ->toInteger())->hasItem(9)", contexts);
+                "Variable1->substring(2,2)->" +
+                        "values()->map(let item:StringType -> substring(2,1) ->toInteger())->hasItem(9)", contexts);
 
 
         RuleBinding rule = new RuleBinding(expression);

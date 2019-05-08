@@ -48,7 +48,7 @@ public class ForAllOperationTest {
     private static Logger logger = LoggerFactory.getLogger(ForAllOperationTest.class);
 
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void forAllBetweenTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -92,7 +92,7 @@ public class ForAllOperationTest {
     }
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void forAllBetweenNotTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -133,7 +133,7 @@ public class ForAllOperationTest {
     }
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void forAllValuesBetweenTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -152,7 +152,7 @@ public class ForAllOperationTest {
     }
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException {
+    public void forAllValuesInTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -187,7 +187,7 @@ public class ForAllOperationTest {
     }
 
     @Test
-    public void testApp5() throws ExpressionParseException, InterpretException {
+    public void forAllInTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

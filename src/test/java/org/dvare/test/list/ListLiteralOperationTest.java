@@ -43,7 +43,7 @@ public class ListLiteralOperationTest {
 
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void variableLiteralArrayIsNotEmptyTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -65,7 +65,7 @@ public class ListLiteralOperationTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void variableLiteralArrayIsEmptyTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -88,7 +88,7 @@ public class ListLiteralOperationTest {
 
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void variableLiteralArraySizeTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

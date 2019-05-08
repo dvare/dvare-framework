@@ -45,7 +45,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ModeTest {
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void dataSetModeTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

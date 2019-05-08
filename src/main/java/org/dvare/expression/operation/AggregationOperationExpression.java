@@ -40,7 +40,6 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.list.PairOperation;
-import org.dvare.expression.operation.list.ValuesOperation;
 import org.dvare.expression.operation.utility.ExpressionSeparator;
 import org.dvare.expression.operation.utility.Function;
 import org.dvare.expression.operation.utility.LeftPriority;
@@ -69,8 +68,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
     @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack,
-                         ContextsBinding contexts) throws ExpressionParseException {
+    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
 
         String token = tokens[pos - 1];
@@ -110,8 +108,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
     @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack,
-                                      ContextsBinding contexts)
+    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts)
             throws ExpressionParseException {
 
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
@@ -132,86 +129,40 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
             } else {
 
-                localStack.add(buildExpression(token, contexts));
+                localStack.add(buildExpression(token, contexts, pos, tokens));
 
             }
         }
         return pos;
     }
 
+
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding)
             throws InterpretException {
 
 
-        Expression valueOperand = this.leftOperand;
+        List valuesList = extractValues(instancesBinding, leftOperand);
 
 
-        List valuesList = null;
-        Class<? extends DataTypeExpression> type = null;
+        for (Object value : valuesList) {
+            LiteralExpression<?> literalExpression = LiteralType.getLiteralExpression(value, dataTypeExpression);
 
+            if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
-        OperationExpression operationExpression = new ValuesOperation();
-        operationExpression.setLeftOperand(valueOperand);
-
-        Object interpret = operationExpression.interpret(instancesBinding);
-
-        if (interpret instanceof ListLiteral) {
-
-            ListLiteral listLiteral = (ListLiteral) interpret;
-            type = listLiteral.getType();
-            valuesList = listLiteral.getValue();
-        }
-
-
-        if (leftExpression == null) {
-            if (type != null) {
-                switch (toDataType(type)) {
-
-                    case FloatType: {
-                        leftExpression = LiteralType.getLiteralExpression(Float.MIN_VALUE, type);
-                        break;
-                    }
-                    case IntegerType: {
-                        leftExpression = LiteralType.getLiteralExpression(Integer.MIN_VALUE, type);
-                        break;
-                    }
-
-                    default: {
-                        leftExpression = new NullLiteral();
-                        //throw new IllegalOperationException("Min OperationExpression Not Allowed");
-                    }
-
+                try {
+                    Class<? extends DataTypeExpression> dataTypeExpression = literalExpression.getType();
+                    leftExpression = new InstanceUtils<DataTypeExpression>().newInstance(dataTypeExpression).evaluate(this, leftExpression, literalExpression);
+                } catch (Exception e) {
+                    logger.error(e.getMessage(), e);
                 }
-            } else {
-                leftExpression = new NullLiteral();
-            }
-        }
-
-        if (valuesList != null && type != null) {
-
-            for (Object value : valuesList) {
-
-
-                LiteralExpression<?> literalExpression = LiteralType.getLiteralExpression(value, type);
-
-                if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
-
-                    try {
-                        Class<? extends DataTypeExpression> dataTypeExpression = literalExpression.getType();
-                        leftExpression = new InstanceUtils<DataTypeExpression>().newInstance(dataTypeExpression)
-                                .evaluate(this, leftExpression, literalExpression);
-                    } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
-                    }
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Updating value of  by " + leftExpression.getValue());
-                    }
-                } else {
-                    throw new InterpretException("Literal Expression is null");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Updating value of  by " + leftExpression.getValue());
                 }
 
-            }
+            } /*else {
+                throw new InterpretException("Literal Expression is null");
+            }*/
 
         }
 
@@ -362,7 +313,6 @@ public abstract class AggregationOperationExpression extends OperationExpression
             }
 
             dataSet = d1;
-            logger.info(dataSet.toString());
         }
 
 
@@ -521,4 +471,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
     }
 
 
+    public List<Expression> getRightListOperand() {
+        return rightOperand;
+    }
 }

@@ -47,7 +47,7 @@ import static org.junit.Assert.assertTrue;
 public class EqualOperationTest {
 
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException, ParseException {
+    public void equalTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -86,7 +86,7 @@ public class EqualOperationTest {
     }
 
     @Test
-    public void testAppP1() throws ExpressionParseException, InterpretException, ParseException {
+    public void notEqualTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -119,7 +119,7 @@ public class EqualOperationTest {
     }
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void equalTestForStringLiteral() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration();
 
@@ -137,7 +137,7 @@ public class EqualOperationTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void equalTestForToString() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration();
 
@@ -155,7 +155,7 @@ public class EqualOperationTest {
     }
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException, ParseException {
+    public void nustedVariableEqualTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -183,26 +183,9 @@ public class EqualOperationTest {
         assertTrue(result);
     }
 
-    @Test
-    public void testApp4() throws ExpressionParseException, InterpretException {
-
-        RuleConfiguration configuration = new RuleConfiguration();
-
-
-        Expression expression = configuration.getParser().fromString("Variable1 < 20 implies Variable2 >= 30 ", Function.class);
-        RuleBinding rule = new RuleBinding(expression);
-
-        Function function = new Function();
-        function.setVariable1(15);
-        function.setVariable2(30);
-
-        RuleEvaluator evaluator = configuration.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(rule, function);
-        assertTrue(result);
-    }
 
     @Test
-    public void testApp5() throws ExpressionParseException, InterpretException {
+    public void arrayEqualNotEqualTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration();
 

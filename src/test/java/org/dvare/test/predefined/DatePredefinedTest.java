@@ -44,7 +44,7 @@ public class DatePredefinedTest {
 
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void toDateTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "date ( 12-05-2016 , dd-MM-yyyy )->toString() ->toDate() = date ( 12-05-2016 , dd-MM-yyyy )";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -55,7 +55,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp1P1() throws ExpressionParseException, InterpretException {
+    public void toDateTestWhenValueIsNull() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "null ->toDate() = null";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -66,7 +66,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp1P2() throws ExpressionParseException, InterpretException {
+    public void dateTotoDateTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "date ( 12-05-2016 , dd-MM-yyyy )->toDate()";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -77,7 +77,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp1P3() throws ExpressionParseException, InterpretException {
+    public void dateTimeToDateTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss ) ->toDate()";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -87,7 +87,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void dateToAddYearsAndGetYearsTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "date ( 12-05-2016 , dd-MM-yyyy )->addYears(1) -> getYears() = 2017";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -98,7 +98,7 @@ public class DatePredefinedTest {
 
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void dateTimeToAddYearsAndGetYearsTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss ) ->addYears(1) -> getYears()";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -109,7 +109,7 @@ public class DatePredefinedTest {
 
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException {
+    public void dateToAddYearsAndGetYearsTestFromVariableValue() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "Variable11 -> addYears(1) -> getYears()";
         Expression expression = factory.getParser().fromString(exp, ArithmeticOperation.class);
@@ -125,7 +125,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp5() throws ExpressionParseException, InterpretException {
+    public void dateToAddYearsAddMonthsAndAddDaysTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "date ( 12-05-2016 , dd-MM-yyyy )->addYears(1)->addMonths(2)->addDays(3)";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -136,7 +136,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp6() throws ExpressionParseException, InterpretException {
+    public void dateTimeToAddYearsAddMonthsAndAddDaysTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss )->addYears(1)->addMonths(2)->addDays(3)";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -148,7 +148,7 @@ public class DatePredefinedTest {
 
 
     @Test
-    public void testApp7() throws ExpressionParseException, InterpretException {
+    public void dateTimeToAddYearsAddMonthsAndAddDaysTestFromVariableValue() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "Variable11 ->addYears(1)->addMonths(2)->addDays(3)";
         Expression expression = factory.getParser().fromString(exp, ArithmeticOperation.class);
@@ -180,7 +180,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp8() throws ExpressionParseException, InterpretException {
+    public void dateToSetYearsSetMonthsSetAddDaysTestFromVariableValue() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "date ( 12-05-2016 , dd-MM-yyyy )->setYear(2016)->setMonth(6)->setDay(15)";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -191,7 +191,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp9() throws ExpressionParseException, InterpretException {
+    public void dateTimeToSetYearsSetMonthsSetAddDaysTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss )->setYear(2016)->setMonth(6)->setDay(15)";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -203,7 +203,7 @@ public class DatePredefinedTest {
 
 
     @Test
-    public void testApp10() throws ExpressionParseException, InterpretException {
+    public void dateToSetYearsSetMonthsSetAddDaysTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "Variable11 ->setYear(2016)->setMonth(6)->setDay(15)";
         Expression expression = factory.getParser().fromString(exp, ArithmeticOperation.class);
@@ -235,7 +235,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp11() throws ExpressionParseException, InterpretException {
+    public void dateToSubYearsSubMonthsAndSubDaysTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "date ( 12-05-2016 , dd-MM-yyyy )->subYears(1)->subMonths(1)->subDays(10)";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -246,7 +246,7 @@ public class DatePredefinedTest {
     }
 
     @Test
-    public void testApp12() throws ExpressionParseException, InterpretException {
+    public void dateTimeToSubYearsSubMonthsAndSubDaysTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss )->subYears(1)->subMonths(1)->subDays(10)";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
@@ -258,7 +258,7 @@ public class DatePredefinedTest {
 
 
     @Test
-    public void testApp13() throws ExpressionParseException, InterpretException {
+    public void dateToSubYearsSubMonthsAndSubDaysTestFromVariableValue() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = "Variable11 ->subYears(1)->subMonths(1)->subDays(10)";
         Expression expression = factory.getParser().fromString(exp, ArithmeticOperation.class);

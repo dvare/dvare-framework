@@ -27,8 +27,10 @@ package org.dvare.expression.literal;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.annotations.Type;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.exceptions.parser.IllegalLiteralException;
 import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.parser.ExpressionTokenizer;
 import org.dvare.util.DataTypeMapping;
 import org.dvare.util.TrimString;
 import org.slf4j.Logger;
@@ -45,6 +47,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author Muhammad Hammad
+ * @since 2016-06-30
+ */
+
 public class LiteralType {
     public final static DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH:mm:ss");
     public final static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -56,10 +63,10 @@ public class LiteralType {
 
 
     public static String date = "\\s*(0[1-9]|1[0-9]|2[0-9]|3[0-1])-(0[1-9]|1[0-2])-([1-9][0-9][0-9][0-9])\\s*";
-    private static String date2 = "\\s*([1-9][0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])\\s*";
+    public static String date2 = "\\s*([1-9][0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])\\s*";
 
 
-    private static String dateTime = "\\s*(0[1-9]|1[0-9]|2[0-9]|3[0-1])-(0[1-9]|1[0-2])-([1-9][0-9][0-9][0-9])\\-{1}(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])\\s*";
+    public static String dateTime = "\\s*(0[1-9]|1[0-9]|2[0-9]|3[0-1])-(0[1-9]|1[0-2])-([1-9][0-9][0-9][0-9])\\-{1}(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])\\s*";
     private static Logger logger = LoggerFactory.getLogger(LiteralType.class);
 
 
@@ -88,8 +95,16 @@ public class LiteralType {
         return getLiteralExpression(value, type);
     }
 
+    public static LiteralExpression<?> getLiteralExpression(String value, int pos, String[] tokens) throws IllegalValueException {
+        DataType type = computeDataType(value);
+        return getLiteralExpression(value, type, pos, tokens);
+    }
 
     public static LiteralExpression<?> getLiteralExpression(Object value, DataType type) throws IllegalValueException {
+        return getLiteralExpression(value, type, 0, null);
+    }
+
+    public static LiteralExpression<?> getLiteralExpression(Object value, DataType type, int pos, String[] tokens) throws IllegalValueException {
         if (value == null) {
             throw new IllegalValueException("The Literal Expression is null");
         }
@@ -102,14 +117,21 @@ public class LiteralType {
 
 
         if (type == null || type.equals(DataType.UnknownType)) {
-            throw new IllegalValueException("Unable to parse Literal \"" + value + "\" of type is Unknown Type");
-        }
+            String message;
+            if (tokens != null) {
+                message = String.format("\"" + value + "\" is not an Variable or Function  near \" %s \"",
+                        ExpressionTokenizer.toString(tokens, pos, pos - 5));
+            } else {
+                message = "\"" + value + "\" is not an Variable or Function.";
+            }
 
+            throw new IllegalLiteralException(value.toString(), message);
+        }
 
         return buildLiteralExpression(value, type);
     }
 
-    private static LiteralExpression<?> buildLiteralExpression(Object value, DataType type) throws IllegalValueException {
+    private static LiteralExpression<?> buildLiteralExpression(Object value, DataType type) throws IllegalLiteralException {
         LiteralExpression literalExpression = null;
         String valueString = value.toString();
         switch (type) {
@@ -132,7 +154,7 @@ public class LiteralType {
                 } catch (NumberFormatException e) {
                     String message = String.format("Unable to Parse literal %s to Float", valueString);
                     logger.error(message);
-                    throw new IllegalValueException(message, e);
+                    throw new IllegalLiteralException(valueString, message, e);
                 }
                 break;
             }
@@ -147,7 +169,7 @@ public class LiteralType {
                 } catch (NumberFormatException e) {
                     String message = String.format("Unable to Parse literal %s to Integer", valueString);
                     logger.error(message);
-                    throw new IllegalValueException(message, e);
+                    throw new IllegalLiteralException(valueString, message, e);
                 }
                 break;
             }
@@ -181,7 +203,7 @@ public class LiteralType {
                 } catch (DateTimeParseException e) {
                     String message = String.format("Unable to Parse literal %s to Date Time", valueString);
                     logger.error(message);
-                    throw new IllegalValueException(message, e);
+                    throw new IllegalLiteralException(valueString, message, e);
                 }
                 literalExpression = new DateTimeLiteral(localDateTime);
                 break;
@@ -207,7 +229,7 @@ public class LiteralType {
                 } catch (Exception e) {
                     String message = String.format("Unable to Parse literal %s to Date", valueString);
                     logger.error(message);
-                    throw new IllegalValueException(message, e);
+                    throw new IllegalLiteralException(valueString, message, e);
 
                 }
                 literalExpression = new DateLiteral(localDate);
@@ -226,7 +248,7 @@ public class LiteralType {
                 } catch (ParseException e) {
                     String message = String.format("Unable to Parse literal %s to Date", valueString);
                     logger.error(message);
-                    throw new IllegalValueException(message, e);
+                    throw new IllegalLiteralException(valueString, message, e);
 
                 }
                 literalExpression = new SimpleDateLiteral(date);
@@ -255,9 +277,9 @@ public class LiteralType {
             case PairListType:
             case SimpleDateListType: {
                 if (value.getClass().isArray()) {
-                    literalExpression = new ListLiteral(Arrays.asList(Object[].class.cast(value)), DataTypeMapping.getDataTypeClass(type));
+                    literalExpression = new ListLiteral(Arrays.asList((Object[]) value), DataTypeMapping.getDataTypeClass(type));
                 } else if (value instanceof List) {
-                    literalExpression = new ListLiteral(List.class.cast(value), DataTypeMapping.getDataTypeClass(type));
+                    literalExpression = new ListLiteral((List) value, DataTypeMapping.getDataTypeClass(type));
                 }
                 break;
             }
@@ -270,7 +292,7 @@ public class LiteralType {
             }
             return literalExpression;
         } else {
-            throw new IllegalValueException("Literal Expression is Null");
+            throw new IllegalLiteralException(null, "Literal Expression is Null");
         }
     }
 
@@ -302,7 +324,7 @@ public class LiteralType {
         try {
             LocalDate.parse(value, DateTimeFormatter.ISO_DATE);
             return DataType.DateType;
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException ignored) {
 
         }
 
@@ -311,7 +333,7 @@ public class LiteralType {
             try {
                 Float.parseFloat(value);
                 return DataType.FloatType;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
         }
 
@@ -319,7 +341,7 @@ public class LiteralType {
         try {
             Integer.parseInt(value);
             return DataType.IntegerType;
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
 
 

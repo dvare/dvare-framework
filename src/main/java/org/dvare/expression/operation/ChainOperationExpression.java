@@ -117,7 +117,7 @@ public abstract class ChainOperationExpression extends OperationExpression {
                 }
 
             } else {
-                Expression expression = buildExpression(token, contexts);
+                Expression expression = buildExpression(token, contexts, pos, tokens);
                 localStack.add(expression);
             }
         }

@@ -44,7 +44,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MeanTest {
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void dataSetMeanTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
         Map<String, String> aggregationTypes = new HashMap<>();
@@ -91,13 +91,13 @@ public class MeanTest {
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
-        boolean result = ((Float) ValueFinder.findValue("A0", resultModel)).compareTo(new Float(31.00)) == 0;
+        boolean result = ((Float) ValueFinder.findValue("A0", resultModel)).compareTo(31.00f) == 0;
 
         assertTrue(result);
     }
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void floatArrayMeanTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -111,7 +111,7 @@ public class MeanTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void integerArrayMeanTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

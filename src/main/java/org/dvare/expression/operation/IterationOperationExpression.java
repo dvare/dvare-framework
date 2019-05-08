@@ -167,7 +167,7 @@ public class IterationOperationExpression extends OperationExpression {
             } else {
 
 
-                localStack.add(buildExpression(token, contexts));
+                localStack.add(buildExpression(token, contexts, pos, tokens));
 
             }
         }

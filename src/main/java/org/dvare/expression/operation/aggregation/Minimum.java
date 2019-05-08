@@ -26,16 +26,16 @@ package org.dvare.expression.operation.aggregation;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.literal.FloatLiteral;
+import org.dvare.expression.literal.IntegerLiteral;
 import org.dvare.expression.literal.LiteralExpression;
-import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.dvare.expression.veriable.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * @author Muhammad Hammad
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 @Operation(type = OperationType.MINIMUM, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Minimum extends AggregationOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Minimum.class);
+    private static Logger logger = LoggerFactory.getLogger(Minimum.class);
 
 
     public Minimum() {
@@ -53,20 +53,17 @@ public class Minimum extends AggregationOperationExpression {
 
     @Override
     public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-
-        Expression right = this.leftOperand;
-        if (right instanceof VariableExpression) {
-            VariableExpression variableExpression = ((VariableExpression) right);
-            DataType type = toDataType(variableExpression.getType());
-
+        extractValues(instancesBinding, leftOperand);
+        DataType type = toDataType(dataTypeExpression);
+        if (type != null) {
             switch (type) {
 
                 case FloatType: {
-                    leftExpression = LiteralType.getLiteralExpression(Float.MAX_VALUE, variableExpression.getType());
+                    leftExpression = new FloatLiteral(Float.MAX_VALUE);
                     break;
                 }
                 case IntegerType: {
-                    leftExpression = LiteralType.getLiteralExpression(Integer.MAX_VALUE, variableExpression.getType());
+                    leftExpression = new IntegerLiteral(Integer.MAX_VALUE);
                     break;
                 }
 
@@ -74,11 +71,8 @@ public class Minimum extends AggregationOperationExpression {
                     leftExpression = new NullLiteral();
                     //throw new IllegalOperationException("Min OperationExpression Not Allowed");
                 }
-
             }
         }
-
-
         return super.interpret(instancesBinding);
     }
 

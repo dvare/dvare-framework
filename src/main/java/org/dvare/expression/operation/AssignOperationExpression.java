@@ -142,7 +142,7 @@ public class AssignOperationExpression extends OperationExpression {
                 }
                 pos = op.parse(tokens, pos, stack, contexts);
             } else {
-                Expression expression = buildExpression(token, contexts);
+                Expression expression = buildExpression(token, contexts, pos, tokens);
                 if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof ExpressionSeparator) {
                     stack.add(expression);
                 } else {
@@ -214,7 +214,7 @@ public class AssignOperationExpression extends OperationExpression {
 
                                 values.add(value);
                             } else {
-                                values.add(new Integer("" + value));
+                                values.add(Integer.parseInt("" + value));
                             }
                             aggregation = setValue(aggregation, variableName, values);
                         }
@@ -223,7 +223,7 @@ public class AssignOperationExpression extends OperationExpression {
                         if (value instanceof Integer) {
                             aggregation = setValue(aggregation, variableName, value);
                         } else {
-                            aggregation = setValue(aggregation, variableName, new Integer("" + value));
+                            aggregation = setValue(aggregation, variableName, Integer.parseInt("" + value));
                         }
                     }
                     break;
@@ -238,7 +238,7 @@ public class AssignOperationExpression extends OperationExpression {
                             if (value instanceof Float) {
                                 values.add(value);
                             } else {
-                                values.add(new Float("" + value));
+                                values.add(Float.parseFloat("" + value));
                             }
                             aggregation = setValue(aggregation, variableName, values);
                         }
@@ -248,7 +248,7 @@ public class AssignOperationExpression extends OperationExpression {
 
                             aggregation = setValue(aggregation, variableName, literalExpression.getValue());
                         } else {
-                            aggregation = setValue(aggregation, variableName, new Float("" + value));
+                            aggregation = setValue(aggregation, variableName, Float.parseFloat("" + value));
                         }
                     }
                     break;

@@ -45,7 +45,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MedianTest {
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void dataSetMedianTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -98,7 +98,7 @@ public class MedianTest {
     }
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void arrayMedianTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

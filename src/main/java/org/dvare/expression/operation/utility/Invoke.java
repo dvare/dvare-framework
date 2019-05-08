@@ -95,7 +95,7 @@ public class Invoke extends Function {
                 String parts[] = token.split("#");
                 String variable = parts[0];
 
-                rightOperand = buildExpression(variable, contexts);
+                rightOperand = buildExpression(variable, contexts, pos, tokens);
 
                 String functionName = parts[1];
 
@@ -109,15 +109,10 @@ public class Invoke extends Function {
 
 
                     List<Expression> expressions = new ArrayList<>(localStack);
-                    List<Expression> parameters = new ArrayList<>();
 
                     if (leftOperand != null) {
                         FunctionExpression functionExpression = (FunctionExpression) leftOperand;
-
-                        for (Expression expression : expressions) {
-                            parameters.add(expression);
-                        }
-
+                        List<Expression> parameters = new ArrayList<>(expressions);
                         functionExpression.setParameters(parameters);
                         stack.push(functionExpression);
                     } else {
@@ -131,7 +126,7 @@ public class Invoke extends Function {
             } else {
 
 
-                localStack.add(buildExpression(token, contexts));
+                localStack.add(buildExpression(token, contexts, pos, tokens));
 
             }
         }
@@ -150,7 +145,7 @@ public class Invoke extends Function {
             value = literalExpression.getValue();
 
         } else if (rightOperand instanceof LiteralExpression) {
-            value = LiteralExpression.class.cast(rightOperand).getValue();
+            value = ((LiteralExpression) rightOperand).getValue();
         }
 
         if (value != null) {

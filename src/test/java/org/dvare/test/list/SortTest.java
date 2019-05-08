@@ -44,7 +44,7 @@ import static org.junit.Assert.assertTrue;
 public class SortTest {
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void dataSetSortWithCustomerComparator() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

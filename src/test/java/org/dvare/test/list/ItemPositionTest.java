@@ -44,7 +44,7 @@ import static org.junit.Assert.assertEquals;
 public class ItemPositionTest {
 
     @Test
-    public void test1() throws ExpressionParseException, InterpretException {
+    public void dataSetItemPositionTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -86,7 +86,7 @@ public class ItemPositionTest {
     }
 
     @Test
-    public void test2() throws ExpressionParseException, InterpretException {
+    public void dataSetArithmeticItemPositionTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -128,7 +128,7 @@ public class ItemPositionTest {
     }
 
     @Test
-    public void test3() throws ExpressionParseException, InterpretException {
+    public void dataSetPredefineOperationItemPositionTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

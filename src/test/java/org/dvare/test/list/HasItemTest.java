@@ -43,7 +43,7 @@ import static org.junit.Assert.assertTrue;
 
 public class HasItemTest {
     @Test
-    public void test1() throws ExpressionParseException, InterpretException {
+    public void dataSetHasItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -85,7 +85,7 @@ public class HasItemTest {
     }
 
     @Test
-    public void test2() throws ExpressionParseException, InterpretException {
+    public void dataSetArithmeticHasItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -127,7 +127,7 @@ public class HasItemTest {
     }
 
     @Test
-    public void test3() throws ExpressionParseException, InterpretException {
+    public void dataSetPredefineOperationHasItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

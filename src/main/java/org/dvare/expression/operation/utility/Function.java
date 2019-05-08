@@ -149,7 +149,7 @@ public class Function extends OperationExpression {
                 first = false;
             } else {
 
-                Expression expression = buildExpression(token, contexts);
+                Expression expression = buildExpression(token, contexts, pos, tokens);
                 if (first && expression instanceof VariableExpression) {
                     FunctionExpression functionExpression = new FunctionExpression(expression, null);
                     localStack.add(functionExpression);

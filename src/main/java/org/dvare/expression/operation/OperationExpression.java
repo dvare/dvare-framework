@@ -79,7 +79,7 @@ public abstract class OperationExpression extends Expression {
         this.rightOperand = rightOperand;
     }
 
-    public static TokenType buildTokenType(String token) {
+    protected static TokenType buildTokenType(String token) {
         TokenType tokenType = new TokenType();
         final String selfPatten = ".{1,}\\..{1,}";
         if (!token.matches(selfPatten)) {
@@ -104,15 +104,20 @@ public abstract class OperationExpression extends Expression {
                 if (!key.equals("self")) {
                     TypeBinding typeBinding = contexts.getContext(key);
                     if (typeBinding != null && typeBinding.getDataType(token) != null) {
+
+
                         tokenType.type = key;
                         tokenType.token = token;
+
                         return tokenType;
 
                     }
 
                 }
 
+
             }
+
 
         }
 
@@ -127,7 +132,7 @@ public abstract class OperationExpression extends Expression {
     public abstract Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException;
 
 
-    protected Expression buildExpression(String token, ContextsBinding contextsBinding) throws IllegalPropertyException, IllegalValueException {
+    protected Expression buildExpression(String token, ContextsBinding contextsBinding, int pos, String[] tokens) throws IllegalPropertyException, IllegalValueException {
         TokenType tokenType = findDataObject(token, contextsBinding);
         if (tokenType.type != null && contextsBinding.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contextsBinding.getContext(tokenType.type)) != null) {
             TypeBinding typeBinding = contextsBinding.getContext(tokenType.type);
@@ -136,7 +141,7 @@ public abstract class OperationExpression extends Expression {
 
 
         } else {
-            return LiteralType.getLiteralExpression(token);
+            return LiteralType.getLiteralExpression(token, pos, tokens);
         }
     }
 

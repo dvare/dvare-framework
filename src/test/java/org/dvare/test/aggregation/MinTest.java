@@ -45,7 +45,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MinTest {
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void dataSetMinnTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -98,7 +98,7 @@ public class MinTest {
     }
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void arrayMinTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

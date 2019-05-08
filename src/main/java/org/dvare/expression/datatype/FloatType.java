@@ -217,9 +217,9 @@ public class FloatType extends DataTypeExpression {
     public Float pow(LiteralExpression left, LiteralExpression right) {
         Float leftValue = (Float) left.getValue();
         if (right.getValue() instanceof Integer) {
-            return new Float(Math.pow(leftValue, (Integer) right.getValue()));
+            return (float) Math.pow(leftValue, (Integer) right.getValue());
         } else if (right.getValue() instanceof Float) {
-            return new Float(Math.pow(leftValue, (Float) right.getValue()));
+            return (float) Math.pow(leftValue, (Float) right.getValue());
         }
         return null;
     }

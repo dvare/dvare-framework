@@ -52,7 +52,7 @@ public class ClassFinderTest {
     public void test3() {
         List classes = ClassFinder.findAnnotated(
                 "org.dvare.expression.datatype", Type.class);
-        Assert.assertTrue(!classes.isEmpty());
+        Assert.assertFalse(classes.isEmpty());
     }
 
     @Test

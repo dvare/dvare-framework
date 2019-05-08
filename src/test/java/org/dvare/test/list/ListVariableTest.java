@@ -42,7 +42,7 @@ import java.util.List;
 public class ListVariableTest {
 
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void listVariableNotEmptyEqualTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -68,7 +68,7 @@ public class ListVariableTest {
     }
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void listVariableEmptyEqualTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -95,7 +95,7 @@ public class ListVariableTest {
 
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void listVariableEmptyNotEmptyTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

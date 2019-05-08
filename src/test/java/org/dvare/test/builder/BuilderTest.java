@@ -53,7 +53,7 @@ public class BuilderTest {
 
     @Test
 
-    public void testApp() throws ExpressionParseException, InterpretException, ParseException {
+    public void builderLogicalOperationTest() throws ExpressionParseException, InterpretException, ParseException {
         RuleConfiguration factory = new RuleConfiguration();
 
         OperationExpression stringEqualExpression = new OperationBuilder().operation(OperationType.EQUAL)//
@@ -113,7 +113,7 @@ public class BuilderTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException, ParseException {
+    public void builderArithmeticOperationTest() throws ExpressionParseException, InterpretException, ParseException {
         RuleConfiguration factory = new RuleConfiguration();
 
         OperationExpression addOperationExpression = new OperationBuilder().operation(OperationType.ADD)//
@@ -157,7 +157,7 @@ public class BuilderTest {
     }
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException, ParseException {
+    public void builderRelationalOperationTest() throws ExpressionParseException, InterpretException, ParseException {
         RuleConfiguration factory = new RuleConfiguration();
         Expression left = new LiteralBuilder().literalType(DataType.BooleanType).literalValue("true").build();
         Expression right = new LiteralBuilder().literalType(DataType.BooleanType).literalValue("true").build();

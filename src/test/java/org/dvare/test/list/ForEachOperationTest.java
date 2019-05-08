@@ -45,7 +45,7 @@ import java.util.List;
 public class ForEachOperationTest {
 
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void forEachInstancesTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -87,7 +87,7 @@ public class ForEachOperationTest {
 
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void forEachValuesTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -123,7 +123,7 @@ public class ForEachOperationTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void forEachValuesCompareTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

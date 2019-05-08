@@ -47,7 +47,7 @@ import static org.junit.Assert.assertTrue;
 
 public class FirstTest {
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void dataSetFirstTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -99,7 +99,7 @@ public class FirstTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void dataSetValuesFirstTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -151,7 +151,7 @@ public class FirstTest {
     }
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void ArrayFirstTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -168,7 +168,7 @@ public class FirstTest {
     }
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException {
+    public void LiteralFirstTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

@@ -46,7 +46,7 @@ import static org.junit.Assert.assertTrue;
 public class SizeTest {
 
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void ValuesReturnSizeTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -62,8 +62,6 @@ public class SizeTest {
         contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
         contexts.addContext("data", ExpressionParser.translate(validationTypes));
 
-
-//        Expression aggregate = factory.getParser().fromString("A0 := value(data.V1->values()->size())", aggregationTypes, validationTypes);
         Expression aggregate = factory.getParser().fromString("A0 := data.V1->values()->size()", contexts);
 
 
@@ -100,14 +98,12 @@ public class SizeTest {
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
 
-        //System.out.println(ValueFinder.findValue("A0", resultModel));
-
         boolean result = ValueFinder.findValue("A0", resultModel).equals(4);
         assertTrue(result);
     }
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void dataSetSizeTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

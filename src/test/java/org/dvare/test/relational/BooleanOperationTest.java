@@ -39,7 +39,7 @@ import java.text.ParseException;
 
 public class BooleanOperationTest {
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException, ParseException {
+    public void booleanLiteralTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

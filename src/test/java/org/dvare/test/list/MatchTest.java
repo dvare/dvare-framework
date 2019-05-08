@@ -46,7 +46,7 @@ public class MatchTest {
     private static Logger logger = LoggerFactory.getLogger(MapTest.class);
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void matchInsideAndExistTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -97,7 +97,7 @@ public class MatchTest {
 
 
     @Test(expected = ExpressionParseException.class)
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void matchParamErrorTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -111,7 +111,7 @@ public class MatchTest {
     }
 
     @Test(expected = ExpressionParseException.class)
-    public void testApp2P1() throws ExpressionParseException, InterpretException {
+    public void insideCombParamErrorTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -125,7 +125,7 @@ public class MatchTest {
     }
 
     @Test(expected = ExpressionParseException.class)
-    public void testApp2P2() throws ExpressionParseException, InterpretException {
+    public void combExistsParamErrorTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -139,7 +139,7 @@ public class MatchTest {
     }
 
     @Test(expected = ExpressionParseException.class)
-    public void testApp2P3() throws ExpressionParseException, InterpretException {
+    public void insideExistsCombParamErrorTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -153,7 +153,7 @@ public class MatchTest {
     }
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void insideCombAndcombExistsTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
 
         ContextsBinding contexts = new ContextsBinding();
@@ -195,7 +195,7 @@ public class MatchTest {
 
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException {
+    public void insideExistsCombTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
 
         ContextsBinding contexts = new ContextsBinding();
@@ -237,7 +237,7 @@ public class MatchTest {
     }
 
     @Test
-    public void testApp5() throws ExpressionParseException, InterpretException {
+    public void insideExistsCombArrayTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
 
         ContextsBinding contexts = new ContextsBinding();

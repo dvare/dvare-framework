@@ -49,7 +49,7 @@ public class ValuesTest {
     private static Logger logger = LoggerFactory.getLogger(ValuesTest.class);
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void valuesComparisonTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -100,7 +100,7 @@ public class ValuesTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void valuesMappingAndNotEmptyTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -148,7 +148,7 @@ public class ValuesTest {
     }
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void conditionalValuesTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -192,9 +192,9 @@ public class ValuesTest {
     }
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException {
+    public void functionParamValuesTest() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration factory = new RuleConfiguration(new String[]{"org.dvare.util"});
+        RuleConfiguration factory = new RuleConfiguration("org.dvare.util");
 
 
         TypeBinding typeBinding = ExpressionParser.translate(ListTestModel.class);
@@ -239,7 +239,7 @@ public class ValuesTest {
     }
 
     @Test
-    public void testApp5() throws ExpressionParseException, InterpretException {
+    public void arrayValuesTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

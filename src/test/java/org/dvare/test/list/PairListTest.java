@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
 public class PairListTest {
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void pairTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -64,7 +64,7 @@ public class PairListTest {
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void toPairOperationTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -81,7 +81,7 @@ public class PairListTest {
     }
 
     @Test
-    public void testApp2P1() throws ExpressionParseException, InterpretException {
+    public void toPairToKeyTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -116,7 +116,7 @@ public class PairListTest {
     }
 
     @Test(expected = ExpressionParseException.class)
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void variableToPairTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -130,7 +130,7 @@ public class PairListTest {
     }
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException {
+    public void pairListToKeysTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -183,7 +183,7 @@ public class PairListTest {
     }
 
     @Test
-    public void testApp5() throws ExpressionParseException, InterpretException {
+    public void pairListToValuesTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -244,7 +244,7 @@ public class PairListTest {
     }
 
     @Test
-    public void testApp6() throws ExpressionParseException, InterpretException {
+    public void pairListWithPredefineFuntionTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -290,7 +290,7 @@ public class PairListTest {
     }
 
     @Test
-    public void testApp7() throws ExpressionParseException, InterpretException {
+    public void pairValuesLastTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -335,7 +335,7 @@ public class PairListTest {
     }
 
     @Test
-    public void testApp8() throws ExpressionParseException, InterpretException {
+    public void pairListSortByKeysAndCompareByLastKeyTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -379,7 +379,7 @@ public class PairListTest {
     }
 
     @Test
-    public void testApp9() throws ExpressionParseException, InterpretException {
+    public void pairListSortByKeysAndCompareByLastValueTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -423,7 +423,7 @@ public class PairListTest {
     }
 
     @Test
-    public void testApp10() throws ExpressionParseException, InterpretException {
+    public void pairLestFilterTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -469,7 +469,7 @@ public class PairListTest {
 
 
     @Test
-    public void testApp11() throws ExpressionParseException, InterpretException {
+    public void pairListFilterAndVariableAssignmentTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

@@ -42,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 
 public class InOperationTest {
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException, ParseException {
+    public void allVariableInArrayTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -75,29 +75,8 @@ public class InOperationTest {
         assertTrue(result);
     }
 
-
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException, ParseException {
-
-        RuleConfiguration factory = new RuleConfiguration();
-
-
-        String exp = "Variable2 in [2,Variable2 + 2 ,Variable1->toInteger(),Variable2 + 3 ]";
-
-        Expression expression = factory.getParser().fromString(exp, InOperation.class);
-        RuleBinding rule = new RuleBinding(expression);
-
-        InOperation inOperation = new InOperation();
-        inOperation.setVariable1("3");
-        inOperation.setVariable2(2);
-        /**/
-        RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(rule, inOperation);
-        assertTrue(result);
-    }
-
-    @Test
-    public void testApp1() throws ExpressionParseException, InterpretException, ParseException {
+    public void allVariableNotInArrayTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -130,8 +109,29 @@ public class InOperationTest {
         assertTrue(result);
     }
 
+
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException, ParseException {
+    public void variableInVariableValueArrayTest() throws ExpressionParseException, InterpretException, ParseException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        String exp = "Variable2 in [2,Variable2 + 2 ,Variable1->toInteger(),Variable2 + 3 ]";
+
+        Expression expression = factory.getParser().fromString(exp, InOperation.class);
+        RuleBinding rule = new RuleBinding(expression);
+
+        InOperation inOperation = new InOperation();
+        inOperation.setVariable1("3");
+        inOperation.setVariable2(2);
+        /**/
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, inOperation);
+        assertTrue(result);
+    }
+
+    @Test
+    public void VariableInArrayTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -148,7 +148,7 @@ public class InOperationTest {
     }
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException, ParseException {
+    public void VariableInNullArrayTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -166,7 +166,7 @@ public class InOperationTest {
     }
 
     @Test
-    public void testApp5() throws ExpressionParseException, InterpretException {
+    public void arrayInNotInTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration configuration = new RuleConfiguration();
 

@@ -42,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 
 public class BetweenOperationTest {
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException, ParseException {
+    public void betweenIntegerFloatDateTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

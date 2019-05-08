@@ -44,7 +44,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MaxTest {
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void dataSetMaxTest() throws ExpressionParseException, InterpretException {
         RuleConfiguration factory = new RuleConfiguration();
         final String exp = "self.A0 := data.V1 -> maximum ()";
 
@@ -89,7 +89,7 @@ public class MaxTest {
     }
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void arrayMaxTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

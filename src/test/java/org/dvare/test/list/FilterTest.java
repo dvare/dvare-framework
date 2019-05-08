@@ -44,7 +44,7 @@ import static org.junit.Assert.assertFalse;
 public class FilterTest {
 
     @Test
-    public void testApp1() throws ExpressionParseException, InterpretException {
+    public void dataSetStringToIntegerAndFilterOperation() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

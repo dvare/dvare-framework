@@ -45,7 +45,7 @@ import static org.junit.Assert.assertTrue;
 
 public class SumTest {
     @Test
-    public void testApp() throws ExpressionParseException, InterpretException {
+    public void dataSetSumTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

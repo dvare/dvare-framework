@@ -35,6 +35,7 @@ import org.junit.runners.Suite;
         BetweenOperationTest.class,
         ParenthesisTest.class,
         DateRelationalTest.class,
+        GenericRelationalTest.class,
 })
 public class RelationalTest {
 
