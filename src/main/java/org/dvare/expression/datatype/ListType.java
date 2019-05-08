@@ -75,8 +75,8 @@ public class ListType extends DataTypeExpression {
     })
     public boolean in(LiteralExpression left, LiteralExpression right) {
         if (left instanceof ListLiteral && right instanceof ListLiteral) {
-            List leftValues = ((ListLiteral) left).getValue();
-            List rightValues = ((ListLiteral) right).getValue();
+            List<?> leftValues = ((ListLiteral) left).getValue();
+            List<?> rightValues = ((ListLiteral) right).getValue();
             return rightValues.containsAll(leftValues);
 
         }

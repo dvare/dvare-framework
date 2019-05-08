@@ -104,20 +104,15 @@ public abstract class OperationExpression extends Expression {
                 if (!key.equals("self")) {
                     TypeBinding typeBinding = contexts.getContext(key);
                     if (typeBinding != null && typeBinding.getDataType(token) != null) {
-
-
                         tokenType.type = key;
                         tokenType.token = token;
-
                         return tokenType;
 
                     }
 
                 }
 
-
             }
-
 
         }
 

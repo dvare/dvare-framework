@@ -33,18 +33,18 @@ import java.util.regex.Pattern;
 
 public class ExpressionTokenizer {
     private static Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
-    private static String operators[] = new String[]{"<>", "\\|\\|", "&&", "=>", "!=", "<=", ">=", ":="};
-    private static String singleOperators[] = new String[]{"\\(", "\\)", "\\[", "\\]", "=", ">", "<", "!", ";", "\\+", /*"\\-", "\\*", "\\/", "\\^",*/};
+    private static String[] operators = new String[]{"<>", "\\|\\|", "&&", "=>", "!=", "<=", ">=", ":="};
+    private static String[] singleOperators = new String[]{"\\(", "\\)", "\\[", "\\]", "=", ">", "<", "!", ";", "\\+", /*"\\-", "\\*", "\\/", "\\^",*/};
     private static Pattern operatorsPattern = Pattern.compile(buildRegex(operators));
     private static Pattern singleOperatorsPattern = Pattern.compile(buildRegex(singleOperators));
 
 
     public static String[] toToken(String expr) {
-        String splits[] = {"\\s", "\\,", "\\->"};
+        String[] splits = {"\\s", "\\,", "\\->"};
         return toToken(expr, splits);
     }
 
-    public static String[] toToken(String expr, String splits[]) {
+    private static String[] toToken(String expr, String[] splits) {
         String regex = buildRegex(splits);
         if (logger.isDebugEnabled()) {
             logger.debug("Token Pattern: {}", regex);
@@ -105,13 +105,13 @@ public class ExpressionTokenizer {
             if (logger.isDebugEnabled()) {
                 logger.debug("tokens: {}", tokenArray);
             }
-            return tokenArray.toArray(new String[tokenArray.size()]);
+            return tokenArray.toArray(new String[0]);
         }
 
         return null;
     }
 
-    private static String buildRegex(String splits[]) {
+    private static String buildRegex(String[] splits) {
         StringBuilder regexBuilder = new StringBuilder("");
         Iterator<String> iterator = Arrays.asList(splits).iterator();
         while (iterator.hasNext()) {
@@ -156,11 +156,10 @@ public class ExpressionTokenizer {
 
 
     private static List<Token> midStartCompeleteStringLiteral(PeekingIterator<String> iterator) {
-        List<Token> tokens = new LinkedList<>();
         String token = iterator.peek();
         String left = token.substring(0, token.indexOf("'"));
         left = left.trim();
-        tokens.addAll(parseToken(left));
+        List<Token> tokens = new LinkedList<>(parseToken(left));
 
         token = token.substring(token.indexOf("'"), token.length());
         String tempToken = token.trim();
@@ -196,10 +195,9 @@ public class ExpressionTokenizer {
 
 
     private static List<Token> midStartParseStringLiteral(PeekingIterator<String> iterator) {
-        List<Token> tokens = new LinkedList<>();
         String token = iterator.peek();
         String left = token.substring(0, token.indexOf("'"));
-        tokens.addAll(parseToken(left));
+        List<Token> tokens = new LinkedList<>(parseToken(left));
         String right = token.substring(token.indexOf("'"), token.length());
         tokens.addAll(parseToken(right));
         return tokens;
@@ -207,7 +205,6 @@ public class ExpressionTokenizer {
 
 
     private static List<Token> midEndParseStringLiteral(PeekingIterator<String> iterator) {
-        List<Token> tokens = new LinkedList<>();
         String token = iterator.peek();
 
 
@@ -216,10 +213,10 @@ public class ExpressionTokenizer {
 
 
         String left = token.substring(0, literalEndPos);
-        tokens.addAll(parseToken(left));
+        List<Token> tokens = new LinkedList<>(parseToken(left));
 
 
-        String right = token.substring(literalEndPos, token.length());
+        String right = token.substring(literalEndPos);
         tokens.addAll(parseToken(right));
 
 
@@ -228,7 +225,6 @@ public class ExpressionTokenizer {
 
 
     private static List<Token> midParseLiteral(PeekingIterator<String> iterator) {
-        List<Token> tokens = new LinkedList<>();
         String token = iterator.peek();
 
 
@@ -237,7 +233,7 @@ public class ExpressionTokenizer {
 
 
         String left = token.substring(0, literalStartPos);
-        tokens.addAll(parseToken(left));
+        List<Token> tokens = new LinkedList<>(parseToken(left));
 
 
         String literal = token.substring(literalStartPos, literalEndPos);

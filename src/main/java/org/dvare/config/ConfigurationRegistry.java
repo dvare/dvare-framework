@@ -25,6 +25,7 @@ package org.dvare.config;
 
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.expression.operation.OperationExpression;
+import org.dvare.util.InstanceUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,13 +43,13 @@ public enum ConfigurationRegistry {
 
     private final Map<String, FunctionBinding> functions = new HashMap<>();
 
-    private final Map<String, Class> operations = new HashMap<>();
+    private final Map<String, Class<? extends OperationExpression>> operations = new HashMap<>();
 
     public List<String> tokens() {
         return new ArrayList<>(operations.keySet());
     }
 
-    public void registerOperation(Class op, List<String> symbols) {
+    public void registerOperation(Class<? extends OperationExpression> op, List<String> symbols) {
         for (String symbol : symbols) {
             if (!operations.containsKey(symbol)) {
                 operations.put(symbol, op);
@@ -62,11 +63,11 @@ public enum ConfigurationRegistry {
     }
 
     public OperationExpression getOperation(String symbol) {
-        Class aClass = operations.get(symbol);
-        if (aClass != null) {
+        Class<? extends OperationExpression> operationExpression = operations.get(symbol);
+        if (operationExpression != null) {
             try {
-                return (OperationExpression) aClass.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
+                return new InstanceUtils<OperationExpression>().newInstance(operationExpression);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

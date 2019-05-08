@@ -36,6 +36,7 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.StringType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
@@ -46,6 +47,7 @@ import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.util.DataTypeMapping;
+import org.dvare.util.InstanceUtils;
 import org.dvare.util.TrimString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -379,7 +381,7 @@ public class Function extends OperationExpression {
         try {
 
             String functionName = functionBinding.getMethodName();
-            Class returnType = functionBinding.getReturnType();
+            Class<? extends DataTypeExpression> returnType = functionBinding.getReturnType();
             Class<?> functionClass = functionBinding.getFunctionClass();
             Object classInstance = functionBinding.getFunctionInstance();
             Object value = null;
@@ -402,7 +404,7 @@ public class Function extends OperationExpression {
 
                     // Modifier.isStatic(method.getModifiers()
                     if (classInstance == null) {
-                        classInstance = functionClass.newInstance();
+                        classInstance = new InstanceUtils<>().newInstance(functionClass);
                     }
                     value = method.invoke(classInstance, values);
 

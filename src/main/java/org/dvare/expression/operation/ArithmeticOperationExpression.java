@@ -31,6 +31,7 @@ import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
+import org.dvare.util.InstanceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,11 +48,11 @@ public abstract class ArithmeticOperationExpression extends RelationalOperationE
 
     public static LiteralExpression evaluate(
             Class<? extends DataTypeExpression> dataTypeExpression, OperationExpression operationExpression,
-            LiteralExpression left, LiteralExpression right) throws InterpretException {
+            LiteralExpression left, LiteralExpression right) {
 
         try {
-            return dataTypeExpression.newInstance().evaluate(operationExpression, left, right);
-        } catch (InstantiationException | IllegalAccessException e) {
+            return new InstanceUtils<DataTypeExpression>().newInstance(dataTypeExpression).evaluate(operationExpression, left, right);
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
         return new NullLiteral();

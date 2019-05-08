@@ -32,12 +32,14 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.*;
 import org.dvare.expression.operation.utility.ExpressionSeparator;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
 import org.dvare.parser.ExpressionTokenizer;
+import org.dvare.util.InstanceUtils;
 import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -289,13 +291,11 @@ public abstract class RelationalOperationExpression extends OperationExpression 
                 dataTypeExpression = NullType.class;
             }
 
-
             try {
-                return dataTypeExpression.newInstance().evaluate(this, leftLiteralExpression, rightLiteralExpression);
-            } catch (InstantiationException | IllegalAccessException e) {
+                return new InstanceUtils<DataTypeExpression>().newInstance(dataTypeExpression).evaluate(this, leftLiteralExpression, rightLiteralExpression);
+            } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
-
 
         }
         return new BooleanLiteral(false);

@@ -48,6 +48,7 @@ import org.dvare.expression.operation.utility.RightPriority;
 import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
+import org.dvare.util.InstanceUtils;
 import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,22 +165,26 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
 
         if (leftExpression == null) {
-            switch (toDataType(type)) {
+            if (type != null) {
+                switch (toDataType(type)) {
 
-                case FloatType: {
-                    leftExpression = LiteralType.getLiteralExpression(Float.MIN_VALUE, type);
-                    break;
-                }
-                case IntegerType: {
-                    leftExpression = LiteralType.getLiteralExpression(Integer.MIN_VALUE, type);
-                    break;
-                }
+                    case FloatType: {
+                        leftExpression = LiteralType.getLiteralExpression(Float.MIN_VALUE, type);
+                        break;
+                    }
+                    case IntegerType: {
+                        leftExpression = LiteralType.getLiteralExpression(Integer.MIN_VALUE, type);
+                        break;
+                    }
 
-                default: {
-                    leftExpression = new NullLiteral();
-                    //throw new IllegalOperationException("Min OperationExpression Not Allowed");
-                }
+                    default: {
+                        leftExpression = new NullLiteral();
+                        //throw new IllegalOperationException("Min OperationExpression Not Allowed");
+                    }
 
+                }
+            } else {
+                leftExpression = new NullLiteral();
             }
         }
 
@@ -193,8 +198,10 @@ public abstract class AggregationOperationExpression extends OperationExpression
                 if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
 
                     try {
-                        leftExpression = literalExpression.getType().newInstance().evaluate(this, leftExpression, literalExpression);
-                    } catch (InstantiationException | IllegalAccessException e) {
+                        Class<? extends DataTypeExpression> dataTypeExpression = literalExpression.getType();
+                        leftExpression = new InstanceUtils<DataTypeExpression>().newInstance(dataTypeExpression)
+                                .evaluate(this, leftExpression, literalExpression);
+                    } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                     }
                     if (logger.isDebugEnabled()) {
