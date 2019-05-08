@@ -31,6 +31,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses(value = {
         DatePredefinedTest.class,
         PredefinedOperationTest.class,
+        PredefinedStringOperationTest.class,
         ToIntegerTest.class,
 
 })

@@ -60,7 +60,8 @@ public enum OperationType {
     GET_YEAR("GetYear", "getYear", "GetYears", "getYears"), //
 
     LENGTH("Length", "length"),//
-    SUBSTRING("substring", "Substring"), APPEND("append", "Append"), PREPEND("prepend", "Prepend"), CONTAINS("contains", "Contains"),//
+    SUBSTRING("substring", "Substring"), APPEND("append", "Append"), PREPEND("prepend", "Prepend"),//
+    CONTAINS("contains", "Contains"), TRIM("trim", "Trim"), //
     STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
 
     //Condition
