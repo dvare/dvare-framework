@@ -1,26 +1,3 @@
-/**
- * The MIT License (MIT)
- * <p>
- * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- * <p>
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * <p>
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Sogiftware.
- * <p>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package org.dvare.parser;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -50,9 +27,9 @@ import java.util.Map;
 import java.util.Stack;
 
 public class ExpressionParser {
-    private static Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
 
-    private ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+    private final ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
     public static TypeBinding translate(String types) {
         TypeBinding typeBinding = new TypeBinding();
@@ -61,16 +38,16 @@ public class ExpressionParser {
         if (types != null) {
 
             if (types.startsWith("{")) {
-                types = types.substring(1, types.length());
+                types = types.substring(1);
             }
             if (types.endsWith("}")) {
                 types = types.substring(0, types.length() - 1);
             }
-            String variables[] = types.split(",");
+            String[] variables = types.split(",");
 
             for (String variable : variables) {
                 if (variable != null && variable.contains(":")) {
-                    String variableTokens[] = variable.split(":");
+                    String[] variableTokens = variable.split(":");
                     String name = variableTokens[0].trim();
                     String type = variableTokens[1].trim();
                     typeBinding.addTypes(name, DataType.valueOf(type));
@@ -89,11 +66,11 @@ public class ExpressionParser {
         return typeBinding;
     }
 
-    public static TypeBinding translate(Class types) {
+    public static TypeBinding translate(Class<?> types) {
         TypeBinding typeBinding = new TypeBinding();
 
 
-        Field fields[] = FieldUtils.getAllFields(types);
+        Field[] fields = FieldUtils.getAllFields(types);
         for (Field field : fields) {
             String type = field.getType().getSimpleName();
             String name = field.getName();
@@ -105,7 +82,7 @@ public class ExpressionParser {
 
                 if (field.getType().equals(List.class)) {
                     Type genericType = field.getGenericType();
-                    if (genericType != null && genericType instanceof ParameterizedType) {
+                    if (genericType instanceof ParameterizedType) {
                         ParameterizedType parameterizedType = (ParameterizedType) genericType;
                         Class<?> parameterizeClass = (Class<?>) parameterizedType.getActualTypeArguments()[0];
 
@@ -146,7 +123,7 @@ public class ExpressionParser {
     }
 
 
-    public Expression fromString(String expr, Class type) throws ExpressionParseException {
+    public Expression fromString(String expr, Class<?> type) throws ExpressionParseException {
 
         TypeBinding typeBinding = translate(type);
         return fromString(expr, typeBinding);
@@ -188,16 +165,11 @@ public class ExpressionParser {
                     if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
                         TypeBinding typeBinding = contexts.getContext(tokenType.type);
                         DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-                        VariableExpression variableExpression = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
+                        VariableExpression<?> variableExpression = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
                         stack.add(variableExpression);
                     } else {
-                        LiteralExpression literalExpression = LiteralType.getLiteralExpression(token);
-                        if (literalExpression != null) {
-                            stack.push(literalExpression);
-                        } else {
-                            throw new ExpressionParseException("syntax Error \"" + token + "\" at " + pos);
-                        }
-
+                        LiteralExpression<?> literalExpression = LiteralType.getLiteralExpression(token);
+                        stack.push(literalExpression);
                     }
 
 

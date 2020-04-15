@@ -1,26 +1,3 @@
-/**
- * The MIT License (MIT)
- * <p>
- * Copyright (c) 2016-2017 DVARE (Data Validation and Aggregation Rule Engine)
- * <p>
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * <p>
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Sogiftware.
- * <p>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package org.dvare.annotations;
 
 import org.slf4j.Logger;
@@ -47,7 +24,7 @@ public class ClassFinder {
     private static final String CLASS_FILE_SUFFIX = ".class";
     private static final String JAR_FILE_SUFFIX = ".jar";
     private static final String BAD_PACKAGE_ERROR = "Unable to get resources from path '%s'. Are you sure the package '%s' exists?";
-    private static Logger logger = LoggerFactory.getLogger(ClassFinder.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClassFinder.class);
 
     public static List<Class<?>> find(String scannedPackage) {
         return findAnnotated(scannedPackage, null);
@@ -101,7 +78,7 @@ public class ClassFinder {
                 String path = resource.substring(0, endIndex);
                 if (path.contains(scannedPath)) {
                     String className = path.replace(DIR_SEPARATOR, PKG_SEPARATOR);
-                    Class aClass = validClass(className, annotation);
+                    Class<?> aClass = validClass(className, annotation);
                     if (aClass != null) {
                         classes.add(aClass);
                     }
@@ -127,7 +104,7 @@ public class ClassFinder {
         } else if (resource.endsWith(CLASS_FILE_SUFFIX)) {
             int endIndex = resource.length() - CLASS_FILE_SUFFIX.length();
             String className = resource.substring(0, endIndex);
-            Class aClass = validClass(className, annotation);
+            Class<?> aClass = validClass(className, annotation);
             if (aClass != null) {
                 classes.add(aClass);
             }
@@ -136,11 +113,13 @@ public class ClassFinder {
         return classes;
     }
 
-    private static Class validClass(String className, Class<? extends Annotation> annotation) {
+    private static Class<?> validClass(String className, Class<? extends Annotation> annotation) {
         try {
-            Class aClass = Class.forName(className);
-            if (annotation != null && aClass.isAnnotationPresent(annotation)) {
-                return aClass;
+            Class<?> aClass = Class.forName(className);
+            if (annotation != null) {
+                if (aClass.isAnnotationPresent(annotation)) {
+                    return aClass;
+                }
             } else {
                 return aClass;
             }
