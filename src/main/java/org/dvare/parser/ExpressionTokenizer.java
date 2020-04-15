@@ -1,6 +1,8 @@
 package org.dvare.parser;
 
 
+import org.dvare.exceptions.parser.ExpressionParseException;
+import org.dvare.exceptions.parser.IllegalLiteralException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,18 +12,20 @@ import java.util.regex.Pattern;
 
 public class ExpressionTokenizer {
     private static final Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
-    private static String[] operators = new String[]{"<>", "\\|\\|", "&&", "=>", "!=", "<=", ">=", ":="};
-    private static String[] singleOperators = new String[]{"\\(", "\\)", "\\[", "\\]", "=", ">", "<", "!", ";", "\\+", /*"\\-", "\\*", "\\/", "\\^",*/};
-    private static Pattern operatorsPattern = Pattern.compile(buildRegex(operators));
-    private static Pattern singleOperatorsPattern = Pattern.compile(buildRegex(singleOperators));
+    private static final String[] operators = new String[]{"<>", "\\|\\|", "&&", "=>", "!=", "<=", ">=", ":="};
+    private static final String[] singleOperators = new String[]{"\\(", "\\)", "\\[", "\\]", "=", ">", "<", "!", ";", "\\+", /*"\\-", "\\*", "\\/", "\\^",*/};
+    private static final String[] splits = {"\\s", "\\,", "\\->"};
+    private static final Pattern operatorsPattern = Pattern.compile(buildRegex(operators));
+    private static final Pattern singleOperatorsPattern = Pattern.compile(buildRegex(singleOperators));
+    private static final char stringLiteralNeedle = '\'';
+    private static final String stringLiteral = "'";
+    private static final String spaceLiteral = " ";
 
-
-    public static String[] toToken(String expr) {
-        String[] splits = {"\\s", "\\,", "\\->"};
+    public static String[] toToken(String expr) throws ExpressionParseException {
         return toToken(expr, splits);
     }
 
-    private static String[] toToken(String expr, String[] splits) {
+    private static String[] toToken(String expr, String[] splits) throws ExpressionParseException {
         String regex = buildRegex(splits);
         if (logger.isDebugEnabled()) {
             logger.debug("Token Pattern: {}", regex);
@@ -35,45 +39,15 @@ public class ExpressionTokenizer {
                 logger.debug("Parsing the expression : {}", expression);
             }
 
-
-            List<Token> tokens = new LinkedList<>();
-
-            Iterator<String> it = Arrays.asList(expression.split(regex)).iterator();
-            PeekingIterator<String> iterator = new PeekingIterator<>(it);
-
-
-            while (iterator.hasNext()) {
-                String token = iterator.next();
-
-                if (token.equals("/*") || token.startsWith("/*")) {
-                    tokens.addAll(comments(iterator));
-                } else if ((countOccurrences(token, '\'') == 1) && (token.startsWith("'") && !token.endsWith("'"))) {
-                    tokens.addAll(completeStringLiteral(iterator));
-                } else if ((countOccurrences(token, '\'') == 1) && (!token.startsWith("'") && !token.endsWith("'"))) {
-
-                    tokens.addAll(midStartCompeleteStringLiteral(iterator));
-
-                } else if ((countOccurrences(token, '\'') == 2) && !token.startsWith("'") && !token.endsWith("'")) {
-
-                    tokens.addAll(midParseLiteral(iterator));
-
-
-                } else if ((countOccurrences(token, '\'') == 2) && !token.startsWith("'")) {
-
-                    tokens.addAll(midStartParseStringLiteral(iterator));
-
-                } else if ((countOccurrences(token, '\'') == 2) && !token.endsWith("'")) {
-                    tokens.addAll(midEndParseStringLiteral(iterator));
-                } else {
-                    tokens.addAll(parseToken(token));
-                }
-
-
+            List<String> parts = Arrays.asList(expression.split(regex));
+            if (logger.isDebugEnabled()) {
+                logger.debug("Expression parts : {}", parts);
             }
+            List<Token> tokens = toToken(parts);
 
             List<String> tokenArray = new ArrayList<>();
             for (Token token : tokens) {
-                if (!token.getType().equals(TokenType.COMMENT)) {
+                if (!token.getType().equals(Token.TokenType.COMMENT)) {
                     tokenArray.add(token.getValue());
                 }
             }
@@ -88,8 +62,86 @@ public class ExpressionTokenizer {
         return null;
     }
 
+    private static List<Token> toToken(List<String> parts) throws IllegalLiteralException {
+        List<Token> tokenList = new LinkedList<>();
+        PeekingIterator<String> iterator = new PeekingIterator<>(new ArrayList<>(parts).listIterator());
+
+        while (iterator.hasNext()) {
+            String token = iterator.next();
+            if (token.isEmpty()) {
+                iterator.previous();
+                iterator.remove();
+                continue;
+            }
+
+            if (token.equals("/*") || token.startsWith("/*")) {
+                tokenList.addAll(comments(iterator));
+            } else if ((countOccurrences(token, stringLiteralNeedle) == 1) && ((token.startsWith(stringLiteral) && !token.endsWith(stringLiteral)) || token.equals(stringLiteral))) {
+
+                if (iterator.hasNext()) {
+                    List<Token> allTokens = completeStringLiteral(iterator);
+                    if (!allTokens.isEmpty()) {
+                        tokenList.addAll(allTokens);
+                    } else {
+                        String message = "\"" + token + "\" is not an String";
+                        throw new IllegalLiteralException(token, message);
+                    }
+                } else {
+                    tokenList.add(new Token(token, Token.TokenType.LITERAL));
+                }
+
+
+            } else if ((countOccurrences(token, stringLiteralNeedle) == 1) && (!token.startsWith(stringLiteral) && !token.endsWith(stringLiteral))) {
+                if (iterator.hasNext()) {
+                    List<Token> allTokens = midStartCompeleteStringLiteral(iterator);
+                    if (!allTokens.isEmpty()) {
+                        tokenList.addAll(allTokens);
+                    } else {
+                        String message = "\"" + token + "\" is not an String";
+                        throw new IllegalLiteralException(token, message);
+                    }
+                } else {
+                    tokenList.add(new Token(token, Token.TokenType.LITERAL));
+                }
+
+            } else if ((countOccurrences(token, stringLiteralNeedle) == 2) && !token.startsWith(stringLiteral) && !token.endsWith(stringLiteral)) {
+
+                addTokensToIteratorOrTokenList(iterator, tokenList, midParseLiteral(iterator));
+
+
+            } else if ((countOccurrences(token, stringLiteralNeedle) == 2) && !token.startsWith(stringLiteral)) {
+
+                addTokensToIteratorOrTokenList(iterator, tokenList, midStartParseStringLiteral(iterator));
+
+            } else if ((countOccurrences(token, stringLiteralNeedle) == 2) && !token.endsWith(stringLiteral)) {
+                addTokensToIteratorOrTokenList(iterator, tokenList, midEndParseStringLiteral(iterator));
+            } else {
+                addTokensToIteratorOrTokenList(iterator, tokenList, parseToken(token));
+            }
+
+        }
+        return tokenList;
+    }
+
+    private static void addTokensToIteratorOrTokenList(PeekingIterator<String> iterator, List<Token> tokenList, List<Token> parsedTokens) {
+        if (parsedTokens.size() == 1 && (
+                countOccurrences(parsedTokens.get(0).getValue(), stringLiteralNeedle) == 0 ||
+                        countOccurrences(parsedTokens.get(0).getValue(), stringLiteralNeedle) == 2)) {
+            tokenList.add(parsedTokens.get(0));
+        } else {
+            iterator.previous();
+            iterator.remove();
+            Collections.reverse(parsedTokens);
+            for (Token parsedToken : parsedTokens) {
+                iterator.add(parsedToken.getValue());
+                iterator.previous();
+            }
+        }
+
+    }
+
     private static String buildRegex(String[] splits) {
-        StringBuilder regexBuilder = new StringBuilder("");
+        StringBuilder regexBuilder = new StringBuilder();
         Iterator<String> iterator = Arrays.asList(splits).iterator();
         while (iterator.hasNext()) {
             String split = iterator.next();
@@ -107,7 +159,7 @@ public class ExpressionTokenizer {
         while (iterator.hasNext()) {
             iterator.next();
             String token = iterator.peek();
-            tokens.add(new Token(token, TokenType.COMMENT));
+            tokens.add(new Token(token, Token.TokenType.COMMENT));
             if (token.equals("*/") || token.endsWith("*/")) {
                 break;
             }
@@ -123,8 +175,11 @@ public class ExpressionTokenizer {
         while (iterator.hasNext()) {
             token = iterator.next();
             literal.append(" ").append(token);
-            if (!token.startsWith("'") && token.endsWith("'")) {
-                tokens.add(new Token(literal.toString(), TokenType.LITERAL));
+            if (!token.startsWith(stringLiteral) && (token.endsWith(stringLiteral)) || token.equals(stringLiteral)) {
+                tokens.add(new Token(literal.toString(), Token.TokenType.LITERAL));
+                break;
+            } else if (countOccurrences(literal.toString(), stringLiteralNeedle) == 2) {
+                tokens.addAll(midParseLiteral(literal.toString()));
                 break;
             }
         }
@@ -134,11 +189,11 @@ public class ExpressionTokenizer {
 
     private static List<Token> midStartCompeleteStringLiteral(PeekingIterator<String> iterator) {
         String token = iterator.peek();
-        String left = token.substring(0, token.indexOf("'"));
+        String left = token.substring(0, token.indexOf(stringLiteral));
         left = left.trim();
         List<Token> tokens = new LinkedList<>(parseToken(left));
 
-        token = token.substring(token.indexOf("'"), token.length());
+        token = token.substring(token.indexOf(stringLiteral));
         String tempToken = token.trim();
 
 
@@ -146,23 +201,25 @@ public class ExpressionTokenizer {
             token = iterator.next();
 
 
-            if (!token.startsWith("'") && token.endsWith("'")) {
-                tempToken += " " + token;
-                tokens.add(new Token(tempToken, TokenType.LITERAL));
-            } else if (!token.startsWith("'") && token.contains("'")) {
-
-
-                left = token.substring(0, token.indexOf("'") + 1);
+            if (!token.startsWith(stringLiteral) && token.endsWith(stringLiteral)) { // case value'
+                tempToken += spaceLiteral + token;
+                tokens.add(new Token(tempToken, Token.TokenType.LITERAL));
+            } else if (!token.startsWith(stringLiteral) && token.contains(stringLiteral)) { //case value'(
+                left = token.substring(0, token.indexOf(stringLiteral) + 1);
                 left = left.trim();
-                tempToken += " " + left;
-                tokens.add(new Token(tempToken, TokenType.LITERAL));
-
-                String right = token.substring(token.indexOf("'") + 1, token.length());
+                tempToken += spaceLiteral + left;
+                tokens.add(new Token(tempToken, Token.TokenType.LITERAL));
+                String right = token.substring(token.indexOf(stringLiteral) + 1);
                 tokens.addAll(parseToken(right));
-
-
+            } else if (token.startsWith(stringLiteral)) { //case ')
+                left = token.substring(0, 1);
+                left = left.trim();
+                tempToken += spaceLiteral + left;
+                tokens.add(new Token(tempToken, Token.TokenType.LITERAL));
+                String right = token.substring(1);
+                tokens.addAll(parseToken(right));
             } else {
-                tempToken += " " + token;
+                tempToken += spaceLiteral + token;
             }
 
         }
@@ -173,9 +230,9 @@ public class ExpressionTokenizer {
 
     private static List<Token> midStartParseStringLiteral(PeekingIterator<String> iterator) {
         String token = iterator.peek();
-        String left = token.substring(0, token.indexOf("'"));
+        String left = token.substring(0, token.indexOf(stringLiteral));
         List<Token> tokens = new LinkedList<>(parseToken(left));
-        String right = token.substring(token.indexOf("'"), token.length());
+        String right = token.substring(token.indexOf(stringLiteral));
         tokens.addAll(parseToken(right));
         return tokens;
     }
@@ -185,8 +242,8 @@ public class ExpressionTokenizer {
         String token = iterator.peek();
 
 
-        int literalStartPos = token.indexOf("'");
-        int literalEndPos = token.indexOf("'", literalStartPos + 1) + 1;
+        int literalStartPos = token.indexOf(stringLiteral);
+        int literalEndPos = token.indexOf(stringLiteral, literalStartPos + 1) + 1;
 
 
         String left = token.substring(0, literalEndPos);
@@ -203,10 +260,12 @@ public class ExpressionTokenizer {
 
     private static List<Token> midParseLiteral(PeekingIterator<String> iterator) {
         String token = iterator.peek();
+        return midParseLiteral(token);
+    }
 
-
-        int literalStartPos = token.indexOf("'");
-        int literalEndPos = token.indexOf("'", literalStartPos + 1) + 1;
+    private static List<Token> midParseLiteral(String token) {
+        int literalStartPos = token.indexOf(stringLiteral);
+        int literalEndPos = token.indexOf(stringLiteral, literalStartPos + 1) + 1;
 
 
         String left = token.substring(0, literalStartPos);
@@ -216,7 +275,7 @@ public class ExpressionTokenizer {
         String literal = token.substring(literalStartPos, literalEndPos);
         tokens.addAll(parseToken(literal));
 
-        String right = token.substring(literalEndPos, token.length());
+        String right = token.substring(literalEndPos);
 
         tokens.addAll(parseToken(right));
 
@@ -244,7 +303,7 @@ public class ExpressionTokenizer {
         }
 
 
-        if (!token.startsWith("'") || !token.endsWith("'")) {
+        if (!token.startsWith(stringLiteral) || !token.endsWith(stringLiteral)) {
 
             Matcher matcher = operatorsPattern.matcher(token);
             Matcher matcher2 = singleOperatorsPattern.matcher(token);
@@ -253,11 +312,11 @@ public class ExpressionTokenizer {
             } else if (matcher2.find()) {
                 tokens.addAll(parse(token, matcher2.group()));
             } else {
-                tokens.add(new Token(token, TokenType.LITERAL));
+                tokens.add(new Token(token, Token.TokenType.LITERAL));
             }
 
         } else {
-            tokens.add(new Token(token, TokenType.LITERAL));
+            tokens.add(new Token(token, Token.TokenType.LITERAL));
         }
 
 
@@ -275,15 +334,15 @@ public class ExpressionTokenizer {
 
 
         if (token.equals(operator)) {
-            tokens.add(new Token(operator, TokenType.OPERATOR));
+            tokens.add(new Token(operator, Token.TokenType.OPERATOR));
         } else if (token.indexOf(operator) == 0) {
-            tokens.add(new Token(operator, TokenType.OPERATOR));
+            tokens.add(new Token(operator, Token.TokenType.OPERATOR));
             String right = token.substring(opLength, tokenLength);
             tokens.addAll(parseToken(right));
         } else {
             String left = token.substring(0, operatorPos);
             tokens.addAll(parseToken(left));
-            tokens.add(new Token(operator, TokenType.OPERATOR));
+            tokens.add(new Token(operator, Token.TokenType.OPERATOR));
             String right = token.substring(operatorPos + opLength, tokenLength);
             tokens.addAll(parseToken(right));
         }
@@ -297,7 +356,11 @@ public class ExpressionTokenizer {
     }
 
     public static String toString(String[] tokens, int pos, int startIndex) {
-        StringBuilder stringBuilder = new StringBuilder("");
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
 
         if (tokens.length >= pos + 1) {
             pos++;
@@ -311,7 +374,7 @@ public class ExpressionTokenizer {
     }
 
     public static String toString(String[] tokens) {
-        StringBuilder stringBuilder = new StringBuilder("");
+        StringBuilder stringBuilder = new StringBuilder();
 
         for (String token : tokens) {
             stringBuilder.append(token);
@@ -321,63 +384,5 @@ public class ExpressionTokenizer {
     }
 
 
-    enum TokenType {
-        OPERATOR, COMMENT, NEW_LINE, LITERAL
-    }
-
-    static class PeekingIterator<T> implements Iterator<T> {
-
-        private Iterator<T> iterator;
-        private T peek;
-
-        public PeekingIterator(Iterator<T> iterator) {
-            this.iterator = iterator;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
-
-        @Override
-        public T next() {
-            peek = iterator.next();
-            return peek;
-        }
-
-        public T peek() {
-            if (peek == null && hasNext()) {
-                next();
-            }
-            return peek;
-        }
-    }
-
-    static class Token {
-        private String value;
-        private TokenType type;
-
-        public Token(String value, TokenType type) {
-            this.value = value;
-            this.type = type;
-        }
-
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public TokenType getType() {
-            return type;
-        }
-
-        public void setType(TokenType type) {
-            this.type = type;
-        }
-    }
 }
 
