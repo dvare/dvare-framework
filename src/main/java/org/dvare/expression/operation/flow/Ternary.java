@@ -47,8 +47,8 @@ public class Ternary extends ConditionOperationExpression {
                 this.condition = stack.pop();
             }
 
-            if (!(condition instanceof BooleanVariable) && !(leftOperand instanceof BooleanLiteral)
-                    && !(condition instanceof RelationalOperationExpression) && !(leftOperand instanceof ToBoolean)) {
+            if (!(condition instanceof BooleanVariable) && !(condition instanceof BooleanLiteral)
+                    && !(condition instanceof RelationalOperationExpression) && !(condition instanceof ToBoolean)) {
                 String message = String.format("Left operand of ternary operation is not boolean type  near %s",
                         ExpressionTokenizer.toString(tokens, pos, pos - 5));
                 logger.error(message);
