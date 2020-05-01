@@ -36,13 +36,13 @@ public class Mean extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
         Expression valueOperand = this.leftOperand;
 
 
-        List valuesList = null;
+        List<?> valuesList = null;
         DataType type = null;
 
 
@@ -75,7 +75,7 @@ public class Mean extends AggregationOperationExpression {
                     }
 
                     Collections.sort(values);
-                    Float sum = 0f;
+                    float sum = 0f;
                     for (Float i : values) {
                         sum = sum + i;
                     }
@@ -98,7 +98,7 @@ public class Mean extends AggregationOperationExpression {
                     }
 
                     Collections.sort(values);
-                    Integer sum = 0;
+                    int sum = 0;
                     for (Integer i : values) {
                         sum = sum + i;
                     }

@@ -134,13 +134,13 @@ public class AssignOperationExpression extends OperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        VariableExpression variable;
+        VariableExpression<?> variable;
         Expression left = this.leftOperand;
 
         if (left instanceof VariableExpression) {
-            variable = (VariableExpression) left;
+            variable = (VariableExpression<?>) left;
 
             Object assignmentInstance = instancesBinding.getInstance(variable.getOperandType());
 
@@ -152,15 +152,17 @@ public class AssignOperationExpression extends OperationExpression {
             variable = VariableType.setVariableValue(variable, assignmentInstance);
 
             Expression valueOperand = this.rightOperand;
-            LiteralExpression literalExpression = null;
+            LiteralExpression<?> literalExpression = null;
             if (valueOperand instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) valueOperand;
                 literalExpression = operation.interpret(instancesBinding);
             } else if (valueOperand instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) valueOperand;
+                VariableExpression<?> variableExpression = (VariableExpression<?>) valueOperand;
                 literalExpression = variableExpression.interpret(instancesBinding);
             } else if (valueOperand instanceof LiteralExpression) {
-                literalExpression = (LiteralExpression) valueOperand;
+                literalExpression = (LiteralExpression<?>) valueOperand;
+            } else {
+                literalExpression = new NullLiteral<>();
             }
 
             if (variable.getType().isAnnotationPresent(Type.class)) {
@@ -173,10 +175,10 @@ public class AssignOperationExpression extends OperationExpression {
             }
         }
 
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
-    private Object updateValue(Object aggregation, DataType dataType, VariableExpression variableExpression, LiteralExpression<?> literalExpression) throws InterpretException {
+    private Object updateValue(Object aggregation, DataType dataType, VariableExpression<?> variableExpression, LiteralExpression<?> literalExpression) throws InterpretException {
         String variableName = variableExpression.getName();
         Object value = literalExpression.getValue();
         if (value != null) {

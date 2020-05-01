@@ -5,6 +5,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.literal.LiteralExpression;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,16 +14,16 @@ import java.util.List;
  */
 public class CompositeOperationExpression extends Expression {
 
-    private List<Expression> expressions;
+    private List<Expression> expressions = new ArrayList<>();
 
     public CompositeOperationExpression(List<Expression> expressions) {
         this.expressions = expressions;
     }
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        LiteralExpression result = null;
+        LiteralExpression<?> result = null;
         for (Expression expression : expressions) {
             result = expression.interpret(instancesBinding);
         }

@@ -86,7 +86,7 @@ public class IF extends ConditionOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         Boolean result = toBoolean(condition.interpret(instancesBinding));
         if (result) {

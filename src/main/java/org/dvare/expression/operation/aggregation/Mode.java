@@ -35,11 +35,11 @@ public class Mode extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         Expression valueOperand = this.leftOperand;
 
-        List valuesList = null;
+        List<?> valuesList = null;
         DataType type = null;
 
 
@@ -74,7 +74,7 @@ public class Mode extends AggregationOperationExpression {
 
 
                     Float maxValue = 0f;
-                    Integer maxCount = 0;
+                    int maxCount = 0;
 
                     for (int i = 0; i < values.size(); ++i) {
                         int count = 0;
@@ -102,7 +102,7 @@ public class Mode extends AggregationOperationExpression {
                     }
 
 
-                    Integer maxValue = 0, maxCount = 0;
+                    int maxValue = 0, maxCount = 0;
 
                     for (int i = 0; i < values.size(); ++i) {
                         int count = 0;

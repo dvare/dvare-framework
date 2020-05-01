@@ -29,7 +29,7 @@ public class Minimum extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         extractValues(instancesBinding, leftOperand);
         DataType type = toDataType(dataTypeExpression);
         if (type != null) {
@@ -45,7 +45,7 @@ public class Minimum extends AggregationOperationExpression {
                 }
 
                 default: {
-                    leftExpression = new NullLiteral();
+                    leftExpression = new NullLiteral<>();
                     //throw new IllegalOperationException("Min OperationExpression Not Allowed");
                 }
             }

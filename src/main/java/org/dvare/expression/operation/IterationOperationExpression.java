@@ -54,13 +54,13 @@ public class IterationOperationExpression extends OperationExpression {
 
 
             DataType variableType = TypeFinder.findType(tokenType.token, contextsBinding.getContext(tokenType.type));
-            VariableExpression variableExpression = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
+            VariableExpression<?> variableExpression = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
 
             derivedContextsBinding = variableExpression.getName();
             referenceContext = variableExpression;
 
 
-            String parts[] = derivedContext.getName().split(":");
+            String[] parts = derivedContext.getName().split(":");
             if (parts.length == 2) {
 
                 String name = parts[0].trim();

@@ -3,4 +3,4 @@ sudo: false
 jdk:
   - oraclejdk11
 after_success:
-  - mvn clean source:jar javadoc:jar install cobertura:cobertura coveralls:report
+  - mvn clean install coveralls:report

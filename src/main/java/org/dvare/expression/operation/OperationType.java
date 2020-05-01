@@ -68,7 +68,7 @@ public enum OperationType {
     SEPARATOR(";"),//
     PRINT("print", "Print", "Log", "log");
 
-    private List<String> symbols = new ArrayList<>();
+    private final List<String> symbols = new ArrayList<>();
 
     OperationType(String... symbols) {
         this.symbols.addAll(Arrays.asList(symbols));

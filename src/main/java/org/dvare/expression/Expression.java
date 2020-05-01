@@ -11,7 +11,7 @@ import org.dvare.expression.literal.LiteralExpression;
  */
 public abstract class Expression {
 
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         return new BooleanLiteral(false);
     }
 

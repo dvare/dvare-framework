@@ -26,7 +26,7 @@ public class Maximum extends AggregationOperationExpression {
     }
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         extractValues(instancesBinding, leftOperand);
         DataType type = toDataType(dataTypeExpression);
         if (type != null) {
