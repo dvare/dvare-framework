@@ -42,7 +42,7 @@ public class Maximum extends AggregationOperationExpression {
                 }
 
                 default: {
-                    leftExpression = new NullLiteral();
+                    leftExpression = new NullLiteral<>();
                     //throw new IllegalOperationException("Min OperationExpression Not Allowed");
                 }
             }

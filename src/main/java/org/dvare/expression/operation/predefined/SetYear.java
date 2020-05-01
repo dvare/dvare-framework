@@ -28,12 +28,12 @@ public class SetYear extends ChainOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
+        LiteralExpression<?> literalExpression = super.interpretOperand(leftOperand, instancesBinding);
         if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null
                 && (rightOperand != null && rightOperand.size() == 1)) {
 
-            LiteralExpression yearsExpression = (LiteralExpression) rightOperand.get(0);
+            LiteralExpression<?> yearsExpression = (LiteralExpression<?>) rightOperand.get(0);
             Object yearValue = yearsExpression.getValue();
             Object value = literalExpression.getValue();
             dataTypeExpression = literalExpression.getType();

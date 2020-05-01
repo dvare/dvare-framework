@@ -28,12 +28,12 @@ public class AddDays extends ChainOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
+        LiteralExpression<?> literalExpression = super.interpretOperand(leftOperand, instancesBinding);
         if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null
                 && (rightOperand != null && rightOperand.size() == 1)) {
 
-            LiteralExpression daysExpression = (LiteralExpression) rightOperand.get(0);
+            LiteralExpression<?> daysExpression = (LiteralExpression<?>) rightOperand.get(0);
             Object daysValue = daysExpression.getValue();
             Object value = literalExpression.getValue();
             dataTypeExpression = literalExpression.getType();

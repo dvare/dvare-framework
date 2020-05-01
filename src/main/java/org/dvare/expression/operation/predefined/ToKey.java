@@ -26,15 +26,15 @@ public class ToKey extends ChainOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
+        LiteralExpression<?> literalExpression = super.interpretOperand(leftOperand, instancesBinding);
         if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null) {
             if (literalExpression.getValue() != null) {
 
                 Object pairValue = literalExpression.getValue();
 
                 if (pairValue instanceof Pair) {
-                    Object key = Pair.class.cast(pairValue).getKey();
+                    Object key = ((Pair) pairValue).getKey();
                     if (key != null) {
                         try {
                             return LiteralType.getLiteralExpression(key, DataTypeMapping.getTypeMapping(key.getClass()));

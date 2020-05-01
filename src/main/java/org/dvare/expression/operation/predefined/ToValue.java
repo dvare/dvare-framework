@@ -26,14 +26,14 @@ public class ToValue extends ChainOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        LiteralExpression literalExpression = super.interpretOperand(this.leftOperand, instancesBinding);
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
+        LiteralExpression<?> literalExpression = super.interpretOperand(this.leftOperand, instancesBinding);
         if (literalExpression != null && literalExpression.getValue() != null) {
 
             Object pairValue = literalExpression.getValue();
 
             if (pairValue instanceof Pair) {
-                Object value = Pair.class.cast(pairValue).getValue();
+                Object value = ((Pair) pairValue).getValue();
                 if (value != null) {
                     try {
                         return LiteralType.getLiteralExpression(value, DataTypeMapping.getTypeMapping(value.getClass()));

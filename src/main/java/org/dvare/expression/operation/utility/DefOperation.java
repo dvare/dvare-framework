@@ -38,7 +38,7 @@ public class DefOperation extends OperationExpression {
         String token = tokens[pos];
 
 
-        String parts[] = token.split(":");
+        String[] parts = token.split(":");
         if (parts.length == 2) {
 
             String name = parts[0].trim();
@@ -63,7 +63,7 @@ public class DefOperation extends OperationExpression {
             }
 
 
-            VariableExpression variableExpression = VariableType.getVariableExpression(tokenType.token, dataType, tokenType.type);
+            VariableExpression<?> variableExpression = VariableType.getVariableExpression(tokenType.token, dataType, tokenType.type);
             stack.push(variableExpression);
 
         } else {

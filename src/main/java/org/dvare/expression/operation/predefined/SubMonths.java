@@ -28,12 +28,12 @@ public class SubMonths extends ChainOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
+        LiteralExpression<?> literalExpression = super.interpretOperand(leftOperand, instancesBinding);
 
         if ((!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null) && (rightOperand != null && rightOperand.size() == 1)) {
 
-            LiteralExpression monthsExpression = (LiteralExpression) rightOperand.get(0);
+            LiteralExpression<?> monthsExpression = (LiteralExpression<?>) rightOperand.get(0);
             Object monthsValue = monthsExpression.getValue();
             Object value = literalExpression.getValue();
             dataTypeExpression = literalExpression.getType();

@@ -144,34 +144,34 @@ public class Function extends OperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         return interpretFunction(instancesBinding);
 
     }
 
 
-    protected LiteralExpression interpretFunction(InstancesBinding instancesBinding) throws InterpretException {
+    protected LiteralExpression<?> interpretFunction(InstancesBinding instancesBinding) throws InterpretException {
 
         FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
 
         FunctionBinding functionBinding = functionExpression.getBinding();
 
         if (functionBinding == null) {
-            LiteralExpression literalExpression = functionExpression.getName().interpret(instancesBinding);
+            LiteralExpression<?> literalExpression = functionExpression.getName().interpret(instancesBinding);
             ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
             functionBinding = configurationRegistry.getFunction(literalExpression.getValue().toString());
         }
 
 
         if (functionBinding == null) {
-            return new NullLiteral();
+            return new NullLiteral<>();
         }
 
         List<Expression> functionParameters = functionExpression.getParameters();
 
         int parmsSize = functionParameters.size();
-        Class<?> params[] = new Class[parmsSize];
-        Object values[] = new Object[parmsSize];
+        Class<?>[] params = new Class[parmsSize];
+        Object[] values = new Object[parmsSize];
 
 
         List<DataType> parameters = functionBinding.getParameters();
@@ -184,7 +184,7 @@ public class Function extends OperationExpression {
 
             if (parameterExpression instanceof OperationExpression) {
                 OperationExpression operation = (OperationExpression) parameterExpression;
-                LiteralExpression literalExpression;
+                LiteralExpression<?> literalExpression;
                 literalExpression = operation.interpret(instancesBinding);
 
                 ParamValue paramsValue = buildLiteralParam(literalExpression, originalType);
@@ -192,13 +192,13 @@ public class Function extends OperationExpression {
                 values[counter] = paramsValue.value;
 
             } else if (parameterExpression instanceof VariableExpression) {
-                VariableExpression variableExpression = (VariableExpression) parameterExpression;
+                VariableExpression<?> variableExpression = (VariableExpression<?>) parameterExpression;
 
                 ParamValue paramsValue = buildVariableExpression(instancesBinding, variableExpression, originalType);
                 params[counter] = paramsValue.param;
                 values[counter] = paramsValue.value;
 
-            } else if (parameterExpression instanceof LiteralExpression) {
+            } else if (parameterExpression instanceof LiteralExpression<?>) {
 
                 ParamValue paramsValue = buildLiteralParam(parameterExpression, originalType);
                 params[counter] = paramsValue.param;
@@ -214,7 +214,7 @@ public class Function extends OperationExpression {
 
     }
 
-    private ParamValue buildVariableExpression(InstancesBinding instancesBinding, VariableExpression variableExpression, Class originalType) throws InterpretException {
+    private ParamValue buildVariableExpression(InstancesBinding instancesBinding, VariableExpression<?> variableExpression, Class<?> originalType) throws InterpretException {
         ParamValue paramsValue = new ParamValue();
 
         Object instance = instancesBinding.getInstance(variableExpression.getOperandType());
@@ -239,7 +239,7 @@ public class Function extends OperationExpression {
                         listValues.add(variableExpression.getValue());
                     }
 
-                    Class type = DataTypeMapping.getDataTypeMapping(variableDataType);
+                    Class<?> type = DataTypeMapping.getDataTypeMapping(variableDataType);
                     Object[] typedArray = (Object[]) Array.newInstance(type, dataSet.size());
                     Object value = listValues.toArray(typedArray);
                     paramsValue.param = originalType;
@@ -270,7 +270,7 @@ public class Function extends OperationExpression {
         return paramsValue;
     }
 
-    private ParamValue buildLiteralParam(Expression expression, Class originalType) throws InterpretException {
+    private ParamValue buildLiteralParam(Expression expression, Class<?> originalType) throws InterpretException {
         ParamValue paramsValue = new ParamValue();
         if (expression instanceof ListLiteral) {
             ListLiteral listLiteral = (ListLiteral) expression;
@@ -281,7 +281,7 @@ public class Function extends OperationExpression {
 
                 if (originalType.isArray()) {
 
-                    Class type = DataTypeMapping.getDataTypeMapping(literalDataType);
+                    Class<?> type = DataTypeMapping.getDataTypeMapping(literalDataType);
                     Object[] typedArray = (Object[]) Array.newInstance(type, listLiteral.getSize());
                     Object value = listLiteral.getValue().toArray(typedArray);
 
@@ -306,7 +306,7 @@ public class Function extends OperationExpression {
         } else {
 
 
-            LiteralExpression literalExpression = (LiteralExpression) expression;
+            LiteralExpression<?> literalExpression = (LiteralExpression<?>) expression;
 
 
             if (originalType.isArray()) {
@@ -323,7 +323,7 @@ public class Function extends OperationExpression {
                 }
 
 
-                Class type = DataTypeMapping.getDataTypeMapping(toDataType(literalExpression.getType()));
+                Class<?> type = DataTypeMapping.getDataTypeMapping(toDataType(literalExpression.getType()));
                 Object[] typedArray = (Object[]) java.lang.reflect.Array.newInstance(type, 1);
                 Object value = listValues.toArray(typedArray);
                 paramsValue.param = originalType;
@@ -353,7 +353,7 @@ public class Function extends OperationExpression {
         return paramsValue;
     }
 
-    private LiteralExpression invokeFunction(FunctionBinding functionBinding, Class<?>[] params, Object[] values) throws InterpretException {
+    private LiteralExpression<?> invokeFunction(FunctionBinding functionBinding, Class<?>[] params, Object[] values) throws InterpretException {
 
         try {
 
@@ -420,12 +420,12 @@ public class Function extends OperationExpression {
 
     }
 
-    private Class[] castParams(Class[] params) throws Exception {
+    private Class<?>[] castParams(Class<?>[] params) throws Exception {
         for (int i = 0; i < params.length; i++) {
 
-            Class param = params[i];
+            Class<?> param = params[i];
             if (!param.isPrimitive() && (param.equals(Integer.class) || param.equals(Float.class) || param.equals(Boolean.class) || param.equals(Double.class) || param.equals(Long.class))) {
-                Class aClass = (Class) FieldUtils.readStaticField(params[i], "TYPE", true);
+                Class<?> aClass = (Class<?>) FieldUtils.readStaticField(params[i], "TYPE", true);
                 if (aClass != null) {
                     params[i] = aClass;
                 }
@@ -465,7 +465,7 @@ public class Function extends OperationExpression {
         return super.toString();
     }
 
-    private class ParamValue {
+    private static class ParamValue {
         Class<?> param;
         Object value;
     }

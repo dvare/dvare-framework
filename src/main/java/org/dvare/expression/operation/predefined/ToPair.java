@@ -43,18 +43,18 @@ public class ToPair extends ChainOperationExpression {
     }
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         if (rightOperand.size() == 2) {
-            LiteralExpression keyParam = super.interpretOperand(rightOperand.get(0), instancesBinding);
-            LiteralExpression valueParam = super.interpretOperand(rightOperand.get(1), instancesBinding);
+            LiteralExpression<?> keyParam = super.interpretOperand(rightOperand.get(0), instancesBinding);
+            LiteralExpression<?> valueParam = super.interpretOperand(rightOperand.get(1), instancesBinding);
 
             Pair pair = Pair.of(keyParam.getValue(), valueParam.getValue());
 
             return LiteralType.getLiteralExpression(pair, PairType.class);
         }
 
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
 

@@ -28,8 +28,8 @@ public class Length extends ChainOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
+        LiteralExpression<?> literalExpression = super.interpretOperand(leftOperand, instancesBinding);
         if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null) {
             if (toDataType(literalExpression.getType()) == DataType.StringType) {
                 Object value = literalExpression.getValue();

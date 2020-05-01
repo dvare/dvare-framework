@@ -57,7 +57,7 @@ public class Today extends OperationExpression {
     }
 
 
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         LocalDate date = LocalDate.now();
         return new DateLiteral(date);
     }

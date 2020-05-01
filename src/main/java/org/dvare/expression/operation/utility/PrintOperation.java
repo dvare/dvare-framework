@@ -67,12 +67,12 @@ public class PrintOperation extends OperationExpression {
     }
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         if (leftOperand != null) {
 
             String key = leftOperand.toString();
-            LiteralExpression literalExpression = leftOperand.interpret(instancesBinding);
+            LiteralExpression<?> literalExpression = leftOperand.interpret(instancesBinding);
             Object value = literalExpression.getValue();
 
             logger.info("Log -> " + key + ": " + value);
@@ -89,7 +89,7 @@ public class PrintOperation extends OperationExpression {
             return literalExpression;
         }
 
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
 

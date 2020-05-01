@@ -20,7 +20,7 @@ public class Implies extends LogicalOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         boolean left = toBoolean(leftOperand.interpret(instancesBinding));
         boolean right = toBoolean(rightOperand.interpret(instancesBinding));
         return new BooleanLiteral((!left) | right);

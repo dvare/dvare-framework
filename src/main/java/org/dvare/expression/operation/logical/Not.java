@@ -34,7 +34,7 @@ public class Not extends LogicalOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         return new BooleanLiteral(!toBoolean(this.rightOperand.interpret(instancesBinding)));
     }
 
