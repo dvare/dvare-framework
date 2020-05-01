@@ -26,7 +26,7 @@ public class FilterOperation extends ListOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         List<?> values = extractValues(instancesBinding, leftOperand);
 
@@ -46,12 +46,12 @@ public class FilterOperation extends ListOperationExpression {
             return new ListLiteral(includedValues, dataTypeExpression);
 
         }
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
 
-    private List pairFilter(InstancesBinding instancesBinding,
-                            Expression includeParam, List values) throws InterpretException {
+    private List<?> pairFilter(InstancesBinding instancesBinding,
+                               Expression includeParam, List values) throws InterpretException {
         List<Pair> includedValues = new ArrayList<>();
         if (includeParam instanceof LogicalOperationExpression) {
 

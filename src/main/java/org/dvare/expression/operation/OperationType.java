@@ -43,6 +43,7 @@ public enum OperationType {
 
     //Condition
 
+    TERNARY("?"),
     IF("IF", "if"), THEN("THEN", "then"),//
     ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
     // List

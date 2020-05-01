@@ -12,15 +12,11 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.ConditionOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
 
 @Operation(type = OperationType.IF)
 public class IF extends ConditionOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(IF.class);
-
 
     public IF() {
         super(OperationType.IF);

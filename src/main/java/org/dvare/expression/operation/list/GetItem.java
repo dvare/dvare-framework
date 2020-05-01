@@ -31,7 +31,7 @@ public class GetItem extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         List<?> values = extractValues(instancesBinding, leftOperand);
 
@@ -61,18 +61,18 @@ public class GetItem extends AggregationOperationExpression {
 
 
                 if (leftExpression instanceof LetOperation) {
-                    leftExpression = LetOperation.class.cast(leftExpression).getVariableExpression();
+                    leftExpression = ((LetOperation) leftExpression).getVariableExpression();
                 }
 
                 if (leftExpression instanceof VariableExpression) {
-                    VariableExpression variableExpression = (VariableExpression) leftExpression;
+                    VariableExpression<?> variableExpression = (VariableExpression<?>) leftExpression;
                     String name = variableExpression.getName();
                     String operandType = variableExpression.getOperandType();
 
                     for (Object value : values) {
 
                         instancesBinding.addInstanceItem(operandType, name, value);
-                        LiteralExpression interpret = operationExpression.interpret(instancesBinding);
+                        LiteralExpression<?> interpret = operationExpression.interpret(instancesBinding);
                         instancesBinding.removeInstanceItem(operandType, name);
 
                         if (toBoolean(interpret)) {
@@ -93,10 +93,10 @@ public class GetItem extends AggregationOperationExpression {
         }
 
 
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
-    private LiteralExpression buildItem(List<?> values, IntegerLiteral integerLiteral, Class dataTypeExpress) throws InterpretException {
+    private LiteralExpression<?> buildItem(List<?> values, IntegerLiteral integerLiteral, Class<?> dataTypeExpress) throws InterpretException {
         Integer index = integerLiteral.getValue();
         if (index != null && values != null) {
             index--; // start index from 1
@@ -108,7 +108,7 @@ public class GetItem extends AggregationOperationExpression {
 
             }
         }
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
 

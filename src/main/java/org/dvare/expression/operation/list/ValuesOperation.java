@@ -33,7 +33,7 @@ public class ValuesOperation extends ListOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         List<?> values = extractValues(instancesBinding, leftOperand);
 
@@ -58,10 +58,10 @@ public class ValuesOperation extends ListOperationExpression {
             return new ListLiteral(values, dataTypeExpression);
 
         }
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
-    private List<?> extractPairValues(List pairList) {
+    private List<?> extractPairValues(List<?> pairList) {
         List<Object> pairValues = new ArrayList<>();
         if (pairList != null && !pairList.isEmpty()) {
             dataTypeExpression = null;

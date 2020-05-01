@@ -28,7 +28,7 @@ public class NotEmpty extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         List<?> values = extractValues(instancesBinding, leftOperand);
 
         if (values != null) {

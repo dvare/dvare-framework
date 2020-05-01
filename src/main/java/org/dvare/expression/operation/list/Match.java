@@ -106,13 +106,13 @@ public class Match extends OperationExpression {
         /* values to match */
 
         Expression valueParam = expressions.get(0);
-        List values = buildValues(instancesBinding, valueParam);
+        List<?> values = buildValues(instancesBinding, valueParam);
         DataType dataType = toDataType(dataTypeExpression);
 
 
         /*match params*/
         Expression paramsExpression = expressions.get(1);
-        List matchParams = buildMatchParams(instancesBinding, paramsExpression);
+        List<?> matchParams = buildMatchParams(instancesBinding, paramsExpression);
 
 
         Boolean insideCombination = false;
@@ -144,7 +144,7 @@ public class Match extends OperationExpression {
     }
 
 
-    protected List buildValues(InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
+    protected List<?> buildValues(InstancesBinding instancesBinding, Expression valueParam) throws InterpretException {
 
         OperationExpression operationExpression = new ValuesOperation();
         operationExpression.setLeftOperand(valueParam);
@@ -165,18 +165,18 @@ public class Match extends OperationExpression {
     protected List<?> buildMatchParams(InstancesBinding instancesBinding, Expression paramsExpression) throws InterpretException {
         List matchParams = null;
         if (paramsExpression instanceof LiteralExpression) {
-            matchParams = buildMatchParams((LiteralExpression) paramsExpression);
+            matchParams = buildMatchParams((LiteralExpression<?>) paramsExpression);
 
 
         } else if (paramsExpression instanceof OperationExpression) {
             OperationExpression operationExpression = (OperationExpression) paramsExpression;
-            LiteralExpression interpret = operationExpression.interpret(instancesBinding);
+            LiteralExpression<?> interpret = operationExpression.interpret(instancesBinding);
 
             matchParams = buildMatchParams(interpret);
 
         } else if (paramsExpression instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) paramsExpression;
-            LiteralExpression literalExpression = variableExpression.interpret(instancesBinding);
+            VariableExpression<?> variableExpression = (VariableExpression<?>) paramsExpression;
+            LiteralExpression<?> literalExpression = variableExpression.interpret(instancesBinding);
             matchParams = new ArrayList<>();
             matchParams.add(literalExpression.getValue());
 
@@ -185,7 +185,7 @@ public class Match extends OperationExpression {
     }
 
 
-    protected LiteralExpression match(DataType dataType, List values, List matchParams, Boolean insideCombination, Boolean combinationExist) throws InterpretException {
+    protected LiteralExpression<?> match(DataType dataType, List<?> values, List<?> matchParams, Boolean insideCombination, Boolean combinationExist) throws InterpretException {
 
         if (dataType != null && matchParams != null && values != null) {
 
@@ -325,8 +325,8 @@ public class Match extends OperationExpression {
 
     }
 
-    private Boolean insideCombination(List Values, List matchParamsBValues) throws InterpretException {
-        for (Object value : Values) {
+    private Boolean insideCombination(List<?> values, List<?> matchParamsBValues) throws InterpretException {
+        for (Object value : values) {
 
             if (!matchParamsBValues.contains(value)) {
                 return false;
@@ -357,7 +357,7 @@ public class Match extends OperationExpression {
     }
 
 
-    private List buildMatchParams(LiteralExpression literalExpression) {
+    private List<?> buildMatchParams(LiteralExpression<?> literalExpression) {
         List<Object> matchParams = new ArrayList<>();
         if (literalExpression instanceof ListLiteral) {
             ListLiteral listLiteral = (ListLiteral) literalExpression;

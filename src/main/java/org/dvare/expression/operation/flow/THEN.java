@@ -8,8 +8,6 @@ import org.dvare.expression.Expression;
 import org.dvare.expression.operation.ConditionOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
 
@@ -19,7 +17,6 @@ import java.util.Stack;
  */
 @Operation(type = OperationType.THEN)
 public class THEN extends ConditionOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(THEN.class);
 
     public THEN() {
         super(OperationType.THEN);

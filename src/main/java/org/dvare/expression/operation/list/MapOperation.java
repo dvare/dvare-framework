@@ -34,7 +34,7 @@ public class MapOperation extends ListOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         if (leftOperand instanceof PairOperation) {
             List<?> values = extractValues(instancesBinding, leftOperand);
             return new ListLiteral(values, dataTypeExpression);

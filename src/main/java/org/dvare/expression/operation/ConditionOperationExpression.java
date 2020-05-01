@@ -5,6 +5,8 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
 
@@ -13,7 +15,7 @@ import java.util.Stack;
  * @since 2016-06-30
  */
 public abstract class ConditionOperationExpression extends OperationExpression {
-
+    protected final static Logger logger = LoggerFactory.getLogger(ConditionOperationExpression.class);
 
     protected Expression condition = null;
     protected Expression thenOperand = null;

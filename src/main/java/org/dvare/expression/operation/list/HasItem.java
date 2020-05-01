@@ -30,7 +30,7 @@ public class HasItem extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
         List<?> values = extractValues(instancesBinding, leftOperand);
@@ -43,7 +43,7 @@ public class HasItem extends AggregationOperationExpression {
             if (expression instanceof ArithmeticOperationExpression || expression instanceof AggregationOperationExpression) {
 
                 OperationExpression operationExpression = (OperationExpression) expression;
-                LiteralExpression literalExpression = operationExpression.interpret(instancesBinding);
+                LiteralExpression<?> literalExpression = operationExpression.interpret(instancesBinding);
 
                 Object item = literalExpression.getValue();
 
@@ -68,18 +68,18 @@ public class HasItem extends AggregationOperationExpression {
 
 
                 if (leftExpression instanceof LetOperation) {
-                    leftExpression = LetOperation.class.cast(leftExpression).getVariableExpression();
+                    leftExpression = ((LetOperation) leftExpression).getVariableExpression();
                 }
 
                 if (leftExpression instanceof VariableExpression) {
-                    VariableExpression variableExpression = (VariableExpression) leftExpression;
+                    VariableExpression<?> variableExpression = (VariableExpression<?>) leftExpression;
                     String name = variableExpression.getName();
                     String operandType = variableExpression.getOperandType();
 
 
                     for (Object value : values) {
                         instancesBinding.addInstanceItem(operandType, name, value);
-                        LiteralExpression interpret = operationExpression.interpret(instancesBinding);
+                        LiteralExpression<?> interpret = operationExpression.interpret(instancesBinding);
                         instancesBinding.removeInstanceItem(operandType, name);
                         if (toBoolean(interpret)) {
                             return LiteralType.getLiteralExpression(true, BooleanType.class);
@@ -89,9 +89,9 @@ public class HasItem extends AggregationOperationExpression {
             } else if (expression instanceof LiteralExpression) {
 
 
-                LiteralExpression literalExpression = (LiteralExpression) expression;
+                LiteralExpression<?> literalExpression = (LiteralExpression<?>) expression;
                 Object item = literalExpression.getValue();
-                Class itemDataTypeExpress = literalExpression.getType();
+                Class<?> itemDataTypeExpress = literalExpression.getType();
 
 
                 if (item != null) {
