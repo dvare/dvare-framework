@@ -1,4 +1,4 @@
-## Dvare Framework [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4c684251c3984e33a88bbfd0cd4e4df8)](https://www.codacy.com/app/hammadirshad/dvare-framework?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dvare/dvare-framework&amp;utm_campaign=Badge_Grade) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|2.3|) [![Javadocs](http://www.javadoc.io/badge/org.dvare/dvare-framework.svg)](http://www.javadoc.io/doc/org.dvare/dvare-framework) [![Coverage Status](https://coveralls.io/repos/github/dvare/dvare-framework/badge.svg?branch=master)](https://coveralls.io/github/dvare/dvare-framework?branch=master)
+## Dvare Framework [![Build Status](https://travis-ci.org/dvare/dvare-framework.svg?branch=master)](https://travis-ci.org/dvare/dvare-framework) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4c684251c3984e33a88bbfd0cd4e4df8)](https://www.codacy.com/app/hammadirshad/dvare-framework?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dvare/dvare-framework&amp;utm_campaign=Badge_Grade) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dvare/dvare-framework/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|org.dvare|dvare-framework|3.0|) [![Javadocs](http://www.javadoc.io/badge/org.dvare/dvare-framework.svg)](http://www.javadoc.io/doc/org.dvare/dvare-framework) [![Coverage Status](https://coveralls.io/repos/github/dvare/dvare-framework/badge.svg?branch=master)](https://coveralls.io/github/dvare/dvare-framework?branch=master)
 A Lightweight Java business rule expression language.
 
 
@@ -26,17 +26,9 @@ public class ArithmeticOperationTest {
 
 ## Current version
 
-* The current stable version is `2.3` : 
+* The current stable version is `3.0` : 
 
 In order to use snapshot versions, you need to add the following maven repository in your `pom.xml`:
-
-```xml
-<repository>
-    <id>ossrh</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-</repository>
-```
-
 
  Maven dependency:
 ```xml
@@ -44,7 +36,7 @@ In order to use snapshot versions, you need to add the following maven repositor
         <dependency>
             <groupId>org.dvare</groupId>
             <artifactId>dvare-framework</artifactId>
-            <version>2.3</version>
+            <version>3.0</version>
         </dependency>         
 </dependencies>
 ```
