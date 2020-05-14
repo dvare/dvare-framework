@@ -4,7 +4,7 @@
 
     <groupId>org.dvare</groupId>
     <artifactId>dvare-framework</artifactId>
-    <version>3.0</version>
+    <version>3.1-SNAPSHOT</version>
 
     <description>A Lightweight Java business rule expression language.</description>
 
