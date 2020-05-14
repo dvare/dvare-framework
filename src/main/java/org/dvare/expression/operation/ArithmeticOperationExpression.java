@@ -23,22 +23,22 @@ public abstract class ArithmeticOperationExpression extends RelationalOperationE
         super(operationType);
     }
 
-    public static LiteralExpression evaluate(
+    public static LiteralExpression<?> evaluate(
             Class<? extends DataTypeExpression> dataTypeExpression, OperationExpression operationExpression,
-            LiteralExpression left, LiteralExpression right) {
+            LiteralExpression<?> left, LiteralExpression<?> right) {
 
         try {
             return new InstanceUtils<DataTypeExpression>().newInstance(dataTypeExpression).evaluate(operationExpression, left, right);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        LiteralExpression leftLiteralExpression = interpretOperandLeft(instancesBinding, leftOperand);
-        LiteralExpression rightLiteralExpression = interpretOperandRight(instancesBinding, rightOperand);
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
+        LiteralExpression<?> leftLiteralExpression = interpretOperandLeft(instancesBinding, leftOperand);
+        LiteralExpression<?> rightLiteralExpression = interpretOperandRight(instancesBinding, rightOperand);
 
         if (leftLiteralExpression instanceof NullLiteral && rightLiteralExpression.getType().isAnnotationPresent(Type.class)) {
             Type type = (Type) rightLiteralExpression.getType().getAnnotation(Type.class);

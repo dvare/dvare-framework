@@ -45,7 +45,7 @@ public class LetOperation extends OperationExpression {
         String token = tokens[pos];
 
 
-        String parts[] = token.split(":");
+        String[] parts = token.split(":");
         if (parts.length == 2) {
 
             String name = parts[0].trim();
@@ -88,11 +88,11 @@ public class LetOperation extends OperationExpression {
     }
 
 
-    public VariableExpression getVariableExpression() throws InterpretException {
+    public VariableExpression<?> getVariableExpression() {
 
 
-        if (NamedExpression.class.cast(leftOperand).getName().contains(":")) {
-            String parts[] = NamedExpression.class.cast(leftOperand).getName().split(":");
+        if (((NamedExpression) leftOperand).getName().contains(":")) {
+            String[] parts = ((NamedExpression) leftOperand).getName().split(":");
             String name = parts[0].trim();
             String type = parts[1].trim();
             TokenType tokenType = buildTokenType(name);
@@ -111,14 +111,14 @@ public class LetOperation extends OperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        VariableExpression variableExpression = getVariableExpression();
+        VariableExpression<?> variableExpression = getVariableExpression();
 
         if (variableExpression != null) {
             return variableExpression.interpret(instancesBinding);
         }
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
     @Override

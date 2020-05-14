@@ -20,7 +20,7 @@ public class OR extends LogicalOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         Boolean left = toBoolean(leftOperand.interpret(instancesBinding));
         Boolean right = toBoolean(rightOperand.interpret(instancesBinding));
         return new BooleanLiteral(left || right);

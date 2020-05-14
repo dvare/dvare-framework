@@ -59,7 +59,7 @@ public class InsideCombination extends Match {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
         List<Expression> expressions = this.leftOperand;
@@ -69,12 +69,12 @@ public class InsideCombination extends Match {
         /* values to match */
 
         Expression valueParam = expressions.get(0);
-        List values = buildValues(instancesBinding, valueParam);
+        List<?> values = buildValues(instancesBinding, valueParam);
         DataType dataType = toDataType(dataTypeExpression);
 
         /*match params*/
         Expression paramsExpression = expressions.get(1);
-        List matchParams = buildMatchParams(instancesBinding, paramsExpression);
+        List<?> matchParams = buildMatchParams(instancesBinding, paramsExpression);
 
 
         return match(dataType, values, matchParams, true, false);

@@ -40,7 +40,7 @@ public class SortOperation extends ListOperationExpression {
     }
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         Comparator<Object> pairComparator = (o1, o2) -> {
 
@@ -92,12 +92,12 @@ public class SortOperation extends ListOperationExpression {
 
 
                 if (leftExpression instanceof LetOperation) {
-                    leftExpression = LetOperation.class.cast(leftExpression).getVariableExpression();
+                    leftExpression = ((LetOperation) leftExpression).getVariableExpression();
                 }
 
 
                 if (leftExpression instanceof VariableExpression) {
-                    VariableExpression variableExpression = (VariableExpression) leftExpression;
+                    VariableExpression<?> variableExpression = (VariableExpression<?>) leftExpression;
 
 
                     values.sort((o1, o2) -> {
@@ -126,29 +126,27 @@ public class SortOperation extends ListOperationExpression {
             }
         }
 
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
 
     private ValueType buildCompareValue(InstancesBinding instancesBinding,
-                                        ChainOperationExpression chainOperationExpression, VariableExpression variableExpression,
+                                        ChainOperationExpression chainOperationExpression, VariableExpression<?> variableExpression,
                                         Object value) throws InterpretException {
         String name = variableExpression.getName();
         String operandType = variableExpression.getOperandType();
 
 
         instancesBinding.addInstanceItem(operandType, name, value);
-        Object chainOperationInterpret = chainOperationExpression.interpret(instancesBinding);
+        LiteralExpression<?> chainOperationInterpret = chainOperationExpression.interpret(instancesBinding);
         instancesBinding.removeInstanceItem(operandType, name);
 
-        if (chainOperationInterpret instanceof LiteralExpression) {
-
-            LiteralExpression literalExpression = (LiteralExpression) chainOperationInterpret;
+        if (chainOperationInterpret != null) {
 
 
             ValueType paramValue = new ValueType();
-            paramValue.value = literalExpression.getValue();
-            paramValue.type = literalExpression.getType();
+            paramValue.value = chainOperationInterpret.getValue();
+            paramValue.type = chainOperationInterpret.getType();
 
             return paramValue;
         }
@@ -218,7 +216,7 @@ public class SortOperation extends ListOperationExpression {
         return -1;
     }
 
-    private class ValueType {
+    private static class ValueType {
         Class<? extends DataTypeExpression> type;
         Object value;
     }

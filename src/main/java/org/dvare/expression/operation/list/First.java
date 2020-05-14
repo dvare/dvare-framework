@@ -27,14 +27,14 @@ public class First extends AggregationOperationExpression {
     }
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         List<?> values = extractValues(instancesBinding, leftOperand);
         if (values != null && !values.isEmpty()) {
             return LiteralType.getLiteralExpression(values.get(0), dataTypeExpression);
         }
 
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
 

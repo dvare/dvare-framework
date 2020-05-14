@@ -34,7 +34,7 @@ public class ForEach extends IterationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         //context forALL
         if (derivedContext != null) {
@@ -50,7 +50,7 @@ public class ForEach extends IterationOperationExpression {
 
 
                         Object interpret = leftOperand.interpret(instancesBinding);
-                        LiteralExpression literalExpression = (LiteralExpression) interpret;
+                        LiteralExpression<?> literalExpression = (LiteralExpression<?>) interpret;
                         if (literalExpression.getType() != null && !(literalExpression.getType().equals(NullType.class))) {
                             dataTypeExpression = literalExpression.getType();
                             results.add(literalExpression.getValue());
@@ -68,7 +68,7 @@ public class ForEach extends IterationOperationExpression {
             //variableForAll
             else if (referenceContext instanceof VariableExpression) {
 
-                String derivedInstanceBinding = ((VariableExpression) referenceContext).getName();
+                String derivedInstanceBinding = ((VariableExpression<?>) referenceContext).getName();
 
                 ValuesOperation valuesOperation = new ValuesOperation();
                 valuesOperation.setLeftOperand(referenceContext);
@@ -107,7 +107,7 @@ public class ForEach extends IterationOperationExpression {
                         }
 
 
-                        LiteralExpression literalExpression = leftOperand.interpret(instancesBinding);
+                        LiteralExpression<?> literalExpression = leftOperand.interpret(instancesBinding);
                         if (literalExpression.getType() != null && !(literalExpression.getType().equals(NullType.class))) {
                             dataTypeExpression = literalExpression.getType();
                             results.add(literalExpression.getValue());
@@ -124,7 +124,7 @@ public class ForEach extends IterationOperationExpression {
                 //instancesBinding.removeInstance(derivedInstanceBinding);
             }
         }
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
 

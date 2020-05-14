@@ -43,6 +43,7 @@ public enum OperationType {
 
     //Condition
 
+    TERNARY("?"),
     IF("IF", "if"), THEN("THEN", "then"),//
     ELSE("ELSE", "else"), ENDIF("ENDIF", "endif"),//
     // List
@@ -68,7 +69,7 @@ public enum OperationType {
     SEPARATOR(";"),//
     PRINT("print", "Print", "Log", "log");
 
-    private List<String> symbols = new ArrayList<>();
+    private final List<String> symbols = new ArrayList<>();
 
     OperationType(String... symbols) {
         this.symbols.addAll(Arrays.asList(symbols));

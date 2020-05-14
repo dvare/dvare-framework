@@ -28,7 +28,7 @@ public abstract class LiteralExpression<T> extends Expression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         return this;
     }
 

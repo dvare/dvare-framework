@@ -1,5 +1,6 @@
 package org.dvare.expression.operation;
 
+import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
@@ -21,7 +22,6 @@ import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Stack;
 
@@ -30,6 +30,7 @@ import java.util.Stack;
  * @since 2016-06-30
  */
 public abstract class RelationalOperationExpression extends OperationExpression {
+
     protected static Logger logger = LoggerFactory.getLogger(RelationalOperationExpression.class);
 
 
@@ -40,147 +41,155 @@ public abstract class RelationalOperationExpression extends OperationExpression 
 
     private boolean isLegalOperation(DataType dataType) {
 
-        Annotation annotation = this.getClass().getAnnotation(org.dvare.annotations.Operation.class);
-        if (annotation != null) {
-            org.dvare.annotations.Operation operation = (org.dvare.annotations.Operation) annotation;
-            DataType dataTypes[] = operation.dataTypes();
-            if (Arrays.asList(dataTypes).contains(dataType)) {
-                return true;
-            }
-        }
-        return false;
+      Operation annotation = this.getClass().getAnnotation(org.dvare.annotations.Operation.class);
+      if (annotation != null) {
+        DataType[] dataTypes = annotation.dataTypes();
+        return Arrays.asList(dataTypes).contains(dataType);
+      }
+      return false;
     }
 
 
-    private int expression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts, TokenType tokenType, Side side)
-            throws ExpressionParseException {
-        Expression expression;
-        OperationExpression op = ConfigurationRegistry.INSTANCE.getOperation(tokenType.token);
-        if (op != null) {
+  private int expression(String[] tokens, int pos, Stack<Expression> stack,
+                         ContextsBinding contexts, TokenType tokenType, Side side)
+          throws ExpressionParseException {
+    Expression expression;
+    OperationExpression op = ConfigurationRegistry.INSTANCE.getOperation(tokenType.token);
+    if (op != null) {
 
-            pos = op.parse(tokens, pos + 1, stack, contexts);
+      pos = op.parse(tokens, pos + 1, stack, contexts);
 
-            expression = stack.pop();
+      expression = stack.pop();
 
-        } else if (tokenType.type != null && contexts.getContext(tokenType.type) != null && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
-            TypeBinding typeBinding = contexts.getContext(tokenType.type);
-            DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
-            expression = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
-        } else {
-            expression = LiteralType.getLiteralExpression(tokenType.token);
-        }
+    } else if (tokenType.type != null && contexts.getContext(tokenType.type) != null
+            && TypeFinder.findType(tokenType.token, contexts.getContext(tokenType.type)) != null) {
+      TypeBinding typeBinding = contexts.getContext(tokenType.type);
+      DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
+      expression = VariableType
+              .getVariableExpression(tokenType.token, variableType, tokenType.type);
+    } else {
+      expression = LiteralType.getLiteralExpression(tokenType.token);
+    }
 
         if (side.equals(Side.Right)) {
             while (pos + 1 < tokens.length) {
-                ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-                OperationExpression nextOpp = configurationRegistry.getOperation(tokens[pos + 1]);
-                if (nextOpp instanceof ChainOperationExpression || nextOpp instanceof AggregationOperationExpression) {
-                    stack.push(expression);
-                    pos = nextOpp.parse(tokens, pos + 1, stack, contexts);
-                    expression = stack.pop();
-                } else {
-                    break;
-                }
+              ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+              OperationExpression nextOpp = configurationRegistry.getOperation(tokens[pos + 1]);
+              if (nextOpp instanceof ChainOperationExpression
+                      || nextOpp instanceof AggregationOperationExpression) {
+                stack.push(expression);
+                pos = nextOpp.parse(tokens, pos + 1, stack, contexts);
+                expression = stack.pop();
+              } else {
+                break;
+              }
 
 
             }
         }
 
-        stack.push(expression);
-        return pos;
+    stack.push(expression);
+    return pos;
+  }
+
+
+  protected int parseOperands(String[] tokens, int pos, Stack<Expression> stack,
+                              ContextsBinding contexts) throws ExpressionParseException {
+
+    String leftString = tokens[pos - 1];
+
+    TokenType leftTokenType = findDataObject(leftString, contexts);
+
+    // computing expression left side̵
+
+    if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack
+            .peek() instanceof ExpressionSeparator) {
+      pos = expression(tokens, pos, stack, contexts, leftTokenType, Side.Left);
     }
 
+    this.leftOperand = stack.pop();
 
-    protected int parseOperands(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+    pos = pos + 1; // after equal sign
+    String rightString = tokens[pos];
 
-        String leftString = tokens[pos - 1];
+    TokenType rightTokenType = findDataObject(rightString, contexts);
 
-        TokenType leftTokenType = findDataObject(leftString, contexts);
+    // computing expression right side̵
+    pos = expression(tokens, pos, stack, contexts, rightTokenType, Side.Right);
+    this.rightOperand = stack.pop();
 
+    return pos;
+  }
 
-        // computing expression left side̵
+  private void validate(Expression left, Expression right, String[] tokens, int pos)
+          throws ExpressionParseException {
+    if (left instanceof VariableExpression && right instanceof VariableExpression) {
+      VariableExpression<?> vL = (VariableExpression<?>) left;
+      VariableExpression<?> vR = (VariableExpression<?>) right;
 
-        if (stack.isEmpty() || stack.peek() instanceof AssignOperationExpression || stack.peek() instanceof ExpressionSeparator) {
-            pos = expression(tokens, pos, stack, contexts, leftTokenType, Side.Left);
-        }
-
-        this.leftOperand = stack.pop();
-
-
-        pos = pos + 1; // after equal sign
-        String rightString = tokens[pos];
-
-
-        TokenType rightTokenType = findDataObject(rightString, contexts);
-
-
-        // computing expression right side̵
-        pos = expression(tokens, pos, stack, contexts, rightTokenType, Side.Right);
-        this.rightOperand = stack.pop();
-
-
-        return pos;
-    }
-
-    private void validate(Expression left, Expression right, String[] tokens, int pos) throws ExpressionParseException {
-        if (left instanceof VariableExpression && right instanceof VariableExpression) {
-            VariableExpression vL = (VariableExpression) left;
-            VariableExpression vR = (VariableExpression) right;
-
-            if (!toDataType(vL.getType()).equals(toDataType(vR.getType()))) {
-                String message = String.format("%s OperationExpression  not possible between  type %s and %s near %s", this.getClass().getSimpleName(), toDataType(vL.getType()), toDataType(vR.getType()), ExpressionTokenizer.toString(tokens, pos));
-                logger.error(message);
-                throw new IllegalOperationException(message);
-            }
+      if (!toDataType(vL.getType()).equals(toDataType(vR.getType()))) {
+        String message = String
+                .format("%s OperationExpression  not possible between  type %s and %s near %s",
+                        this.getClass().getSimpleName(), toDataType(vL.getType()), toDataType(vR.getType()),
+                        ExpressionTokenizer.toString(tokens, pos));
+        logger.error(message);
+        throw new IllegalOperationException(message);
+      }
 
         }
-
 
         if (!(left instanceof NullLiteral) && !(right instanceof NullLiteral)) {
 
             DataType leftDataType = null;
             DataType rightDataType = null;
             if (left instanceof VariableExpression) {
-                leftDataType = toDataType(((VariableExpression) left).getType());
+              leftDataType = toDataType(((VariableExpression<?>) left).getType());
             } else if (left instanceof LiteralExpression) {
-                leftDataType = toDataType(((LiteralExpression) left).getType());
+              leftDataType = toDataType(((LiteralExpression<?>) left).getType());
             }
-
 
             if (right instanceof VariableExpression) {
-                rightDataType = toDataType(((VariableExpression) right).getType());
+              rightDataType = toDataType(((VariableExpression<?>) right).getType());
             } else if (right instanceof LiteralExpression) {
-                rightDataType = toDataType(((LiteralExpression) right).getType());
+              rightDataType = toDataType(((LiteralExpression<?>) right).getType());
             }
-
 
             if (leftDataType != null && rightDataType != null) {
 
                 if (leftDataType.equals(DataType.StringType)) {
-                    if (!rightDataType.equals(DataType.StringType) && !rightDataType.equals(DataType.RegexType)) {
+                  if (!rightDataType.equals(DataType.StringType) && !rightDataType
+                          .equals(DataType.RegexType)) {
 
-                        String message = String.format("%s OperationExpression not possible between  type %s and %s near %s", this.getClass().getSimpleName(), leftDataType, rightDataType, ExpressionTokenizer.toString(tokens, pos));
-                        logger.error(message);
-                        throw new IllegalOperationException(message);
+                    String message = String
+                            .format("%s OperationExpression not possible between  type %s and %s near %s",
+                                    this.getClass().getSimpleName(), leftDataType, rightDataType,
+                                    ExpressionTokenizer.toString(tokens, pos));
+                    logger.error(message);
+                    throw new IllegalOperationException(message);
 
-                    }
+                  }
                 } else {
 
-                    if (!leftDataType.equals(rightDataType) && (leftDataType != DataType.SimpleDateType && leftDataType != DataType.DateType && rightDataType != DataType.DateTimeType)) {
-                        String message = String.format("%s OperationExpression not possible between  type %s and %s near %s", this.getClass().getSimpleName(), leftDataType, rightDataType, ExpressionTokenizer.toString(tokens, pos));
-                        logger.error(message);
-                        throw new IllegalOperationException(message);
-                    }
+                  if (!leftDataType.equals(rightDataType) && (leftDataType != DataType.SimpleDateType
+                          && leftDataType != DataType.DateType && rightDataType != DataType.DateTimeType)) {
+                    String message = String
+                            .format("%s OperationExpression not possible between  type %s and %s near %s",
+                                    this.getClass().getSimpleName(), leftDataType, rightDataType,
+                                    ExpressionTokenizer.toString(tokens, pos));
+                    logger.error(message);
+                    throw new IllegalOperationException(message);
+                  }
 
                 }
 
             }
 
-
             if (leftDataType != null && !isLegalOperation(leftDataType)) {
-                String message = String.format("OperationExpression %s not possible on type %s at %s", this.getClass().getSimpleName(), leftDataType, ExpressionTokenizer.toString(tokens, pos));
-                logger.error(message);
-                throw new IllegalOperationException(message);
+              String message = String.format("OperationExpression %s not possible on type %s at %s",
+                      this.getClass().getSimpleName(), leftDataType,
+                      ExpressionTokenizer.toString(tokens, pos));
+              logger.error(message);
+              throw new IllegalOperationException(message);
             }
 
 
@@ -190,18 +199,19 @@ public abstract class RelationalOperationExpression extends OperationExpression 
     }
 
 
-    @Override
-    public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+  @Override
+  public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts)
+          throws ExpressionParseException {
 
-        if (pos - 1 >= 0 && tokens.length >= pos + 1) {
+    if (pos - 1 >= 0 && tokens.length >= pos + 1) {
 
-            pos = parseOperands(tokens, pos, stack, contexts);
+      pos = parseOperands(tokens, pos, stack, contexts);
 
-            Expression left = this.leftOperand;
-            Expression right = this.rightOperand;
+      Expression left = this.leftOperand;
+      Expression right = this.rightOperand;
 
-            validate(left, right, tokens, pos);
-            if (logger.isDebugEnabled()) {
+      validate(left, right, tokens, pos);
+      if (logger.isDebugEnabled()) {
                 logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
             }
             stack.push(this);
@@ -211,37 +221,40 @@ public abstract class RelationalOperationExpression extends OperationExpression 
     }
 
 
-    @Override
-    public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
-        ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-        for (; pos < tokens.length; pos++) {
-            OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
-            if (op != null) {
-                pos = op.parse(tokens, pos, stack, contexts);
-                return pos;
-
-            }
-        }
+  @Override
+  public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack,
+                                    ContextsBinding contexts) throws ExpressionParseException {
+    ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
+    for (; pos < tokens.length; pos++) {
+      OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
+      if (op != null) {
+        pos = op.parse(tokens, pos, stack, contexts);
         return pos;
+
+      }
     }
+    return pos;
+  }
 
 
-    protected LiteralExpression interpretOperandLeft(InstancesBinding instancesBinding, Expression leftOperand) throws InterpretException {
-        return super.interpretOperand(leftOperand, instancesBinding);
-    }
+  protected LiteralExpression<?> interpretOperandLeft(InstancesBinding instancesBinding,
+                                                      Expression leftOperand) throws InterpretException {
+    return super.interpretOperand(leftOperand, instancesBinding);
+  }
 
 
-    protected LiteralExpression interpretOperandRight(InstancesBinding instancesBinding, Expression rightOperand) throws InterpretException {
-        LiteralExpression<?> rightExpression;
-        if (rightOperand instanceof OperationExpression) {
-            OperationExpression operation = (OperationExpression) rightOperand;
-            rightExpression = operation.interpret(instancesBinding);
-        } else if (rightOperand instanceof LiteralExpression) {
-            rightExpression = (LiteralExpression<?>) rightOperand;
-        } else if (rightOperand instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) rightOperand;
-            rightExpression = variableExpression.interpret(instancesBinding);
-        } else {
+  protected LiteralExpression<?> interpretOperandRight(InstancesBinding instancesBinding,
+                                                       Expression rightOperand) throws InterpretException {
+    LiteralExpression<?> rightExpression;
+    if (rightOperand instanceof OperationExpression) {
+      OperationExpression operation = (OperationExpression) rightOperand;
+      rightExpression = operation.interpret(instancesBinding);
+    } else if (rightOperand instanceof LiteralExpression) {
+      rightExpression = (LiteralExpression<?>) rightOperand;
+    } else if (rightOperand instanceof VariableExpression) {
+      VariableExpression<?> variableExpression = (VariableExpression<?>) rightOperand;
+      rightExpression = variableExpression.interpret(instancesBinding);
+    } else {
             rightExpression = new NullLiteral<>();
         }
         if (dataTypeExpression == null && !(rightExpression instanceof NullLiteral)) {
@@ -250,29 +263,34 @@ public abstract class RelationalOperationExpression extends OperationExpression 
         return rightExpression;
     }
 
-    @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+  @Override
+  public LiteralExpression<?> interpret(InstancesBinding instancesBinding)
+          throws InterpretException {
 
-        LiteralExpression leftLiteralExpression = interpretOperandLeft(instancesBinding, leftOperand);
-        LiteralExpression rightLiteralExpression = interpretOperandRight(instancesBinding, rightOperand);
+    LiteralExpression<?> leftLiteralExpression = interpretOperandLeft(instancesBinding,
+            leftOperand);
+    LiteralExpression<?> rightLiteralExpression = interpretOperandRight(instancesBinding,
+            rightOperand);
 
+    if (leftLiteralExpression != null && rightLiteralExpression != null) {
 
-        if (leftLiteralExpression != null && rightLiteralExpression != null) {
+      if (leftLiteralExpression instanceof ListLiteral
+              && rightLiteralExpression instanceof ListLiteral) {
 
-            if (leftLiteralExpression instanceof ListLiteral && rightLiteralExpression instanceof ListLiteral) {
+        dataTypeExpression = ((ListLiteral) leftLiteralExpression).getListType();
+      }
 
-                dataTypeExpression = ((ListLiteral) leftLiteralExpression).getListType();
-            }
+      if (leftLiteralExpression instanceof NullLiteral
+              || rightLiteralExpression instanceof NullLiteral) {
+        dataTypeExpression = NullType.class;
+      }
 
-            if (leftLiteralExpression instanceof NullLiteral || rightLiteralExpression instanceof NullLiteral) {
-                dataTypeExpression = NullType.class;
-            }
-
-            try {
-                return new InstanceUtils<DataTypeExpression>().newInstance(dataTypeExpression).evaluate(this, leftLiteralExpression, rightLiteralExpression);
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
+      try {
+        return new InstanceUtils<DataTypeExpression>().newInstance(dataTypeExpression)
+                .evaluate(this, leftLiteralExpression, rightLiteralExpression);
+      } catch (Exception e) {
+        logger.error(e.getMessage(), e);
+      }
 
         }
         return new BooleanLiteral(false);

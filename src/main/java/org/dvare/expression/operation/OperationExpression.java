@@ -132,26 +132,26 @@ public abstract class OperationExpression extends Expression {
     }
 
 
-    protected DataType toDataType(Class dataTypeExpression) {
+    protected DataType toDataType(Class<?> dataTypeExpression) {
         if (dataTypeExpression.isAnnotationPresent(Type.class)) {
-            Type type = ((Class<? extends DataTypeExpression>) dataTypeExpression).getAnnotation(Type.class);
+            Type type = dataTypeExpression.getAnnotation(Type.class);
             return type.dataType();
         }
         return null;
     }
 
 
-    public LiteralExpression interpretOperand(Expression expression, InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpretOperand(Expression expression, InstancesBinding instancesBinding) throws InterpretException {
 
-        LiteralExpression literalExpression;
+        LiteralExpression<?> literalExpression;
         if (expression instanceof OperationExpression) {
             OperationExpression operation = (OperationExpression) expression;
             literalExpression = operation.interpret(instancesBinding);
         } else if (expression instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) expression;
+            VariableExpression<?> variableExpression = (VariableExpression<?>) expression;
             literalExpression = variableExpression.interpret(instancesBinding);
         } else if (expression instanceof LiteralExpression) {
-            literalExpression = (LiteralExpression) expression;
+            literalExpression = (LiteralExpression<?>) expression;
         } else {
             literalExpression = new NullLiteral<>();
         }
@@ -165,7 +165,7 @@ public abstract class OperationExpression extends Expression {
 
     }
 
-    protected boolean toBoolean(LiteralExpression interpret) {
+    protected boolean toBoolean(LiteralExpression<?> interpret) {
         boolean result = false;
         if (interpret != null) {
             if (!(interpret instanceof NullLiteral) && interpret.getValue() != null) {

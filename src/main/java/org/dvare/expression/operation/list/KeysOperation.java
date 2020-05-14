@@ -32,20 +32,20 @@ public class KeysOperation extends ListOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         List<?> pairs = extractValues(instancesBinding, leftOperand);
 
         if (pairs != null && isPairList(pairs)) {
-            List pairKeys = extractPairKeys(pairs);
+            List<?> pairKeys = extractPairKeys(pairs);
             return new ListLiteral(pairKeys, dataTypeExpression);
         }
 
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
 
-    private List<Object> extractPairKeys(List pairList) throws InterpretException {
+    private List<Object> extractPairKeys(List<?> pairList) throws InterpretException {
         List<Object> pairKeys = new ArrayList<>();
         if (pairList != null && !pairList.isEmpty()) {
             dataTypeExpression = null;

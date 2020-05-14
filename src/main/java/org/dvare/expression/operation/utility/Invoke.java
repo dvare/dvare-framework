@@ -12,6 +12,7 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
+import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
@@ -69,7 +70,7 @@ public class Invoke extends Function {
 
             if (token.contains("#")) {
 
-                String parts[] = token.split("#");
+                String[] parts = token.split("#");
                 String variable = parts[0];
 
                 rightOperand = buildExpression(variable, contexts, pos, tokens);
@@ -113,21 +114,21 @@ public class Invoke extends Function {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         Object value = null;
         if (rightOperand instanceof VariableExpression) {
 
-            VariableExpression variableExpression = (VariableExpression) rightOperand;
-            LiteralExpression literalExpression = variableExpression.interpret(instancesBinding);
+            VariableExpression<?> variableExpression = (VariableExpression<?>) rightOperand;
+            LiteralExpression<?> literalExpression = variableExpression.interpret(instancesBinding);
             value = literalExpression.getValue();
 
-        } else if (rightOperand instanceof LiteralExpression) {
-            value = ((LiteralExpression) rightOperand).getValue();
+        } else if (rightOperand instanceof LiteralExpression<?>) {
+            value = ((LiteralExpression<?>) rightOperand).getValue();
         }
 
         if (value != null) {
 
-            Class functionClass = value.getClass();
+            Class<?> functionClass = value.getClass();
 
             FunctionExpression functionExpression = (FunctionExpression) this.leftOperand;
             FunctionBinding functionBinding = functionExpression.getBinding();
@@ -139,14 +140,14 @@ public class Invoke extends Function {
             Method method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName());
 
             if (method == null) {
-                List<Class> parameters = new ArrayList<>();
+                List<Class<?>> parameters = new ArrayList<>();
                 for (Expression expression : functionExpression.getParameters()) {
-                    LiteralExpression literalExpression = expression.interpret(instancesBinding);
+                    LiteralExpression<?> literalExpression = expression.interpret(instancesBinding);
                     Object value1 = literalExpression.getValue();
                     parameters.add(value1.getClass());
                 }
 
-                Class[] params = parameters.toArray(new Class[parameters.size()]);
+                Class<?>[] params = parameters.toArray(new Class[0]);
 
                 method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), params);
 
@@ -155,7 +156,7 @@ public class Invoke extends Function {
 
                         if (!params[i].isPrimitive()) {
                             try {
-                                Class aClass = (Class) FieldUtils.readStaticField(params[i], "TYPE", true);
+                                Class<?> aClass = (Class<?>) FieldUtils.readStaticField(params[i], "TYPE", true);
                                 params[i] = aClass;
                             } catch (IllegalAccessException ignored) {
                             }
@@ -167,17 +168,17 @@ public class Invoke extends Function {
 
             if (method != null) {
                 List<DataType> parameters = new ArrayList<>();
-                for (Class type : method.getParameterTypes()) {
+                for (Class<?> type : method.getParameterTypes()) {
                     DataType dataType = DataTypeMapping.getTypeMapping(type);
                     parameters.add(dataType);
                 }
                 functionBinding.setParameters(parameters);
-                Class returnClass = method.getReturnType();
-                if (returnClass != null && !returnClass.equals(Void.class)) {
+                Class<?> returnClass = method.getReturnType();
+                if (!returnClass.equals(Void.class)) {
 
                     DataType returnType = DataTypeMapping.getTypeMapping(returnClass);
 
-                    Class dataTypeExpressionClass = DataTypeMapping.getDataTypeClass(returnType);
+                    Class<? extends DataTypeExpression> dataTypeExpressionClass = DataTypeMapping.getDataTypeClass(returnType);
                     if (dataTypeExpressionClass != null) {
 
                         functionBinding.setReturnType(dataTypeExpressionClass);

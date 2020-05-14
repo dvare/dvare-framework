@@ -35,13 +35,13 @@ public class Median extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
         Expression valueOperand = this.leftOperand;
 
 
-        List valuesList = null;
+        List<?> valuesList = null;
         DataType type = null;
 
 

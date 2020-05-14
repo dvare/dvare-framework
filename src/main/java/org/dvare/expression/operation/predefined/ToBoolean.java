@@ -24,16 +24,16 @@ public class ToBoolean extends ChainOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        LiteralExpression literalExpression = super.interpretOperand(this.leftOperand, instancesBinding);
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
+        LiteralExpression<?> literalExpression = super.interpretOperand(this.leftOperand, instancesBinding);
         if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null) {
 
 
             Object value = literalExpression.getValue();
-            Boolean boolValue;
+            boolean boolValue;
 
             if (value instanceof Boolean) {
-                boolValue = Boolean.class.cast(value);
+                boolValue = (Boolean) value;
             } else {
                 String valueString = value.toString();
                 boolValue = Boolean.parseBoolean(valueString);

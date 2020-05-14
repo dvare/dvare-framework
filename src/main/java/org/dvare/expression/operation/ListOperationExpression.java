@@ -68,7 +68,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
 
             BooleanExpression booleanExpression = (BooleanExpression) includeParam;
 
-            Boolean result = toBoolean(booleanExpression.interpret(instancesBinding));
+            boolean result = toBoolean(booleanExpression.interpret(instancesBinding));
 
             if (!result) {
                 return new ArrayList<>();
@@ -96,7 +96,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
             List<Object> excludedValues = new ArrayList<>();
             for (Object value : values) {
 
-                Boolean result = solveLogical(operationExpression, instancesBinding, value);
+                boolean result = solveLogical(operationExpression, instancesBinding, value);
                 if (result) {
                     excludedValues.add(value);
                 }
@@ -127,7 +127,7 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
     protected Boolean buildEqualityOperationExpression(Expression includeParam, InstancesBinding instancesBinding, Object value) throws InterpretException {
 
         if (includeParam instanceof BooleanLiteral) {
-            return toBoolean((LiteralExpression) includeParam);
+            return toBoolean((LiteralExpression<?>) includeParam);
         }
 
 
@@ -140,18 +140,18 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
 
 
         if (leftExpression instanceof LetOperation) {
-            leftExpression = LetOperation.class.cast(leftExpression).getVariableExpression();
+            leftExpression = ((LetOperation) leftExpression).getVariableExpression();
         }
 
 
         if (leftExpression instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) leftExpression;
+            VariableExpression<?> variableExpression = (VariableExpression<?>) leftExpression;
             String name = variableExpression.getName();
             String operandType = variableExpression.getOperandType();
 
             instancesBinding.addInstanceItem(operandType, name, value);
 
-            LiteralExpression interpret = operationExpression.interpret(instancesBinding);
+            LiteralExpression<?> interpret = operationExpression.interpret(instancesBinding);
 
             instancesBinding.removeInstanceItem(operandType, name);
 

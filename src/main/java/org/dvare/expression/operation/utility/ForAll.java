@@ -38,7 +38,7 @@ public class ForAll extends IterationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(
+    public LiteralExpression<?> interpret(
             InstancesBinding instancesBinding) throws InterpretException {
 
         //context forALL
@@ -55,7 +55,7 @@ public class ForAll extends IterationOperationExpression {
                     for (Object instance : instances) {
                         instancesBinding.addInstance(derivedInstanceBinding, instance);
 
-                        LiteralExpression result = leftOperand.interpret(instancesBinding);
+                        LiteralExpression<?> result = leftOperand.interpret(instancesBinding);
                         results.add(toBoolean(result));
 
                     }
@@ -69,7 +69,7 @@ public class ForAll extends IterationOperationExpression {
                 //variableForAll
             } else if (referenceContext instanceof VariableExpression) {
 
-                String derivedInstanceBinding = ((VariableExpression) referenceContext).getName();
+                String derivedInstanceBinding = ((VariableExpression<?>) referenceContext).getName();
 
                 ValuesOperation valuesOperation = new ValuesOperation();
                 valuesOperation.setLeftOperand(referenceContext);
@@ -89,7 +89,7 @@ public class ForAll extends IterationOperationExpression {
                                 instance = new DataRow();
                             }
                             if (instance instanceof DataRow) {
-                                DataRow dataRow = DataRow.class.cast(instance);
+                                DataRow dataRow = (DataRow) instance;
                                 dataRow.addData(derivedContext.getName(), value);
                                 instancesBinding.addInstance(derivedInstanceBinding, dataRow);
                             }
@@ -101,7 +101,7 @@ public class ForAll extends IterationOperationExpression {
                                 instance = new DataRow();
                             }
                             if (instance instanceof DataRow) {
-                                DataRow dataRow = DataRow.class.cast(instance);
+                                DataRow dataRow = (DataRow) instance;
                                 dataRow.addData(derivedTokenType.token, value);
                                 instancesBinding.addInstance(derivedTokenType.type, dataRow);
                             }
@@ -109,7 +109,7 @@ public class ForAll extends IterationOperationExpression {
                         }
 
 
-                        LiteralExpression result = leftOperand.interpret(instancesBinding);
+                        LiteralExpression<?> result = leftOperand.interpret(instancesBinding);
                         results.add(toBoolean(result));
 
                     }

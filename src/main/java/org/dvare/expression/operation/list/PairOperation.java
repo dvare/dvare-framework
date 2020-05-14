@@ -72,7 +72,7 @@ public class PairOperation extends AggregationOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
         if (rightOperand.size() == 2) {
 
@@ -85,12 +85,12 @@ public class PairOperation extends AggregationOperationExpression {
 
             if (keyListLiteral != null && valueListLiteral != null) {
 
-                List keys = keyListLiteral.getValue();
-                List values = valueListLiteral.getValue();
+                List<?> keys = keyListLiteral.getValue();
+                List<?> values = valueListLiteral.getValue();
 
 
-                Iterator leftIterator = keys.iterator();
-                Iterator rightIterator = values.iterator();
+                Iterator<?> leftIterator = keys.iterator();
+                Iterator<?> rightIterator = values.iterator();
 
                 // dataTypeExpression = valueListLiteral.getType();
 
@@ -110,7 +110,7 @@ public class PairOperation extends AggregationOperationExpression {
         }
 
 
-        return new NullLiteral();
+        return new NullLiteral<>();
     }
 
 

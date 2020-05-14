@@ -38,7 +38,7 @@ import java.util.*;
 public abstract class AggregationOperationExpression extends OperationExpression {
     private static final Logger logger = LoggerFactory.getLogger(AggregationOperationExpression.class);
     protected List<Expression> rightOperand = new ArrayList<>();
-    protected LiteralExpression leftExpression;
+    protected LiteralExpression<?> leftExpression;
 
     public AggregationOperationExpression(OperationType operationType) {
         super(operationType);
@@ -115,17 +115,17 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding)
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding)
             throws InterpretException {
 
 
-        List valuesList = extractValues(instancesBinding, leftOperand);
+        List<?> valuesList = extractValues(instancesBinding, leftOperand);
 
 
         for (Object value : valuesList) {
             LiteralExpression<?> literalExpression = LiteralType.getLiteralExpression(value, dataTypeExpression);
 
-            if (literalExpression != null && !(literalExpression instanceof NullLiteral)) {
+            if (!(literalExpression instanceof NullLiteral)) {
 
                 try {
                     Class<? extends DataTypeExpression> dataTypeExpression = literalExpression.getType();
@@ -164,7 +164,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
         } else if (valueOperand instanceof LiteralExpression) {
 
-            values = literalExpressionValues((LiteralExpression) valueOperand);
+            values = literalExpressionValues((LiteralExpression<?>) valueOperand);
 
         } else if (valueOperand instanceof ListLiteralOperationExpression) {
 
@@ -172,7 +172,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
         } else if (valueOperand instanceof VariableExpression) {
 
-            values = variableExpressionValues(instancesBinding, (VariableExpression) valueOperand);
+            values = variableExpressionValues(instancesBinding, (VariableExpression<?>) valueOperand);
 
         } else if (valueOperand instanceof ChainOperationExpression) {
 
@@ -195,11 +195,11 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return values;
     }
 
-    private List<?> literalExpressionValues(LiteralExpression literalExpression) throws InterpretException {
+    private List<?> literalExpressionValues(LiteralExpression<?> literalExpression) throws InterpretException {
         List values;
 
         if (literalExpression instanceof ListLiteral) {
-            ListLiteral listLiteral = ListLiteral.class.cast(literalExpression);
+            ListLiteral listLiteral = (ListLiteral) literalExpression;
             values = listLiteral.getValue();
             dataTypeExpression = listLiteral.getType();
         } else {
@@ -214,8 +214,8 @@ public abstract class AggregationOperationExpression extends OperationExpression
     private List<?> listLiteralValues(
             InstancesBinding instancesBinding, ListLiteralOperationExpression listLiteralOperationExpression)
             throws InterpretException {
-        List values = null;
-        LiteralExpression literalExpression = listLiteralOperationExpression.interpret(instancesBinding);
+        List<?> values = null;
+        LiteralExpression<?> literalExpression = listLiteralOperationExpression.interpret(instancesBinding);
 
         if (literalExpression instanceof ListLiteral) {
             values = extractValues(instancesBinding, literalExpression);
@@ -225,11 +225,11 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return values;
     }
 
-    private List<?> variableExpressionValues(InstancesBinding instancesBinding, VariableExpression variableExpression)
+    private List<?> variableExpressionValues(InstancesBinding instancesBinding, VariableExpression<?> variableExpression)
             throws InterpretException {
         List values = null;
         if (variableExpression instanceof ListVariable) {
-            LiteralExpression literalExpression = variableExpression.interpret(instancesBinding);
+            LiteralExpression<?> literalExpression = variableExpression.interpret(instancesBinding);
 
             if (literalExpression instanceof ListLiteral) {
                 values = extractValues(instancesBinding, literalExpression);
@@ -318,7 +318,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
                     Expression leftOperandExpression1 = chainOperationExpression.getLeftOperand();
                     chainOperationExpression.setLeftOperand(LiteralType.getLiteralExpression(object, dataTypeExpression));
                     Object interpret = chainOperationExpression.interpret(instancesBinding);
-                    LiteralExpression literalExpression = (LiteralExpression) interpret;
+                    LiteralExpression<?> literalExpression = (LiteralExpression<?>) interpret;
 
                     dummyParameters.add(literalExpression);
 
@@ -335,7 +335,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
             functionValueOperand.setParameters(dummyParameters);
 
 
-            LiteralExpression literalExpression = (LiteralExpression) function.interpret(instancesBinding);
+            LiteralExpression<?> literalExpression = function.interpret(instancesBinding);
 
             if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
                 dataTypeExpression = literalExpression.getType();
@@ -363,10 +363,10 @@ public abstract class AggregationOperationExpression extends OperationExpression
             expression = ((ChainOperationExpression) expression).getLeftOperand();
         }
 
-        List dataSet = null;
+        List<?> dataSet = null;
         Class<? extends DataTypeExpression> dataSetDataTypeExpression = null;
         if (expression instanceof VariableExpression) {
-            VariableExpression variableExpression = (VariableExpression) expression;
+            VariableExpression<?> variableExpression = (VariableExpression<?>) expression;
             dataSet = extractValues(instancesBinding, variableExpression);
             dataSetDataTypeExpression = dataTypeExpression;
         }
@@ -378,7 +378,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
                 Expression leftOperandExpression1 = chainOperationExpressionTemp.getLeftOperand();
                 chainOperationExpressionTemp.setLeftOperand(LiteralType.getLiteralExpression(object, dataSetDataTypeExpression));
                 Object interpret = chainOperationExpression.interpret(instancesBinding);
-                LiteralExpression literalExpression = (LiteralExpression) interpret;
+                LiteralExpression<?> literalExpression = (LiteralExpression<?>) interpret;
                 if (literalExpression.getType() != null && !(literalExpression.getType().equals(NullType.class))) {
                     dataTypeExpression = literalExpression.getType();
                 }

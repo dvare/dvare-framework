@@ -44,8 +44,8 @@ public class Substring extends ChainOperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
-        LiteralExpression literalExpression = super.interpretOperand(leftOperand, instancesBinding);
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
+        LiteralExpression<?> literalExpression = super.interpretOperand(leftOperand, instancesBinding);
         if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null
                 && rightOperand.size() >= 2) {
 
@@ -53,8 +53,8 @@ public class Substring extends ChainOperationExpression {
             value = TrimString.trim(value);
 
 
-            LiteralExpression indexExpression = (LiteralExpression) rightOperand.get(0);
-            LiteralExpression countExpression = (LiteralExpression) rightOperand.get(1);
+            LiteralExpression<?> indexExpression = (LiteralExpression<?>) rightOperand.get(0);
+            LiteralExpression<?> countExpression = (LiteralExpression) rightOperand.get(1);
 
             Integer index;
             if (indexExpression.getValue() instanceof Integer) {
