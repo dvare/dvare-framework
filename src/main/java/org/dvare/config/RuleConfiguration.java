@@ -4,8 +4,6 @@ package org.dvare.config;
 import org.dvare.binding.function.FunctionBinding;
 import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.parser.ExpressionParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Muhammad Hammad
@@ -14,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 public class RuleConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(RuleConfiguration.class);
     private final ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
 
     private ExpressionParser expressionParser;

@@ -10,8 +10,6 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -20,8 +18,6 @@ import org.slf4j.LoggerFactory;
  */
 @Operation(type = OperationType.MINIMUM, dataTypes = {DataType.FloatType, DataType.IntegerType})
 public class Minimum extends AggregationOperationExpression {
-    private static final Logger logger = LoggerFactory.getLogger(Minimum.class);
-
 
     public Minimum() {
         super(OperationType.MINIMUM);
@@ -47,6 +43,7 @@ public class Minimum extends AggregationOperationExpression {
                 default: {
                     leftExpression = new NullLiteral<>();
                     //throw new IllegalOperationException("Min OperationExpression Not Allowed");
+                    break;
                 }
             }
         }

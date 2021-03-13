@@ -180,12 +180,12 @@ public abstract class DataTypeExpression extends Expression {
         return null;
     }
 
-    List<LocalDateTime> buildDateTimeList(List<?> objects) {
-        List<LocalDateTime> localDateTimeList = new ArrayList<>();
-        for (Object object : objects) {
+   protected List<LocalDateTime> buildDateTimeList(List<?> objects) {
+       List<LocalDateTime> localDateTimeList = new ArrayList<>();
+       for (Object object : objects) {
 
-            localDateTimeList.add(toLocalDateTime(object));
-        }
-        return localDateTimeList;
-    }
+           localDateTimeList.add(toLocalDateTime(object));
+       }
+       return localDateTimeList;
+   }
 }

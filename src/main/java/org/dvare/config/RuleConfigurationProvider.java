@@ -13,7 +13,6 @@ import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +39,7 @@ public class RuleConfigurationProvider {
         if (functionBasePackages != null) {
             for (String functionPackage : functionBasePackages) {
                 List<Class<?>> classes = ClassFinder.findAnnotated(functionPackage, FunctionService.class);
-                for (Class _class : classes) {
+                for (Class<?> _class : classes) {
                     for (Method method : _class.getMethods()) {
                         if (method.isAnnotationPresent(FunctionMethod.class)) {
                             String functionName = method.getName();
@@ -66,10 +65,10 @@ public class RuleConfigurationProvider {
 
     private void operationInit() {
         List<Class<?>> classes = ClassFinder.findAnnotated(OperationExpression.class.getPackage().getName(), org.dvare.annotations.Operation.class);
-        for (Class _class : classes) {
-            Annotation annotation = _class.getAnnotation(org.dvare.annotations.Operation.class);
-            if (annotation != null && annotation instanceof org.dvare.annotations.Operation) {
-                configurationRegistry.registerOperation(_class, ((Operation) annotation).type().getSymbols());
+        for (Class<?> _class : classes) {
+            Operation annotation = _class.getAnnotation(org.dvare.annotations.Operation.class);
+            if (annotation != null) {
+                configurationRegistry.registerOperation((Class<? extends OperationExpression>) _class, annotation.type().getSymbols());
             }
         }
     }

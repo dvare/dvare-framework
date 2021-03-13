@@ -25,14 +25,14 @@ public class ValueFinder {
 
 
             try {
-                Class type = object.getClass();
+                Class<?> type = object.getClass();
                 if (name.contains(".")) {
 
-                    String fields[] = name.split("\\.");
+                    String[] fields = name.split("\\.");
 
                     Iterator<String> iterator = Arrays.asList(fields).iterator();
 
-                    Class childType = type;
+                    Class<?> childType = type;
                     Object chieldValue = object;
                     while (iterator.hasNext()) {
                         String field = iterator.next();
@@ -54,8 +54,7 @@ public class ValueFinder {
 
 
                 } else {
-                    String field = name;
-                    Field newType = FieldUtils.getDeclaredField(type, field, true);
+                    Field newType = FieldUtils.getDeclaredField(type, name, true);
                     if (newType != null) {
                         return FieldUtils.readField(newType, object, true);
                     }
@@ -79,14 +78,14 @@ public class ValueFinder {
 
 
             try {
-                Class type = object.getClass();
+                Class<?> type = object.getClass();
                 if (name.contains(".")) {
 
-                    String fields[] = name.split(".");
+                    String[] fields = name.split("\\.");
 
                     Iterator<String> iterator = Arrays.asList(fields).iterator();
 
-                    Class childType = type;
+                    Class<?> childType = type;
                     while (iterator.hasNext()) {
                         String field = iterator.next();
 
@@ -107,8 +106,7 @@ public class ValueFinder {
 
 
                 } else {
-                    String field = name;
-                    Field newType = FieldUtils.getDeclaredField(type, field, true);
+                    Field newType = FieldUtils.getDeclaredField(type, name, true);
                     if (newType != null) {
                         FieldUtils.writeField(newType, object, value, true);
                         return object;

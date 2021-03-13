@@ -128,7 +128,7 @@ public class FirstTest {
     }
 
     @Test
-    public void ArrayFirstTest() throws ExpressionParseException, InterpretException {
+    public void arrayFirstTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -145,7 +145,7 @@ public class FirstTest {
     }
 
     @Test
-    public void LiteralFirstTest() throws ExpressionParseException, InterpretException {
+    public void literalFirstTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

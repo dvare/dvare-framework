@@ -43,19 +43,19 @@ public class In extends RelationalOperationExpression {
 
 
     private void testInOperation(String[] tokens, int pos) throws ExpressionParseException {
-        Expression left = this.leftOperand;
+        /*Expression left = this.leftOperand;*/
         Expression right = this.rightOperand;
 
         String message = null;
 
         if (right instanceof VariableExpression && !(right instanceof ListVariable)) {
-            VariableExpression variableExpression = (VariableExpression) right;
+            VariableExpression<?> variableExpression = (VariableExpression<?>) right;
 
             message = String.format("List OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), toDataType(variableExpression.getType()), ExpressionTokenizer.toString(tokens, pos + 2));
 
 
         } else if (right instanceof LiteralExpression) {
-            LiteralExpression literalExpression = (LiteralExpression) right;
+            LiteralExpression<?> literalExpression = (LiteralExpression<?>) right;
             if (!(literalExpression instanceof ListLiteral)) {
                 message = String.format("List OperationExpression %s not possible on type %s near %s", this.getClass().getSimpleName(), toDataType(literalExpression.getType()), ExpressionTokenizer.toString(tokens, pos + 2));
 

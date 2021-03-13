@@ -143,12 +143,7 @@ public class FloatType extends DataTypeExpression {
         Float lower = rightValues.get(0);
         Float upper = rightValues.get(1);
 
-        if (lower <= leftValue && leftValue <= upper) {
-            {
-                return true;
-            }
-        }
-        return false;
+        return lower <= leftValue && leftValue <= upper;
     }
 
     @OperationMapping(operations = {

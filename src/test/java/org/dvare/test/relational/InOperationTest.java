@@ -108,10 +108,9 @@ public class InOperationTest {
     }
 
     @Test
-    public void VariableInArrayTest() throws ExpressionParseException, InterpretException, ParseException {
+    public void variableInArrayTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
-
 
         String exp = "Variable1 in [ null, '4']";
 
@@ -125,7 +124,7 @@ public class InOperationTest {
     }
 
     @Test
-    public void VariableInNullArrayTest() throws ExpressionParseException, InterpretException, ParseException {
+    public void variableInNullArrayTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

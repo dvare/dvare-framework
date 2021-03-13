@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 public class ArithmeticTest {
     @Test
-    public void IntegerArithmeticOperationsTest() throws ExpressionParseException, InterpretException {
+    public void integerArithmeticOperationsTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -49,7 +49,7 @@ public class ArithmeticTest {
     }
 
     @Test
-    public void FloatArithmeticOperationsTest() throws ExpressionParseException, InterpretException {
+    public void floatArithmeticOperationsTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -79,7 +79,7 @@ public class ArithmeticTest {
     }
 
     @Test
-    public void IntegerNegtiveValueAddTest() throws ExpressionParseException, InterpretException {
+    public void integerNegtiveValueAddTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -105,7 +105,7 @@ public class ArithmeticTest {
 
 
     @Test
-    public void IntegerPowerTest() throws ExpressionParseException, InterpretException {
+    public void integerPowerTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

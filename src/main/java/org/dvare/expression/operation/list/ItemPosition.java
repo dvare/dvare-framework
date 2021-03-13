@@ -11,8 +11,6 @@ import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.*;
 import org.dvare.expression.operation.utility.LetOperation;
 import org.dvare.expression.veriable.VariableExpression;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -22,8 +20,6 @@ import java.util.List;
  */
 @Operation(type = OperationType.ITEM_POSITION)
 public class ItemPosition extends AggregationOperationExpression {
-    private static final Logger logger = LoggerFactory.getLogger(ItemPosition.class);
-
 
     public ItemPosition() {
         super(OperationType.ITEM_POSITION);

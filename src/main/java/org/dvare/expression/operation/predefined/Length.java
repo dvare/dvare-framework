@@ -10,8 +10,6 @@ import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Muhammad Hammad
@@ -19,8 +17,6 @@ import org.slf4j.LoggerFactory;
  */
 @Operation(type = OperationType.LENGTH)
 public class Length extends ChainOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Length.class);
-
 
     public Length() {
         super(OperationType.LENGTH);

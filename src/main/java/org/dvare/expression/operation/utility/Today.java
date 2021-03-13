@@ -46,11 +46,8 @@ public class Today extends OperationExpression {
         for (int i = pos; i < tokens.length; i++) {
             String token = tokens[i];
             OperationExpression op = configurationRegistry.getOperation(token);
-            if (op != null) {
-
-                if (op.getClass().equals(RightPriority.class)) {
-                    return i;
-                }
+            if (op != null && op.getClass().equals(RightPriority.class)) {
+                return i;
             }
         }
         return null;

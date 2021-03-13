@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 public class SizeTest {
 
     @Test
-    public void ValuesReturnSizeTest() throws ExpressionParseException, InterpretException {
+    public void valuesReturnSizeTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

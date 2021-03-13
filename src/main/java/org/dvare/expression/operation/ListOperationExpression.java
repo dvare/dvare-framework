@@ -10,8 +10,6 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.utility.LetOperation;
 import org.dvare.expression.veriable.VariableExpression;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +19,6 @@ import java.util.List;
  * @since 2016-06-30
  */
 public abstract class ListOperationExpression extends AggregationOperationExpression {
-    private static final Logger logger = LoggerFactory.getLogger(ListOperationExpression.class);
-
 
     public ListOperationExpression(OperationType operationType) {
         super(operationType);

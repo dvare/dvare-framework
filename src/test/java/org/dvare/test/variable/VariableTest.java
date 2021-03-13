@@ -172,7 +172,7 @@ public class VariableTest {
 
 
     @Test
-    public void ListVariableTest() throws ExpressionParseException, InterpretException, ParseException {
+    public void listVariableTest() throws ExpressionParseException, InterpretException, ParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

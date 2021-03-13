@@ -51,8 +51,9 @@ public class Sum extends AggregationOperationExpression {
                     break;
                 }
                 default: {
-                    leftExpression = new NullLiteral();
+                    leftExpression = new NullLiteral<>();
                     //throw new IllegalOperationException("Sum OperationExpression Not Allowed");
+                    break;
                 }
 
             }

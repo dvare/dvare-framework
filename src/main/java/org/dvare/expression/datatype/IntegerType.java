@@ -143,12 +143,7 @@ public class IntegerType extends DataTypeExpression {
         Integer lower = rightValues.get(0);
         Integer upper = rightValues.get(1);
 
-        if (lower <= leftValue && leftValue <= upper) {
-            {
-                return true;
-            }
-        }
-        return false;
+        return lower <= leftValue && leftValue <= upper;
     }
 
 

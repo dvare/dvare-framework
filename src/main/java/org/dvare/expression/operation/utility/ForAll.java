@@ -13,8 +13,6 @@ import org.dvare.expression.operation.IterationOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.list.ValuesOperation;
 import org.dvare.expression.veriable.VariableExpression;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +23,6 @@ import java.util.List;
  */
 @Operation(type = OperationType.FORALL)
 public class ForAll extends IterationOperationExpression {
-    private static final Logger logger = LoggerFactory.getLogger(ForAll.class);
-
 
     public ForAll() {
         super(OperationType.FORALL);

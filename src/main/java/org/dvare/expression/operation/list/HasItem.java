@@ -10,8 +10,6 @@ import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.*;
 import org.dvare.expression.operation.utility.LetOperation;
 import org.dvare.expression.veriable.VariableExpression;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -21,20 +19,15 @@ import java.util.List;
  */
 @Operation(type = OperationType.HAS_ITEM)
 public class HasItem extends AggregationOperationExpression {
-    private static final Logger logger = LoggerFactory.getLogger(HasItem.class);
-
 
     public HasItem() {
         super(OperationType.HAS_ITEM);
     }
 
-
     @Override
     public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-
         List<?> values = extractValues(instancesBinding, leftOperand);
-
 
         if (values != null && !rightOperand.isEmpty()) {
 
@@ -58,7 +51,6 @@ public class HasItem extends AggregationOperationExpression {
 
             } else if (expression instanceof RelationalOperationExpression || expression instanceof ChainOperationExpression) {
                 OperationExpression operationExpression = (OperationExpression) expression;
-
 
                 Expression leftExpression = operationExpression.getLeftOperand();
 
@@ -93,17 +85,15 @@ public class HasItem extends AggregationOperationExpression {
                 Object item = literalExpression.getValue();
                 Class<?> itemDataTypeExpress = literalExpression.getType();
 
+                if (item != null && !values.isEmpty() && (dataTypeExpression.equals(itemDataTypeExpress))) {
 
-                if (item != null) {
-                    if (!values.isEmpty() && (dataTypeExpression.equals(itemDataTypeExpress))) {
-
-                        for (Object value : values) {
-                            if (value != null && value.equals(item)) {
-                                return LiteralType.getLiteralExpression(true, BooleanType.class);
-                            }
+                    for (Object value : values) {
+                        if (value != null && value.equals(item)) {
+                            return LiteralType.getLiteralExpression(true, BooleanType.class);
                         }
                     }
                 }
+
             }
 
         }

@@ -267,9 +267,6 @@ public class LiteralType {
 
         if (literalExpression != null) {
             if (logger.isDebugEnabled()) {
-                System.out.println("literalExpression " + literalExpression.getClass().getSimpleName());
-                System.out.println("literalExpressionValue " + literalExpression.getValue());
-                System.out.println("literalExpressionType " + literalExpression.getType());
                 logger.debug("{} Expression : {} [{}]", literalExpression.getClass().getSimpleName(),
                         literalExpression.getType().getSimpleName(), literalExpression.getValue());
             }

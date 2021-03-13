@@ -8,8 +8,6 @@ import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -19,8 +17,6 @@ import java.util.List;
  */
 @Operation(type = OperationType.LAST)
 public class Last extends AggregationOperationExpression {
-    static Logger logger = LoggerFactory.getLogger(Last.class);
-
 
     public Last() {
         super(OperationType.LAST);

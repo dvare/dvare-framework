@@ -165,321 +165,41 @@ public class VariableType {
             DataType dataType = type.dataType();
             switch (dataType) {
                 case BooleanType: {
-                    if (variable instanceof ListVariable) {
-                        ListVariable listVariable = (ListVariable) variable;
-                        if (value instanceof List) {
-                            listVariable.setValue((List<?>) value);
-                        } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList((Boolean[]) value));
-                        } else {
-                            List<Object> values = new ArrayList<>();
-                            if (value instanceof Boolean) {
-                                values.add(value);
-                            }
-                            listVariable.setValue(values);
-                        }
-                    } else if (variable instanceof BooleanVariable) {
-                        BooleanVariable booleanVariable = (BooleanVariable) variable;
-                        if (value instanceof Boolean) {
-                            booleanVariable.setValue((Boolean) value);
-                        } else {
-                            if (value.toString().equals("")) {
-                                booleanVariable.setValue(false);
-                            } else {
-                                booleanVariable.setValue(Boolean.parseBoolean((String) value));
-                            }
-                        }
-                    }
+                    setBooleanValue(variable, value);
                     break;
                 }
-
                 case FloatType: {
-                    if (variable instanceof ListVariable) {
-                        ListVariable listVariable = (ListVariable) variable;
-                        if (value instanceof List) {
-                            listVariable.setValue((List<?>) value);
-                        } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList((Float[]) value));
-                        } else {
-                            List<Object> values = new ArrayList<>();
-                            if (value instanceof Float) {
-                                values.add(value);
-                            } else {
-                                values.add(Float.parseFloat(value.toString()));
-                            }
-                            listVariable.setValue(values);
-                        }
-                    } else if (variable instanceof FloatVariable) {
-                        FloatVariable floatVariable = (FloatVariable) variable;
-                        try {
-                            if (value instanceof Float) {
-                                floatVariable.setValue((Float) value);
-                            } else {
-
-                                if (value.toString().equals("")) {
-                                    floatVariable.setValue(0f);
-                                } else {
-                                    floatVariable.setValue(Float.parseFloat(value.toString()));
-                                }
-
-                            }
-
-                        } catch (NumberFormatException e) {
-                            String message = String.format("Unable to Parse literal %s to Float", value);
-                            logger.error(message);
-                            throw new IllegalPropertyValueException(message);
-                        }
-                    }
+                    setFloatValue(variable, value);
                     break;
                 }
                 case IntegerType: {
-                    if (variable instanceof ListVariable) {
-                        ListVariable listVariable = (ListVariable) variable;
-                        if (value instanceof List) {
-                            listVariable.setValue((List<?>) value);
-                        } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList((Integer[]) value));
-                        } else {
-                            List<Object> values = new ArrayList<>();
-                            if (value instanceof Integer) {
-                                values.add(value);
-                            } else {
-                                values.add(Integer.parseInt((String) value));
-                            }
-                            listVariable.setValue(values);
-                        }
-                    } else if (variable instanceof IntegerVariable) {
-                        IntegerVariable integerVariable = (IntegerVariable) variable;
-                        try {
-                            if (value instanceof Integer) {
-                                integerVariable.setValue((Integer) value);
-                            } else {
-
-                                if (value.toString().equals("")) {
-                                    integerVariable.setValue(0);
-                                } else {
-                                    integerVariable.setValue(Integer.parseInt((String) value));
-                                }
-                            }
-
-                        } catch (NumberFormatException e) {
-                            String message = String.format("Unable to Parse literal %s to Integer", value);
-                            logger.error(message);
-                            throw new IllegalPropertyValueException(message);
-                        }
-                    }
+                    setIntegerValue(variable, value);
                     break;
                 }
                 case StringType: {
-                    if (variable instanceof ListVariable) {
-                        ListVariable listVariable = (ListVariable) variable;
-                        if (value instanceof List) {
-                            listVariable.setValue((List<?>) value);
-                        } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList((String[]) value));
-                        } else {
-                            List<Object> values = new ArrayList<>();
-                            values.add(value);
-                            listVariable.setValue(values);
-                        }
-                    } else if (variable instanceof StringVariable) {
-                        StringVariable stringVariable = (StringVariable) variable;
-                        if (value instanceof String) {
-                            stringVariable.setValue((String) value);
-                        } else {
-                            stringVariable.setValue(value.toString());
-                        }
-                    }
+                    setStringValue(variable, value);
                     break;
                 }
-
-
                 case PairType: {
-                    if (variable instanceof ListVariable) {
-                        ListVariable listVariable = (ListVariable) variable;
-                        if (value instanceof List) {
-                            listVariable.setValue((List<?>) value);
-                        } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList((Pair<?, ?>[]) value));
-                        } else {
-                            List<Object> values = new ArrayList<>();
-                            values.add(value);
-                            listVariable.setValue(values);
-                        }
-                    } else if (variable instanceof PairVariable) {
-                        PairVariable pairVariable = (PairVariable) variable;
-                        if (value instanceof Pair) {
-                            pairVariable.setValue((Pair<?, ?>) value);
-                        }
-                    }
+                    setPaitTypeValue(variable, value);
                     break;
                 }
-
                 case TripleType: {
-                    if (variable instanceof ListVariable) {
-                        ListVariable listVariable = (ListVariable) variable;
-                        if (value instanceof List) {
-                            listVariable.setValue((List<?>) value);
-                        } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList((Triple<?, ?, ?>[]) value));
-                        } else {
-                            List<Object> values = new ArrayList<>();
-                            values.add(value);
-                            listVariable.setValue(values);
-                        }
-                    } else if (variable instanceof TripleVariable) {
-                        TripleVariable tripleVariable = (TripleVariable) variable;
-                        if (value instanceof Triple) {
-                            tripleVariable.setValue((Triple<?, ?, ?>) value);
-                        }
-                    }
+                    setTripleTypeValue(variable, value);
                     break;
                 }
                 case DateTimeType: {
-                    if (variable instanceof ListVariable) {
-                        ListVariable listVariable = (ListVariable) variable;
-                        if (value instanceof List) {
-                            listVariable.setValue((List<?>) value);
-                        } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList((LocalDateTime[]) value));
-                        } else {
-                            List<Object> values = new ArrayList<>();
-                            if (value instanceof LocalDateTime) {
-                                values.add(value);
-                            }
-                            listVariable.setValue(values);
-                        }
-                    } else if (variable instanceof DateTimeVariable) {
-                        DateTimeVariable dateTimeVariable = (DateTimeVariable) variable;
-                        LocalDateTime localDateTime = null;
-                        if (value instanceof LocalDateTime) {
-                            localDateTime = (LocalDateTime) value;
-
-                        } else if (value instanceof Date) {
-                            Date date = (Date) value;
-                            localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-
-                        } else {
-                            String newValue = (String) value;
-                            if (!newValue.isEmpty()) {
-                                try {
-                                    localDateTime = LocalDateTime.parse(newValue, LiteralType.dateTimeFormat);
-                                } catch (Exception e) {
-                                    try {
-                                        localDateTime = LocalDateTime.parse(newValue, LiteralType.defaultFormat);
-                                    } catch (Exception ex) {
-                                        String message = String.format("Unable to Parse literal %s to DateTime", newValue);
-                                        logger.error(message);
-                                        throw new IllegalPropertyValueException(message);
-                                    }
-                                }
-
-                            }
-                        }
-                        dateTimeVariable.setValue(localDateTime);
-                    }
+                    setDateTimeValue(variable, value);
 
                     break;
                 }
                 case DateType: {
-                    if (variable instanceof ListVariable) {
-                        ListVariable listVariable = (ListVariable) variable;
-                        if (value instanceof List) {
-                            listVariable.setValue((List<?>) value);
-                        } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList((LocalDate[]) value));
-                        } else {
-                            List<Object> values = new ArrayList<>();
-                            if (value instanceof LocalDate) {
-                                values.add(value);
-                            }
-                            listVariable.setValue(values);
-                        }
-                    } else if (variable instanceof DateVariable) {
-                        DateVariable dateVariable = (DateVariable) variable;
-
-                        LocalDate localDate = null;
-                        if (value instanceof LocalDate) {
-                            localDate = (LocalDate) value;
-                        } else if (value instanceof Date) {
-                            Date date = (Date) value;
-                            localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                        } else {
-                            String newValue = (String) value;
-                            if (!newValue.isEmpty()) {
-                                try {
-                                    localDate = LocalDate.parse(newValue, LiteralType.dateFormat);
-                                } catch (Exception e) {
-
-
-                                    try {
-                                        localDate = LocalDate.parse(newValue, LiteralType.defaultFormat);
-                                    } catch (Exception ex) {
-                                        String message = String.format("Unable to Parse literal %s to Date", newValue);
-                                        logger.error(message);
-                                        throw new IllegalPropertyValueException(message);
-                                    }
-
-
-                                }
-
-                            }
-                        }
-                        dateVariable.setValue(localDate);
-                    }
+                    setDAteTypeValue(variable, value);
                     break;
                 }
 
                 case SimpleDateType: {
-                    if (variable instanceof ListVariable) {
-                        ListVariable listVariable = (ListVariable) variable;
-                        if (value instanceof List) {
-                            listVariable.setValue((List<?>) value);
-                        } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList((Date[]) value));
-                        } else {
-                            List<Object> values = new ArrayList<>();
-                            if (value instanceof Date) {
-                                values.add(value);
-                            }
-                            listVariable.setValue(values);
-                        }
-                    } else if (variable instanceof SimpleDateVariable) {
-                        SimpleDateVariable dateVariable = (SimpleDateVariable) variable;
-
-                        Date date = null;
-                        if (value instanceof LocalDate) {
-                            LocalDate localDate = (LocalDate) value;
-                            date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-                        } else if (value instanceof LocalDateTime) {
-                            LocalDateTime localDateTime = (LocalDateTime) value;
-                            date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                        } else if (value instanceof Date) {
-                            date = (Date) value;
-
-                        } else {
-                            String newValue = (String) value;
-                            if (!newValue.isEmpty()) {
-                                try {
-                                    date = LiteralType.simpleDateFormat.parse(newValue);
-                                } catch (Exception e) {
-
-
-                                    try {
-                                        date = LiteralType.simpleDateTimeFormat.parse(newValue);
-                                    } catch (ParseException ex) {
-                                        String message = String.format("Unable to Parse literal %s to Date", newValue);
-                                        logger.error(message);
-                                        throw new IllegalPropertyValueException(message);
-                                    }
-
-
-                                }
-
-                            }
-                        }
-                        dateVariable.setValue(date);
-                    }
+                    setSimpleDateTypeValue(variable, value);
                     break;
                 }
                 case RegexType: {
@@ -495,6 +215,318 @@ public class VariableType {
 
         }
         return variable;
+    }
+
+    private static void setBooleanValue(VariableExpression<?> variable, Object value) {
+        if (variable instanceof ListVariable) {
+            ListVariable listVariable = (ListVariable) variable;
+            if (value instanceof List) {
+                listVariable.setValue((List<?>) value);
+            } else if (value.getClass().isArray()) {
+                listVariable.setValue(Arrays.asList((Boolean[]) value));
+            } else {
+                List<Object> values = new ArrayList<>();
+                if (value instanceof Boolean) {
+                    values.add(value);
+                }
+                listVariable.setValue(values);
+            }
+        } else if (variable instanceof BooleanVariable) {
+            BooleanVariable booleanVariable = (BooleanVariable) variable;
+            if (value instanceof Boolean) {
+                booleanVariable.setValue((Boolean) value);
+            } else {
+                if (value.toString().equals("")) {
+                    booleanVariable.setValue(false);
+                } else {
+                    booleanVariable.setValue(Boolean.parseBoolean((String) value));
+                }
+            }
+        }
+    }
+
+    private static void setFloatValue(VariableExpression<?> variable, Object value) throws IllegalPropertyValueException {
+        if (variable instanceof ListVariable) {
+            ListVariable listVariable = (ListVariable) variable;
+            if (value instanceof List) {
+                listVariable.setValue((List<?>) value);
+            } else if (value.getClass().isArray()) {
+                listVariable.setValue(Arrays.asList((Float[]) value));
+            } else {
+                List<Object> values = new ArrayList<>();
+                if (value instanceof Float) {
+                    values.add(value);
+                } else {
+                    values.add(Float.parseFloat(value.toString()));
+                }
+                listVariable.setValue(values);
+            }
+        } else if (variable instanceof FloatVariable) {
+            FloatVariable floatVariable = (FloatVariable) variable;
+            try {
+                if (value instanceof Float) {
+                    floatVariable.setValue((Float) value);
+                } else {
+
+                    if (value.toString().equals("")) {
+                        floatVariable.setValue(0f);
+                    } else {
+                        floatVariable.setValue(Float.parseFloat(value.toString()));
+                    }
+
+                }
+
+            } catch (NumberFormatException e) {
+                String message = String.format("Unable to Parse literal %s to Float", value);
+                logger.error(message);
+                throw new IllegalPropertyValueException(message);
+            }
+        }
+    }
+
+    private static void setIntegerValue(VariableExpression<?> variable, Object value) throws IllegalPropertyValueException {
+        if (variable instanceof ListVariable) {
+            ListVariable listVariable = (ListVariable) variable;
+            if (value instanceof List) {
+                listVariable.setValue((List<?>) value);
+            } else if (value.getClass().isArray()) {
+                listVariable.setValue(Arrays.asList((Integer[]) value));
+            } else {
+                List<Object> values = new ArrayList<>();
+                if (value instanceof Integer) {
+                    values.add(value);
+                } else {
+                    values.add(Integer.parseInt((String) value));
+                }
+                listVariable.setValue(values);
+            }
+        } else if (variable instanceof IntegerVariable) {
+            IntegerVariable integerVariable = (IntegerVariable) variable;
+            try {
+                if (value instanceof Integer) {
+                    integerVariable.setValue((Integer) value);
+                } else {
+
+                    if (value.toString().equals("")) {
+                        integerVariable.setValue(0);
+                    } else {
+                        integerVariable.setValue(Integer.parseInt((String) value));
+                    }
+                }
+
+            } catch (NumberFormatException e) {
+                String message = String.format("Unable to Parse literal %s to Integer", value);
+                logger.error(message);
+                throw new IllegalPropertyValueException(message);
+            }
+        }
+    }
+
+    private static void setStringValue(VariableExpression<?> variable, Object value) {
+        if (variable instanceof ListVariable) {
+            ListVariable listVariable = (ListVariable) variable;
+            if (value instanceof List) {
+                listVariable.setValue((List<?>) value);
+            } else if (value.getClass().isArray()) {
+                listVariable.setValue(Arrays.asList((String[]) value));
+            } else {
+                List<Object> values = new ArrayList<>();
+                values.add(value);
+                listVariable.setValue(values);
+            }
+        } else if (variable instanceof StringVariable) {
+            StringVariable stringVariable = (StringVariable) variable;
+            if (value instanceof String) {
+                stringVariable.setValue((String) value);
+            } else {
+                stringVariable.setValue(value.toString());
+            }
+        }
+    }
+
+    private static void setPaitTypeValue(VariableExpression<?> variable, Object value) {
+        if (variable instanceof ListVariable) {
+            ListVariable listVariable = (ListVariable) variable;
+            if (value instanceof List) {
+                listVariable.setValue((List<?>) value);
+            } else if (value.getClass().isArray()) {
+                listVariable.setValue(Arrays.asList((Pair<?, ?>[]) value));
+            } else {
+                List<Object> values = new ArrayList<>();
+                values.add(value);
+                listVariable.setValue(values);
+            }
+        } else if (variable instanceof PairVariable) {
+            PairVariable pairVariable = (PairVariable) variable;
+            if (value instanceof Pair) {
+                pairVariable.setValue((Pair<?, ?>) value);
+            }
+        }
+    }
+
+    private static void setTripleTypeValue(VariableExpression<?> variable, Object value) {
+        if (variable instanceof ListVariable) {
+            ListVariable listVariable = (ListVariable) variable;
+            if (value instanceof List) {
+                listVariable.setValue((List<?>) value);
+            } else if (value.getClass().isArray()) {
+                listVariable.setValue(Arrays.asList((Triple<?, ?, ?>[]) value));
+            } else {
+                List<Object> values = new ArrayList<>();
+                values.add(value);
+                listVariable.setValue(values);
+            }
+        } else if (variable instanceof TripleVariable) {
+            TripleVariable tripleVariable = (TripleVariable) variable;
+            if (value instanceof Triple) {
+                tripleVariable.setValue((Triple<?, ?, ?>) value);
+            }
+        }
+    }
+
+    private static void setDateTimeValue(VariableExpression<?> variable, Object value) throws IllegalPropertyValueException {
+        if (variable instanceof ListVariable) {
+            ListVariable listVariable = (ListVariable) variable;
+            if (value instanceof List) {
+                listVariable.setValue((List<?>) value);
+            } else if (value.getClass().isArray()) {
+                listVariable.setValue(Arrays.asList((LocalDateTime[]) value));
+            } else {
+                List<Object> values = new ArrayList<>();
+                if (value instanceof LocalDateTime) {
+                    values.add(value);
+                }
+                listVariable.setValue(values);
+            }
+        } else if (variable instanceof DateTimeVariable) {
+            DateTimeVariable dateTimeVariable = (DateTimeVariable) variable;
+            LocalDateTime localDateTime = null;
+            if (value instanceof LocalDateTime) {
+                localDateTime = (LocalDateTime) value;
+
+            } else if (value instanceof Date) {
+                Date date = (Date) value;
+                localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+            } else {
+                String newValue = (String) value;
+                if (!newValue.isEmpty()) {
+                    try {
+                        localDateTime = LocalDateTime.parse(newValue, LiteralType.dateTimeFormat);
+                    } catch (Exception e) {
+                        try {
+                            localDateTime = LocalDateTime.parse(newValue, LiteralType.defaultFormat);
+                        } catch (Exception ex) {
+                            String message = String.format("Unable to Parse literal %s to DateTime", newValue);
+                            logger.error(message);
+                            throw new IllegalPropertyValueException(message);
+                        }
+                    }
+
+                }
+            }
+            dateTimeVariable.setValue(localDateTime);
+        }
+    }
+
+    private static void setDAteTypeValue(VariableExpression<?> variable, Object value) throws IllegalPropertyValueException {
+        if (variable instanceof ListVariable) {
+            ListVariable listVariable = (ListVariable) variable;
+            if (value instanceof List) {
+                listVariable.setValue((List<?>) value);
+            } else if (value.getClass().isArray()) {
+                listVariable.setValue(Arrays.asList((LocalDate[]) value));
+            } else {
+                List<Object> values = new ArrayList<>();
+                if (value instanceof LocalDate) {
+                    values.add(value);
+                }
+                listVariable.setValue(values);
+            }
+        } else if (variable instanceof DateVariable) {
+            DateVariable dateVariable = (DateVariable) variable;
+
+            LocalDate localDate = null;
+            if (value instanceof LocalDate) {
+                localDate = (LocalDate) value;
+            } else if (value instanceof Date) {
+                Date date = (Date) value;
+                localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            } else {
+                String newValue = (String) value;
+                if (!newValue.isEmpty()) {
+                    try {
+                        localDate = LocalDate.parse(newValue, LiteralType.dateFormat);
+                    } catch (Exception e) {
+
+
+                        try {
+                            localDate = LocalDate.parse(newValue, LiteralType.defaultFormat);
+                        } catch (Exception ex) {
+                            String message = String.format("Unable to Parse literal %s to Date", newValue);
+                            logger.error(message);
+                            throw new IllegalPropertyValueException(message);
+                        }
+
+
+                    }
+
+                }
+            }
+            dateVariable.setValue(localDate);
+        }
+    }
+
+    private static void setSimpleDateTypeValue(VariableExpression<?> variable, Object value) throws IllegalPropertyValueException {
+        if (variable instanceof ListVariable) {
+            ListVariable listVariable = (ListVariable) variable;
+            if (value instanceof List) {
+                listVariable.setValue((List<?>) value);
+            } else if (value.getClass().isArray()) {
+                listVariable.setValue(Arrays.asList((Date[]) value));
+            } else {
+                List<Object> values = new ArrayList<>();
+                if (value instanceof Date) {
+                    values.add(value);
+                }
+                listVariable.setValue(values);
+            }
+        } else if (variable instanceof SimpleDateVariable) {
+            SimpleDateVariable dateVariable = (SimpleDateVariable) variable;
+
+            Date date = null;
+            if (value instanceof LocalDate) {
+                LocalDate localDate = (LocalDate) value;
+                date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            } else if (value instanceof LocalDateTime) {
+                LocalDateTime localDateTime = (LocalDateTime) value;
+                date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            } else if (value instanceof Date) {
+                date = (Date) value;
+
+            } else {
+                String newValue = (String) value;
+                if (!newValue.isEmpty()) {
+                    try {
+                        date = LiteralType.simpleDateFormat.parse(newValue);
+                    } catch (Exception e) {
+
+
+                        try {
+                            date = LiteralType.simpleDateTimeFormat.parse(newValue);
+                        } catch (ParseException ex) {
+                            String message = String.format("Unable to Parse literal %s to Date", newValue);
+                            logger.error(message);
+                            throw new IllegalPropertyValueException(message);
+                        }
+
+
+                    }
+
+                }
+            }
+            dateVariable.setValue(date);
+        }
     }
 
 

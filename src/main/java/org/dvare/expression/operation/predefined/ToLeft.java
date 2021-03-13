@@ -30,27 +30,24 @@ public class ToLeft extends ChainOperationExpression {
     public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         LiteralExpression<?> literalExpression = super.interpretOperand(leftOperand, instancesBinding);
         if (!(literalExpression instanceof NullLiteral) && literalExpression.getValue() != null) {
-            if (literalExpression.getValue() != null) {
+            Object tupleValue = literalExpression.getValue();
 
-                Object tupleValue = literalExpression.getValue();
-
-                if (tupleValue instanceof Pair) {
-                    Object key = ((Pair<?, ?>) tupleValue).getLeft();
-                    if (key != null) {
-                        try {
-                            return LiteralType.getLiteralExpression(key, DataTypeMapping.getTypeMapping(key.getClass()));
-                        } catch (IllegalValueException e) {
-                            logger.error(e.getMessage(), e);
-                        }
+            if (tupleValue instanceof Pair) {
+                Object key = ((Pair<?, ?>) tupleValue).getLeft();
+                if (key != null) {
+                    try {
+                        return LiteralType.getLiteralExpression(key, DataTypeMapping.getTypeMapping(key.getClass()));
+                    } catch (IllegalValueException e) {
+                        logger.error(e.getMessage(), e);
                     }
-                } else if (tupleValue instanceof Triple) {
-                    Object value = ((Triple<?, ?, ?>) tupleValue).getLeft();
-                    if (value != null) {
-                        try {
-                            return LiteralType.getLiteralExpression(value, DataTypeMapping.getTypeMapping(value.getClass()));
-                        } catch (IllegalValueException e) {
-                            logger.error(e.getMessage(), e);
-                        }
+                }
+            } else if (tupleValue instanceof Triple) {
+                Object value = ((Triple<?, ?, ?>) tupleValue).getLeft();
+                if (value != null) {
+                    try {
+                        return LiteralType.getLiteralExpression(value, DataTypeMapping.getTypeMapping(value.getClass()));
+                    } catch (IllegalValueException e) {
+                        logger.error(e.getMessage(), e);
                     }
                 }
             }

@@ -13,14 +13,11 @@ import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class TernaryTest {
-    private static final Logger logger = LoggerFactory.getLogger(FlowTest.class);
 
     @Test
     public void ternaryTest() throws ExpressionParseException, InterpretException {

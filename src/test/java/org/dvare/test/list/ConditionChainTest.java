@@ -60,7 +60,7 @@ public class ConditionChainTest {
     }
 
     @Test
-    public void DataSetIfElsedHasItemTest() throws ExpressionParseException, InterpretException {
+    public void dataSetIfElsedHasItemTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

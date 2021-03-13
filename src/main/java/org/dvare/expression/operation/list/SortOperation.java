@@ -17,8 +17,6 @@ import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.utility.LetOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.util.DataTypeMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +31,6 @@ import java.util.List;
  */
 @Operation(type = OperationType.SORT)
 public class SortOperation extends ListOperationExpression {
-    private static final Logger logger = LoggerFactory.getLogger(SortOperation.class);
 
     public SortOperation() {
         super(OperationType.SORT);
