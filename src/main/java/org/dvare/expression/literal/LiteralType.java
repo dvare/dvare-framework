@@ -2,6 +2,7 @@ package org.dvare.expression.literal;
 
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.annotations.Type;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalLiteralException;
@@ -24,11 +25,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author Muhammad Hammad
- * @since 2016-06-30
- */
-
 public class LiteralType {
     public final static DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH:mm:ss");
     public final static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -37,15 +33,20 @@ public class LiteralType {
 
     public final static SimpleDateFormat simpleDateTimeFormat = new SimpleDateFormat("dd-MM-yyyy-HH:mm:ss");
     public final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    private static final Logger logger = LoggerFactory.getLogger(LiteralType.class);
+
+
     public static String date = "\\s*(0[1-9]|1[0-9]|2[0-9]|3[0-1])-(0[1-9]|1[0-2])-([1-9][0-9][0-9][0-9])\\s*";
     public static String date2 = "\\s*([1-9][0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])\\s*";
+
+
     public static String dateTime = "\\s*(0[1-9]|1[0-9]|2[0-9]|3[0-1])-(0[1-9]|1[0-2])-([1-9][0-9][0-9][0-9])\\-{1}(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])\\s*";
+    private static final Logger logger = LoggerFactory.getLogger(LiteralType.class);
+
 
     public static LiteralExpression<?> getLiteralExpression(Object value, Class<?> dataTypeExpression) throws InterpretException {
 
         if (value == null) {
-            return new NullLiteral();
+            return new NullLiteral<>();
         }
 
         DataType dataType = null;
@@ -104,7 +105,7 @@ public class LiteralType {
     }
 
     private static LiteralExpression<?> buildLiteralExpression(Object value, DataType type) throws IllegalLiteralException {
-        LiteralExpression literalExpression = null;
+        LiteralExpression<?> literalExpression = null;
         String valueString = value.toString();
         switch (type) {
 
@@ -228,12 +229,18 @@ public class LiteralType {
             }
 
             case NullType: {
-                literalExpression = new NullLiteral();
+                literalExpression = new NullLiteral<>();
                 break;
             }
             case PairType: {
                 if (value instanceof Pair) {
-                    literalExpression = new PairLiteral((Pair) value);
+                    literalExpression = new PairLiteral((Pair<?, ?>) value);
+                    break;
+                }
+            }
+            case TripleType: {
+                if (value instanceof Triple) {
+                    literalExpression = new TripleLiteral((Triple<?, ?, ?>) value);
                     break;
                 }
             }
@@ -247,11 +254,12 @@ public class LiteralType {
             case DateTimeListType:
             case DateListType:
             case PairListType:
+            case TripleListType:
             case SimpleDateListType: {
                 if (value.getClass().isArray()) {
                     literalExpression = new ListLiteral(Arrays.asList((Object[]) value), DataTypeMapping.getDataTypeClass(type));
                 } else if (value instanceof List) {
-                    literalExpression = new ListLiteral((List) value, DataTypeMapping.getDataTypeClass(type));
+                    literalExpression = new ListLiteral((List<?>) value, DataTypeMapping.getDataTypeClass(type));
                 }
                 break;
             }
@@ -259,6 +267,9 @@ public class LiteralType {
 
         if (literalExpression != null) {
             if (logger.isDebugEnabled()) {
+                System.out.println("literalExpression " + literalExpression.getClass().getSimpleName());
+                System.out.println("literalExpressionValue " + literalExpression.getValue());
+                System.out.println("literalExpressionType " + literalExpression.getType());
                 logger.debug("{} Expression : {} [{}]", literalExpression.getClass().getSimpleName(),
                         literalExpression.getType().getSimpleName(), literalExpression.getValue());
             }
@@ -296,7 +307,7 @@ public class LiteralType {
         try {
             LocalDate.parse(value, DateTimeFormatter.ISO_DATE);
             return DataType.DateType;
-        } catch (DateTimeParseException ignored) {
+        } catch (DateTimeParseException e) {
 
         }
 
@@ -305,7 +316,7 @@ public class LiteralType {
             try {
                 Float.parseFloat(value);
                 return DataType.FloatType;
-            } catch (NumberFormatException ignored) {
+            } catch (NumberFormatException e) {
             }
         }
 
@@ -313,7 +324,7 @@ public class LiteralType {
         try {
             Integer.parseInt(value);
             return DataType.IntegerType;
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException e) {
         }
 
 

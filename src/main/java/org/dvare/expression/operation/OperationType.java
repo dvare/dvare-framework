@@ -10,7 +10,7 @@ import java.util.List;
  */
 public enum OperationType {
 
-    List("["), ASSIGN(":=", "assign", "update"),
+    LIST_START("["), LIST_END("]"), ASSIGN(":=", "assign", "update"),
     INVOKE("Invoke", "invoke"),
     FUNCTION("Function", "function", "fun"),//
 
@@ -37,8 +37,8 @@ public enum OperationType {
     GET_YEAR("GetYear", "getYear", "GetYears", "getYears"), //
 
     LENGTH("Length", "length"),//
-    SUBSTRING("substring", "Substring"), APPEND("append", "Append"), PREPEND("prepend", "Prepend"),//
-    CONTAINS("contains", "Contains"), TRIM("trim", "Trim"), //
+    TRIM("Trim", "trim"),//
+    SUBSTRING("substring", "Substring"), APPEND("append", "Append"), PREPEND("prepend", "Prepend"), CONTAINS("contains", "Contains"),//
     STARTS_WITH("startsWith", "Startswith", "StartsWith", "startswith"), ENDS_WITH("endsWith", "Endswith", "EndsWith", "endswith"),//
 
     //Condition
@@ -49,8 +49,9 @@ public enum OperationType {
     // List
     FORALL("forAll", "ForAll"), END_FORALL("endForAll", "EndForAll"), FOREACH("forEach", "ForEach"), END_FOREACH("endForEach", "EndForEach"), //
 
-    VALUES("Values", "values"), FILTER("Filter", "filter"), MAP("Map", "map"), SORT("Sort", "sort"), //
+    VALUES("Values", "values", "rights"), FILTER("Filter", "filter"), MAP("Map", "map"), SORT("Sort", "sort"), DISTINCT("Distinct", "distinct"),//
     GET_ITEM("GetItem", "getItem"), HAS_ITEM("HasItem", "hasItem"), ITEM_POSITION("ItemPosition", "itemPosition", "itemPos"),//
+    JOIN("Join", "join"),//
 
     FIRST("First", "first"), LAST("Last", "last"),//
     SIZE("Size", "size"), NOT_EMPTY("notEmpty", "NotEMPTY"), IS_EMPTY("isEmpty", "ISEMPTY"),//
@@ -60,13 +61,17 @@ public enum OperationType {
     SUM("Sum", "sum"),//
 
 
-    PAIR_List("Pair", "pair", "PairList", "pairList"), TO_PAIR("toPair", "ToPair"), KEYS("Keys", "keys"),
+    PAIR_LIST("Pair", "pair", "PairList", "pairList"), TO_PAIR("toPair", "ToPair"), KEYS("Keys", "keys", "lefts"),
     TO_KEY("toKey", "ToKey", "getKey", "GetKey"), TO_VALUE("toValue", "ToValue", "getValue", "GetValue"),
+
+    TRIPLE_LIST("Triple", "triple", "TripleList", "tripleList"), TO_TRIPLE("toTriple", "ToTriple"),//
+    TO_LEFT("toLeft", "ToLeft", "getLeft", "GetLeft"), TO_MIDDLE("toMiddle", "ToMiddle", "getMiddle", "GetMiddle"),
+    TO_RIGHT("toRight", "ToRight", "getRight", "GetRight"), MIDDLES("Middles", "middles"), //
 
     // initialization
     DEF("Def", "def"), LET("let", "Let"),
 
-    SEPARATOR(";"),//
+    SEPARATOR(";", "along"),//
     PRINT("print", "Print", "Log", "log");
 
     private final List<String> symbols = new ArrayList<>();

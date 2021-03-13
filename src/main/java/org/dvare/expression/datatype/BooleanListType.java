@@ -20,14 +20,14 @@ public class BooleanListType extends ListType {
     @OperationMapping(operations = {
             Equals.class
     })
-    public boolean equal(LiteralExpression left, LiteralExpression right) {
+    public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
         return super.equal(left, right);
     }
 
     @OperationMapping(operations = {
             NotEquals.class
     })
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         return super.notEqual(left, right);
     }
 }

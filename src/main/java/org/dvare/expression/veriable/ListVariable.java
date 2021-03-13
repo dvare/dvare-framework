@@ -15,7 +15,7 @@ import java.util.List;
  * @since 2016-06-30
  */
 
-public class ListVariable extends VariableExpression<List> {
+public class ListVariable extends VariableExpression<List<?>> {
 
     public ListVariable(String name, Class<? extends DataTypeExpression> type) {
         super(name, type);
@@ -50,13 +50,15 @@ public class ListVariable extends VariableExpression<List> {
                     return SimpleDateListType.class;
                 case PairType:
                     return PairListType.class;
+                case TripleType:
+                    return TripleListType.class;
             }
         }
         return ListType.class;
     }
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         if (instancesBinding != null) {
             Object instance = instancesBinding.getInstance(operandType);
             VariableType.setVariableValue(this, instance);

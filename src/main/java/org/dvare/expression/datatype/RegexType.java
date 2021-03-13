@@ -25,7 +25,7 @@ public class RegexType extends DataTypeExpression {
     @OperationMapping(operations = {
             Equals.class
     })
-    public boolean equal(LiteralExpression left, LiteralExpression right) {
+    public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
 
         String leftValue = (String) left.getValue();
         String rightValue = (String) right.getValue();
@@ -37,7 +37,7 @@ public class RegexType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotEquals.class
     })
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         String leftValue = (String) left.getValue();
         String rightValue = (String) right.getValue();
 
@@ -49,7 +49,7 @@ public class RegexType extends DataTypeExpression {
     @OperationMapping(operations = {
             In.class
     })
-    public boolean in(LiteralExpression left, LiteralExpression right) {
+    public boolean in(LiteralExpression<?> left, LiteralExpression<?> right) {
         String leftValue = (String) left.getValue();
         List<Object> tempValues = (List<Object>) right.getValue();
 
@@ -71,7 +71,7 @@ public class RegexType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotIn.class
     })
-    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+    public boolean notIn(LiteralExpression<?> left, LiteralExpression<?> right) {
         return !in(left, right);
     }
 

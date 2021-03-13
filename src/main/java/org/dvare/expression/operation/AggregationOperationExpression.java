@@ -1,6 +1,7 @@
 package org.dvare.expression.operation;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
@@ -17,6 +18,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.list.PairOperation;
+import org.dvare.expression.operation.list.TripleOperation;
 import org.dvare.expression.operation.utility.ExpressionSeparator;
 import org.dvare.expression.operation.utility.Function;
 import org.dvare.expression.operation.utility.LeftPriority;
@@ -24,7 +26,6 @@ import org.dvare.expression.operation.utility.RightPriority;
 import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
-import org.dvare.util.InstanceUtils;
 import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ import java.util.*;
  * @since 2016-06-30
  */
 public abstract class AggregationOperationExpression extends OperationExpression {
-    private static final Logger logger = LoggerFactory.getLogger(AggregationOperationExpression.class);
+    protected static final Logger logger = LoggerFactory.getLogger(AggregationOperationExpression.class);
     protected List<Expression> rightOperand = new ArrayList<>();
     protected LiteralExpression<?> leftExpression;
 
@@ -128,9 +129,8 @@ public abstract class AggregationOperationExpression extends OperationExpression
             if (!(literalExpression instanceof NullLiteral)) {
 
                 try {
-                    Class<? extends DataTypeExpression> dataTypeExpression = literalExpression.getType();
-                    leftExpression = new InstanceUtils<DataTypeExpression>().newInstance(dataTypeExpression).evaluate(this, leftExpression, literalExpression);
-                } catch (Exception e) {
+                    leftExpression = literalExpression.getType().newInstance().evaluate(this, leftExpression, literalExpression);
+                } catch (InstantiationException | IllegalAccessException e) {
                     logger.error(e.getMessage(), e);
                 }
                 if (logger.isDebugEnabled()) {
@@ -186,6 +186,10 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
             values = pairValues(instancesBinding, valueOperand);
 
+        } else if (valueOperand instanceof TripleOperation) {
+
+            values = tripleValues(instancesBinding, valueOperand);
+
         } else if (valueOperand instanceof ConditionOperationExpression) {
             logger.error("Condition Operation Expression: " + leftOperand.toString());
         } else {
@@ -199,7 +203,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
         List values;
 
         if (literalExpression instanceof ListLiteral) {
-            ListLiteral listLiteral = (ListLiteral) literalExpression;
+            ListLiteral listLiteral = ListLiteral.class.cast(literalExpression);
             values = listLiteral.getValue();
             dataTypeExpression = listLiteral.getType();
         } else {
@@ -214,7 +218,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
     private List<?> listLiteralValues(
             InstancesBinding instancesBinding, ListLiteralOperationExpression listLiteralOperationExpression)
             throws InterpretException {
-        List<?> values = null;
+        List values = null;
         LiteralExpression<?> literalExpression = listLiteralOperationExpression.interpret(instancesBinding);
 
         if (literalExpression instanceof ListLiteral) {
@@ -335,7 +339,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
             functionValueOperand.setParameters(dummyParameters);
 
 
-            LiteralExpression<?> literalExpression = function.interpret(instancesBinding);
+            LiteralExpression<?> literalExpression = (LiteralExpression<?>) function.interpret(instancesBinding);
 
             if (literalExpression.getType() != null && !literalExpression.getType().equals(NullType.class)) {
                 dataTypeExpression = literalExpression.getType();
@@ -363,7 +367,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
             expression = ((ChainOperationExpression) expression).getLeftOperand();
         }
 
-        List<?> dataSet = null;
+        List dataSet = null;
         Class<? extends DataTypeExpression> dataSetDataTypeExpression = null;
         if (expression instanceof VariableExpression) {
             VariableExpression<?> variableExpression = (VariableExpression<?>) expression;
@@ -409,10 +413,30 @@ public abstract class AggregationOperationExpression extends OperationExpression
         return null;
     }
 
+    private List<?> tripleValues(InstancesBinding instancesBinding, Expression expression)
+            throws InterpretException {
+        if (expression instanceof TripleOperation || expression instanceof ListOperationExpression) {
+            OperationExpression tripleOperation = (OperationExpression) expression;
+
+            Object tripleResultList = tripleOperation.interpret(instancesBinding);
+
+            if (tripleResultList instanceof ListLiteral) {
+                ListLiteral listLiteral = (ListLiteral) tripleResultList;
+                return listLiteral.getValue();
+
+            }
+        }
+        return null;
+    }
+
+
     protected boolean isPairList(List<?> values) {
         return values.stream().allMatch(o -> o instanceof Pair);
     }
 
+    protected boolean isTripleList(List<?> values) {
+        return values.stream().allMatch(o -> o instanceof Triple);
+    }
 
     @Override
     public String toString() {

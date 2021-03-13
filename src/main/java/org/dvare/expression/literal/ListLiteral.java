@@ -6,10 +6,10 @@ import org.dvare.expression.datatype.*;
 
 import java.util.List;
 
-public class ListLiteral extends LiteralExpression<List> {
+public class ListLiteral extends LiteralExpression<List<?>> {
 
 
-    public ListLiteral(List value, Class<? extends DataTypeExpression> type) {
+    public ListLiteral(List<?> value, Class<? extends DataTypeExpression> type) {
         super(value, type);
     }
 
@@ -37,6 +37,8 @@ public class ListLiteral extends LiteralExpression<List> {
                     return BooleanListType.class;
                 case PairType:
                     return PairListType.class;
+                case TripleType:
+                    return TripleListType.class;
                 case DateType:
                     return DateListType.class;
                 case DateTimeType:

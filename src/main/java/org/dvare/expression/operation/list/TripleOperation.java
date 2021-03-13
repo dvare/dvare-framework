@@ -1,21 +1,19 @@
 package org.dvare.expression.operation.list;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.datatype.PairType;
+import org.dvare.expression.datatype.TripleType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,13 +24,12 @@ import java.util.Stack;
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
-@Operation(type = OperationType.PAIR_LIST)
-public class PairOperation extends AggregationOperationExpression {
-    private static final Logger logger = LoggerFactory.getLogger(PairOperation.class);
+@Operation(type = OperationType.TRIPLE_LIST)
+public class TripleOperation extends AggregationOperationExpression {
 
 
-    public PairOperation() {
-        super(OperationType.PAIR_LIST);
+    public TripleOperation() {
+        super(OperationType.TRIPLE_LIST);
     }
 
 
@@ -42,8 +39,8 @@ public class PairOperation extends AggregationOperationExpression {
 
         pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
-        if (rightOperand.size() != 2) {
-            throw new ExpressionParseException(" Pair Operation must contains 2 params ");
+        if (rightOperand.size() != 3) {
+            throw new ExpressionParseException(" Triple Operation must contains 2 params ");
         }
 
 
@@ -74,36 +71,41 @@ public class PairOperation extends AggregationOperationExpression {
     @Override
     public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
-        if (rightOperand.size() == 2) {
+        if (rightOperand.size() == 3) {
 
-            Expression keyParam = rightOperand.get(0);
-            Expression valueParam = rightOperand.get(1);
-
-
-            ListLiteral keyListLiteral = buildValues(instancesBinding, keyParam);
-            ListLiteral valueListLiteral = buildValues(instancesBinding, valueParam);
-
-            if (keyListLiteral != null && valueListLiteral != null) {
-
-                List<?> keys = keyListLiteral.getValue();
-                List<?> values = valueListLiteral.getValue();
+            Expression leftParam = rightOperand.get(0);
+            Expression middleParam = rightOperand.get(1);
+            Expression rightParam = rightOperand.get(2);
 
 
-                Iterator<?> leftIterator = keys.iterator();
-                Iterator<?> rightIterator = values.iterator();
+            ListLiteral leftListLiteral = buildValues(instancesBinding, leftParam);
+            ListLiteral middleListLiteral = buildValues(instancesBinding, middleParam);
+            ListLiteral rightListLiteral = buildValues(instancesBinding, rightParam);
+
+            if (leftListLiteral != null && middleListLiteral != null && rightListLiteral != null) {
+
+                List<?> lefts = leftListLiteral.getValue();
+                List<?> middles = middleListLiteral.getValue();
+                List<?> rights = rightListLiteral.getValue();
+
+
+                Iterator<?> leftIterator = lefts.iterator();
+                Iterator<?> middleIterator = middles.iterator();
+                Iterator<?> rightIterator = rights.iterator();
 
                 // dataTypeExpression = valueListLiteral.getType();
 
-                List<Pair> pairs = new ArrayList<>();
+                List<Triple<?, ?, ?>> pairs = new ArrayList<>();
                 while (leftIterator.hasNext() && rightIterator.hasNext()) {
 
                     Object leftValue = leftIterator.next();
+                    Object middleValue = middleIterator.next();
                     Object rightValue = rightIterator.next();
 
-                    pairs.add(Pair.of(leftValue, rightValue));
+                    pairs.add(Triple.of(leftValue, middleValue, rightValue));
                 }
 
-                return new ListLiteral(pairs, PairType.class);
+                return new ListLiteral(pairs, TripleType.class);
             }
 
 

@@ -16,6 +16,7 @@ import org.junit.runners.Suite;
         ListVariableTest.class,
         MatchTest.class,
         PairListTest.class,
+        TripleListTest.class,
         SizeTest.class,
         ValuesTest.class,
         FilterTest.class,

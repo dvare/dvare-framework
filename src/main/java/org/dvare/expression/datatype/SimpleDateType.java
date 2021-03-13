@@ -25,7 +25,7 @@ public class SimpleDateType extends DataTypeExpression {
     @OperationMapping(operations = {
             Equals.class
     })
-    public boolean equal(LiteralExpression left, LiteralExpression right) {
+    public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
         Date leftValue = toDate(left.getValue());
         Date rightValue = toDate(right.getValue());
         return (leftValue != null && rightValue != null) && leftValue.compareTo(rightValue) == 0;
@@ -34,7 +34,7 @@ public class SimpleDateType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotEquals.class
     })
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         Date leftValue = toDate(left.getValue());
         Date rightValue = toDate(right.getValue());
         return (leftValue != null && rightValue != null) && leftValue.compareTo(rightValue) != 0;
@@ -43,7 +43,7 @@ public class SimpleDateType extends DataTypeExpression {
     @OperationMapping(operations = {
             LessThan.class
     })
-    public boolean less(LiteralExpression left, LiteralExpression right) {
+    public boolean less(LiteralExpression<?> left, LiteralExpression<?> right) {
         Date leftValue = toDate(left.getValue());
         Date rightValue = toDate(right.getValue());
         return (leftValue != null && rightValue != null) && leftValue.compareTo(rightValue) < 0;
@@ -53,7 +53,7 @@ public class SimpleDateType extends DataTypeExpression {
             LessEqual.class
     })
 
-    public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean lessEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         Date leftValue = toDate(left.getValue());
         Date rightValue = toDate(right.getValue());
         return (leftValue != null && rightValue != null) && leftValue.compareTo(rightValue) <= 0;
@@ -62,7 +62,7 @@ public class SimpleDateType extends DataTypeExpression {
     @OperationMapping(operations = {
             GreaterThan.class
     })
-    public boolean greater(LiteralExpression left, LiteralExpression right) {
+    public boolean greater(LiteralExpression<?> left, LiteralExpression<?> right) {
         Date leftValue = toDate(left.getValue());
         Date rightValue = toDate(right.getValue());
         return (leftValue != null && rightValue != null) && leftValue.compareTo(rightValue) > 0;
@@ -71,7 +71,7 @@ public class SimpleDateType extends DataTypeExpression {
     @OperationMapping(operations = {
             GreaterEqual.class
     })
-    public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean greaterEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         Date leftValue = toDate(left.getValue());
         Date rightValue = toDate(right.getValue());
         return (leftValue != null && rightValue != null) && leftValue.compareTo(rightValue) >= 0;
@@ -80,7 +80,7 @@ public class SimpleDateType extends DataTypeExpression {
     @OperationMapping(operations = {
             In.class
     })
-    public boolean in(LiteralExpression left, LiteralExpression right) {
+    public boolean in(LiteralExpression<?> left, LiteralExpression<?> right) {
         Date leftValue = toDate(left.getValue());
         List<Date> rightValues = buildDateList((List<?>) right.getValue());
         return leftValue != null && rightValues.contains(leftValue);
@@ -89,7 +89,7 @@ public class SimpleDateType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotIn.class
     })
-    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+    public boolean notIn(LiteralExpression<?> left, LiteralExpression<?> right) {
         Date leftValue = toDate(left.getValue());
         List<Date> rightValues = buildDateList((List<?>) right.getValue());
         return leftValue != null && !rightValues.contains(leftValue);
@@ -98,7 +98,7 @@ public class SimpleDateType extends DataTypeExpression {
     @OperationMapping(operations = {
             Between.class
     })
-    public boolean between(LiteralExpression left, LiteralExpression right) {
+    public boolean between(LiteralExpression<?> left, LiteralExpression<?> right) {
         Date leftValue = toDate(left.getValue());
         List<Date> values = buildDateList((List<?>) right.getValue());
         Date lower = values.get(0);
@@ -111,7 +111,7 @@ public class SimpleDateType extends DataTypeExpression {
     @OperationMapping(operations = {
             Subtract.class
     })
-    public Date sub(LiteralExpression left, LiteralExpression right) {
+    public Date sub(LiteralExpression<?> left, LiteralExpression<?> right) {
         Date leftValue = toDate(left.getValue());
         Date rightValue = toDate(right.getValue());
         return new Date(rightValue.getTime() - leftValue.getTime());

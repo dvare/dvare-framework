@@ -28,14 +28,14 @@ import java.util.Stack;
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
-@Operation(type = OperationType.List)
+@Operation(type = OperationType.LIST_START)
 public class ListLiteralOperationExpression extends OperationExpression {
     protected static Logger logger = LoggerFactory.getLogger(ListLiteralOperationExpression.class);
 
-    protected List<Expression> expressions = new ArrayList<>();
+    protected List<Expression> rightOperand = new ArrayList<>();
 
     public ListLiteralOperationExpression() {
-        super(OperationType.List);
+        super(OperationType.LIST_START);
     }
 
 
@@ -44,9 +44,9 @@ public class ListLiteralOperationExpression extends OperationExpression {
 
         int newPos = pos;
         List<String> listPrams = new ArrayList<>();
-        while (!tokens[newPos].equals("]")) {
+        while (!tokens[newPos].equals(OperationType.LIST_END.getSymbols().get(0))) {
             String value = tokens[newPos];
-            if (!value.equals("[")) {
+            if (!value.equals(OperationType.LIST_START.getSymbols().get(0))) {
                 listPrams.add(value);
             }
             newPos++;
@@ -70,7 +70,7 @@ public class ListLiteralOperationExpression extends OperationExpression {
             TokenType tokenType = findDataObject(token, contexts);
 
 
-            Expression expression = null;
+            Expression expression;
             OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
 
@@ -84,7 +84,7 @@ public class ListLiteralOperationExpression extends OperationExpression {
                 DataType variableType = TypeFinder.findType(tokenType.token, typeBinding);
                 expression = VariableType.getVariableExpression(tokenType.token, variableType, tokenType.type);
             } else {
-                expression = LiteralType.getLiteralExpression(tokenType.token);
+                expression = LiteralType.getLiteralExpression(tokenType.token, pos, tokens);
 
             }
 
@@ -94,7 +94,7 @@ public class ListLiteralOperationExpression extends OperationExpression {
 
         }
 
-        expressions.addAll(localStack);
+        rightOperand.addAll(localStack);
 
 
         stack.push(this);
@@ -113,28 +113,37 @@ public class ListLiteralOperationExpression extends OperationExpression {
     public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         Class<? extends DataTypeExpression> dataType = null;
         List<Object> values = new ArrayList<>();
-        for (Expression expression : expressions) {
+        for (Expression expression : rightOperand) {
 
             if (expression instanceof OperationExpression) {
                 OperationExpression operationExpression = (OperationExpression) expression;
+
                 LiteralExpression<?> literalExpression = operationExpression.interpret(instancesBinding);
-                if (literalExpression instanceof ListLiteral) {
-                    values.addAll(((ListLiteral) literalExpression).getValue());
-                } else {
-                    values.add(literalExpression.getValue());
+
+                if (literalExpression != null) {
+
+                    if (literalExpression instanceof ListLiteral) {
+                        values.addAll(((ListLiteral) literalExpression).getValue());
+                    } else {
+                        values.add(literalExpression.getValue());
+                    }
+
+                    if (dataType == null || toDataType(dataType).equals(DataType.NullType)) {
+                        dataType = literalExpression.getType();
+                    }
                 }
-                if (dataType == null || toDataType(dataType).equals(DataType.NullType)) {
-                    dataType = literalExpression.getType();
-                }
+
 
             } else if (expression instanceof VariableExpression) {
                 VariableExpression<?> variableExpression = (VariableExpression<?>) expression;
                 LiteralExpression<?> literalExpression = variableExpression.interpret(instancesBinding);
+
                 if (literalExpression instanceof ListLiteral) {
                     values.addAll(((ListLiteral) literalExpression).getValue());
                 } else {
                     values.add(literalExpression.getValue());
                 }
+
                 dataType = variableExpression.getType();
             } else if (expression instanceof LiteralExpression) {
                 LiteralExpression<?> literalExpression = (LiteralExpression<?>) expression;
@@ -160,11 +169,11 @@ public class ListLiteralOperationExpression extends OperationExpression {
     }
 
     public boolean isEmpty() {
-        return expressions.isEmpty();
+        return rightOperand.isEmpty();
     }
 
     public Integer getSize() {
-        return expressions.size();
+        return rightOperand.size();
     }
 
     @Override
@@ -172,7 +181,7 @@ public class ListLiteralOperationExpression extends OperationExpression {
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("[");
-        Iterator<Expression> iterator = expressions.iterator();
+        Iterator<Expression> iterator = rightOperand.iterator();
 
         while (iterator.hasNext()) {
             stringBuilder.append(iterator.next().toString());
@@ -187,5 +196,9 @@ public class ListLiteralOperationExpression extends OperationExpression {
 
     }
 
-
+    public List<Expression> getRightListOperand() {
+        return rightOperand;
+    }
 }
+
+

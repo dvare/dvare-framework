@@ -22,18 +22,18 @@ public class PairType extends DataTypeExpression {
     @OperationMapping(operations = {
             Equals.class
     })
-    public boolean equal(LiteralExpression left, LiteralExpression right) {
-        Pair leftValue = (Pair) left.getValue();
-        Pair rightValue = (Pair) right.getValue();
+    public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
+        Pair<?, ?> leftValue = (Pair<?, ?>) left.getValue();
+        Pair<?, ?> rightValue = (Pair<?, ?>) right.getValue();
         return leftValue.equals(rightValue);
     }
 
     @OperationMapping(operations = {
             NotEquals.class
     })
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
-        Pair leftValue = (Pair) left.getValue();
-        Pair rightValue = (Pair) right.getValue();
+    public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
+        Pair<?, ?> leftValue = (Pair<?, ?>) left.getValue();
+        Pair<?, ?> rightValue = (Pair<?, ?>) right.getValue();
         return !leftValue.equals(rightValue);
     }
 

@@ -23,7 +23,7 @@ public class StringType extends DataTypeExpression {
     @OperationMapping(operations = {
             Equals.class
     })
-    public boolean equal(LiteralExpression left, LiteralExpression right) {
+    public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
         String leftValue = left.getValue().toString();
         String rightValue = right.getValue().toString();
 
@@ -43,7 +43,7 @@ public class StringType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotEquals.class
     })
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         String leftValue = left.getValue().toString();
         String rightValue = right.getValue().toString();
 
@@ -60,7 +60,7 @@ public class StringType extends DataTypeExpression {
     @OperationMapping(operations = {
             LessThan.class
     })
-    public boolean less(LiteralExpression left, LiteralExpression right) {
+    public boolean less(LiteralExpression<?> left, LiteralExpression<?> right) {
         String leftValue = left.getValue().toString();
         String rightValue = right.getValue().toString();
         return leftValue.length() < rightValue.length();
@@ -69,7 +69,7 @@ public class StringType extends DataTypeExpression {
     @OperationMapping(operations = {
             LessEqual.class
     })
-    public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean lessEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         String leftValue = left.getValue().toString();
         String rightValue = right.getValue().toString();
         return leftValue.length() <= rightValue.length();
@@ -78,7 +78,7 @@ public class StringType extends DataTypeExpression {
     @OperationMapping(operations = {
             GreaterThan.class
     })
-    public boolean greater(LiteralExpression left, LiteralExpression right) {
+    public boolean greater(LiteralExpression<?> left, LiteralExpression<?> right) {
         String leftValue = left.getValue().toString();
         String rightValue = right.getValue().toString();
         return leftValue.length() > rightValue.length();
@@ -87,7 +87,7 @@ public class StringType extends DataTypeExpression {
     @OperationMapping(operations = {
             GreaterEqual.class
     })
-    public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean greaterEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         String leftValue = (String) left.getValue();
         String rightValue = (String) right.getValue();
         return leftValue.length() >= rightValue.length();
@@ -96,7 +96,7 @@ public class StringType extends DataTypeExpression {
     @OperationMapping(operations = {
             In.class
     })
-    public boolean in(LiteralExpression left, LiteralExpression right) {
+    public boolean in(LiteralExpression<?> left, LiteralExpression<?> right) {
 
         String leftValue = left.getValue().toString();
 
@@ -131,7 +131,7 @@ public class StringType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotIn.class
     })
-    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+    public boolean notIn(LiteralExpression<?> left, LiteralExpression<?> right) {
         return !in(left, right);
     }
 

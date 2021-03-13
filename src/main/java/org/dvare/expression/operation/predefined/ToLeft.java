@@ -17,12 +17,12 @@ import org.dvare.util.DataTypeMapping;
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
-@Operation(type = OperationType.TO_KEY)
-public class ToKey extends ChainOperationExpression {
+@Operation(type = OperationType.TO_LEFT)
+public class ToLeft extends ChainOperationExpression {
 
 
-    public ToKey() {
-        super(OperationType.TO_KEY);
+    public ToLeft() {
+        super(OperationType.TO_LEFT);
     }
 
 
@@ -35,7 +35,7 @@ public class ToKey extends ChainOperationExpression {
                 Object tupleValue = literalExpression.getValue();
 
                 if (tupleValue instanceof Pair) {
-                    Object key = ((Pair<?, ?>) tupleValue).getKey();
+                    Object key = ((Pair<?, ?>) tupleValue).getLeft();
                     if (key != null) {
                         try {
                             return LiteralType.getLiteralExpression(key, DataTypeMapping.getTypeMapping(key.getClass()));

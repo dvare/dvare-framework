@@ -19,10 +19,10 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class PairListTest {
+public class TripleListTest {
 
     @Test
-    public void pairTest() throws ExpressionParseException, InterpretException {
+    public void testApp1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -31,17 +31,17 @@ public class PairListTest {
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
 
-        Expression expression = factory.getParser().fromString("Pair (Variable1,Variable2)", contexts);
+        Expression expression = factory.getParser().fromString("Triple (Variable1,Variable2,Variable3)", contexts);
 
         assertNotNull(expression);
 
 
-        assertEquals(expression.toString().trim(), "Pair(self.Variable1, self.Variable2)");
+        assertEquals(expression.toString().trim(), "Triple(self.Variable1, self.Variable2, self.Variable3)");
 
     }
 
     @Test
-    public void toPairOperationTest() throws ExpressionParseException, InterpretException {
+    public void testApp2() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -50,7 +50,7 @@ public class PairListTest {
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
 
-        Expression expression = factory.getParser().fromString("toPair(Variable1,Variable2)", contexts);
+        Expression expression = factory.getParser().fromString("toTriple(Variable1,Variable2,Variable3)", contexts);
 
         assertNotNull(expression);
 
@@ -58,7 +58,7 @@ public class PairListTest {
     }
 
     @Test
-    public void toPairToKeyTest() throws ExpressionParseException, InterpretException {
+    public void testApp2P1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -67,7 +67,7 @@ public class PairListTest {
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
 
-        Expression expression = factory.getParser().fromString("toPair(Variable1,Variable2) -> toKey() = '42964'", contexts);
+        Expression expression = factory.getParser().fromString("toTriple(Variable1,Variable2,Variable3) -> toLeft() = '42964'", contexts);
 
         assertNotNull(expression);
 
@@ -75,6 +75,7 @@ public class PairListTest {
         ListTestModel dataRow = new ListTestModel();
         dataRow.setVariable1("42964");
         dataRow.setVariable2(1);
+        dataRow.setVariable3(1.4f);
 
         InstancesBinding instancesBinding = new InstancesBinding();
         instancesBinding.addInstance("self", dataRow);
@@ -84,7 +85,14 @@ public class PairListTest {
         boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
         assertTrue(result);
 
-        expression = factory.getParser().fromString("toPair(Variable1,Variable2) -> toValue() = 1", contexts);
+        expression = factory.getParser().fromString("toTriple(Variable1,Variable2,Variable3) -> toMiddle() = 1", contexts);
+        assertNotNull(expression);
+
+        evaluator = factory.getEvaluator();
+        result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
+        assertTrue(result);
+
+        expression = factory.getParser().fromString("toTriple(Variable1,Variable2,Variable3) -> toRight() = 1.4", contexts);
         assertNotNull(expression);
 
         evaluator = factory.getEvaluator();
@@ -93,7 +101,7 @@ public class PairListTest {
     }
 
     @Test(expected = ExpressionParseException.class)
-    public void variableToPairTest() throws ExpressionParseException, InterpretException {
+    public void testApp3() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -101,13 +109,13 @@ public class PairListTest {
         TypeBinding typeBinding = ExpressionParser.translate(ListTestModel.class);
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
-        factory.getParser().fromString("Pair (Variable1)", contexts);
+        factory.getParser().fromString("Triple (Variable1)", contexts);
 
 
     }
 
     @Test
-    public void pairListToKeysTest() throws ExpressionParseException, InterpretException {
+    public void testApp4() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -117,7 +125,7 @@ public class PairListTest {
         contexts.addContext("self", typeBinding);
 
 
-        Expression expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> Keys() ->notEmpty()", contexts);
+        Expression expression = factory.getParser().fromString("Triple (Variable2,Variable1,Variable3) -> Keys() ->notEmpty()", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
 
@@ -132,7 +140,7 @@ public class PairListTest {
         assertTrue(result);
 
 
-        expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> Keys() ->notEmpty() and Pair (Variable2,Variable1) -> Keys() = [1,3,2]", contexts);
+        expression = factory.getParser().fromString("Triple (Variable2,Variable1,Variable3) -> Keys() ->notEmpty() and Triple (Variable2,Variable1,Variable3) -> lefts() = [1,3,2]", contexts);
 
         rule = new RuleBinding(expression);
 
@@ -143,7 +151,7 @@ public class PairListTest {
     }
 
     @Test
-    public void pairListToValuesTest() throws ExpressionParseException, InterpretException {
+    public void testApp5() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -153,7 +161,7 @@ public class PairListTest {
         contexts.addContext("self", typeBinding);
 
 
-        Expression expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> values() ->notEmpty()", contexts);
+        Expression expression = factory.getParser().fromString("Triple (Variable2,Variable1,Variable3) -> values() ->notEmpty()", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
 
@@ -169,7 +177,7 @@ public class PairListTest {
         assertTrue(result);
 
 
-        expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> values() ->notEmpty() and Pair (Variable2,Variable1) -> values() = ['42964','42456','42459']", contexts);
+        expression = factory.getParser().fromString("Triple (Variable2,Variable1,Variable3) -> middles() ->notEmpty() and Triple (Variable2,Variable1,Variable3) -> middles() = ['42964','42456','42459']", contexts);
 
         rule = new RuleBinding(expression);
 
@@ -177,7 +185,7 @@ public class PairListTest {
         assertTrue(result);
 
 
-        expression = factory.getParser().fromString("Pair (Variable2,Variable1->substring(1,4)) -> values() = ['4296','4245','4245']", contexts);
+        expression = factory.getParser().fromString("Triple (Variable2,Variable3,Variable1->substring(1,4)) -> values() = ['4296','4245','4245']", contexts);
 
         rule = new RuleBinding(expression);
 
@@ -187,7 +195,7 @@ public class PairListTest {
     }
 
     @Test
-    public void pairListWithPredefineFuntionTest() throws ExpressionParseException, InterpretException {
+    public void testApp6() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -197,7 +205,7 @@ public class PairListTest {
         contexts.addContext("self", typeBinding);
 
 
-        Expression expression = factory.getParser().fromString("Pair (Variable2,Variable1->substring(1,4)) -> values() = ['4296','4245','4245']", contexts);
+        Expression expression = factory.getParser().fromString("Triple (Variable2,Variable3,Variable1->substring(1,4)) -> values() = ['4296','4245','4245']", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
 
@@ -216,7 +224,7 @@ public class PairListTest {
     }
 
     @Test
-    public void pairValuesLastTest() throws ExpressionParseException, InterpretException {
+    public void testApp7() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -226,13 +234,12 @@ public class PairListTest {
         contexts.addContext("self", typeBinding);
 
 
-        Expression expression = factory.getParser().fromString("Pair (Variable2,Variable1) -> values() ->last() = '42459'", contexts);
+        Expression expression = factory.getParser().fromString("Triple (Variable2,Variable3,Variable1) -> values() ->last() = '42459'", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
 
 
         List<ListTestModel> dataSet = getListTestModels();
-
         InstancesBinding instancesBinding = new InstancesBinding();
         instancesBinding.addInstance("self", dataSet);
 
@@ -244,7 +251,7 @@ public class PairListTest {
     }
 
     @Test
-    public void pairListSortByKeysAndCompareByLastKeyTest() throws ExpressionParseException, InterpretException {
+    public void testApp8() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -254,10 +261,9 @@ public class PairListTest {
         contexts.addContext("self", typeBinding);
 
 
-        Expression expression = factory.getParser().fromString("Pair (Variable2,Variable1) ->sort() -> keys() ->last() = 3", contexts);
+        Expression expression = factory.getParser().fromString("Triple (Variable2,Variable1,Variable3) ->sort() -> keys() ->last() = 3", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
-
 
         List<ListTestModel> dataSet = getListTestModels();
 
@@ -271,7 +277,7 @@ public class PairListTest {
     }
 
     @Test
-    public void pairListSortByKeysAndCompareByLastValueTest() throws ExpressionParseException, InterpretException {
+    public void testApp9() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -281,78 +287,11 @@ public class PairListTest {
         contexts.addContext("self", typeBinding);
 
 
-        Expression expression = factory.getParser().fromString("Pair (Variable2,Variable1) ->sort() -> values() ->last() = '42456'", contexts);
+        Expression expression = factory.getParser().fromString("Triple (Variable2,Variable3,Variable1) ->sort() -> values() ->last() = '42456'", contexts);
 
         RuleBinding rule = new RuleBinding(expression);
 
 
-        List<ListTestModel> dataSet = getListTestModels();
-
-        InstancesBinding instancesBinding = new InstancesBinding();
-        instancesBinding.addInstance("self", dataSet);
-
-        RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        assertTrue(result);
-
-    }
-
-
-    @Test
-    public void pairLestFilterTest() throws ExpressionParseException, InterpretException {
-
-        RuleConfiguration factory = new RuleConfiguration();
-
-
-        ContextsBinding contexts = new ContextsBinding();
-        contexts.addContext("self", ListTestModel.class);
-
-
-        Expression expression = factory.getParser().fromString("" +
-                "Pair (Variable2,Variable1) ->filter(let temp:PairType ->getKey() ->toInteger() != 3) " +
-                "->sort() -> values() ->last() = '42459'", contexts);
-
-        RuleBinding rule = new RuleBinding(expression);
-
-
-        List<ListTestModel> dataSet = getListTestModels();
-
-        InstancesBinding instancesBinding = new InstancesBinding();
-        instancesBinding.addInstance("self", dataSet);
-
-        RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        assertTrue(result);
-
-    }
-
-
-    @Test
-    public void pairListFilterAndVariableAssignmentTest() throws ExpressionParseException, InterpretException {
-
-        RuleConfiguration factory = new RuleConfiguration();
-
-
-        ContextsBinding contexts = new ContextsBinding();
-        contexts.addContext("self", ListTestModel.class);
-
-
-        Expression expression = factory.getParser().fromString("" +
-                "def tmp.pairList:PairListType := PairList (Variable2,Variable1) ->filter(let tmp:PairType ->getKey() ->toInteger() != 3) " +
-                "tmp.pairList ->values() ->notEmpty() and tmp.pairList ->values() = ['42964','42459']", contexts);
-
-        List<ListTestModel> dataSet = getListTestModels();
-
-        InstancesBinding instancesBinding = new InstancesBinding();
-        instancesBinding.addInstance("self", dataSet);
-
-        RuleEvaluator evaluator = factory.getEvaluator();
-        boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
-        assertTrue(result);
-    }
-
-
-    private List<ListTestModel> getListTestModels() {
         List<ListTestModel> dataSet = new ArrayList<>();
 
 
@@ -371,7 +310,93 @@ public class PairListTest {
         valuesObject3.setVariable1("42459");
         valuesObject3.setVariable2(2);
         dataSet.add(valuesObject3);
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertTrue(result);
+
+    }
+
+    @Test
+    public void testApp10() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ListTestModel.class);
+
+
+        Expression expression = factory.getParser().fromString("" +
+                "Triple (Variable2,Variable3, Variable1) ->filter(let tmp.tripleVariable:TripleType ->getKey() ->toInteger() != 3) " +
+                "->sort() -> values() ->last() = '42459'", contexts);
+
+        RuleBinding rule = new RuleBinding(expression);
+
+
+        List<ListTestModel> dataSet = getListTestModels();
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
+        assertTrue(result);
+
+    }
+
+
+    @Test
+    public void testApp11() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ListTestModel.class);
+
+
+        Expression expression = factory.getParser().fromString("" +
+                "def tmp.tripleList:TripleListType := tripleList (Variable2,Variable3,Variable1) ->filter(let tmp:TripleType ->getKey() ->toInteger() != 3) " +
+                "tmp.tripleList ->values() ->notEmpty() and tmp.tripleList ->values() = ['42964','42459']", contexts);
+
+        List<ListTestModel> dataSet = getListTestModels();
+
+        InstancesBinding instancesBinding = new InstancesBinding();
+        instancesBinding.addInstance("self", dataSet);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
+        assertTrue(result);
+    }
+
+
+    private List<ListTestModel> getListTestModels() {
+        List<ListTestModel> dataSet = new ArrayList<>();
+
+        ListTestModel valuesObject1 = new ListTestModel();
+        valuesObject1.setVariable1("42964");
+        valuesObject1.setVariable2(1);
+        valuesObject1.setVariable3(1.4f);
+        dataSet.add(valuesObject1);
+
+        ListTestModel valuesObject2 = new ListTestModel();
+        valuesObject2.setVariable1("42456");
+        valuesObject2.setVariable2(3);
+        valuesObject2.setVariable3(1.5f);
+        dataSet.add(valuesObject2);
+
+
+        ListTestModel valuesObject3 = new ListTestModel();
+        valuesObject3.setVariable1("42459");
+        valuesObject3.setVariable2(2);
+        valuesObject3.setVariable3(1.6f);
+
+        dataSet.add(valuesObject3);
         return dataSet;
     }
-}
 
+}

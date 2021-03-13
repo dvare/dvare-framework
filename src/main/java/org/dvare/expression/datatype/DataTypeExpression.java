@@ -10,7 +10,6 @@ import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.util.DataTypeMapping;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
@@ -43,8 +42,8 @@ public abstract class DataTypeExpression extends Expression {
     }
 
 
-    public LiteralExpression evaluate(OperationExpression operationExpression,
-                                      LiteralExpression left, LiteralExpression right) throws InterpretException {
+    public LiteralExpression<?> evaluate(OperationExpression operationExpression,
+                                         LiteralExpression<?> left, LiteralExpression<?> right) throws InterpretException {
 
 
         try {
@@ -65,7 +64,7 @@ public abstract class DataTypeExpression extends Expression {
                     return LiteralType.getLiteralExpression(result, type);
                 }
             }
-            return new NullLiteral();
+            return new NullLiteral<>();
 
         } catch (Exception m) {
             if (m instanceof InvocationTargetException && m.getCause() != null) {
@@ -77,12 +76,11 @@ public abstract class DataTypeExpression extends Expression {
     }
 
 
-    private String getMethodName(Class operation) {
+    private String getMethodName(Class<?> operation) {
         for (Method method : this.getClass().getMethods()) {
 
             if (method.isAnnotationPresent(OperationMapping.class)) {
-                Annotation annotation = method.getAnnotation(OperationMapping.class);
-                OperationMapping operationMapping = (OperationMapping) annotation;
+                OperationMapping operationMapping = method.getAnnotation(OperationMapping.class);
                 if (Arrays.asList(operationMapping.operations()).contains(operation)) {
                     return method.getName();
                 }
@@ -92,49 +90,6 @@ public abstract class DataTypeExpression extends Expression {
         return null;
     }
 
-
-    /*public boolean equal(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    public boolean less(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    public boolean greater(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    public boolean in(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    public boolean notIn(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    public boolean between(LiteralExpression left, LiteralExpression right) {
-        throw new UnsupportedOperationException();
-    }*/
 
     Date toDate(Object value) {
 
@@ -149,7 +104,7 @@ public abstract class DataTypeExpression extends Expression {
         }
 
         try {
-            LiteralExpression literalExpression = LiteralType.getLiteralExpression(value.toString());
+            LiteralExpression<?> literalExpression = LiteralType.getLiteralExpression(value.toString());
             if (literalExpression.getType().equals(DateType.class)
                     || literalExpression.getType().equals(DateTimeType.class)
                     || literalExpression.getType().equals(SimpleDateType.class)) {
@@ -174,14 +129,14 @@ public abstract class DataTypeExpression extends Expression {
 
     LocalDate toLocalDate(Object value) {
         if (value instanceof LocalDateTime) {
-            return LocalDateTime.class.cast(value).toLocalDate();
+            return ((LocalDateTime) value).toLocalDate();
         } else if (value instanceof LocalDate) {
             return (LocalDate) value;
         } else if (value instanceof Date) {
-            return Date.class.cast(value).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            return ((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         }
         try {
-            LiteralExpression literalExpression = LiteralType.getLiteralExpression(value.toString());
+            LiteralExpression<?> literalExpression = LiteralType.getLiteralExpression(value.toString());
             if (literalExpression.getType().equals(DateType.class)
                     || literalExpression.getType().equals(DateTimeType.class)
                     || literalExpression.getType().equals(SimpleDateType.class)) {
@@ -205,14 +160,14 @@ public abstract class DataTypeExpression extends Expression {
 
     LocalDateTime toLocalDateTime(Object value) {
         if (value instanceof LocalDateTime) {
-            return LocalDateTime.class.cast(value);
+            return (LocalDateTime) value;
         } else if (value instanceof LocalDate) {
-            return LocalDate.class.cast(value).atStartOfDay(ZoneId.systemDefault()).toLocalDateTime();
+            return ((LocalDate) value).atStartOfDay(ZoneId.systemDefault()).toLocalDateTime();
         } else if (value instanceof Date) {
-            return Date.class.cast(value).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            return ((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         } else {
             try {
-                LiteralExpression literalExpression = LiteralType.getLiteralExpression(value.toString());
+                LiteralExpression<?> literalExpression = LiteralType.getLiteralExpression(value.toString());
                 if (literalExpression.getType().equals(DateType.class)
                         || literalExpression.getType().equals(DateTimeType.class)
                         || literalExpression.getType().equals(SimpleDateType.class)) {

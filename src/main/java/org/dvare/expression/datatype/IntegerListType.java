@@ -26,7 +26,7 @@ public class IntegerListType extends ListType {
     @OperationMapping(operations = {
             Equals.class
     })
-    public boolean equal(LiteralExpression left, LiteralExpression right) {
+    public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
         List<Integer> leftValues = buildIntegerList((List<?>) left.getValue());
         List<Integer> rightValues = buildIntegerList((List<?>) right.getValue());
         return leftValues.equals(rightValues);
@@ -36,7 +36,7 @@ public class IntegerListType extends ListType {
     @OperationMapping(operations = {
             NotEquals.class
     })
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         List<Integer> leftValues = buildIntegerList((List<?>) left.getValue());
         List<Integer> rightValues = buildIntegerList((List<?>) right.getValue());
         return !leftValues.equals(rightValues);
@@ -47,7 +47,7 @@ public class IntegerListType extends ListType {
     @OperationMapping(operations = {
             In.class
     })
-    public boolean in(LiteralExpression left, LiteralExpression right) {
+    public boolean in(LiteralExpression<?> left, LiteralExpression<?> right) {
         List<Integer> leftValues = buildIntegerList((List<?>) left.getValue());
         List<Integer> rightValues = buildIntegerList((List<?>) right.getValue());
         return rightValues.containsAll(leftValues);
@@ -56,7 +56,7 @@ public class IntegerListType extends ListType {
     @OperationMapping(operations = {
             NotIn.class
     })
-    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+    public boolean notIn(LiteralExpression<?> left, LiteralExpression<?> right) {
         List<Integer> leftValues = buildIntegerList((List<?>) left.getValue());
         List<Integer> rightValues = buildIntegerList((List<?>) right.getValue());
         return !rightValues.containsAll(leftValues);

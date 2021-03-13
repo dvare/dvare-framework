@@ -358,7 +358,7 @@ public class Match extends OperationExpression {
 
 
     private List<?> buildMatchParams(LiteralExpression<?> literalExpression) {
-        List<Object> matchParams = new ArrayList<>();
+        List matchParams = new ArrayList<>();
         if (literalExpression instanceof ListLiteral) {
             ListLiteral listLiteral = (ListLiteral) literalExpression;
             if (listLiteral.getValue() != null) {

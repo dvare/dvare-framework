@@ -1,43 +1,40 @@
 package org.dvare.expression.datatype;
 
-
+import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
-import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.relational.Equals;
 import org.dvare.expression.operation.relational.NotEquals;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
-@Type(dataType = DataType.SimpleDateListType)
-public class SimpleDateListType extends ListType {
-    public SimpleDateListType() {
-        super(DataType.SimpleDateListType);
+@Type(dataType = DataType.TripleType)
+public class TripleType extends DataTypeExpression {
+    public TripleType() {
+        super(DataType.TripleType);
+
     }
 
     @OperationMapping(operations = {
             Equals.class
     })
     public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
-        if (left instanceof ListLiteral && right instanceof ListLiteral) {
-            List<Date> leftValues = buildDateList(((ListLiteral) left).getValue());
-            List<Date> rightValues = buildDateList(((ListLiteral) right).getValue());
-            return leftValues.equals(rightValues);
-
-        }
-        return false;
+        Triple<?, ?, ?> leftValue = (Triple<?, ?, ?>) left.getValue();
+        Triple<?, ?, ?> rightValue = (Triple<?, ?, ?>) right.getValue();
+        return leftValue.equals(rightValue);
     }
 
     @OperationMapping(operations = {
             NotEquals.class
     })
     public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
-        return !equal(left, right);
+        Triple<?, ?, ?> leftValue = (Triple<?, ?, ?>) left.getValue();
+        Triple<?, ?, ?> rightValue = (Triple<?, ?, ?>) right.getValue();
+        return !leftValue.equals(rightValue);
     }
+
+
 }

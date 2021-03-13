@@ -1,6 +1,7 @@
 package org.dvare.expression.operation.list;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -32,11 +33,11 @@ public class FilterOperation extends ListOperationExpression {
 
         if (values != null) {
 
-            List includedValues = values;
+            List<?> includedValues = values;
             if (rightOperand.size() == 1) {
                 Expression includeParam = rightOperand.get(0);
-                if (isPairList(values)) {
-                    includedValues = pairFilter(instancesBinding, includeParam, values);
+                if (isPairList(values) || isTripleList(values)) {
+                    includedValues = toupleFilter(instancesBinding, includeParam, values);
                 } else {
                     includedValues = includedFilter(includeParam, instancesBinding, values);
                 }
@@ -50,9 +51,9 @@ public class FilterOperation extends ListOperationExpression {
     }
 
 
-    private List<?> pairFilter(InstancesBinding instancesBinding,
-                               Expression includeParam, List values) throws InterpretException {
-        List<Pair> includedValues = new ArrayList<>();
+    private List<?> toupleFilter(InstancesBinding instancesBinding,
+                                 Expression includeParam, List<?> values) throws InterpretException {
+        List includedValues = new ArrayList<>();
         if (includeParam instanceof LogicalOperationExpression) {
 
 
@@ -64,10 +65,18 @@ public class FilterOperation extends ListOperationExpression {
 
             for (Object value : values) {
                 if (value instanceof Pair) {
-                    Pair valuePair = (Pair) value;
-                    Boolean result = solveLogical(operationExpression, instancesBinding, valuePair);
+                    Pair<?, ?> valuePair = (Pair<?, ?>) value;
+                    boolean result = solveLogical(operationExpression, instancesBinding, valuePair);
                     if (result) {
                         includedValues.add(valuePair);
+                    }
+                    operationExpression.setLeftOperand(left);
+                    operationExpression.setRightOperand(right);
+                } else if (value instanceof Triple) {
+                    Triple<?, ?, ?> triplePair = (Triple<?, ?, ?>) value;
+                    boolean result = solveLogical(operationExpression, instancesBinding, triplePair);
+                    if (result) {
+                        includedValues.add(triplePair);
                     }
                     operationExpression.setLeftOperand(left);
                     operationExpression.setRightOperand(right);
@@ -80,11 +89,18 @@ public class FilterOperation extends ListOperationExpression {
 
             for (Object value : values) {
                 if (value instanceof Pair) {
-                    Pair valuePair = (Pair) value;
+                    Pair<?, ?> valuePair = (Pair<?, ?>) value;
                     Boolean result = buildEqualityOperationExpression(includeParam,
                             instancesBinding, valuePair);
                     if (result) {
                         includedValues.add(valuePair);
+                    }
+                } else if (value instanceof Triple) {
+                    Triple<?, ?, ?> triplePair = (Triple<?, ?, ?>) value;
+                    Boolean result = buildEqualityOperationExpression(includeParam,
+                            instancesBinding, triplePair);
+                    if (result) {
+                        includedValues.add(triplePair);
                     }
                 }
             }

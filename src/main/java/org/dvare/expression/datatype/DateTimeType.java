@@ -22,7 +22,7 @@ public class DateTimeType extends DataTypeExpression {
     @OperationMapping(operations = {
             Equals.class
     })
-    public boolean equal(LiteralExpression left, LiteralExpression right) {
+    public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
         LocalDateTime leftValue = toLocalDateTime(left.getValue());
         LocalDateTime rightValue = toLocalDateTime(right.getValue());
         return leftValue.compareTo(rightValue) == 0;
@@ -31,7 +31,7 @@ public class DateTimeType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotEquals.class
     })
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         LocalDateTime leftValue = toLocalDateTime(left.getValue());
         LocalDateTime rightValue = toLocalDateTime(right.getValue());
         return leftValue.compareTo(rightValue) != 0;
@@ -40,7 +40,7 @@ public class DateTimeType extends DataTypeExpression {
     @OperationMapping(operations = {
             LessThan.class
     })
-    public boolean less(LiteralExpression left, LiteralExpression right) {
+    public boolean less(LiteralExpression<?> left, LiteralExpression<?> right) {
         LocalDateTime leftValue = toLocalDateTime(left.getValue());
         LocalDateTime rightValue = toLocalDateTime(right.getValue());
         return leftValue.compareTo(rightValue) < 0;
@@ -50,7 +50,7 @@ public class DateTimeType extends DataTypeExpression {
             LessEqual.class
     })
 
-    public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean lessEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         LocalDateTime leftValue = toLocalDateTime(left.getValue());
         LocalDateTime rightValue = toLocalDateTime(right.getValue());
         return leftValue.compareTo(rightValue) <= 0;
@@ -59,7 +59,7 @@ public class DateTimeType extends DataTypeExpression {
     @OperationMapping(operations = {
             GreaterThan.class
     })
-    public boolean greater(LiteralExpression left, LiteralExpression right) {
+    public boolean greater(LiteralExpression<?> left, LiteralExpression<?> right) {
         LocalDateTime leftValue = toLocalDateTime(left.getValue());
         LocalDateTime rightValue = toLocalDateTime(right.getValue());
         return leftValue.compareTo(rightValue) > 0;
@@ -68,7 +68,7 @@ public class DateTimeType extends DataTypeExpression {
     @OperationMapping(operations = {
             GreaterEqual.class
     })
-    public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean greaterEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         LocalDateTime leftValue = toLocalDateTime(left.getValue());
         LocalDateTime rightValue = toLocalDateTime(right.getValue());
         return leftValue.compareTo(rightValue) >= 0;
@@ -77,7 +77,7 @@ public class DateTimeType extends DataTypeExpression {
     @OperationMapping(operations = {
             In.class
     })
-    public boolean in(LiteralExpression left, LiteralExpression right) {
+    public boolean in(LiteralExpression<?> left, LiteralExpression<?> right) {
         LocalDateTime leftValue = toLocalDateTime(left.getValue());
         List<LocalDateTime> rightValues = buildDateTimeList((List<?>) right.getValue());
         return rightValues.contains(leftValue);
@@ -86,7 +86,7 @@ public class DateTimeType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotIn.class
     })
-    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+    public boolean notIn(LiteralExpression<?> left, LiteralExpression<?> right) {
         LocalDateTime leftValue = toLocalDateTime(left.getValue());
         List<LocalDateTime> rightValues = buildDateTimeList((List<?>) right.getValue());
         return !rightValues.contains(leftValue);
@@ -95,7 +95,7 @@ public class DateTimeType extends DataTypeExpression {
     @OperationMapping(operations = {
             Between.class
     })
-    public boolean between(LiteralExpression left, LiteralExpression right) {
+    public boolean between(LiteralExpression<?> left, LiteralExpression<?> right) {
         LocalDateTime leftValue = toLocalDateTime(left.getValue());
         List<LocalDateTime> values = buildDateTimeList((List<?>) right.getValue());
         LocalDateTime lower = values.get(0);

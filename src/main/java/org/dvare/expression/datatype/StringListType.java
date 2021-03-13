@@ -27,7 +27,7 @@ public class StringListType extends ListType {
     @OperationMapping(operations = {
             Equals.class
     })
-    public boolean equal(LiteralExpression left, LiteralExpression right) {
+    public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
         List<String> leftValues = buildStringList((List<?>) left.getValue());
         List<String> rightValues = buildStringList((List<?>) right.getValue());
         return leftValues.equals(rightValues);
@@ -37,7 +37,7 @@ public class StringListType extends ListType {
     @OperationMapping(operations = {
             NotEquals.class
     })
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         List<String> leftValues = buildStringList((List<?>) left.getValue());
         List<String> rightValues = buildStringList((List<?>) right.getValue());
         return !leftValues.equals(rightValues);
@@ -48,7 +48,7 @@ public class StringListType extends ListType {
     @OperationMapping(operations = {
             In.class
     })
-    public boolean in(LiteralExpression left, LiteralExpression right) {
+    public boolean in(LiteralExpression<?> left, LiteralExpression<?> right) {
         List<String> leftValues = buildStringList((List<?>) left.getValue());
         List<String> rightValues = buildStringList((List<?>) right.getValue());
         return rightValues.containsAll(leftValues);
@@ -57,7 +57,7 @@ public class StringListType extends ListType {
     @OperationMapping(operations = {
             NotIn.class
     })
-    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+    public boolean notIn(LiteralExpression<?> left, LiteralExpression<?> right) {
         List<String> leftValues = buildStringList((List<?>) left.getValue());
         List<String> rightValues = buildStringList((List<?>) right.getValue());
         return !rightValues.containsAll(leftValues);

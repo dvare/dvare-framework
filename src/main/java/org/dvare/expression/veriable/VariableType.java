@@ -2,6 +2,7 @@ package org.dvare.expression.veriable;
 
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.annotations.Type;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.parser.IllegalPropertyException;
@@ -29,15 +30,15 @@ public class VariableType {
     private static final Logger logger = LoggerFactory.getLogger(VariableType.class);
 
 
-    public static VariableExpression getVariableExpression(String name, DataType type, String operandType) throws IllegalPropertyException {
-        VariableExpression variableExpression = getVariableExpression(name, type);
+    public static VariableExpression<?> getVariableExpression(String name, DataType type, String operandType) throws IllegalPropertyException {
+        VariableExpression<?> variableExpression = getVariableExpression(name, type);
         variableExpression.setOperandType(operandType);
         return variableExpression;
     }
 
 
-    public static VariableExpression getVariableExpression(String name, DataType type) throws IllegalPropertyException {
-        VariableExpression variableExpression;
+    public static VariableExpression<?> getVariableExpression(String name, DataType type) throws IllegalPropertyException {
+        VariableExpression<?> variableExpression;
 
         if (name == null)
             throw new IllegalPropertyException("The provided string must not be null");
@@ -114,12 +115,22 @@ public class VariableType {
                 break;
             }
 
+            case TripleType: {
+                variableExpression = new TripleVariable(name);
+                break;
+            }
+
+            case TripleListType: {
+                variableExpression = new ListVariable(name, TripleType.class);
+                break;
+            }
+
             case RegexType: {
                 variableExpression = new StringVariable(name);
                 break;
             }
             default: {
-                String message = String.format("Type of Variable Expression {} not found", name);
+                String message = String.format("Type of Variable Expression %s not found", name);
                 logger.error(message);
                 throw new IllegalPropertyException(message);
             }
@@ -132,12 +143,12 @@ public class VariableType {
     }
 
 
-    public static VariableExpression setVariableValue(VariableExpression variable, Object object) throws IllegalPropertyValueException {
+    public static VariableExpression<?> setVariableValue(VariableExpression<?> variable, Object object) throws IllegalPropertyValueException {
         Object value = ValueFinder.findValue(variable.getName(), object);
         return setValue(variable, value);
     }
 
-    private static VariableExpression setValue(VariableExpression variable, Object value) throws IllegalPropertyValueException {
+    private static VariableExpression<?> setValue(VariableExpression<?> variable, Object value) throws IllegalPropertyValueException {
 
         if (variable == null) {
             return null;
@@ -150,16 +161,16 @@ public class VariableType {
         }
 
         if (variable.getType().isAnnotationPresent(Type.class)) {
-            Type type = (Type) variable.getType().getAnnotation(Type.class);
+            Type type = variable.getType().getAnnotation(Type.class);
             DataType dataType = type.dataType();
             switch (dataType) {
                 case BooleanType: {
                     if (variable instanceof ListVariable) {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
-                            listVariable.setValue((List) value);
+                            listVariable.setValue((List<?>) value);
                         } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList(Boolean[].class.cast(value)));
+                            listVariable.setValue(Arrays.asList((Boolean[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof Boolean) {
@@ -186,9 +197,9 @@ public class VariableType {
                     if (variable instanceof ListVariable) {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
-                            listVariable.setValue((List) value);
+                            listVariable.setValue((List<?>) value);
                         } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList(Float[].class.cast(value)));
+                            listVariable.setValue(Arrays.asList((Float[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof Float) {
@@ -225,9 +236,9 @@ public class VariableType {
                     if (variable instanceof ListVariable) {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
-                            listVariable.setValue((List) value);
+                            listVariable.setValue((List<?>) value);
                         } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList(Integer[].class.cast(value)));
+                            listVariable.setValue(Arrays.asList((Integer[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof Integer) {
@@ -263,9 +274,9 @@ public class VariableType {
                     if (variable instanceof ListVariable) {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
-                            listVariable.setValue((List) value);
+                            listVariable.setValue((List<?>) value);
                         } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList(String[].class.cast(value)));
+                            listVariable.setValue(Arrays.asList((String[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             values.add(value);
@@ -287,9 +298,9 @@ public class VariableType {
                     if (variable instanceof ListVariable) {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
-                            listVariable.setValue((List) value);
+                            listVariable.setValue((List<?>) value);
                         } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList(Pair[].class.cast(value)));
+                            listVariable.setValue(Arrays.asList((Pair<?, ?>[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             values.add(value);
@@ -298,7 +309,28 @@ public class VariableType {
                     } else if (variable instanceof PairVariable) {
                         PairVariable pairVariable = (PairVariable) variable;
                         if (value instanceof Pair) {
-                            pairVariable.setValue((Pair) value);
+                            pairVariable.setValue((Pair<?, ?>) value);
+                        }
+                    }
+                    break;
+                }
+
+                case TripleType: {
+                    if (variable instanceof ListVariable) {
+                        ListVariable listVariable = (ListVariable) variable;
+                        if (value instanceof List) {
+                            listVariable.setValue((List<?>) value);
+                        } else if (value.getClass().isArray()) {
+                            listVariable.setValue(Arrays.asList((Triple<?, ?, ?>[]) value));
+                        } else {
+                            List<Object> values = new ArrayList<>();
+                            values.add(value);
+                            listVariable.setValue(values);
+                        }
+                    } else if (variable instanceof TripleVariable) {
+                        TripleVariable tripleVariable = (TripleVariable) variable;
+                        if (value instanceof Triple) {
+                            tripleVariable.setValue((Triple<?, ?, ?>) value);
                         }
                     }
                     break;
@@ -307,9 +339,9 @@ public class VariableType {
                     if (variable instanceof ListVariable) {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
-                            listVariable.setValue((List) value);
+                            listVariable.setValue((List<?>) value);
                         } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList(LocalDateTime[].class.cast(value)));
+                            listVariable.setValue(Arrays.asList((LocalDateTime[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof LocalDateTime) {
@@ -353,9 +385,9 @@ public class VariableType {
                     if (variable instanceof ListVariable) {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
-                            listVariable.setValue((List) value);
+                            listVariable.setValue((List<?>) value);
                         } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList(LocalDate[].class.cast(value)));
+                            listVariable.setValue(Arrays.asList((LocalDate[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof LocalDate) {
@@ -402,9 +434,9 @@ public class VariableType {
                     if (variable instanceof ListVariable) {
                         ListVariable listVariable = (ListVariable) variable;
                         if (value instanceof List) {
-                            listVariable.setValue((List) value);
+                            listVariable.setValue((List<?>) value);
                         } else if (value.getClass().isArray()) {
-                            listVariable.setValue(Arrays.asList(Date[].class.cast(value)));
+                            listVariable.setValue(Arrays.asList((Date[]) value));
                         } else {
                             List<Object> values = new ArrayList<>();
                             if (value instanceof Date) {

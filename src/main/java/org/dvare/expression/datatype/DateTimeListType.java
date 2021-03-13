@@ -24,10 +24,10 @@ public class DateTimeListType extends ListType {
     @OperationMapping(operations = {
             Equals.class
     })
-    public boolean equal(LiteralExpression left, LiteralExpression right) {
+    public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
         if (left instanceof ListLiteral && right instanceof ListLiteral) {
-            List<LocalDateTime> leftValues = buildDateTimeList(ListLiteral.class.cast(left).getValue());
-            List<LocalDateTime> rightValues = buildDateTimeList(ListLiteral.class.cast(right).getValue());
+            List<LocalDateTime> leftValues = buildDateTimeList(((ListLiteral) left).getValue());
+            List<LocalDateTime> rightValues = buildDateTimeList(((ListLiteral) right).getValue());
             return leftValues.equals(rightValues);
 
         }
@@ -37,7 +37,7 @@ public class DateTimeListType extends ListType {
     @OperationMapping(operations = {
             NotEquals.class
     })
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         return !equal(left, right);
     }
 }

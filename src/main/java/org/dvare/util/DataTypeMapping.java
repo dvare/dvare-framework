@@ -13,6 +13,36 @@ import java.util.Date;
  */
 public class DataTypeMapping {
 
+    public static DataType getDataTypeListDataType(String type) {
+        return getDataTypeListDataType(DataType.valueOf(type));
+    }
+
+    public static DataType getDataTypeListDataType(DataType type) {
+
+        switch (type) {
+            case BooleanType:
+                return DataType.BooleanListType;
+            case FloatType:
+                return DataType.FloatListType;
+            case IntegerType:
+                return DataType.IntegerListType;
+            case StringType:
+                return DataType.StringListType;
+            case DateTimeType:
+                return DataType.DateTimeListType;
+            case DateType:
+                return DataType.DateListType;
+            case SimpleDateType:
+                return DataType.SimpleDateListType;
+            case PairType:
+                return DataType.PairListType;
+
+        }
+        return type;
+
+    }
+
+
     public static Class<? extends DataTypeExpression> getDataTypeClass(String type) {
         return getDataTypeClass(DataType.valueOf(type));
     }
@@ -64,6 +94,12 @@ public class DataTypeMapping {
 
             }
 
+            case TripleType:
+            case TripleListType: {
+                return TripleType.class;
+
+            }
+
             case RegexType: {
 
                 return RegexType.class;
@@ -74,63 +110,42 @@ public class DataTypeMapping {
 
     }
 
-    public static DataType getTypeMapping(Class type) {
+    public static DataType getTypeMapping(Class<?> type) {
         return getTypeMapping(type.getSimpleName());
     }
 
     public static DataType getTypeMapping(String type) {
 
         switch (type) {
-            case "Boolean": {
-                return DataType.BooleanType;
-            }
-
-
-            case "Boolean[]": {
-                return DataType.BooleanListType;
-            }
-
-
+            case "Boolean":
             case "boolean": {
                 return DataType.BooleanType;
             }
 
+            case "Boolean[]":
             case "boolean[]": {
                 return DataType.BooleanListType;
             }
 
 
-            case "Integer": {
-                return DataType.IntegerType;
-            }
-
-
-            case "Integer[]": {
-                return DataType.IntegerListType;
-            }
-
-
+            case "Integer":
             case "int": {
                 return DataType.IntegerType;
             }
 
+
+            case "Integer[]":
             case "int[]": {
                 return DataType.IntegerListType;
             }
 
 
-            case "Float": {
-                return DataType.FloatType;
-            }
-
-
-            case "Float[]": {
-                return DataType.FloatListType;
-            }
+            case "Float":
             case "float": {
                 return DataType.FloatType;
             }
 
+            case "Float[]":
             case "float[]": {
                 return DataType.FloatListType;
             }
@@ -154,7 +169,6 @@ public class DataTypeMapping {
             case "LocalDate": {
                 return DataType.DateType;
             }
-
 
             case "LocalDate[]": {
                 return DataType.DateListType;
@@ -185,11 +199,11 @@ public class DataTypeMapping {
 
     }
 
-    public static Class getDataTypeMapping(String type) {
+    public static Class<?> getDataTypeMapping(String type) {
         return getDataTypeMapping(DataType.valueOf(type));
     }
 
-    public static Class getDataTypeMapping(DataType type) {
+    public static Class<?> getDataTypeMapping(DataType type) {
 
         switch (type) {
             case BooleanType: {
@@ -256,10 +270,7 @@ public class DataTypeMapping {
                 return Pair[].class;
 
             }
-
-
             case RegexType: {
-
                 return String.class;
             }
 

@@ -25,7 +25,7 @@ public class BooleanType extends DataTypeExpression {
     @OperationMapping(operations = {
             Equals.class
     })
-    public boolean equal(LiteralExpression left, LiteralExpression right) {
+    public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
         Boolean leftValue = (Boolean) left.getValue();
         Boolean rightValue = (Boolean) right.getValue();
         return leftValue.equals(rightValue);
@@ -34,7 +34,7 @@ public class BooleanType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotEquals.class
     })
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         Boolean leftValue = (Boolean) left.getValue();
         Boolean rightValue = (Boolean) right.getValue();
         return !leftValue.equals(rightValue);

@@ -29,10 +29,10 @@ public class ListType extends DataTypeExpression {
     @OperationMapping(operations = {
             Equals.class
     })
-    public boolean equal(LiteralExpression left, LiteralExpression right) {
+    public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
         if (left instanceof ListLiteral && right instanceof ListLiteral) {
-            List leftValues = ((ListLiteral) left).getValue();
-            List rightValues = ((ListLiteral) right).getValue();
+            List<?> leftValues = ((ListLiteral) left).getValue();
+            List<?> rightValues = ((ListLiteral) right).getValue();
             return leftValues.equals(rightValues);
 
         }
@@ -42,7 +42,7 @@ public class ListType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotEquals.class
     })
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         return !equal(left, right);
     }
 
@@ -50,7 +50,7 @@ public class ListType extends DataTypeExpression {
     @OperationMapping(operations = {
             In.class
     })
-    public boolean in(LiteralExpression left, LiteralExpression right) {
+    public boolean in(LiteralExpression<?> left, LiteralExpression<?> right) {
         if (left instanceof ListLiteral && right instanceof ListLiteral) {
             List<?> leftValues = ((ListLiteral) left).getValue();
             List<?> rightValues = ((ListLiteral) right).getValue();
@@ -64,7 +64,7 @@ public class ListType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotIn.class
     })
-    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+    public boolean notIn(LiteralExpression<?> left, LiteralExpression<?> right) {
         return !in(left, right);
     }
 

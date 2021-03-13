@@ -25,7 +25,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             Equals.class
     })
-    public boolean equal(LiteralExpression left, LiteralExpression right) {
+    public boolean equal(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
 
         if (right.getValue() instanceof Float) {
@@ -41,7 +41,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotEquals.class
     })
-    public boolean notEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
 
 
@@ -57,7 +57,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             LessThan.class
     })
-    public boolean less(LiteralExpression left, LiteralExpression right) {
+    public boolean less(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
         if (right.getValue() instanceof Float) {
             return leftValue < (Float) right.getValue();
@@ -71,7 +71,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             LessEqual.class
     })
-    public boolean lessEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean lessEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
 
 
@@ -88,7 +88,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             GreaterThan.class
     })
-    public boolean greater(LiteralExpression left, LiteralExpression right) {
+    public boolean greater(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
 
         if (right.getValue() instanceof Float) {
@@ -104,7 +104,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             GreaterEqual.class
     })
-    public boolean greaterEqual(LiteralExpression left, LiteralExpression right) {
+    public boolean greaterEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
 
         if (right.getValue() instanceof Float) {
@@ -119,7 +119,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             In.class
     })
-    public boolean in(LiteralExpression left, LiteralExpression right) {
+    public boolean in(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
         List<Integer> rightValues = buildIntegerList((List<?>) right.getValue());
         return rightValues.contains(leftValue);
@@ -128,7 +128,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             NotIn.class
     })
-    public boolean notIn(LiteralExpression left, LiteralExpression right) {
+    public boolean notIn(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
         List<Integer> rightValues = buildIntegerList((List<?>) right.getValue());
         return !rightValues.contains(leftValue);
@@ -137,7 +137,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             Between.class
     })
-    public boolean between(LiteralExpression left, LiteralExpression right) {
+    public boolean between(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
         List<Integer> rightValues = buildIntegerList((List<?>) right.getValue());
         Integer lower = rightValues.get(0);
@@ -156,7 +156,7 @@ public class IntegerType extends DataTypeExpression {
             org.dvare.expression.operation.aggregation.Sum.class,
             Add.class
     })
-    public Integer sum(LiteralExpression left, LiteralExpression right) {
+    public Integer sum(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
         Integer rightValue = (Integer) right.getValue();
         return leftValue + rightValue;
@@ -165,7 +165,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             Subtract.class
     })
-    public Integer sub(LiteralExpression left, LiteralExpression right) {
+    public Integer sub(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
         Integer rightValue = (Integer) right.getValue();
         return leftValue - rightValue;
@@ -174,7 +174,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             Multiply.class
     })
-    public Integer mul(LiteralExpression left, LiteralExpression right) {
+    public Integer mul(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
         Integer rightValue = (Integer) right.getValue();
         return leftValue * rightValue;
@@ -183,7 +183,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             Divide.class
     })
-    public Integer div(LiteralExpression left, LiteralExpression right) {
+    public Integer div(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
         Integer rightValue = (Integer) right.getValue();
         return leftValue / rightValue;
@@ -192,7 +192,7 @@ public class IntegerType extends DataTypeExpression {
     @OperationMapping(operations = {
             Power.class
     })
-    public Integer pow(LiteralExpression left, LiteralExpression right) {
+    public Integer pow(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
         if (right.getValue() instanceof Integer) {
             return (int) Math.pow(leftValue, (Integer) right.getValue());
@@ -206,7 +206,7 @@ public class IntegerType extends DataTypeExpression {
             Minimum.class,
             Min.class
     })
-    public Integer min(LiteralExpression left, LiteralExpression right) {
+    public Integer min(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
         Integer rightValue = (Integer) right.getValue();
         return Integer.min((leftValue), rightValue);
@@ -216,7 +216,7 @@ public class IntegerType extends DataTypeExpression {
             Maximum.class,
             Max.class
     })
-    public Integer max(LiteralExpression left, LiteralExpression right) {
+    public Integer max(LiteralExpression<?> left, LiteralExpression<?> right) {
         Integer leftValue = (Integer) left.getValue();
         Integer rightValue = (Integer) right.getValue();
         return Integer.max((leftValue), rightValue);

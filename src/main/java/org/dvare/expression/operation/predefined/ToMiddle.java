@@ -1,6 +1,5 @@
 package org.dvare.expression.operation.predefined;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
@@ -17,12 +16,14 @@ import org.dvare.util.DataTypeMapping;
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
-@Operation(type = OperationType.TO_VALUE)
-public class ToValue extends ChainOperationExpression {
+@Operation(type = OperationType.TO_MIDDLE)
+public class ToMiddle extends ChainOperationExpression {
 
-    public ToValue() {
-        super(OperationType.TO_VALUE);
+
+    public ToMiddle() {
+        super(OperationType.TO_MIDDLE);
     }
+
 
     @Override
     public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
@@ -31,17 +32,8 @@ public class ToValue extends ChainOperationExpression {
 
             Object tupleValue = literalExpression.getValue();
 
-            if (tupleValue instanceof Pair) {
-                Object value = ((Pair<?, ?>) tupleValue).getValue();
-                if (value != null) {
-                    try {
-                        return LiteralType.getLiteralExpression(value, DataTypeMapping.getTypeMapping(value.getClass()));
-                    } catch (IllegalValueException e) {
-                        logger.error(e.getMessage(), e);
-                    }
-                }
-            } else if (tupleValue instanceof Triple) {
-                Object value = ((Triple<?, ?, ?>) tupleValue).getRight();
+            if (tupleValue instanceof Triple) {
+                Object value = ((Triple<?, ?, ?>) tupleValue).getMiddle();
                 if (value != null) {
                     try {
                         return LiteralType.getLiteralExpression(value, DataTypeMapping.getTypeMapping(value.getClass()));

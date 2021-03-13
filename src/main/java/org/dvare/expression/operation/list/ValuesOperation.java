@@ -1,6 +1,7 @@
 package org.dvare.expression.operation.list;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -12,8 +13,6 @@ import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.ListOperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.util.DataTypeMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +23,6 @@ import java.util.List;
  */
 @Operation(type = OperationType.VALUES)
 public class ValuesOperation extends ListOperationExpression {
-    private static final Logger logger = LoggerFactory.getLogger(ValuesOperation.class);
-
 
     public ValuesOperation() {
         super(OperationType.VALUES);
@@ -41,6 +38,8 @@ public class ValuesOperation extends ListOperationExpression {
 
             if (isPairList(values)) {
                 values = extractPairValues(values);
+            } else if (isTripleList(values)) {
+                values = extractTripleValues(values);
             }
 
             if (!rightOperand.isEmpty()) {
@@ -67,12 +66,30 @@ public class ValuesOperation extends ListOperationExpression {
             dataTypeExpression = null;
             for (Object pairObject : pairList) {
                 if (pairObject instanceof Pair) {
-                    Pair pair = (Pair) pairObject;
+                    Pair<?, ?> pair = (Pair<?, ?>) pairObject;
                     if (dataTypeExpression == null && pair.getValue() != null) {
                         DataType dataType = DataTypeMapping.getTypeMapping(pair.getValue().getClass());
                         dataTypeExpression = DataTypeMapping.getDataTypeClass(dataType);
                     }
                     pairValues.add(pair.getValue());
+                }
+            }
+        }
+        return pairValues;
+    }
+
+    private List<?> extractTripleValues(List<?> tripleList) {
+        List<Object> pairValues = new ArrayList<>();
+        if (tripleList != null && !tripleList.isEmpty()) {
+            dataTypeExpression = null;
+            for (Object pairObject : tripleList) {
+                if (pairObject instanceof Triple) {
+                    Triple<?, ?, ?> pair = (Triple<?, ?, ?>) pairObject;
+                    if (dataTypeExpression == null && pair.getRight() != null) {
+                        DataType dataType = DataTypeMapping.getTypeMapping(pair.getRight().getClass());
+                        dataTypeExpression = DataTypeMapping.getDataTypeClass(dataType);
+                    }
+                    pairValues.add(pair.getRight());
                 }
             }
         }
