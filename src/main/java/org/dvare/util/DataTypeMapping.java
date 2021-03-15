@@ -1,6 +1,7 @@
 package org.dvare.util;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.expression.datatype.*;
 
 import java.time.LocalDate;
@@ -53,55 +54,50 @@ public class DataTypeMapping {
             case BooleanType:
             case BooleanListType: {
                 return BooleanType.class;
-
             }
+
             case FloatType:
             case FloatListType: {
-
                 return FloatType.class;
             }
+
             case IntegerType:
             case IntegerListType: {
                 return IntegerType.class;
-
             }
+
             case StringType:
             case StringListType: {
-
                 return StringType.class;
             }
+
             case DateTimeType:
             case DateTimeListType: {
-
                 return DateTimeType.class;
             }
+
             case DateType:
             case DateListType: {
                 return DateType.class;
-
             }
 
 
             case SimpleDateType:
             case SimpleDateListType: {
                 return SimpleDateType.class;
-
             }
 
             case PairType:
             case PairListType: {
                 return PairType.class;
-
             }
 
             case TripleType:
             case TripleListType: {
                 return TripleType.class;
-
             }
 
             case RegexType: {
-
                 return RegexType.class;
             }
 
@@ -194,6 +190,18 @@ public class DataTypeMapping {
             case "MutablePair[]": {
                 return DataType.PairListType;
             }
+
+            case "Triple":
+            case "ImmutableTriple":
+            case "MutableTriple": {
+                return DataType.TripleType;
+            }
+
+            case "Triple[]":
+            case "ImmutableTriple[]":
+            case "MutableTriple[]": {
+                return DataType.TripleListType;
+            }
         }
         return null;
 
@@ -208,67 +216,57 @@ public class DataTypeMapping {
         switch (type) {
             case BooleanType: {
                 return Boolean.class;
-
             }
             case BooleanListType: {
                 return Boolean[].class;
-
             }
             case FloatType: {
                 return Float.class;
             }
             case FloatListType: {
-
                 return Float[].class;
             }
             case IntegerType: {
                 return Integer.class;
-
             }
             case IntegerListType: {
                 return Integer[].class;
-
             }
             case StringType: {
-
                 return String.class;
             }
             case StringListType: {
-
                 return String[].class;
             }
             case DateTimeType: {
-
                 return LocalDateTime.class;
             }
             case DateTimeListType: {
-
                 return LocalDateTime[].class;
             }
             case DateType: {
                 return LocalDate.class;
-
             }
             case DateListType: {
                 return LocalDate[].class;
-
             }
             case SimpleDateType: {
                 return Date.class;
-
             }
             case SimpleDateListType: {
                 return Date[].class;
-
             }
-
-
             case PairType: {
                 return Pair.class;
             }
             case PairListType: {
                 return Pair[].class;
-
+            }
+            case TripleType: {
+                return Triple.class;
+            }
+            case TripleListType: {
+                return Triple[].class;
             }
             case RegexType: {
                 return String.class;

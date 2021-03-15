@@ -211,20 +211,83 @@ public class AssignOperationExpression extends OperationExpression {
 
                 default: {
 
-                    if (variableExpression instanceof ListVariable) {
-                        if (value instanceof List) {
-                            aggregation = setValue(aggregation, variableName, value);
-                        } else {
-                            aggregation = setValue(aggregation, variableName, Arrays.asList(value));
-                        }
-
-                    } else {
-                        aggregation = setValue(aggregation, variableName, literalExpression.getValue());
-                    }
+                    aggregation = updateValue(aggregation, variableExpression, literalExpression, variableName, value);
                 }
             }
         } else {
             aggregation = setValue(aggregation, variableName, null);
+        }
+        return aggregation;
+    }
+
+
+    private Object updateIntegerVaue(Object aggregation, VariableExpression<?> variableExpression, String variableName, Object value) throws IllegalPropertyValueException {
+        if (variableExpression instanceof ListVariable) {
+            if (value instanceof List) {
+                aggregation = setValue(aggregation, variableName, value);
+            } else {
+                List<Object> values = new ArrayList<>();
+                if (value instanceof Integer) {
+
+                    values.add(value);
+                } else {
+                    values.add(Integer.parseInt("" + value));
+                }
+                aggregation = setValue(aggregation, variableName, values);
+            }
+
+        } else if (variableExpression instanceof IntegerVariable) {
+            if (value instanceof Integer) {
+                aggregation = setValue(aggregation, variableName, value);
+            } else {
+                aggregation = setValue(aggregation, variableName, Integer.parseInt("" + value));
+            }
+        }
+        return aggregation;
+    }
+
+    private Object updateFloatValue(Object aggregation, VariableExpression<?> variableExpression, LiteralExpression<?> literalExpression, String variableName, Object value) throws IllegalPropertyValueException {
+        if (variableExpression instanceof ListVariable) {
+            if (value instanceof List) {
+                aggregation = setValue(aggregation, variableName, value);
+            } else {
+                List<Object> values = new ArrayList<>();
+                if (value instanceof Float) {
+                    values.add(value);
+                } else {
+                    values.add(Float.parseFloat("" + value));
+                }
+                aggregation = setValue(aggregation, variableName, values);
+            }
+
+        } else if (variableExpression instanceof FloatVariable) {
+            if (value instanceof Float) {
+
+                aggregation = setValue(aggregation, variableName, literalExpression.getValue());
+            } else {
+                aggregation = setValue(aggregation, variableName, Float.parseFloat("" + value));
+            }
+        }
+        return aggregation;
+    }
+
+
+    private Object updateStringValue(Object aggregation, VariableExpression<?> variableExpression, String variableName, Object value) throws IllegalPropertyValueException {
+        if (variableExpression instanceof ListVariable) {
+            if (value instanceof List) {
+                aggregation = setValue(aggregation, variableName, value);
+            } else {
+                aggregation = setValue(aggregation, variableName, Collections.singletonList(TrimString.trim(value.toString())));
+            }
+
+        } else if (variableExpression instanceof StringVariable) {
+            if (value instanceof String) {
+                value = TrimString.trim((String) value);
+                aggregation = setValue(aggregation, variableName, value);
+            } else {
+                value = TrimString.trim(value.toString());
+                aggregation = setValue(aggregation, variableName, value);
+            }
         }
         return aggregation;
     }
@@ -265,74 +328,19 @@ public class AssignOperationExpression extends OperationExpression {
         return aggregation;
     }
 
-    private Object updateStringValue(Object aggregation, VariableExpression<?> variableExpression, String variableName, Object value) throws IllegalPropertyValueException {
+    private Object updateValue(Object aggregation, VariableExpression<?> variableExpression, LiteralExpression<?> literalExpression, String variableName, Object value) throws IllegalPropertyValueException {
         if (variableExpression instanceof ListVariable) {
             if (value instanceof List) {
                 aggregation = setValue(aggregation, variableName, value);
             } else {
-                aggregation = setValue(aggregation, variableName, Collections.singletonList(TrimString.trim(value.toString())));
+                aggregation = setValue(aggregation, variableName, Arrays.asList(value));
             }
 
-        } else if (variableExpression instanceof StringVariable) {
-            if (value instanceof String) {
-                value = TrimString.trim((String) value);
-                aggregation = setValue(aggregation, variableName, value);
-            } else {
-                value = TrimString.trim(value.toString());
-                aggregation = setValue(aggregation, variableName, value);
-            }
+        } else {
+            aggregation = setValue(aggregation, variableName, literalExpression.getValue());
         }
         return aggregation;
     }
 
-    private Object updateFloatValue(Object aggregation, VariableExpression<?> variableExpression, LiteralExpression<?> literalExpression, String variableName, Object value) throws IllegalPropertyValueException {
-        if (variableExpression instanceof ListVariable) {
-            if (value instanceof List) {
-                aggregation = setValue(aggregation, variableName, value);
-            } else {
-                List<Object> values = new ArrayList<>();
-                if (value instanceof Float) {
-                    values.add(value);
-                } else {
-                    values.add(Float.parseFloat("" + value));
-                }
-                aggregation = setValue(aggregation, variableName, values);
-            }
-
-        } else if (variableExpression instanceof FloatVariable) {
-            if (value instanceof Float) {
-
-                aggregation = setValue(aggregation, variableName, literalExpression.getValue());
-            } else {
-                aggregation = setValue(aggregation, variableName, Float.parseFloat("" + value));
-            }
-        }
-        return aggregation;
-    }
-
-    private Object updateIntegerVaue(Object aggregation, VariableExpression<?> variableExpression, String variableName, Object value) throws IllegalPropertyValueException {
-        if (variableExpression instanceof ListVariable) {
-            if (value instanceof List) {
-                aggregation = setValue(aggregation, variableName, value);
-            } else {
-                List<Object> values = new ArrayList<>();
-                if (value instanceof Integer) {
-
-                    values.add(value);
-                } else {
-                    values.add(Integer.parseInt("" + value));
-                }
-                aggregation = setValue(aggregation, variableName, values);
-            }
-
-        } else if (variableExpression instanceof IntegerVariable) {
-            if (value instanceof Integer) {
-                aggregation = setValue(aggregation, variableName, value);
-            } else {
-                aggregation = setValue(aggregation, variableName, Integer.parseInt("" + value));
-            }
-        }
-        return aggregation;
-    }
 
 }

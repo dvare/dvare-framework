@@ -33,7 +33,7 @@ public abstract class VariableExpression<T> extends Expression {
     }
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         if (instancesBinding != null) {
             Object instance = instancesBinding.getInstance(operandType);
             if (instance instanceof List) {
