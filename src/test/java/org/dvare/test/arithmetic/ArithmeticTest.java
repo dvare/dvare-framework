@@ -11,8 +11,8 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ArithmeticOperation;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
@@ -45,7 +45,7 @@ public class ArithmeticTest {
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", arithmeticOperation);
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class ArithmeticTest {
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", arithmeticOperation);
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class ArithmeticTest {
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", arithmeticOperation);
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 
@@ -127,7 +127,7 @@ public class ArithmeticTest {
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", arithmeticOperation);
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 }

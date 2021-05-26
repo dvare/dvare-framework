@@ -12,12 +12,11 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.Assert.assertTrue;
 
 public class DefTest {
     @Test
@@ -34,40 +33,33 @@ public class DefTest {
         RuleBinding rule = new RuleBinding(expression);
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, new InstancesBinding());
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 
-    @Test(expected = ExpressionParseException.class)
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    @Test
+    public void testApp2() throws ExpressionParseException {
         RuleConfiguration factory = new RuleConfiguration();
-        String exp = " def newVariable:IntegerType := 4 + 5 ; " +
-                "def result:BooleanType := false ; " +
-                "def result:BooleanType := newVariable > 7";
 
-
-        factory.getParser().fromString(exp, new ContextsBinding());
-
-
-        exp = " def newVariable:IntegerType := 4 + 5 ; " +
+        String exp2 = " def newVariable:IntegerType := 4 + 5 ; " +
                 "def result:BooleanType := false ; " +
                 "def result := newVariable > 7";
 
-
-        factory.getParser().fromString(exp, new ContextsBinding());
-
+        Assertions.assertThrows(ExpressionParseException.class, () -> {
+            factory.getParser().fromString(exp2, new ContextsBinding());
+        });
     }
 
-    @Test(expected = ExpressionParseException.class)
-    public void testApp2P1() throws ExpressionParseException, InterpretException {
+    @Test
+    public void testApp2P1() {
         RuleConfiguration factory = new RuleConfiguration();
         String exp = " def newVariable:IntegerType := 4 + 5 ; " +
                 "def result:BooleanType := false ; " +
                 "def result := newVariable > 7";
 
-
-        factory.getParser().fromString(exp, new ContextsBinding());
-
+        Assertions.assertThrows(ExpressionParseException.class, () -> {
+            factory.getParser().fromString(exp, new ContextsBinding());
+        });
     }
 
     @Test
@@ -113,7 +105,7 @@ public class DefTest {
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(50);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -159,7 +151,7 @@ public class DefTest {
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(10);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -207,7 +199,7 @@ public class DefTest {
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(25);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 

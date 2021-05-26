@@ -1,8 +1,8 @@
 package org.dvare.expression.veriable;
 
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.expression.datatype.PairType;
+import org.dvare.util.Pair;
 
 /**
  * @author Muhammad Hammad

@@ -189,7 +189,7 @@ public abstract class OperationExpression extends Expression {
             toStringBuilder.append(" ");
         }
 
-        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(operationType.getTokens().get(0));
         toStringBuilder.append(" ");
 
         if (rightOperand != null) {
@@ -219,7 +219,7 @@ public abstract class OperationExpression extends Expression {
     }
 
     public List<String> getSymbols() {
-        return this.operationType.getSymbols();
+        return this.operationType.getTokens();
     }
 
     protected enum Side {

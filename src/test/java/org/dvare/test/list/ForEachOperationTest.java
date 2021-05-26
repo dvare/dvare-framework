@@ -11,8 +11,8 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ForEachOperation;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,7 +58,7 @@ public class ForEachOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 
@@ -95,7 +95,7 @@ public class ForEachOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 
@@ -131,7 +131,7 @@ public class ForEachOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 

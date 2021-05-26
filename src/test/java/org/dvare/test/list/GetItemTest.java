@@ -11,12 +11,11 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ListTestModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class GetItemTest {
 
@@ -59,7 +58,7 @@ public class GetItemTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         String result = (String) evaluator.evaluate(rule, instancesBinding);
-        assertEquals("42964", result);
+        Assertions.assertEquals("42964", result);
     }
 
     @Test
@@ -101,7 +100,7 @@ public class GetItemTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         String result = (String) evaluator.evaluate(rule, instancesBinding);
-        assertEquals("42456", result);
+        Assertions.assertEquals("42456", result);
     }
 
     @Test
@@ -144,7 +143,7 @@ public class GetItemTest {
         RuleEvaluator evaluator = factory.getEvaluator();
         String result = (String) evaluator.evaluate(rule, instancesBinding);
 
-        assertEquals("42964", result);
+        Assertions.assertEquals("42964", result);
     }
 
 

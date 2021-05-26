@@ -12,8 +12,8 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ArithmeticOperation;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class PredefinedStringOperationTest {
 
@@ -33,7 +33,7 @@ public class PredefinedStringOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 
@@ -53,7 +53,7 @@ public class PredefinedStringOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class PredefinedStringOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 
@@ -103,7 +103,7 @@ public class PredefinedStringOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -122,6 +122,6 @@ public class PredefinedStringOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
     }
 }

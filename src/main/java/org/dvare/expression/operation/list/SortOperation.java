@@ -1,6 +1,5 @@
 package org.dvare.expression.operation.list;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
@@ -17,6 +16,7 @@ import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.utility.LetOperation;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.util.DataTypeMapping;
+import org.dvare.util.Pair;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

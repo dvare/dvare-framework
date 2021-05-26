@@ -15,14 +15,13 @@ import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.EqualOperation;
 import org.dvare.test.dataobjects.ListTestModel;
 import org.dvare.util.ValueFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.assertTrue;
 
 public class ConditionChainTest {
 
@@ -56,7 +55,7 @@ public class ConditionChainTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, dataSet);
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -102,7 +101,7 @@ public class ConditionChainTest {
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(70);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -150,7 +149,7 @@ public class ConditionChainTest {
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(40);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -197,7 +196,7 @@ public class ConditionChainTest {
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(20);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -237,7 +236,7 @@ public class ConditionChainTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 
@@ -278,7 +277,7 @@ public class ConditionChainTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 

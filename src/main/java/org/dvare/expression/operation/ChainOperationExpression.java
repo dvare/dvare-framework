@@ -110,7 +110,7 @@ public abstract class ChainOperationExpression extends OperationExpression {
             toStringBuilder.append(" -> ");
         }
 
-        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(operationType.getTokens().get(0));
 
 
         if (rightOperand != null) {

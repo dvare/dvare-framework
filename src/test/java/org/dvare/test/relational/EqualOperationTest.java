@@ -14,12 +14,12 @@ import org.dvare.test.dataobjects.ArithmeticOperation;
 import org.dvare.test.dataobjects.EqualOperation;
 import org.dvare.test.dataobjects.Function;
 import org.dvare.test.dataobjects.NotEqualOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EqualOperationTest {
 
@@ -132,7 +132,7 @@ public class EqualOperationTest {
     }
 
     @Test
-    public void nustedVariableEqualTest() throws ExpressionParseException, InterpretException, ParseException {
+    public void nustedVariableEqualTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

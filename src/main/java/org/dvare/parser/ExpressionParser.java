@@ -1,6 +1,5 @@
 package org.dvare.parser;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
@@ -14,6 +13,7 @@ import org.dvare.expression.operation.CompositeOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
+import org.dvare.util.ClassUtils;
 import org.dvare.util.DataTypeMapping;
 import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public class ExpressionParser {
         TypeBinding typeBinding = new TypeBinding();
 
 
-        Field[] fields = FieldUtils.getAllFields(types);
+        Field[] fields = ClassUtils.getAllFields(types);
         for (Field field : fields) {
             String type = field.getType().getSimpleName();
             String name = field.getName();
@@ -109,7 +109,6 @@ public class ExpressionParser {
         }
         return typeBinding;
     }
-
 
     public Expression fromString(String expr, Map<String, String> types) throws ExpressionParseException {
         TypeBinding typeBinding = translate(types);

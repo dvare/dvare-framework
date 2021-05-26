@@ -12,12 +12,12 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ListTestModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TripleListTest {
 
@@ -25,7 +25,6 @@ public class TripleListTest {
     public void testApp1() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
-
 
         TypeBinding typeBinding = ExpressionParser.translate(ListTestModel.class);
         ContextsBinding contexts = new ContextsBinding();
@@ -35,16 +34,13 @@ public class TripleListTest {
 
         assertNotNull(expression);
 
-
         assertEquals(expression.toString().trim(), "Triple(self.Variable1, self.Variable2, self.Variable3)");
-
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void testApp2() throws ExpressionParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
-
 
         TypeBinding typeBinding = ExpressionParser.translate(ListTestModel.class);
         ContextsBinding contexts = new ContextsBinding();
@@ -53,7 +49,6 @@ public class TripleListTest {
         Expression expression = factory.getParser().fromString("toTriple(Variable1,Variable2,Variable3)", contexts);
 
         assertNotNull(expression);
-
 
     }
 
@@ -100,17 +95,18 @@ public class TripleListTest {
         assertTrue(result);
     }
 
-    @Test(expected = ExpressionParseException.class)
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    @Test
+    public void testApp3() {
 
         RuleConfiguration factory = new RuleConfiguration();
-
 
         TypeBinding typeBinding = ExpressionParser.translate(ListTestModel.class);
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
-        factory.getParser().fromString("Triple (Variable1)", contexts);
 
+        assertThrows(ExpressionParseException.class, () -> {
+            factory.getParser().fromString("Triple (Variable1)", contexts);
+        });
 
     }
 

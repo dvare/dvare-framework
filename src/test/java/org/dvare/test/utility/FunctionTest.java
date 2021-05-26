@@ -13,7 +13,8 @@ import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.Function;
 import org.dvare.util.ValueFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,8 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.assertTrue;
 
 
 public class FunctionTest {
@@ -32,7 +31,7 @@ public class FunctionTest {
     @Test
     public void testApp() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
+        RuleConfiguration configuration = new RuleConfiguration("org.dvare.util");
 
         Expression expression = configuration.getParser().fromString("Variable1 = fun ( addFiveFunction , Variable2, Variable3 )", Function.class);
         RuleBinding rule = new RuleBinding(expression);
@@ -45,7 +44,7 @@ public class FunctionTest {
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
 
 
     }
@@ -53,7 +52,7 @@ public class FunctionTest {
     @Test
     public void testApp1() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
+        RuleConfiguration configuration = new RuleConfiguration("org.dvare.util");
 
         Expression expression = configuration.getParser().fromString("Variable3 = fun ( addFunction , Variable1, Variable2 )->toString()", Function.class);
         RuleBinding rule = new RuleBinding(expression);
@@ -66,13 +65,13 @@ public class FunctionTest {
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     public void testApp2() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
+        RuleConfiguration configuration = new RuleConfiguration("org.dvare.util");
 
         Expression expression = configuration.getParser().fromString("Variable1 = fun( addTenFunction , Variable2, [4,5,6] )", Function.class);
         RuleBinding rule = new RuleBinding(expression);
@@ -84,13 +83,13 @@ public class FunctionTest {
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     public void testApp3() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
+        RuleConfiguration configuration = new RuleConfiguration("org.dvare.util");
 
         Expression expression = configuration.getParser().fromString("Variable1 = 20 and fun ( addTenFunction , Variable2, [4,5,6] )->toString() = '20'", Function.class);
         RuleBinding rule = new RuleBinding(expression);
@@ -102,13 +101,13 @@ public class FunctionTest {
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     public void testApp4() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
+        RuleConfiguration configuration = new RuleConfiguration("org.dvare.util");
 
         String types = "{Variable1:IntegerType, Variable3:StringType }";
 
@@ -124,13 +123,13 @@ public class FunctionTest {
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     public void testApp5() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
+        RuleConfiguration configuration = new RuleConfiguration("org.dvare.util");
 
         Expression expression = configuration.getParser().fromString("Variable1 = fun ( addTenFunction , Variable3->toInteger(), [4,5,6] ) and fun ( addTenFunction , Variable3->toInteger(), [4,5,6] ) <= 20", Function.class);
         RuleBinding rule = new RuleBinding(expression);
@@ -142,13 +141,13 @@ public class FunctionTest {
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     public void testApp6() throws ExpressionParseException, InterpretException, ClassNotFoundException {
 
-        RuleConfiguration factory = new RuleConfiguration(new String[]{"org.dvare.util"});
+        RuleConfiguration factory = new RuleConfiguration("org.dvare.util");
 
 
         Map<String, String> aggregationTypes = new HashMap<>();
@@ -192,13 +191,13 @@ public class FunctionTest {
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(30);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     public void testApp7() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
+        RuleConfiguration configuration = new RuleConfiguration("org.dvare.util");
 
 
         Expression expression = configuration.getParser().fromString("Variable2 := fun( addTenFunction , 5, [self.Variable1] )", Function.class);
@@ -215,13 +214,13 @@ public class FunctionTest {
 
         boolean result = ValueFinder.findValue("Variable2", resultModel).equals(15);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     public void testAp8() throws ExpressionParseException, InterpretException {
 
-        RuleConfiguration configuration = new RuleConfiguration(new String[]{"org.dvare.util"});
+        RuleConfiguration configuration = new RuleConfiguration("org.dvare.util");
 
         Expression expression = configuration.getParser().fromString("Variable1 = fun( Variable3 , Variable2, [4,5,6] )", Function.class);
         RuleBinding rule = new RuleBinding(expression);
@@ -236,7 +235,7 @@ public class FunctionTest {
         RuleEvaluator evaluator = configuration.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, function);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 }

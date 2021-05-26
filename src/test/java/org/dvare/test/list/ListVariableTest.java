@@ -10,8 +10,8 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +40,7 @@ public class ListVariableTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 
@@ -66,7 +66,7 @@ public class ListVariableTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 
@@ -89,13 +89,13 @@ public class ListVariableTest {
         Expression expression = factory.getParser().fromString(exp, contexts);
 
         boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
         exp = "testStringListVariable -> notEmpty()";
         expression = factory.getParser().fromString(exp, contexts);
 
         result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
 

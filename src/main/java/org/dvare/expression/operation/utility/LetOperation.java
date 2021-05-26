@@ -125,7 +125,7 @@ public class LetOperation extends OperationExpression {
     public String toString() {
         StringBuilder toStringBuilder = new StringBuilder();
 
-        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(operationType.getTokens().get(0));
         toStringBuilder.append(" ");
 
         if (leftOperand != null) {

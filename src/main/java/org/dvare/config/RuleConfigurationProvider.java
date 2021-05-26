@@ -68,7 +68,7 @@ public class RuleConfigurationProvider {
         for (Class<?> _class : classes) {
             Operation annotation = _class.getAnnotation(org.dvare.annotations.Operation.class);
             if (annotation != null) {
-                configurationRegistry.registerOperation((Class<? extends OperationExpression>) _class, annotation.type().getSymbols());
+                configurationRegistry.registerOperation((Class<? extends OperationExpression>) _class, annotation.type().getTokens());
             }
         }
     }

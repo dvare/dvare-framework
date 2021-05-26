@@ -9,12 +9,12 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionTokenizer;
 import org.dvare.test.dataobjects.Parenthesis;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ParenthesisTest {
     @Test
@@ -52,19 +52,19 @@ public class ParenthesisTest {
 
         String expr = "Variable1 = ('dvare(framework)')";
 
-        String tokens[] = ExpressionTokenizer.toToken(expr);
+        String[] tokens = ExpressionTokenizer.toToken(expr);
 
         assertEquals(tokens.length, 5);
 
     }
 
     @Test
-    public void testApp2() throws ExpressionParseException, InterpretException {
+    public void testApp2() throws ExpressionParseException {
 
 
         String expr = "Variable1 = ('dvare(framework)' )";
 
-        String tokens[] = ExpressionTokenizer.toToken(expr);
+        String[] tokens = ExpressionTokenizer.toToken(expr);
 
         assertEquals(tokens.length, 5);
 
@@ -72,23 +72,23 @@ public class ParenthesisTest {
 
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void testApp3() throws ExpressionParseException {
 
 
         String expr = "Variable1 = ( 'dvare(framework)')";
 
-        String tokens[] = ExpressionTokenizer.toToken(expr);
+        String[] tokens = ExpressionTokenizer.toToken(expr);
 
         assertEquals(tokens.length, 5);
 
     }
 
     @Test
-    public void testApp4() throws ExpressionParseException, InterpretException {
+    public void testApp4() throws ExpressionParseException {
 
 
         String expr = "Variable1 = ('dvare (framework)')";
-        String tokens[] = ExpressionTokenizer.toToken(expr);
+        String[] tokens = ExpressionTokenizer.toToken(expr);
 
         assertEquals(tokens.length, 5);
         assertEquals(Arrays.asList(tokens), Arrays.asList("Variable1", "=", "(", "'dvare (framework)'", ")"));

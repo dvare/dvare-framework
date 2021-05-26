@@ -1,7 +1,5 @@
 package org.dvare.expression.operation.utility;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.function.FunctionBinding;
@@ -23,6 +21,7 @@ import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
+import org.dvare.util.ClassUtils;
 import org.dvare.util.DataTypeMapping;
 import org.dvare.util.InstanceUtils;
 import org.dvare.util.TrimString;
@@ -372,10 +371,10 @@ public class Function extends OperationExpression {
             if (functionClass != null) {
 
 
-                Method method = MethodUtils.getAccessibleMethod(functionClass, functionName, params);
+                Method method = ClassUtils.getAccessibleMethod(functionClass, functionName, params);
                 if (method == null) {
                     castParams(params);
-                    method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), params);
+                    method = ClassUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), params);
                 }
                 if (method != null) {
 
@@ -425,7 +424,7 @@ public class Function extends OperationExpression {
 
             Class<?> param = params[i];
             if (!param.isPrimitive() && (param.equals(Integer.class) || param.equals(Float.class) || param.equals(Boolean.class) || param.equals(Double.class) || param.equals(Long.class))) {
-                Class<?> aClass = (Class<?>) FieldUtils.readStaticField(params[i], "TYPE", true);
+                Class<?> aClass = (Class<?>) ClassUtils.readStaticField(params[i], "TYPE", true);
                 if (aClass != null) {
                     params[i] = aClass;
                 }

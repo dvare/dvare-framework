@@ -1,8 +1,6 @@
 package org.dvare.test.variable;
 
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.rule.RuleBinding;
 import org.dvare.config.RuleConfiguration;
@@ -13,7 +11,9 @@ import org.dvare.expression.Expression;
 import org.dvare.test.dataobjects.AllArrayVariable;
 import org.dvare.test.dataobjects.AllListVariable;
 import org.dvare.test.dataobjects.AllVariable;
-import org.junit.Test;
+import org.dvare.util.Pair;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -21,8 +21,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
-
-import static org.junit.Assert.assertTrue;
 
 public class VariableTest {
 
@@ -57,11 +55,11 @@ public class VariableTest {
                 .atStartOfDay(ZoneId.systemDefault()).toInstant()));
         allVariable.setVariable6(LocalDate.of(2016, 5, 12));
         allVariable.setVariable7(LocalDateTime.of(2016, 5, 12, 15, 30, 0));
-        allVariable.setVariable8(new ImmutablePair<>("dvare", "framework"));
+        allVariable.setVariable8(new Pair.PairImpl<>("dvare", "framework"));
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, allVariable);
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 
@@ -108,13 +106,13 @@ public class VariableTest {
                 LocalDateTime.of(2017, 6, 15, 15, 30, 0)));
 
         allVariable.setVariable8(Arrays.asList(
-                new ImmutablePair<>("dvare", "framework"),
-                new ImmutablePair<>("rule", "engine")
+                new Pair.PairImpl<>("dvare", "framework"),
+                new Pair.PairImpl<>("rule", "engine")
         ));
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, allVariable);
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -161,13 +159,13 @@ public class VariableTest {
         });
 
         allVariable.setVariable8(new Pair[]{
-                new ImmutablePair<>("dvare", "framework"),
-                new ImmutablePair<>("rule", "engine")
+                new Pair.PairImpl<>("dvare", "framework"),
+                new Pair.PairImpl<>("rule", "engine")
         });
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, allVariable);
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 
@@ -202,11 +200,11 @@ public class VariableTest {
                 .atStartOfDay(ZoneId.systemDefault()).toInstant()));
         allVariable.setVariable6(LocalDate.of(2016, 5, 12));
         allVariable.setVariable7(LocalDateTime.of(2016, 5, 12, 15, 30, 0));
-        allVariable.setVariable8(new ImmutablePair<>("dvare", "framework"));
+        allVariable.setVariable8(new Pair.PairImpl<>("dvare", "framework"));
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, allVariable);
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 }

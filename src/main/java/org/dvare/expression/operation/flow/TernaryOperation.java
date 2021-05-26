@@ -22,9 +22,9 @@ import java.util.Stack;
 
 
 @Operation(type = OperationType.TERNARY)
-public class Ternary extends ConditionOperationExpression {
+public class TernaryOperation extends ConditionOperationExpression {
 
-    public Ternary() {
+    public TernaryOperation() {
         super(OperationType.TERNARY);
     }
 
@@ -126,7 +126,7 @@ public class Ternary extends ConditionOperationExpression {
             toStringBuilder.append(" ");
         }
 
-        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(operationType.getTokens().get(0));
         toStringBuilder.append(" ");
 
 

@@ -10,14 +10,13 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.assertTrue;
 
 public class MaxTest {
     @Test
@@ -62,7 +61,7 @@ public class MaxTest {
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(40);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -76,7 +75,7 @@ public class MaxTest {
 
         boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding());
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 

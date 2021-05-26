@@ -9,14 +9,15 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.test.dataobjects.ListTestModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class MatchTest {
@@ -73,60 +74,60 @@ public class MatchTest {
     }
 
 
-    @Test(expected = ExpressionParseException.class)
-    public void matchParamErrorTest() throws ExpressionParseException, InterpretException {
+    @Test
+    public void matchParamErrorTest() {
 
         RuleConfiguration factory = new RuleConfiguration();
-
 
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", ListTestModel.class);
 
-
-        factory.getParser().fromString("" +
-                "match(self.Variable1)", contexts); //value exists
+        assertThrows(ExpressionParseException.class, () -> {
+            factory.getParser().fromString("" +
+                    "match(self.Variable1)", contexts); //value exists
+        });
     }
 
-    @Test(expected = ExpressionParseException.class)
-    public void insideCombParamErrorTest() throws ExpressionParseException, InterpretException {
+    @Test
+    public void insideCombParamErrorTest() {
 
         RuleConfiguration factory = new RuleConfiguration();
-
 
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", ListTestModel.class);
 
+        assertThrows(ExpressionParseException.class, () -> {
+            factory.getParser().fromString("" +
+                    "insideComb(self.Variable1)", contexts); //value exists
+        });
 
-        factory.getParser().fromString("" +
-                "insideComb(self.Variable1)", contexts); //value exists
     }
 
-    @Test(expected = ExpressionParseException.class)
-    public void combExistsParamErrorTest() throws ExpressionParseException, InterpretException {
+    @Test
+    public void combExistsParamErrorTest() {
 
         RuleConfiguration factory = new RuleConfiguration();
-
 
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", ListTestModel.class);
 
+        assertThrows(ExpressionParseException.class, () -> {
+            factory.getParser().fromString("" +
+                    "combExists(self.Variable1)", contexts); //value exists
+        });
 
-        factory.getParser().fromString("" +
-                "combExists(self.Variable1)", contexts); //value exists
     }
 
-    @Test(expected = ExpressionParseException.class)
-    public void insideExistsCombParamErrorTest() throws ExpressionParseException, InterpretException {
-
+    @Test
+    public void insideExistsCombParamErrorTest() {
         RuleConfiguration factory = new RuleConfiguration();
-
 
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", ListTestModel.class);
-
-
-        factory.getParser().fromString("" +
-                "InsideExistsComb(self.Variable1)", contexts); //value exists
+        assertThrows(ExpressionParseException.class, () -> {
+            factory.getParser().fromString("" +
+                    "InsideExistsComb(self.Variable1)", contexts); //value exists
+        });
     }
 
     @Test

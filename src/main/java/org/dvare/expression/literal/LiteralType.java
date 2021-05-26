@@ -1,8 +1,6 @@
 package org.dvare.expression.literal;
 
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.annotations.Type;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalLiteralException;
@@ -10,7 +8,9 @@ import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.parser.ExpressionTokenizer;
 import org.dvare.util.DataTypeMapping;
+import org.dvare.util.Pair;
 import org.dvare.util.TrimString;
+import org.dvare.util.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -10,14 +10,13 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.util.ValueFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.assertTrue;
 
 public class MeanTest {
     @Test
@@ -70,7 +69,7 @@ public class MeanTest {
 
         boolean result = ((Float) ValueFinder.findValue("A0", resultModel)).compareTo(31.00f) == 0;
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -84,7 +83,7 @@ public class MeanTest {
 
         boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding(new HashMap<>()));
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -98,7 +97,7 @@ public class MeanTest {
 
         boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding(new HashMap<>()));
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 

@@ -8,8 +8,8 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.test.dataobjects.ArithmeticOperation;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ToIntegerTest {
 
@@ -33,7 +33,7 @@ public class ToIntegerTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 
@@ -51,7 +51,7 @@ public class ToIntegerTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), new InstancesBinding());
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 
@@ -77,7 +77,7 @@ public class ToIntegerTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -101,6 +101,6 @@ public class ToIntegerTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, ArithmeticOperation);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 }

@@ -1,11 +1,11 @@
 package org.dvare.expression.datatype;
 
-import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.relational.Equals;
 import org.dvare.expression.operation.relational.NotEquals;
+import org.dvare.util.Triple;
 
 /**
  * @author Muhammad Hammad

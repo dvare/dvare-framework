@@ -15,7 +15,8 @@ import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.test.dataobjects.ArithmeticOperation;
 import org.dvare.test.dataobjects.EqualOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,13 +24,10 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.assertTrue;
-
 public class BuilderTest {
     private static final Logger logger = LoggerFactory.getLogger(BuilderTest.class);
 
     @Test
-
     public void builderLogicalOperationTest() throws ExpressionParseException, InterpretException, ParseException {
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -86,7 +84,7 @@ public class BuilderTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), equalOperation);
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -130,7 +128,7 @@ public class BuilderTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), arithmeticOperation);
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -148,7 +146,7 @@ public class BuilderTest {
         }
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), null);
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 

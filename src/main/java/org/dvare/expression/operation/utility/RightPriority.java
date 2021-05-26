@@ -13,12 +13,11 @@ import java.util.Stack;
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
-@Operation(type = OperationType.RIGHT_PRIORITY)
+@Operation(type = OperationType.RIGHT_END)
 public class RightPriority extends OperationExpression {
     public RightPriority() {
-        super(OperationType.RIGHT_PRIORITY);
+        super(OperationType.RIGHT_END);
     }
-
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {

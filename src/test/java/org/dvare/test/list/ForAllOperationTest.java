@@ -11,8 +11,8 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ForEachOperation;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +64,7 @@ public class ForAllOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 
@@ -105,7 +105,7 @@ public class ForAllOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 
@@ -124,7 +124,7 @@ public class ForAllOperationTest {
 
         //System.out.println(expression);
 
-        Assert.assertNotNull(expression);
+        Assertions.assertNotNull(expression);
 
     }
 
@@ -159,7 +159,7 @@ public class ForAllOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 
@@ -194,7 +194,7 @@ public class ForAllOperationTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(new RuleBinding(expression), instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 }

@@ -12,17 +12,17 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ListTestModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PairListTest {
 
     @Test
-    public void pairTest() throws ExpressionParseException, InterpretException {
+    public void pairTest() throws ExpressionParseException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -35,9 +35,7 @@ public class PairListTest {
 
         assertNotNull(expression);
 
-
         assertEquals(expression.toString().trim(), "Pair(self.Variable1, self.Variable2)");
-
     }
 
     @Test
@@ -92,8 +90,8 @@ public class PairListTest {
         assertTrue(result);
     }
 
-    @Test(expected = ExpressionParseException.class)
-    public void variableToPairTest() throws ExpressionParseException, InterpretException {
+    @Test
+    public void variableToPairTest() {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -101,9 +99,9 @@ public class PairListTest {
         TypeBinding typeBinding = ExpressionParser.translate(ListTestModel.class);
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", typeBinding);
-        factory.getParser().fromString("Pair (Variable1)", contexts);
-
-
+        assertThrows(ExpressionParseException.class, () -> {
+            factory.getParser().fromString("Pair (Variable1)", contexts);
+        });
     }
 
     @Test

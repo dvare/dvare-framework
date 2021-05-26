@@ -11,13 +11,13 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class TernaryTest {
+public class TernaryOperationTest {
 
     @Test
     public void ternaryTest() throws ExpressionParseException, InterpretException {
@@ -26,7 +26,7 @@ public class TernaryTest {
         Expression ruleExpression = factory.getParser().fromString("false ?(4 : 5) = 5", new ContextsBinding());
 
         boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(ruleExpression), new InstancesBinding());
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class TernaryTest {
         instancesBinding.addInstance("self", new DataRow(values));
 
         boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(ruleExpression), instancesBinding);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class TernaryTest {
         RuleConfiguration factory = new RuleConfiguration();
         Expression ruleExpression = factory.getParser().fromString("false ?(4 : '5'->toInteger()) = 5", new ContextsBinding());
         boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(ruleExpression), new InstancesBinding());
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class TernaryTest {
 
         boolean result = ValueFinder.findValue("variable", resultModel).equals(4);
 
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 
@@ -113,7 +113,7 @@ public class TernaryTest {
 
         boolean result = ValueFinder.findValue("variable", resultModel).equals(4);
 
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 }

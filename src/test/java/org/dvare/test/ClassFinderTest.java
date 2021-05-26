@@ -1,10 +1,10 @@
 package org.dvare.test;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.dvare.annotations.ClassFinder;
 import org.dvare.annotations.Type;
-import org.junit.Assert;
-import org.junit.Test;
+import org.dvare.util.FunctionProvider;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -14,27 +14,31 @@ public class ClassFinderTest {
     public void test1() {
 
         List<?> classes = ClassFinder.find("org.dvare.annotations");
-        Assert.assertTrue(classes.contains(ClassFinder.class));
+        Assertions.assertTrue(classes.contains(ClassFinder.class));
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void test2() {
-        ClassFinder.find("com.net");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            ClassFinder.find("com.net");
+        });
+
     }
 
 
     @Test
     public void test3() {
         List<?> classes = ClassFinder.findAnnotated("org.dvare.expression.datatype", Type.class);
-        Assert.assertFalse(classes.isEmpty());
+        Assertions.assertFalse(classes.isEmpty());
     }
 
     @Test
     public void test4() {
-        List classes = ClassFinder.find(
-                "org.apache.commons.lang3.tuple");
-        Assert.assertTrue(classes.contains(Pair.class));
+
+        List<?> classes = ClassFinder.find(
+                "org.dvare.util");
+        Assertions.assertTrue(classes.contains(FunctionProvider.class));
     }
 
 

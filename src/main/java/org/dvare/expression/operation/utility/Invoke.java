@@ -1,7 +1,5 @@
 package org.dvare.expression.operation.utility;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.function.FunctionBinding;
@@ -17,6 +15,7 @@ import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.veriable.VariableExpression;
+import org.dvare.util.ClassUtils;
 import org.dvare.util.DataTypeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,7 +136,7 @@ public class Invoke extends Function {
             functionBinding.setFunctionInstance(value);
 
 
-            Method method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName());
+            Method method = ClassUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName());
 
             if (method == null) {
                 List<Class<?>> parameters = new ArrayList<>();
@@ -149,20 +148,20 @@ public class Invoke extends Function {
 
                 Class<?>[] params = parameters.toArray(new Class[0]);
 
-                method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), params);
+                method = ClassUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), params);
 
                 if (method == null) {
                     for (int i = 0; i < params.length; i++) {
 
                         if (!params[i].isPrimitive()) {
                             try {
-                                Class<?> aClass = (Class<?>) FieldUtils.readStaticField(params[i], "TYPE", true);
+                                Class<?> aClass = (Class<?>) ClassUtils.readStaticField(params[i], "TYPE", true);
                                 params[i] = aClass;
                             } catch (IllegalAccessException ignored) {
                             }
                         }
                     }
-                    method = MethodUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), params);
+                    method = ClassUtils.getAccessibleMethod(functionClass, functionBinding.getMethodName(), params);
                 }
             }
 

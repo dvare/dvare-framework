@@ -1,6 +1,5 @@
 package org.dvare.util;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.dvare.binding.data.DataRow;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 
@@ -39,14 +38,14 @@ public class ValueFinder {
 
                         if (iterator.hasNext()) {
 
-                            Field newType = FieldUtils.getDeclaredField(childType, field, true);
+                            Field newType = ClassUtils.getDeclaredField(childType, field, true);
                             childType = newType.getType();
-                            chieldValue = FieldUtils.readField(newType, chieldValue, true);
+                            chieldValue = ClassUtils.readField(newType, chieldValue, true);
                         } else {
-                            Field newType = FieldUtils.getDeclaredField(childType, field, true);
+                            Field newType = ClassUtils.getDeclaredField(childType, field, true);
                             if (newType != null) {
 
-                                return FieldUtils.readField(newType, chieldValue, true);
+                                return ClassUtils.readField(newType, chieldValue, true);
                             }
                         }
 
@@ -54,9 +53,9 @@ public class ValueFinder {
 
 
                 } else {
-                    Field newType = FieldUtils.getDeclaredField(type, name, true);
+                    Field newType = ClassUtils.getDeclaredField(type, name, true);
                     if (newType != null) {
-                        return FieldUtils.readField(newType, object, true);
+                        return ClassUtils.readField(newType, object, true);
                     }
                 }
             } catch (IllegalAccessException e) {
@@ -91,13 +90,13 @@ public class ValueFinder {
 
                         if (iterator.hasNext()) {
 
-                            Field newType = FieldUtils.getDeclaredField(childType, field, true);
+                            Field newType = ClassUtils.getDeclaredField(childType, field, true);
                             childType = newType.getType();
 
                         } else {
-                            Field newType = FieldUtils.getDeclaredField(childType, field, true);
+                            Field newType = ClassUtils.getDeclaredField(childType, field, true);
                             if (newType != null) {
-                                FieldUtils.writeField(newType, object, value, true);
+                                ClassUtils.writeField(newType, object, value, true);
                                 return object;
                             }
                         }
@@ -106,9 +105,9 @@ public class ValueFinder {
 
 
                 } else {
-                    Field newType = FieldUtils.getDeclaredField(type, name, true);
+                    Field newType = ClassUtils.getDeclaredField(type, name, true);
                     if (newType != null) {
-                        FieldUtils.writeField(newType, object, value, true);
+                        ClassUtils.writeField(newType, object, value, true);
                         return object;
                     }
                 }

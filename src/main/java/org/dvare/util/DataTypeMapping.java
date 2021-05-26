@@ -1,7 +1,5 @@
 package org.dvare.util;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.expression.datatype.*;
 
 import java.time.LocalDate;
@@ -180,26 +178,22 @@ public class DataTypeMapping {
 
 
             case "Pair":
-            case "ImmutablePair":
-            case "MutablePair": {
+            case "PairImpl": {
                 return DataType.PairType;
             }
 
             case "Pair[]":
-            case "ImmutablePair[]":
-            case "MutablePair[]": {
+            case "PairImpl[]": {
                 return DataType.PairListType;
             }
 
             case "Triple":
-            case "ImmutableTriple":
-            case "MutableTriple": {
+            case "TripleImpl": {
                 return DataType.TripleType;
             }
 
             case "Triple[]":
-            case "ImmutableTriple[]":
-            case "MutableTriple[]": {
+            case "TripleImpl[]": {
                 return DataType.TripleListType;
             }
         }

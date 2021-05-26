@@ -58,7 +58,7 @@ public abstract class ConditionOperationExpression extends OperationExpression {
             toStringBuilder.append(" ");
         }
 
-        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(operationType.getTokens().get(0));
         toStringBuilder.append(" ");
 
 

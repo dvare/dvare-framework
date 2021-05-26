@@ -1,6 +1,5 @@
 package org.dvare.expression.operation.list;
 
-import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
@@ -14,6 +13,7 @@ import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.AggregationOperationExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.util.Triple;
 
 import java.util.ArrayList;
 import java.util.Iterator;

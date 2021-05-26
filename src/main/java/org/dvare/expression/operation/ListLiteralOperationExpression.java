@@ -44,9 +44,9 @@ public class ListLiteralOperationExpression extends OperationExpression {
 
         int newPos = pos;
         List<String> listPrams = new ArrayList<>();
-        while (!tokens[newPos].equals(OperationType.LIST_END.getSymbols().get(0))) {
+        while (!tokens[newPos].equals(OperationType.LIST_END.getTokens().get(0))) {
             String value = tokens[newPos];
-            if (!value.equals(OperationType.LIST_START.getSymbols().get(0))) {
+            if (!value.equals(OperationType.LIST_START.getTokens().get(0))) {
                 listPrams.add(value);
             }
             newPos++;

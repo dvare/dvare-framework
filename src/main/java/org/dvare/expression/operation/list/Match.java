@@ -27,14 +27,14 @@ import java.util.Stack;
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
-@Operation(type = OperationType.Match)
+@Operation(type = OperationType.MATCH)
 public class Match extends OperationExpression {
     private static final Logger logger = LoggerFactory.getLogger(Match.class);
 
     protected List<Expression> leftOperand;
 
     public Match() {
-        super(OperationType.Match);
+        super(OperationType.MATCH);
     }
 
     public Match(OperationType operationType) {
@@ -96,7 +96,7 @@ public class Match extends OperationExpression {
 
 
     @Override
-    public LiteralExpression interpret(InstancesBinding instancesBinding) throws InterpretException {
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
 
 
         List<Expression> expressions = this.leftOperand;
@@ -376,7 +376,7 @@ public class Match extends OperationExpression {
     public String toString() {
         StringBuilder toStringBuilder = new StringBuilder();
 
-        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(operationType.getTokens().get(0));
         toStringBuilder.append("( ");
         if (leftOperand != null && !leftOperand.isEmpty()) {
             for (Expression expression : leftOperand) {

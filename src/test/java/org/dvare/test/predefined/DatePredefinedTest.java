@@ -9,8 +9,8 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.test.dataobjects.ArithmeticOperation;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,7 +26,7 @@ public class DatePredefinedTest {
         String exp = "date ( 12-05-2016 , dd-MM-yyyy )->toString() ->toDate() = date ( 12-05-2016 , dd-MM-yyyy )";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
         boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding());
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
 
     }
@@ -37,7 +37,7 @@ public class DatePredefinedTest {
         String exp = "null ->toDate() = null";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
         boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding());
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
 
     }
@@ -48,7 +48,7 @@ public class DatePredefinedTest {
         String exp = "date ( 12-05-2016 , dd-MM-yyyy )->toDate()";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
         LocalDate localDate = (LocalDate) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding());
-        Assert.assertEquals(localDate, LocalDate.of(2016, 5, 12));
+        Assertions.assertEquals(localDate, LocalDate.of(2016, 5, 12));
 
 
     }
@@ -59,7 +59,7 @@ public class DatePredefinedTest {
         String exp = "dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss ) ->toDate()";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
         LocalDate localDate = (LocalDate) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding());
-        Assert.assertEquals(localDate, LocalDate.of(2016, 5, 12));
+        Assertions.assertEquals(localDate, LocalDate.of(2016, 5, 12));
 
     }
 
@@ -69,7 +69,7 @@ public class DatePredefinedTest {
         String exp = "date ( 12-05-2016 , dd-MM-yyyy )->addYears(1) -> getYears() = 2017";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
         boolean result = (Boolean) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding());
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 
@@ -80,7 +80,7 @@ public class DatePredefinedTest {
         String exp = "dateTime ( 12-05-2016-15:30:00 , dd-MM-yyyy-HH:mm:ss ) ->addYears(1) -> getYears()";
         Expression expression = factory.getParser().fromString(exp, new ContextsBinding());
         int year = (Integer) factory.getEvaluator().evaluate(new RuleBinding(expression), new InstancesBinding());
-        Assert.assertEquals(year, 2017);
+        Assertions.assertEquals(year, 2017);
 
     }
 
@@ -97,7 +97,7 @@ public class DatePredefinedTest {
         arithmeticOperation.setVariable11(calendar.getTime());
 
         int result = (Integer) factory.getEvaluator().evaluate(new RuleBinding(expression), arithmeticOperation);
-        Assert.assertEquals(result, 2017);
+        Assertions.assertEquals(result, 2017);
 
     }
 
@@ -109,7 +109,7 @@ public class DatePredefinedTest {
         RuleBinding rule = new RuleBinding(expression);
         RuleEvaluator evaluator = factory.getEvaluator();
         LocalDate result = (LocalDate) evaluator.evaluate(rule, new InstancesBinding());
-        Assert.assertEquals(result, LocalDate.of(2017, 7, 15));
+        Assertions.assertEquals(result, LocalDate.of(2017, 7, 15));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class DatePredefinedTest {
         RuleBinding rule = new RuleBinding(expression);
         RuleEvaluator evaluator = factory.getEvaluator();
         LocalDateTime result = (LocalDateTime) evaluator.evaluate(rule, new InstancesBinding());
-        Assert.assertEquals(result, LocalDateTime.of(2017, 7, 15, 15, 30, 0));
+        Assertions.assertEquals(result, LocalDateTime.of(2017, 7, 15, 15, 30, 0));
     }
 
 
@@ -152,7 +152,7 @@ public class DatePredefinedTest {
         calendar2.set(Calendar.SECOND, 0);
         calendar2.set(Calendar.MILLISECOND, 0);
 
-        Assert.assertEquals(date, calendar2.getTime());
+        Assertions.assertEquals(date, calendar2.getTime());
 
     }
 
@@ -164,7 +164,7 @@ public class DatePredefinedTest {
         RuleBinding rule = new RuleBinding(expression);
         RuleEvaluator evaluator = factory.getEvaluator();
         LocalDate result = (LocalDate) evaluator.evaluate(rule, new InstancesBinding());
-        Assert.assertEquals(result, LocalDate.of(2016, 6, 15));
+        Assertions.assertEquals(result, LocalDate.of(2016, 6, 15));
     }
 
     @Test
@@ -175,7 +175,7 @@ public class DatePredefinedTest {
         RuleBinding rule = new RuleBinding(expression);
         RuleEvaluator evaluator = factory.getEvaluator();
         LocalDateTime result = (LocalDateTime) evaluator.evaluate(rule, new InstancesBinding());
-        Assert.assertEquals(result, LocalDateTime.of(2016, 6, 15, 15, 30, 0));
+        Assertions.assertEquals(result, LocalDateTime.of(2016, 6, 15, 15, 30, 0));
     }
 
 
@@ -207,7 +207,7 @@ public class DatePredefinedTest {
         calendar2.set(Calendar.SECOND, 0);
         calendar2.set(Calendar.MILLISECOND, 0);
 
-        Assert.assertEquals(date, calendar2.getTime());
+        Assertions.assertEquals(date, calendar2.getTime());
 
     }
 
@@ -219,7 +219,7 @@ public class DatePredefinedTest {
         RuleBinding rule = new RuleBinding(expression);
         RuleEvaluator evaluator = factory.getEvaluator();
         LocalDate result = (LocalDate) evaluator.evaluate(rule, new InstancesBinding());
-        Assert.assertEquals(result, LocalDate.of(2015, 4, 2));
+        Assertions.assertEquals(result, LocalDate.of(2015, 4, 2));
     }
 
     @Test
@@ -230,7 +230,7 @@ public class DatePredefinedTest {
         RuleBinding rule = new RuleBinding(expression);
         RuleEvaluator evaluator = factory.getEvaluator();
         LocalDateTime result = (LocalDateTime) evaluator.evaluate(rule, new InstancesBinding());
-        Assert.assertEquals(result, LocalDateTime.of(2015, 4, 2, 15, 30, 0));
+        Assertions.assertEquals(result, LocalDateTime.of(2015, 4, 2, 15, 30, 0));
     }
 
 
@@ -262,7 +262,7 @@ public class DatePredefinedTest {
         calendar2.set(Calendar.SECOND, 0);
         calendar2.set(Calendar.MILLISECOND, 0);
 
-        Assert.assertEquals(date, calendar2.getTime());
+        Assertions.assertEquals(date, calendar2.getTime());
 
     }
 }

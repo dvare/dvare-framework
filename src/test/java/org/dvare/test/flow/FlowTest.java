@@ -12,14 +12,12 @@ import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.ListTestModel;
 import org.dvare.util.ValueFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class FlowTest {
     private static final Logger logger = LoggerFactory.getLogger(FlowTest.class);
@@ -74,7 +72,7 @@ public class FlowTest {
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(70);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -130,7 +128,7 @@ public class FlowTest {
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(40);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -188,7 +186,7 @@ public class FlowTest {
 
         Object result = ValueFinder.findValue("A1", resultModel);
 
-        assertEquals(result, 40);
+        Assertions.assertEquals(result, 40);
     }
 
 
@@ -242,7 +240,7 @@ public class FlowTest {
 
         boolean result = ValueFinder.findValue("A1", resultModel).equals(10);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -290,7 +288,7 @@ public class FlowTest {
 
         boolean result = ValueFinder.findValue("A0", resultModel).equals(10);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 
@@ -334,7 +332,7 @@ public class FlowTest {
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
 
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
 
     }
 

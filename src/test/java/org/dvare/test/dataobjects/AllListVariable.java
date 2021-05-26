@@ -1,7 +1,7 @@
 package org.dvare.test.dataobjects;
 
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.dvare.util.Pair;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

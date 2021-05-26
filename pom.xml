@@ -5,15 +5,11 @@
     <groupId>org.dvare</groupId>
     <artifactId>dvare-framework</artifactId>
     <version>3.1-SNAPSHOT</version>
-
     <description>A Lightweight Java business rule expression language.</description>
-
-
     <packaging>jar</packaging>
 
     <name>Dvare framework</name>
     <url>http://dvare.org</url>
-
 
     <developers>
         <developer>
@@ -49,7 +45,6 @@
             <url>http://repo1.maven.org/maven/</url>
         </repository>
 
-
         <repository>
             <id>oss-sonatype</id>
             <name>oss-sonatype</name>
@@ -59,7 +54,6 @@
             </snapshots>
         </repository>
     </repositories>
-
 
     <scm>
         <connection>scm:git:git://github.com/dvare/dvare-framework.git</connection>
@@ -72,7 +66,6 @@
         <system>GitHub</system>
         <url>https://github.com/dvare/dvare-framework/issues</url>
     </issueManagement>
-
 
     <distributionManagement>
         <repository>
@@ -92,25 +85,18 @@
         </license>
     </licenses>
 
-
     <dependencies>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.11</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.7.2</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -122,9 +108,7 @@
     </dependencies>
 
     <build>
-
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -169,14 +153,11 @@
                     <reportFormat>html</reportFormat>
                 </configuration>
             </plugin>
-
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>${maven-jar-plugin.version}</version>
             </plugin>
-
         </plugins>
     </build>
 
@@ -185,7 +166,6 @@
             <id>release</id>
             <build>
                 <plugins>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-deploy-plugin</artifactId>
@@ -254,7 +234,6 @@
                             </execution>
                         </executions>
                     </plugin>
-
 
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>

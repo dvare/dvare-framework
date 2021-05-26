@@ -98,7 +98,7 @@ public class PrintOperation extends OperationExpression {
         StringBuilder toStringBuilder = new StringBuilder();
 
 
-        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(operationType.getTokens().get(0));
 
 
         if (leftOperand != null) {

@@ -1,7 +1,6 @@
 package org.dvare.test.utility;
 
 
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.binding.rule.RuleBinding;
@@ -12,12 +11,11 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.parser.ExpressionParser;
 import org.dvare.test.dataobjects.EqualOperation;
-import org.junit.Assert;
-import org.junit.Test;
+import org.dvare.util.ClassUtils;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
-
-import static org.junit.Assert.assertNotNull;
 
 public class InvokeTest {
 
@@ -43,7 +41,7 @@ public class InvokeTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, equalOperation);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -67,15 +65,14 @@ public class InvokeTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, equalOperation);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
-    public void testApp3() throws ExpressionParseException, InterpretException {
+    public void testApp3() {
 
-        Method method = MethodUtils.getAccessibleMethod(String.class, "substring", int.class, int.class);
-        assertNotNull(method);
-
+        Method method = ClassUtils.getAccessibleMethod(String.class, "substring", int.class, int.class);
+        Assertions.assertNotNull(method);
     }
 
 

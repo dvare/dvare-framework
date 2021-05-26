@@ -14,10 +14,10 @@ import java.util.Stack;
  * @author Muhammad Hammad
  * @since 2016-06-30
  */
-@Operation(type = OperationType.LEFT_PRIORITY)
+@Operation(type = OperationType.PRIORITY_START)
 public class LeftPriority extends OperationExpression {
     public LeftPriority() {
-        super(OperationType.LEFT_PRIORITY);
+        super(OperationType.PRIORITY_START);
     }
 
 

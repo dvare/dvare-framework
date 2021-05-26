@@ -8,20 +8,19 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
 import org.dvare.test.dataobjects.AllVariable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DateRelationalTest {
 
     @Test
-    public void dateAndTimeEqualsTest() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeEqualsTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -51,7 +50,7 @@ public class DateRelationalTest {
 
 
     @Test
-    public void dateAndTimeNotEqualsTest() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeNotEqualsTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -79,7 +78,7 @@ public class DateRelationalTest {
     }
 
     @Test
-    public void dateAndTimeLessGreaterTest() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeLessGreaterTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -112,7 +111,7 @@ public class DateRelationalTest {
 
 
     @Test
-    public void dateAndTimeLessEqualGreaterEqualTest() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeLessEqualGreaterEqualTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -144,7 +143,7 @@ public class DateRelationalTest {
     }
 
     @Test
-    public void dateAndTimeBetweenTest() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeBetweenTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -174,7 +173,7 @@ public class DateRelationalTest {
     }
 
     @Test
-    public void dateAndTimeInTest() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeInTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 
@@ -204,7 +203,7 @@ public class DateRelationalTest {
     }
 
     @Test
-    public void dateAndTimeNotInTest() throws ExpressionParseException, InterpretException, ParseException {
+    public void dateAndTimeNotInTest() throws ExpressionParseException, InterpretException {
 
         RuleConfiguration factory = new RuleConfiguration();
 

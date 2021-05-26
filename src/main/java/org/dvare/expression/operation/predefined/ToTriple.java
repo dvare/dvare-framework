@@ -1,6 +1,5 @@
 package org.dvare.expression.operation.predefined;
 
-import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
@@ -13,6 +12,7 @@ import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.ChainOperationExpression;
 import org.dvare.expression.operation.OperationType;
+import org.dvare.util.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

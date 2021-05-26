@@ -1,7 +1,7 @@
 package org.dvare.expression.literal;
 
-import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.expression.datatype.TripleType;
+import org.dvare.util.Triple;
 
 public class TripleLiteral extends LiteralExpression<Triple<?, ?, ?>> {
 

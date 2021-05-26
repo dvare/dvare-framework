@@ -10,8 +10,8 @@ import org.dvare.evaluator.RuleEvaluator;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class PrintTest {
         InstancesBinding instancesBinding = new InstancesBinding();
         evaluator.aggregate(rule, instancesBinding);
         DataRow dataRow = (DataRow) instancesBinding.getInstance("log");
-        Assert.assertFalse(dataRow.getData().isEmpty());
+        Assertions.assertFalse(dataRow.getData().isEmpty());
     }
 
 

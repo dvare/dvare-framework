@@ -1,13 +1,13 @@
 package org.dvare.expression.veriable;
 
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.annotations.Type;
 import org.dvare.exceptions.interpreter.IllegalPropertyValueException;
 import org.dvare.exceptions.parser.IllegalPropertyException;
 import org.dvare.expression.datatype.*;
 import org.dvare.expression.literal.LiteralType;
+import org.dvare.util.Pair;
+import org.dvare.util.Triple;
 import org.dvare.util.ValueFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

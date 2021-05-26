@@ -1,7 +1,5 @@
 package org.dvare.expression.operation;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
@@ -26,10 +24,13 @@ import org.dvare.expression.operation.utility.RightPriority;
 import org.dvare.expression.veriable.ListVariable;
 import org.dvare.expression.veriable.VariableExpression;
 import org.dvare.expression.veriable.VariableType;
+import org.dvare.util.Pair;
+import org.dvare.util.Triple;
 import org.dvare.util.TypeFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -129,8 +130,8 @@ public abstract class AggregationOperationExpression extends OperationExpression
             if (!(literalExpression instanceof NullLiteral)) {
 
                 try {
-                    leftExpression = literalExpression.getType().newInstance().evaluate(this, leftExpression, literalExpression);
-                } catch (InstantiationException | IllegalAccessException e) {
+                    leftExpression = literalExpression.getType().getDeclaredConstructor().newInstance().evaluate(this, leftExpression, literalExpression);
+                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                     logger.error(e.getMessage(), e);
                 }
                 if (logger.isDebugEnabled()) {
@@ -447,7 +448,7 @@ public abstract class AggregationOperationExpression extends OperationExpression
             toStringBuilder.append(" -> ");
         }
 
-        toStringBuilder.append(operationType.getSymbols().get(0));
+        toStringBuilder.append(operationType.getTokens().get(0));
 
 
         if (rightOperand != null) {

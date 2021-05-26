@@ -7,8 +7,8 @@ import org.dvare.config.RuleConfiguration;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class BooleanExpressionTest {
 
@@ -20,6 +20,6 @@ public class BooleanExpressionTest {
         InstancesBinding instancesBinding = new InstancesBinding();
         Object result = factory.getEvaluator().evaluate(new RuleBinding(expression), instancesBinding);
 
-        Assert.assertEquals(result, true);
+        Assertions.assertEquals(result, true);
     }
 }
