@@ -1,14 +1,18 @@
 package org.dvare.parser;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalLiteralException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ExpressionTokenizer {
     private static final Logger logger = LoggerFactory.getLogger(ExpressionParser.class);
@@ -74,9 +78,12 @@ public class ExpressionTokenizer {
                 continue;
             }
 
+            int stringLiterals = countOccurrences(token, stringLiteralNeedle);
             if (token.equals("/*") || token.startsWith("/*")) {
                 tokenList.addAll(comments(iterator));
-            } else if ((countOccurrences(token, stringLiteralNeedle) == 1) && ((token.startsWith(stringLiteral) && !token.endsWith(stringLiteral)) || token.equals(stringLiteral))) {
+            } else if ((stringLiterals == 1) && (
+                (token.startsWith(stringLiteral) && !token.endsWith(stringLiteral)) || token.equals(
+                    stringLiteral))) {
 
                 if (iterator.hasNext()) {
                     List<Token> allTokens = completeStringLiteral(iterator);
@@ -91,7 +98,8 @@ public class ExpressionTokenizer {
                 }
 
 
-            } else if ((countOccurrences(token, stringLiteralNeedle) == 1) && (!token.startsWith(stringLiteral) && !token.endsWith(stringLiteral))) {
+            } else if ((stringLiterals == 1) && (!token.startsWith(stringLiteral)
+                                                 && !token.endsWith(stringLiteral))) {
                 if (iterator.hasNext()) {
                     List<Token> allTokens = midStartCompeleteStringLiteral(iterator);
                     if (!allTokens.isEmpty()) {
@@ -104,17 +112,25 @@ public class ExpressionTokenizer {
                     tokenList.add(new Token(token, Token.TokenType.LITERAL));
                 }
 
-            } else if ((countOccurrences(token, stringLiteralNeedle) == 2) && !token.startsWith(stringLiteral) && !token.endsWith(stringLiteral)) {
+            } else if (
+                (stringLiterals != 0 && stringLiterals % 2 == 0) && !token.startsWith(stringLiteral)
+                && !token.endsWith(stringLiteral)
+                || ((stringLiterals > 2) && token.startsWith(stringLiteral) && token.endsWith(
+                    stringLiteral))) {
 
                 addTokensToIteratorOrTokenList(iterator, tokenList, midParseLiteral(iterator));
 
 
-            } else if ((countOccurrences(token, stringLiteralNeedle) == 2) && !token.startsWith(stringLiteral)) {
+            } else if ((stringLiterals != 0 && stringLiterals % 2 == 0) && !token.startsWith(
+                stringLiteral)) {
 
-                addTokensToIteratorOrTokenList(iterator, tokenList, midStartParseStringLiteral(iterator));
+                addTokensToIteratorOrTokenList(iterator, tokenList,
+                    midStartParseStringLiteral(iterator));
 
-            } else if ((countOccurrences(token, stringLiteralNeedle) == 2) && !token.endsWith(stringLiteral)) {
-                addTokensToIteratorOrTokenList(iterator, tokenList, midEndParseStringLiteral(iterator));
+            } else if ((stringLiterals != 0 && stringLiterals % 2 == 0) && !token.endsWith(
+                stringLiteral)) {
+                addTokensToIteratorOrTokenList(iterator, tokenList,
+                    midEndParseStringLiteral(iterator));
             } else {
                 addTokensToIteratorOrTokenList(iterator, tokenList, parseToken(token));
             }
