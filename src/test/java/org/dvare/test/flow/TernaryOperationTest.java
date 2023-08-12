@@ -1,5 +1,7 @@
 package org.dvare.test.flow;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
@@ -13,9 +15,6 @@ import org.dvare.parser.ExpressionParser;
 import org.dvare.util.ValueFinder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class TernaryOperationTest {
 
@@ -82,9 +81,9 @@ public class TernaryOperationTest {
         RuleEvaluator evaluator = factory.getEvaluator();
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
-        boolean result = ValueFinder.findValue("variable", resultModel).equals(4);
+        Object result = ValueFinder.findValue("variable", resultModel);
 
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(result, 4);
     }
 
 
@@ -111,9 +110,9 @@ public class TernaryOperationTest {
         RuleEvaluator evaluator = factory.getEvaluator();
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
-        boolean result = ValueFinder.findValue("variable", resultModel).equals(4);
+        Object result = ValueFinder.findValue("variable", resultModel);
 
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(result, 4);
     }
 
 }

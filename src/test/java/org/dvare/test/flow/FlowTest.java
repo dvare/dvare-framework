@@ -1,5 +1,10 @@
 package org.dvare.test.flow;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
@@ -17,10 +22,44 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-
 public class FlowTest {
+
     private static final Logger logger = LoggerFactory.getLogger(FlowTest.class);
+
+    @Test
+    public void ifAssignmentTest() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        Map<String, String> aggregationTypes = new HashMap<>();
+        aggregationTypes.put("A0", "IntegerType");
+        aggregationTypes.put("A1", "IntegerType");
+        aggregationTypes.put("A2", "StringType");
+        aggregationTypes.put("A3", "StringType");
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
+
+        Expression aggregate = factory.getParser().fromString("" +
+                                                              "IF A0 = 2 " +
+                                                              "THEN A1:=10; A2:='1(0)'; A3:='1b2' "
+                                                              +
+                                                              "ENDIF", contexts);
+
+        RuleBinding rule = new RuleBinding(aggregate);
+
+        Map<String, Object> aggregation = new HashMap<>();
+        aggregation.put("A0", 2);
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("self", new DataRow(aggregation));
+        Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
+
+        Assertions.assertEquals(ValueFinder.findValue("A1", resultModel), 10);
+        Assertions.assertEquals(ValueFinder.findValue("A2", resultModel), "1(0)");
+        Assertions.assertEquals(ValueFinder.findValue("A3", resultModel), "1b2");
+    }
 
     @Test
     public void ifElseAssignmentTest() throws ExpressionParseException, InterpretException {
@@ -70,9 +109,7 @@ public class FlowTest {
         instancesBinding.addInstance("data", dataSet);
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
-        boolean result = ValueFinder.findValue("A1", resultModel).equals(70);
-
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(ValueFinder.findValue("A1", resultModel), 70);
     }
 
     @Test
@@ -126,10 +163,9 @@ public class FlowTest {
         instancesBinding.addInstance("data", dataSet);
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
-        boolean result = ValueFinder.findValue("A1", resultModel).equals(40);
-
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(ValueFinder.findValue("A1", resultModel), 40);
     }
+
 
     @Test
     public void nustedIfElseTest() throws ExpressionParseException, InterpretException {
@@ -238,9 +274,7 @@ public class FlowTest {
         instancesBinding.addInstance("data", dataSet);
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
-        boolean result = ValueFinder.findValue("A1", resultModel).equals(10);
-
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(ValueFinder.findValue("A1", resultModel), 10);
     }
 
     @Test
@@ -252,43 +286,27 @@ public class FlowTest {
         aggregationTypes.put("A0", "IntegerType");
 
 
-        Map<String, String> validationTypes = new HashMap<>();
-        validationTypes.put("V1", "IntegerType");
-        validationTypes.put("V2", "IntegerType");
-
-
         ContextsBinding contexts = new ContextsBinding();
         contexts.addContext("self", ExpressionParser.translate(aggregationTypes));
-        contexts.addContext("data", ExpressionParser.translate(validationTypes));
 
         Expression aggregate = factory.getParser().fromString("" +
-                "def temp.variable:BooleanType := true " +
-                "IF temp.variable = true " +
-                "THEN A0 := 25 ; A0 := 10 " +
-                "ENDIF", contexts);
+                                                              "def temp.variable:BooleanType := true "
+                                                              +
+                                                              "IF temp.variable = true " +
+                                                              "THEN A0:=25;A0:=10 " +
+                                                              "ENDIF", contexts);
 
         RuleBinding rule = new RuleBinding(aggregate);
-
 
         Map<String, Object> aggregation = new HashMap<>();
         aggregation.put("A0", 2);
 
-
-        Map<String, Object> dataset = new HashMap<>();
-        dataset.put("V1", 5);
-        dataset.put("V2", 5);
-
-
         RuleEvaluator evaluator = factory.getEvaluator();
         InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
         instancesBinding.addInstance("self", new DataRow(aggregation));
-        instancesBinding.addInstance("data", new DataRow(dataset));
         Object resultModel = evaluator.aggregate(rule, instancesBinding).getInstance("self");
 
-
-        boolean result = ValueFinder.findValue("A0", resultModel).equals(10);
-
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(ValueFinder.findValue("A0", resultModel), 10);
     }
 
 
@@ -330,7 +348,6 @@ public class FlowTest {
 
         RuleEvaluator evaluator = factory.getEvaluator();
         boolean result = (Boolean) evaluator.evaluate(rule, instancesBinding);
-
 
         Assertions.assertTrue(result);
 
