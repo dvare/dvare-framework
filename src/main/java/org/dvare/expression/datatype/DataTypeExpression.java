@@ -4,7 +4,6 @@ import org.dvare.annotations.OperationMapping;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -189,10 +188,4 @@ public abstract class DataTypeExpression extends Expression {
        }
        return localDateTimeList;
    }
-
-    @Override
-    public void accept(ExpressionVisitor v) {
-        super.accept(v);
-        v.visit(this);
-    }
 }

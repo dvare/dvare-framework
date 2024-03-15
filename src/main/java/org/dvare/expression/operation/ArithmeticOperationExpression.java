@@ -3,7 +3,6 @@ package org.dvare.expression.operation;
 import org.dvare.annotations.Type;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
-import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.LiteralExpression;
@@ -70,11 +69,5 @@ public abstract class ArithmeticOperationExpression extends RelationalOperationE
         return evaluate(dataTypeExpression, this, leftLiteralExpression, rightLiteralExpression);
 
 
-    }
-
-    @Override
-    public void accept(ExpressionVisitor v) {
-        super.accept(v);
-        v.visit(this);
     }
 }

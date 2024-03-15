@@ -3,7 +3,6 @@ package org.dvare.expression.literal;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.datatype.RegexType;
 import org.dvare.expression.datatype.StringType;
@@ -31,12 +30,6 @@ public abstract class LiteralExpression<T> extends Expression {
     @Override
     public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
         return this;
-    }
-
-    @Override
-    public void accept(ExpressionVisitor v) {
-        super.accept(v);
-        v.visit(this);
     }
 
 

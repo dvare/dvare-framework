@@ -170,10 +170,8 @@ public class ListLiteralOperationExpression extends OperationExpression {
     }
 
     @Override
-    public void accept(ExpressionVisitor v) {
-        super.accept(v);
-        rightOperand.forEach(e -> e.accept(v));
-        v.visit(this);
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
     }
 
     public boolean isEmpty() {

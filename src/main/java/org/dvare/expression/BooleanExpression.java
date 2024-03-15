@@ -36,8 +36,8 @@ public class BooleanExpression extends Expression {
     }
 
     @Override
-    public void accept(ExpressionVisitor v) {
-        v.visit(this);
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
     }
 
 

@@ -6,7 +6,6 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.operation.utility.LeftPriority;
@@ -30,14 +29,6 @@ public abstract class ChainOperationExpression extends OperationExpression {
     public ChainOperationExpression(OperationType operationType) {
         super(operationType);
     }
-
-    @Override
-    public void accept(ExpressionVisitor v) {
-        super.accept(v);
-        rightOperand.forEach(e -> e.accept(v));
-        v.visit(this);
-    }
-
 
     private int parseOperands(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 

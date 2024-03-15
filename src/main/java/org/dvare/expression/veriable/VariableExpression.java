@@ -89,9 +89,4 @@ public abstract class VariableExpression<T> extends Expression {
         this.operandType = operandType;
     }
 
-    @Override
-    public void accept(ExpressionVisitor v) {
-        super.accept(v);
-        v.visit(this);
-    }
 }

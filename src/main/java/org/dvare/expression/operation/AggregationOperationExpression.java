@@ -7,7 +7,6 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
@@ -476,13 +475,5 @@ public abstract class AggregationOperationExpression extends OperationExpression
 
     public List<Expression> getRightListOperand() {
         return rightOperand;
-    }
-
-    @Override
-    public void accept(ExpressionVisitor v) {
-        super.accept(v);
-        leftExpression.accept(v);
-        rightOperand.forEach(o -> o.accept(v));
-        v.visit(this);
     }
 }

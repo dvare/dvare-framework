@@ -11,7 +11,6 @@ import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalPropertyException;
 import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
-import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.literal.LiteralExpression;
@@ -221,14 +220,6 @@ public abstract class OperationExpression extends Expression {
 
     public List<String> getSymbols() {
         return this.operationType.getTokens();
-    }
-
-    @Override
-    public void accept(ExpressionVisitor v) {
-        super.accept(v);
-        leftOperand.accept(v);
-        rightOperand.accept(v);
-        v.visit(this);
     }
 
     protected enum Side {

@@ -15,9 +15,7 @@ public abstract class Expression {
         return new BooleanLiteral(false);
     }
 
-    public void accept(ExpressionVisitor v) {
-        v.visit(this);
-    }
+    public abstract <T> T accept(ExpressionVisitor<T> v);
 }
 
 
