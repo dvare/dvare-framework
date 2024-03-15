@@ -3,6 +3,7 @@ package org.dvare.expression.operation.list;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
@@ -80,6 +81,12 @@ public class KeysOperation extends ListOperationExpression {
             }
         }
         return pairKeys;
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 
 }

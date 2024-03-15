@@ -4,6 +4,7 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.IntegerType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -96,6 +97,12 @@ public class ItemPosition extends AggregationOperationExpression {
 
 
         return new NullLiteral<>();
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 
 }

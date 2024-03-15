@@ -4,6 +4,7 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.FloatType;
 import org.dvare.expression.datatype.IntegerType;
@@ -115,6 +116,12 @@ public class Mean extends AggregationOperationExpression {
 
 
         return leftExpression;
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 
 

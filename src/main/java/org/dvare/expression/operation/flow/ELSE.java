@@ -1,6 +1,7 @@
 package org.dvare.expression.operation.flow;
 
 import org.dvare.annotations.Operation;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.operation.ConditionOperationExpression;
 import org.dvare.expression.operation.OperationType;
 
@@ -15,5 +16,10 @@ public class ELSE extends ConditionOperationExpression {
         super(OperationType.ELSE);
     }
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
+    }
 
 }

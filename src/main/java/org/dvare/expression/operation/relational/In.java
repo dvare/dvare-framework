@@ -5,6 +5,7 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.OperationType;
@@ -39,6 +40,12 @@ public class In extends RelationalOperationExpression {
             return pos;
         }
         throw new ExpressionParseException("Cannot assign literal to variable");
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 
 

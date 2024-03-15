@@ -3,6 +3,7 @@ package org.dvare.expression.operation.list;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -32,5 +33,10 @@ public class NotEmpty extends AggregationOperationExpression {
         return LiteralType.getLiteralExpression(false, BooleanType.class);
     }
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
+    }
 
 }

@@ -3,6 +3,7 @@ package org.dvare.expression.operation.logical;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.BooleanLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.LogicalOperationExpression;
@@ -24,5 +25,11 @@ public class OR extends LogicalOperationExpression {
         Boolean left = toBoolean(leftOperand.interpret(instancesBinding));
         Boolean right = toBoolean(rightOperand.interpret(instancesBinding));
         return new BooleanLiteral(left || right);
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 }

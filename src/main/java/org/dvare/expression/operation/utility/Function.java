@@ -9,6 +9,7 @@ import org.dvare.exceptions.interpreter.FunctionCallException;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.FunctionExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
@@ -462,6 +463,12 @@ public class Function extends OperationExpression {
             return stringBuilder.toString();
         }
         return super.toString();
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 
     private static class ParamValue {

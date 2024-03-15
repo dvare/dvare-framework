@@ -1,6 +1,7 @@
 package org.dvare.expression.veriable;
 
 
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.SimpleDateType;
 
 import java.util.Date;
@@ -23,4 +24,9 @@ public class SimpleDateVariable extends VariableExpression<Date> {
     }
 
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
+    }
 }

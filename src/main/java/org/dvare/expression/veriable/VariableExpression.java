@@ -3,6 +3,7 @@ package org.dvare.expression.veriable;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -86,5 +87,11 @@ public abstract class VariableExpression<T> extends Expression {
 
     public void setOperandType(String operandType) {
         this.operandType = operandType;
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 }

@@ -37,4 +37,9 @@ public class NamedExpression extends Expression {
     }
 
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
+    }
 }

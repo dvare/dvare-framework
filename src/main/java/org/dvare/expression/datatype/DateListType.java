@@ -3,6 +3,7 @@ package org.dvare.expression.datatype;
 
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.relational.Equals;
@@ -39,5 +40,11 @@ public class DateListType extends ListType {
     })
     public boolean notEqual(LiteralExpression<?> left, LiteralExpression<?> right) {
         return !equal(left, right);
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 }

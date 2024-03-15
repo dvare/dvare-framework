@@ -7,6 +7,7 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.*;
@@ -141,6 +142,13 @@ public class Match extends OperationExpression {
 
 
         return match(dataType, values, matchParams, insideCombination, combinationExist);
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        leftOperand.forEach(e -> e.accept(v));
+        v.visit(this);
     }
 
 

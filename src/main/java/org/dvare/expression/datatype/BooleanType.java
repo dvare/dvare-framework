@@ -2,6 +2,7 @@ package org.dvare.expression.datatype;
 
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.relational.Equals;
 import org.dvare.expression.operation.relational.In;
@@ -76,4 +77,9 @@ public class BooleanType extends DataTypeExpression {
         return values;
     }
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
+    }
 }

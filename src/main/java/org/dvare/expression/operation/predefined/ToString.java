@@ -3,6 +3,7 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.StringType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -47,6 +48,12 @@ public class ToString extends ChainOperationExpression {
         }
 
         return new NullLiteral<>();
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 
 }

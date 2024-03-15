@@ -3,6 +3,7 @@ package org.dvare.expression.operation.aggregation;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.FloatLiteral;
 import org.dvare.expression.literal.IntegerLiteral;
@@ -48,6 +49,12 @@ public class Minimum extends AggregationOperationExpression {
             }
         }
         return super.interpret(instancesBinding);
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 
 }

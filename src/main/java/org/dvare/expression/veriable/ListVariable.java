@@ -4,6 +4,7 @@ package org.dvare.expression.veriable;
 import org.dvare.annotations.Type;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.*;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
@@ -64,6 +65,12 @@ public class ListVariable extends VariableExpression<List<?>> {
             VariableType.setVariableValue(this, instance);
         }
         return LiteralType.getLiteralExpression(value, getListType());
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 
 }

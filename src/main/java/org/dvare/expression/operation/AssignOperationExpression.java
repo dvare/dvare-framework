@@ -12,6 +12,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalPropertyException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.NullLiteral;
@@ -177,6 +178,12 @@ public class AssignOperationExpression extends OperationExpression {
         }
 
         return new NullLiteral<>();
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 
     private Object updateValue(Object aggregation, DataType dataType, VariableExpression<?> variableExpression, LiteralExpression<?> literalExpression) throws InterpretException {

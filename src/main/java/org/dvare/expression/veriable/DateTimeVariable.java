@@ -1,6 +1,7 @@
 package org.dvare.expression.veriable;
 
 
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DateTimeType;
 
 import java.time.LocalDateTime;
@@ -20,4 +21,9 @@ public class DateTimeVariable extends VariableExpression<LocalDateTime> {
     }
 
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
+    }
 }

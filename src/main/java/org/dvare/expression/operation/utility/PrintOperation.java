@@ -8,6 +8,7 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.NullLiteral;
 import org.dvare.expression.operation.OperationExpression;
@@ -113,5 +114,11 @@ public class PrintOperation extends OperationExpression {
         }
 
         return toStringBuilder.toString();
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 }

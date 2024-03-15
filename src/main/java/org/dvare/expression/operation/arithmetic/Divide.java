@@ -1,6 +1,7 @@
 package org.dvare.expression.operation.arithmetic;
 
 import org.dvare.annotations.Operation;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.ArithmeticOperationExpression;
 import org.dvare.expression.operation.OperationType;
@@ -16,4 +17,9 @@ public class Divide extends ArithmeticOperationExpression {
     }
 
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
+    }
 }

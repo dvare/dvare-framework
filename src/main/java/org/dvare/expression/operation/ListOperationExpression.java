@@ -4,6 +4,7 @@ import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.BooleanExpression;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.BooleanType;
 import org.dvare.expression.literal.BooleanLiteral;
 import org.dvare.expression.literal.LiteralExpression;
@@ -22,6 +23,12 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
 
     public ListOperationExpression(OperationType operationType) {
         super(operationType);
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 
 

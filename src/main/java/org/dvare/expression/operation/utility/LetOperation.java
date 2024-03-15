@@ -8,6 +8,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalPropertyException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
@@ -137,5 +138,9 @@ public class LetOperation extends OperationExpression {
         return toStringBuilder.toString();
     }
 
-
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
+    }
 }

@@ -6,6 +6,7 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.DateTimeLiteral;
@@ -108,5 +109,10 @@ public class DateTimeOperation extends OperationExpression {
         return null;
     }
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
+    }
 
 }

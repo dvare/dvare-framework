@@ -5,6 +5,7 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.binding.model.TypeBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
@@ -74,5 +75,10 @@ public class DefOperation extends OperationExpression {
         return pos;
     }
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
+    }
 
 }

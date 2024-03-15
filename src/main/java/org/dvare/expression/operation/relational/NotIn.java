@@ -1,6 +1,7 @@
 package org.dvare.expression.operation.relational;
 
 import org.dvare.annotations.Operation;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.operation.OperationType;
 
 /**
@@ -11,5 +12,11 @@ import org.dvare.expression.operation.OperationType;
 public class NotIn extends In {
     public NotIn() {
         super(OperationType.NOT_IN);
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 }

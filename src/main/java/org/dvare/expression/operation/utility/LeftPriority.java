@@ -5,6 +5,7 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 
@@ -60,5 +61,11 @@ public class LeftPriority extends OperationExpression {
             }
         }
         return pos;
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 }

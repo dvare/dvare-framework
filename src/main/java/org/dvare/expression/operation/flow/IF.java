@@ -7,6 +7,7 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.BooleanLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.ConditionOperationExpression;
@@ -93,5 +94,10 @@ public class IF extends ConditionOperationExpression {
         return new BooleanLiteral(result);
     }
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
+    }
 
 }

@@ -5,6 +5,7 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,14 @@ public abstract class ConditionOperationExpression extends OperationExpression {
         super(operationType);
     }
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        condition.accept(v);
+        thenOperand.accept(v);
+        elseOperand.accept(v);
+        v.visit(this);
+    }
 
     @Override
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {

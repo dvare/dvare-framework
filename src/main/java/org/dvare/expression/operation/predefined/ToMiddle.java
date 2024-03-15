@@ -4,6 +4,7 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.IllegalValueException;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -46,6 +47,12 @@ public class ToMiddle extends ChainOperationExpression {
         }
 
         return new NullLiteral<>();
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
     }
 
 }

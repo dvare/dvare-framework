@@ -62,4 +62,11 @@ public class FunctionExpression extends Expression {
     }
 
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        name.accept(v);
+        parameters.forEach(p -> p.accept(v));
+        v.visit(this);
+    }
 }

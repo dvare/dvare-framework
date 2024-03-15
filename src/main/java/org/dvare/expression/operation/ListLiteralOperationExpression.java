@@ -8,6 +8,7 @@ import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.literal.ListLiteral;
@@ -166,6 +167,13 @@ public class ListLiteralOperationExpression extends OperationExpression {
             logger.debug("List Literal Expression : {} [{}]", toDataType(listLiteral.getType()), listLiteral.getValue());
         }
         return listLiteral;
+    }
+
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        rightOperand.forEach(e -> e.accept(v));
+        v.visit(this);
     }
 
     public boolean isEmpty() {

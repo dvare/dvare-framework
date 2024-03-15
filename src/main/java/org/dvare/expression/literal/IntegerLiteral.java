@@ -1,6 +1,7 @@
 package org.dvare.expression.literal;
 
 
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.IntegerType;
 
 public class IntegerLiteral extends LiteralExpression<Integer> {
@@ -11,4 +12,9 @@ public class IntegerLiteral extends LiteralExpression<Integer> {
     }
 
 
+    @Override
+    public void accept(ExpressionVisitor v) {
+        super.accept(v);
+        v.visit(this);
+    }
 }
