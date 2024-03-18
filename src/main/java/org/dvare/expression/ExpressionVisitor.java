@@ -17,6 +17,7 @@ import org.dvare.expression.operation.utility.*;
 import org.dvare.expression.veriable.*;
 
 public interface ExpressionVisitor<T> {
+    // basic
     T visit(FunctionExpression f);
     T visit(NamedExpression n);
     T visit(BooleanExpression b);
@@ -24,7 +25,6 @@ public interface ExpressionVisitor<T> {
     // datatype
     T visit(BooleanListType bl);
     T visit(BooleanType b);
-    T visit(DataTypeExpression dt);
     T visit(DateListType dl);
     T visit(DateTimeListType dtl);
     T visit(ListType l);
@@ -46,7 +46,6 @@ public interface ExpressionVisitor<T> {
     T visit(TripleType t);
 
     // literal
-    T visit(LiteralExpression<?> l);
     T visit(BooleanLiteral b);
     T visit(DateLiteral d);
     T visit(DateTimeLiteral dt);
@@ -61,7 +60,6 @@ public interface ExpressionVisitor<T> {
     T visit(TripleLiteral t);
 
     // variable
-    T visit(VariableExpression<?> v);
     T visit(BooleanVariable b);
     T visit(DateTimeVariable dt);
     T visit(DateVariable d);
@@ -75,19 +73,13 @@ public interface ExpressionVisitor<T> {
     T visit(TripleVariable t);
 
     // operation
-    T visit(OperationExpression o);
     T visit(AssignOperationExpression a);
-    T visit(ChainOperationExpression c);
-    T visit(ConditionOperationExpression c);
     T visit(CompositeOperationExpression c);
     T visit(IterationOperationExpression i);
     T visit(ListLiteralOperationENDExpression lle);
     T visit(ListLiteralOperationExpression ll);
-    T visit(ListOperationExpression l);
-    T visit(LogicalOperationExpression l);
 
     // aggregation
-    T visit(AggregationOperationExpression a);
     T visit(Maximum m);
     T visit(Mean m);
     T visit(Median m);
@@ -96,7 +88,6 @@ public interface ExpressionVisitor<T> {
     T visit(Sum s);
 
     // arithmetic
-    T visit(ArithmeticOperationExpression e);
     T visit(Add a);
     T visit(Divide d);
     T visit(Max m);
@@ -172,7 +163,6 @@ public interface ExpressionVisitor<T> {
     T visit(Trim t);
 
     // relational
-    T visit(RelationalOperationExpression r);
     T visit(Between b);
     T visit(Equals e);
     T visit(GreaterEqual ge);
