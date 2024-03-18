@@ -205,6 +205,10 @@ public class ListLiteralOperationExpression extends OperationExpression {
     public List<Expression> getRightListOperand() {
         return rightOperand;
     }
+
+    public void setRightListOperand(List<Expression> rightOperand) {
+        this.rightOperand = rightOperand;
+    }
 }
 
 

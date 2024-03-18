@@ -36,6 +36,10 @@ public class CompositeOperationExpression extends Expression {
         return v.visit(this);
     }
 
+    public List<Expression> getExpressions() {
+        return expressions;
+    }
+
     @Override
     public String toString() {
         StringBuilder toStringBuilder = new StringBuilder();

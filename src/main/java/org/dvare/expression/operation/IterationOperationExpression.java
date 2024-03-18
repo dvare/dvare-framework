@@ -157,4 +157,20 @@ public class IterationOperationExpression extends OperationExpression {
     public <T> T accept(ExpressionVisitor<T> v) {
         return v.visit(this);
     }
+
+    public Expression getReferenceContext() {
+        return referenceContext;
+    }
+
+    public void setReferenceContext(Expression referenceContext) {
+        this.referenceContext = referenceContext;
+    }
+
+    public NamedExpression getDerivedContext() {
+        return derivedContext;
+    }
+
+    public void setDerivedContext(NamedExpression derivedContext) {
+        this.derivedContext = derivedContext;
+    }
 }

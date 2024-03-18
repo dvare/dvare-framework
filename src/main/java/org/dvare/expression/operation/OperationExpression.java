@@ -222,6 +222,22 @@ public abstract class OperationExpression extends Expression {
         return this.operationType.getTokens();
     }
 
+    public OperationType getOperationType() {
+        return operationType;
+    }
+
+    public void setOperationType(OperationType operationType) {
+        this.operationType = operationType;
+    }
+
+    public Class<? extends DataTypeExpression> getDataTypeExpression() {
+        return dataTypeExpression;
+    }
+
+    public void setDataTypeExpression(Class<? extends DataTypeExpression> dataTypeExpression) {
+        this.dataTypeExpression = dataTypeExpression;
+    }
+
     protected enum Side {
         Left, Right;
     }

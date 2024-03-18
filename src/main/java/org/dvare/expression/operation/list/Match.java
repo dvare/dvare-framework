@@ -395,6 +395,14 @@ public class Match extends OperationExpression {
         return toStringBuilder.toString();
     }
 
+    public List<Expression> getLeftListOperand() {
+        return leftOperand;
+    }
+
+    public void setLeftListOperand(List<Expression> leftOperand) {
+        this.leftOperand = leftOperand;
+    }
+
 
    /* public static void main(String[] args) throws Exception {
 

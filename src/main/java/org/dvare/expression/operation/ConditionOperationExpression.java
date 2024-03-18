@@ -89,5 +89,28 @@ public abstract class ConditionOperationExpression extends OperationExpression {
         return toStringBuilder.toString();
     }
 
+    public Expression getCondition() {
+        return condition;
+    }
+
+    public void setCondition(Expression condition) {
+        this.condition = condition;
+    }
+
+    public Expression getThenOperand() {
+        return thenOperand;
+    }
+
+    public void setThenOperand(Expression thenOperand) {
+        this.thenOperand = thenOperand;
+    }
+
+    public Expression getElseOperand() {
+        return elseOperand;
+    }
+
+    public void setElseOperand(Expression elseOperand) {
+        this.elseOperand = elseOperand;
+    }
 
 }

@@ -133,4 +133,12 @@ public abstract class ChainOperationExpression extends OperationExpression {
         return toStringBuilder.toString();
     }
 
+    public List<Expression> getRightListOperand() {
+        return rightOperand;
+    }
+
+    public void setRightListOperand(List<Expression> rightOperand) {
+        this.rightOperand = rightOperand;
+    }
+
 }
