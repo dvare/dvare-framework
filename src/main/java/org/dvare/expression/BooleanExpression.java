@@ -40,7 +40,6 @@ public class BooleanExpression extends Expression {
         return v.visit(this);
     }
 
-
     public String getName() {
         return name;
     }

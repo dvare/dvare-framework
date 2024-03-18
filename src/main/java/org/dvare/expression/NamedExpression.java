@@ -36,7 +36,6 @@ public class NamedExpression extends Expression {
         this.name = name;
     }
 
-
     @Override
     public <T> T accept(ExpressionVisitor<T> v) {
         return v.visit(this);

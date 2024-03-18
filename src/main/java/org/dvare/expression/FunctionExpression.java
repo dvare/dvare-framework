@@ -61,7 +61,6 @@ public class FunctionExpression extends Expression {
         this.binding = binding;
     }
 
-
     @Override
     public <T> T accept(ExpressionVisitor<T> v) {
         return v.visit(this);

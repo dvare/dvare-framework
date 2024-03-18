@@ -42,13 +42,6 @@ public class In extends RelationalOperationExpression {
         throw new ExpressionParseException("Cannot assign literal to variable");
     }
 
-    @Override
-    public void accept(ExpressionVisitor v) {
-        super.accept(v);
-        v.visit(this);
-    }
-
-
     private void testInOperation(String[] tokens, int pos) throws ExpressionParseException {
         /*Expression left = this.leftOperand;*/
         Expression right = this.rightOperand;
@@ -85,5 +78,10 @@ public class In extends RelationalOperationExpression {
         if (logger.isDebugEnabled()) {
             logger.debug("OperationExpression Call Expression : {}", getClass().getSimpleName());
         }
+    }
+
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
     }
 }

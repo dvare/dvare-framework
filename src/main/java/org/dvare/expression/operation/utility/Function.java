@@ -149,6 +149,11 @@ public class Function extends OperationExpression {
 
     }
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
+
 
     protected LiteralExpression<?> interpretFunction(InstancesBinding instancesBinding) throws InterpretException {
 
@@ -463,12 +468,6 @@ public class Function extends OperationExpression {
             return stringBuilder.toString();
         }
         return super.toString();
-    }
-
-    @Override
-    public void accept(ExpressionVisitor v) {
-        super.accept(v);
-        v.visit(this);
     }
 
     private static class ParamValue {

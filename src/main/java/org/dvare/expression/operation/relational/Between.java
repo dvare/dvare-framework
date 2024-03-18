@@ -39,12 +39,6 @@ public class Between extends RelationalOperationExpression {
         throw new ExpressionParseException("Cannot assign literal to variable");
     }
 
-    @Override
-    public void accept(ExpressionVisitor v) {
-        super.accept(v);
-        v.visit(this);
-    }
-
     private void testBetweenOperation(String[] tokens, int pos) throws ExpressionParseException {
 
         Expression left = this.leftOperand;
@@ -91,4 +85,8 @@ public class Between extends RelationalOperationExpression {
 
     }
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 }

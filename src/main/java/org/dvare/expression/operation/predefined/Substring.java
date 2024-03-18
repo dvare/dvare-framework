@@ -96,9 +96,8 @@ public class Substring extends ChainOperationExpression {
     }
 
     @Override
-    public void accept(ExpressionVisitor v) {
-        super.accept(v);
-        v.visit(this);
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
     }
 
 }
