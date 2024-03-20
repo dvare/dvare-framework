@@ -5,6 +5,7 @@ import org.dvare.expression.datatype.*;
 import org.dvare.expression.literal.*;
 import org.dvare.expression.operation.*;
 import org.dvare.expression.operation.aggregation.*;
+import org.dvare.expression.operation.arithmetic.*;
 import org.dvare.expression.operation.utility.Function;
 import org.dvare.expression.operation.utility.PrintOperation;
 import org.dvare.expression.veriable.*;
@@ -585,4 +586,72 @@ public class BaseExpressionVisitorTest {
     public void visitSum() {
         visitAggregationOperationExpression(Sum.class);
     }
+
+    private <T extends ArithmeticOperationExpression> void visitArithmeticOperationExpression(Class<T> clazz) {
+        try {
+            var o = clazz.getDeclaredConstructor().newInstance();
+            var ol = new IntegerLiteral(3);
+            var or = new IntegerLiteral(2);
+            o.setLeftOperand(ol);
+            o.setRightOperand(or);
+
+            var e = o.accept(v);
+            Assertions.assertEquals(o.getClass(), e.getClass());
+
+            var n = clazz.cast(e);
+            Assertions.assertEquals(o.getLeftOperand().getClass(), n.getLeftOperand().getClass());
+
+            var nlo = n.getLeftOperand();
+            Assertions.assertEquals(ol.getClass(), nlo.getClass());
+            var nle = (IntegerLiteral) nlo;
+            Assertions.assertEquals(ol.getType(), nle.getType());
+            Assertions.assertEquals(ol.getValue(), nle.getValue());
+
+            var nro = n.getRightOperand();
+            Assertions.assertEquals(or.getClass(), nro.getClass());
+            var nre = (IntegerLiteral) nro;
+            Assertions.assertEquals(or.getType(), nre.getType());
+            Assertions.assertEquals(or.getValue(), nre.getValue());
+
+            Assertions.assertEquals(o.toString(), n.toString());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void visitAdd() {
+        visitArithmeticOperationExpression(Add.class);
+    }
+
+    @Test
+    public void visitDivide() {
+        visitArithmeticOperationExpression(Divide.class);
+    }
+
+    @Test
+    public void visitMax() {
+        visitArithmeticOperationExpression(Max.class);
+    }
+
+    @Test
+    public void visitMin() {
+        visitArithmeticOperationExpression(Min.class);
+    }
+
+    @Test
+    public void visitMultiply() {
+        visitArithmeticOperationExpression(Multiply.class);
+    }
+
+    @Test
+    public void visitPower() {
+        visitArithmeticOperationExpression(Power.class);
+    }
+
+    @Test
+    public void visitSubtract() {
+        visitArithmeticOperationExpression(Subtract.class);
+    }
+
 }
