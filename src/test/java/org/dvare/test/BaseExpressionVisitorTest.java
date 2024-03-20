@@ -6,6 +6,8 @@ import org.dvare.expression.literal.*;
 import org.dvare.expression.operation.*;
 import org.dvare.expression.operation.aggregation.*;
 import org.dvare.expression.operation.arithmetic.*;
+import org.dvare.expression.operation.flow.*;
+import org.dvare.expression.operation.relational.Equals;
 import org.dvare.expression.operation.utility.Function;
 import org.dvare.expression.operation.utility.PrintOperation;
 import org.dvare.expression.veriable.*;
@@ -652,6 +654,58 @@ public class BaseExpressionVisitorTest {
     @Test
     public void visitSubtract() {
         visitArithmeticOperationExpression(Subtract.class);
+    }
+
+    private <T extends ConditionOperationExpression> void visitConditionOperationExpression(Class<T> clazz) {
+        try {
+            var o = clazz.getDeclaredConstructor().newInstance();
+            var oc = new Equals();
+            oc.setLeftOperand(new IntegerVariable("I"));
+            oc.setRightOperand(new IntegerLiteral(5));
+            o.setCondition(oc);
+            var ot = new AssignOperationExpression();
+            ot.setLeftOperand(new IntegerVariable("J"));
+            ot.setRightOperand(new IntegerLiteral(1));
+            o.setThenOperand(ot);
+            var oe = new AssignOperationExpression();
+            oe.setLeftOperand(new IntegerVariable("J"));
+            oe.setRightOperand(new IntegerLiteral(2));
+            o.setElseOperand(oe);
+
+            var e = o.accept(v);
+            Assertions.assertEquals(o.getClass(), e.getClass());
+
+            var n = clazz.cast(e);
+
+            Assertions.assertEquals(o.toString(), n.toString());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void visitELSE() {
+        visitConditionOperationExpression(ELSE.class);
+    }
+
+    @Test
+    public void visitENDIF() {
+        visitConditionOperationExpression(ENDIF.class);
+    }
+
+    @Test
+    public void visitIF() {
+        visitConditionOperationExpression(IF.class);
+    }
+
+    @Test
+    public void visitTernaryOperation() {
+        visitConditionOperationExpression(TernaryOperation.class);
+    }
+
+    @Test
+    public void visitTHEN() {
+        visitConditionOperationExpression(THEN.class);
     }
 
 }

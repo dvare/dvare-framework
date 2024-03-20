@@ -388,7 +388,7 @@ public class BaseExpressionVisitor implements ExpressionVisitor<Expression> {
     @Override
     public Expression visit(ELSE e) {
         var n = new ELSE();
-        setConditionOperation(n, e);
+        setConditionOperation(e, n);
         return n;
     }
 
@@ -1007,7 +1007,7 @@ public class BaseExpressionVisitor implements ExpressionVisitor<Expression> {
         }
 
         if (o.getElseOperand() != null) {
-            n.setElseOperand(o.getThenOperand().accept(this));
+            n.setElseOperand(o.getElseOperand().accept(this));
         }
     }
 
