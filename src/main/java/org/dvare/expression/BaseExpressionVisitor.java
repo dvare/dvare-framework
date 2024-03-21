@@ -423,7 +423,7 @@ public class BaseExpressionVisitor implements ExpressionVisitor<Expression> {
     @Override
     public Expression visit(CombinationExists ce) {
         var n = new CombinationExists();
-        setMatch(n, ce);
+        setMatch(ce, n);
         return n;
     }
 

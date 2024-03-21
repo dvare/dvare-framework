@@ -1,5 +1,7 @@
 package org.dvare.test;
 
+import org.dvare.binding.data.InstancesBinding;
+import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.*;
 import org.dvare.expression.datatype.*;
 import org.dvare.expression.literal.*;
@@ -7,7 +9,9 @@ import org.dvare.expression.operation.*;
 import org.dvare.expression.operation.aggregation.*;
 import org.dvare.expression.operation.arithmetic.*;
 import org.dvare.expression.operation.flow.*;
+import org.dvare.expression.operation.list.*;
 import org.dvare.expression.operation.relational.Equals;
+import org.dvare.expression.operation.relational.In;
 import org.dvare.expression.operation.utility.Function;
 import org.dvare.expression.operation.utility.PrintOperation;
 import org.dvare.expression.veriable.*;
@@ -707,5 +711,193 @@ public class BaseExpressionVisitorTest {
     public void visitTHEN() {
         visitConditionOperationExpression(THEN.class);
     }
+
+    private <T extends LiteralExpression<?>> void compareListLiterals(Expression ol, Expression nl, Class<T> elementClass) {
+        if (ol.getClass() != ListLiteral.class) {
+            Assertions.fail("ol is not a ListLiteral but " + ol.getClass());
+            return;
+        }
+        if (nl.getClass() != ListLiteral.class) {
+            Assertions.fail("nl is not a ListLiteral but " + nl.getClass());
+            return;
+        }
+
+        var l1 = (ListLiteral) ol;
+        var l2 = (ListLiteral) nl;
+
+        Assertions.assertEquals(l1.getListType(), l2.getListType());
+        Assertions.assertEquals(l1.getSize(), l2.getSize());
+
+        for (var i = 0; i < l1.getSize(); i++) {
+            var l1e = l1.getValue().get(i);
+            var l2e = l2.getValue().get(i);
+            Assertions.assertEquals(elementClass, l1e.getClass());
+            Assertions.assertEquals(l1e.getClass(), l2e.getClass());
+
+            var l1v = elementClass.cast(l1e);
+            var l2v = elementClass.cast(l2e);
+
+            Assertions.assertEquals(l1v.getType(), l2v.getType());
+            Assertions.assertEquals(l1v.getType(), l2v.getType());
+        }
+    }
+
+    private <T extends Match> void visitMatchClass(Class<T> clazz) {
+        try {
+            var o = clazz.getDeclaredConstructor().newInstance();
+            var ol1 = new ListLiteral(
+                    List.of(
+                            new IntegerLiteral(1),
+                            new IntegerLiteral(2),
+                            new IntegerLiteral(3)
+                    ),
+                    IntegerType.class
+            );
+            var ol2 = new ListLiteral(
+                    List.of(
+                            new IntegerLiteral(1),
+                            new IntegerLiteral(2),
+                            new IntegerLiteral(3)
+                    ),
+                    IntegerType.class
+            );
+            List<Expression> ol = List.of(ol1, ol2);
+            o.setLeftListOperand(ol);
+
+            var e = o.accept(v);
+            Assertions.assertEquals(o.getClass(), e.getClass());
+
+            var n = clazz.cast(e);
+
+            Assertions.assertEquals(o.getLeftListOperand().size(), n.getLeftListOperand().size());
+
+            var nl1e = n.getLeftListOperand().get(0);
+            Assertions.assertEquals(ol1.getClass(), nl1e.getClass());
+            var nl1 = (ListLiteral) nl1e;
+            compareListLiterals(ol1, nl1, IntegerLiteral.class);
+
+            var nl2e = n.getLeftListOperand().get(1);
+            Assertions.assertEquals(ol2.getClass(), nl2e.getClass());
+            var nl2 = (ListLiteral) nl2e;
+            compareListLiterals(ol2, nl2, IntegerLiteral.class);
+
+            Assertions.assertEquals(o.toString(), n.toString());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private <T extends ListOperationExpression> void visitListOperationExpression(Class<T> clazz) {
+        try {
+            var o = clazz.getDeclaredConstructor().newInstance();
+            var ol = new ListLiteral(
+                    List.of(
+                            new IntegerLiteral(1),
+                            new IntegerLiteral(2),
+                            new IntegerLiteral(3)
+                    ),
+                    IntegerType.class
+            );
+
+            //TODO continue
+
+            o.setLeftOperand(ol);
+            var or = new IntegerVariable("I");
+            o.setRightListOperand(List.of(or));
+            o.setRightOperand(or);
+
+            var e = o.accept(v);
+            Assertions.assertEquals(o.getClass(), e.getClass());
+
+            var n = clazz.cast(e);
+
+            Assertions.assertEquals(o.toString(), n.toString());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void visitCombinationExists() {
+        visitMatchClass(CombinationExists.class);
+    }
+    @Test
+    public void visitFilterOperation() {
+        visitListOperationExpression(FilterOperation.class);
+    }
+    @Test
+    public void visitFirst() {
+
+    }
+    @Test
+    public void visitGetItem() {
+
+    }
+    @Test
+    public void visitHasItem() {
+
+    }
+    @Test
+    public void visitInsideCombination() {
+        visitMatchClass(InsideCombination.class);
+    }
+    @Test
+    public void visitInsideExistsCombination() {
+        visitMatchClass(InsideExistsCombination.class);
+    }
+    @Test
+    public void visitIsEmpty() {
+
+    }
+    @Test
+    public void visitItemPosition() {
+
+    }
+    @Test
+    public void visitKeysOperation() {
+
+    }
+    @Test
+    public void visitLast() {
+
+    }
+    @Test
+    public void visitMapOperation() {
+
+    }
+    @Test
+    public void visitMatch() {
+        visitMatchClass(Match.class);
+    }
+    @Test
+    public void visitMiddlesOperation() {
+
+    }
+    @Test
+    public void visitNotEmpty() {
+
+    }
+    @Test
+    public void visitPairOperation() {
+
+    }
+    @Test
+    public void visitSizeOperation() {
+
+    }
+    @Test
+    public void visitSortOperation() {
+
+    }
+    @Test
+    public void visitTripleOperation() {
+
+    }
+    @Test
+    public void visitValuesOperation() {
+
+    }
+
+
 
 }
