@@ -799,15 +799,17 @@ public class BaseExpressionVisitorTest {
                     IntegerType.class
             );
 
-            //TODO continue
-
             o.setLeftOperand(ol);
-            var or = new IntegerVariable("I");
+            var or = new Equals();
+            or.setLeftOperand(new IntegerVariable("I"));
+            or.setRightOperand(new IntegerVariable("J"));
             o.setRightListOperand(List.of(or));
             o.setRightOperand(or);
 
             var e = o.accept(v);
             Assertions.assertEquals(o.getClass(), e.getClass());
+
+            //TODO continue
 
             var n = clazz.cast(e);
 
