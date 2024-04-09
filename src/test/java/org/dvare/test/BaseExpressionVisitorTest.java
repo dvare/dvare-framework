@@ -1,7 +1,5 @@
 package org.dvare.test;
 
-import org.dvare.binding.data.InstancesBinding;
-import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.*;
 import org.dvare.expression.datatype.*;
 import org.dvare.expression.literal.*;
@@ -14,8 +12,8 @@ import org.dvare.expression.operation.logical.And;
 import org.dvare.expression.operation.logical.Implies;
 import org.dvare.expression.operation.logical.Not;
 import org.dvare.expression.operation.logical.OR;
+import org.dvare.expression.operation.predefined.*;
 import org.dvare.expression.operation.relational.Equals;
-import org.dvare.expression.operation.relational.In;
 import org.dvare.expression.operation.utility.Function;
 import org.dvare.expression.operation.utility.PrintOperation;
 import org.dvare.expression.veriable.*;
@@ -1021,5 +1019,211 @@ public class BaseExpressionVisitorTest {
     public void visitOR() {
         visitLogicalOperationExpression(OR.class);
     }
+
+    private <E extends ChainOperationExpression, L extends VariableExpression<?>, R extends VariableExpression<?>> void visitChainOperationExpression(Class<E> expressionClass, Class<L> leftVariableClass, Class<R> rightVariableClass, int rightOperandSize) {
+        // precondition on rightVariableClass and rightOperandSize
+        Assertions.assertTrue(
+                !(rightVariableClass == null) && rightOperandSize > 0 || rightVariableClass == null && rightOperandSize == 0,
+                "Precondition violated: rightVariableClass=" + rightVariableClass + "; rightOperandSize=" + rightOperandSize
+        );
+
+        try {
+            var o = expressionClass.getDeclaredConstructor().newInstance();
+
+            var ol = leftVariableClass.getDeclaredConstructor(String.class).newInstance("T");
+            o.setLeftOperand(ol);
+            Assertions.assertEquals(leftVariableClass, o.getLeftOperand().getClass());
+
+            if (rightOperandSize > 0) {
+                var orl = new ArrayList<Expression>();
+                for (var i = 0; i < rightOperandSize; i++) {
+                    var or = rightVariableClass.getDeclaredConstructor(String.class).newInstance("A" + i);
+                    Assertions.assertEquals(rightVariableClass, or.getClass());
+                    orl.add(or);
+                    o.setRightListOperand(orl);
+                }
+                Assertions.assertEquals(rightOperandSize, orl.size());
+            }
+
+            var ne = o.accept(v);
+            Assertions.assertEquals(o.getClass(), ne.getClass());
+
+            var n = expressionClass.cast(ne);
+
+            var nlo = n.getLeftOperand();
+            Assertions.assertEquals(leftVariableClass, n.getLeftOperand().getClass());
+            Assertions.assertEquals(ol.getClass(), nlo.getClass());
+            var nl = leftVariableClass.cast(nlo);
+            Assertions.assertEquals(ol.getName(), nl.getName());
+
+            var nrl = n.getRightListOperand();
+            var orl = o.getRightListOperand();
+            Assertions.assertEquals(orl.size(), nrl.size());
+
+            if (rightOperandSize > 0) {
+                Assertions.assertEquals(rightOperandSize, nrl.size());
+                for (var i = 0; i < rightOperandSize; i++) {
+                    var nre = nrl.get(i);
+                    var ore = orl.get(i);
+                    Assertions.assertEquals(rightVariableClass, nre.getClass());
+                    Assertions.assertEquals(ore.getClass(), nre.getClass());
+
+                    var nr = rightVariableClass.cast(nre);
+                    var or = rightVariableClass.cast(ore);
+                    Assertions.assertEquals(or.getName(), nr.getName());
+                }
+            }
+
+            Assertions.assertEquals(o.toString(), n.toString());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void visitAddDays() {
+        visitChainOperationExpression(AddDays.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+    }
+
+    @Test
+    public void visitAddMonths() {
+        visitChainOperationExpression(AddMonths.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+    }
+
+    @Test
+    public void visitAddYears() {
+        visitChainOperationExpression(AddYears.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+    }
+
+    @Test
+    public void visitAppend() {
+        visitChainOperationExpression(Append.class, StringVariable.class, StringVariable.class, 1);
+    }
+
+    @Test
+    public void visitContains() {
+        visitChainOperationExpression(Contains.class, StringVariable.class, StringVariable.class, 1);
+    }
+
+    @Test
+    public void visitEndsWith() {
+        visitChainOperationExpression(EndsWith.class, StringVariable.class, StringVariable.class, 1);
+    }
+
+    @Test
+    public void visitGetYear() {
+        visitChainOperationExpression(GetYear.class, DateTimeVariable.class, null, 0);
+    }
+
+    @Test
+    public void visitLength() {
+        visitChainOperationExpression(Length.class, DateTimeVariable.class, null, 0);
+    }
+
+    @Test
+    public void visitPrepend() {
+        visitChainOperationExpression(Prepend.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+    }
+
+    @Test
+    public void visitSetDay() {
+        visitChainOperationExpression(SetDay.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+    }
+
+    @Test
+    public void visitSetMonth() {
+        visitChainOperationExpression(SetMonth.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+    }
+
+    @Test
+    public void visitSetYear() {
+        visitChainOperationExpression(SetYear.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+    }
+
+    @Test
+    public void visitStartsWith() {
+        visitChainOperationExpression(StartsWith.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+    }
+
+    @Test
+    public void visitSubDays() {
+        visitChainOperationExpression(SubDays.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+    }
+
+    @Test
+    public void visitSubMonths() {
+        visitChainOperationExpression(SubMonths.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+    }
+
+    @Test
+    public void visitSubYears() {
+        visitChainOperationExpression(SubYears.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+    }
+
+    @Test
+    public void visitSubstring() {
+        visitChainOperationExpression(Substring.class, DateTimeVariable.class, DateTimeVariable.class, 2);
+    }
+
+    @Test
+    public void visitToBoolean() {
+        visitChainOperationExpression(ToBoolean.class, DateTimeVariable.class, null, 0);
+    }
+
+    @Test
+    public void visitToDate() {
+        visitChainOperationExpression(ToDate.class, DateTimeVariable.class, null, 0);
+    }
+
+    @Test
+    public void visitToInteger() {
+        visitChainOperationExpression(ToInteger.class, DateTimeVariable.class, null, 0);
+    }
+
+    @Test
+    public void visitToKey() {
+        visitChainOperationExpression(ToKey.class, DateTimeVariable.class, null, 0);
+    }
+
+    @Test
+    public void visitToLeft() {
+        visitChainOperationExpression(ToLeft.class, DateTimeVariable.class, null, 0);
+    }
+
+    @Test
+    public void visitToMiddle() {
+        visitChainOperationExpression(ToMiddle.class, DateTimeVariable.class, null, 0);
+    }
+
+    @Test
+    public void visitToPair() {
+        visitChainOperationExpression(ToPair.class, DateTimeVariable.class, null, 0);
+    }
+
+    @Test
+    public void visitToRight() {
+        visitChainOperationExpression(ToRight.class, DateTimeVariable.class, null,0);
+    }
+
+    @Test
+    public void visitToString() {
+        visitChainOperationExpression(ToString.class, DateTimeVariable.class, null, 0);
+    }
+
+    @Test
+    public void visitToTriple() {
+        visitChainOperationExpression(ToTriple.class, DateTimeVariable.class, null, 0);
+    }
+
+    @Test
+    public void visitToValue() {
+        visitChainOperationExpression(ToValue.class, DateTimeVariable.class, null, 0);
+    }
+
+    @Test
+    public void visitTrim() {
+        visitChainOperationExpression(Trim.class, DateTimeVariable.class, null,0);
+    }
+
 
 }
