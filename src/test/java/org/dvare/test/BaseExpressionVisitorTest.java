@@ -813,22 +813,8 @@ public class BaseExpressionVisitorTest {
             var n = clazz.cast(e);
 
             // new left operand
-            var nlo = n.getLeftOperand();
-            Assertions.assertEquals(ol.getClass(), nlo.getClass());
-            var nl = (ListLiteral) nlo;
-            Assertions.assertEquals(ol.getListType(), nl.getListType());
-            Assertions.assertEquals(ol.getSize(), nl.getSize());
-
-            for (var i = 0; i < ol.getSize(); i++) {
-                var ole = ol.getValue().get(i);
-                var nle = nl.getValue().get(i);
-                Assertions.assertEquals(IntegerLiteral.class, ole.getClass());
-                Assertions.assertEquals(ole.getClass(), nle.getClass());
-
-                var oe = (IntegerLiteral) ole;
-                var ne = (IntegerLiteral) nle;
-                Assertions.assertEquals(oe.getValue(), ne.getValue());
-            }
+            var nl = n.getLeftOperand();
+            compareListLiterals(ol, nl, IntegerLiteral.class);
 
             // new right operand
             var nrlo = n.getRightListOperand();
