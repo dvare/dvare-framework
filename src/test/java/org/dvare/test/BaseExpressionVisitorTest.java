@@ -885,7 +885,7 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitKeysOperation() {
-
+        visitListOperationExpression(KeysOperation.class);
     }
 
     @Test
@@ -895,7 +895,7 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitMapOperation() {
-
+        visitListOperationExpression(MapOperation.class);
     }
 
     @Test
@@ -905,7 +905,7 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitMiddlesOperation() {
-
+        visitListOperationExpression(MiddlesOperation.class);
     }
 
     @Test
@@ -925,7 +925,7 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitSortOperation() {
-
+        visitListOperationExpression(SortOperation.class);
     }
 
     @Test
@@ -935,6 +935,6 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitValuesOperation() {
-
+        visitListOperationExpression(ValuesOperation.class);
     }
 }
