@@ -1117,12 +1117,12 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitLength() {
-        visitChainOperationExpression(Length.class, DateTimeVariable.class, null, 0);
+        visitChainOperationExpression(Length.class, StringVariable.class, null, 0);
     }
 
     @Test
     public void visitPrepend() {
-        visitChainOperationExpression(Prepend.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+        visitChainOperationExpression(Prepend.class, StringVariable.class, StringVariable.class, 1);
     }
 
     @Test
@@ -1142,7 +1142,7 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitStartsWith() {
-        visitChainOperationExpression(StartsWith.class, DateTimeVariable.class, DateTimeVariable.class, 1);
+        visitChainOperationExpression(StartsWith.class, StringVariable.class, StringVariable.class, 1);
     }
 
     @Test
@@ -1162,47 +1162,47 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitSubstring() {
-        visitChainOperationExpression(Substring.class, DateTimeVariable.class, DateTimeVariable.class, 2);
+        visitChainOperationExpression(Substring.class, StringVariable.class, IntegerVariable.class, 2);
     }
 
     @Test
     public void visitToBoolean() {
-        visitChainOperationExpression(ToBoolean.class, DateTimeVariable.class, null, 0);
+        visitChainOperationExpression(ToBoolean.class, StringVariable.class, null, 0);
     }
 
     @Test
     public void visitToDate() {
-        visitChainOperationExpression(ToDate.class, DateTimeVariable.class, null, 0);
+        visitChainOperationExpression(ToDate.class, StringVariable.class, null, 0);
     }
 
     @Test
     public void visitToInteger() {
-        visitChainOperationExpression(ToInteger.class, DateTimeVariable.class, null, 0);
+        visitChainOperationExpression(ToInteger.class, StringVariable.class, null, 0);
     }
 
     @Test
     public void visitToKey() {
-        visitChainOperationExpression(ToKey.class, DateTimeVariable.class, null, 0);
+        visitChainOperationExpression(ToKey.class, PairVariable.class, null, 0);
     }
 
     @Test
     public void visitToLeft() {
-        visitChainOperationExpression(ToLeft.class, DateTimeVariable.class, null, 0);
+        visitChainOperationExpression(ToLeft.class, TripleVariable.class, null, 0);
     }
 
     @Test
     public void visitToMiddle() {
-        visitChainOperationExpression(ToMiddle.class, DateTimeVariable.class, null, 0);
+        visitChainOperationExpression(ToMiddle.class, TripleVariable.class, null, 0);
     }
 
     @Test
     public void visitToPair() {
-        visitChainOperationExpression(ToPair.class, DateTimeVariable.class, null, 0);
+        visitChainOperationExpression(ToPair.class, StringVariable.class, null, 0);
     }
 
     @Test
     public void visitToRight() {
-        visitChainOperationExpression(ToRight.class, DateTimeVariable.class, null,0);
+        visitChainOperationExpression(ToRight.class, TripleVariable.class, null,0);
     }
 
     @Test
@@ -1212,17 +1212,17 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitToTriple() {
-        visitChainOperationExpression(ToTriple.class, DateTimeVariable.class, null, 0);
+        visitChainOperationExpression(ToTriple.class, StringVariable.class, null, 0);
     }
 
     @Test
     public void visitToValue() {
-        visitChainOperationExpression(ToValue.class, DateTimeVariable.class, null, 0);
+        visitChainOperationExpression(ToValue.class, PairVariable.class, null, 0);
     }
 
     @Test
     public void visitTrim() {
-        visitChainOperationExpression(Trim.class, DateTimeVariable.class, null,0);
+        visitChainOperationExpression(Trim.class, StringVariable.class, null,0);
     }
 
 
