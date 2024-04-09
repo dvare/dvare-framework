@@ -801,17 +801,50 @@ public class BaseExpressionVisitorTest {
 
             o.setLeftOperand(ol);
             var or = new Equals();
-            or.setLeftOperand(new IntegerVariable("I"));
-            or.setRightOperand(new IntegerVariable("J"));
+            var orlv = new IntegerVariable("I");
+            or.setLeftOperand(orlv);
+            var orrv = new IntegerVariable("J");
+            or.setRightOperand(orrv);
             o.setRightListOperand(List.of(or));
             o.setRightOperand(or);
 
             var e = o.accept(v);
             Assertions.assertEquals(o.getClass(), e.getClass());
-
-            //TODO continue
-
             var n = clazz.cast(e);
+
+            // new left operand
+            var nlo = n.getLeftOperand();
+            Assertions.assertEquals(ol.getClass(), nlo.getClass());
+            var nl = (ListLiteral) nlo;
+            Assertions.assertEquals(ol.getListType(), nl.getListType());
+            Assertions.assertEquals(ol.getSize(), nl.getSize());
+
+            for (var i = 0; i < ol.getSize(); i++) {
+                var ole = ol.getValue().get(i);
+                var nle = nl.getValue().get(i);
+                Assertions.assertEquals(IntegerLiteral.class, ole.getClass());
+                Assertions.assertEquals(ole.getClass(), nle.getClass());
+
+                var oe = (IntegerLiteral) ole;
+                var ne = (IntegerLiteral) nle;
+                Assertions.assertEquals(oe.getValue(), ne.getValue());
+            }
+
+            // new right operand
+            var nrlo = n.getRightListOperand();
+            Assertions.assertEquals(o.getRightListOperand().size(), nrlo.size());
+            var nr = (Equals) (nrlo.get(0));
+            Assertions.assertEquals(or.getClass(), nr.getClass());
+
+            var nrl = nr.getLeftOperand();
+            Assertions.assertEquals(or.getLeftOperand().getClass(), nrl.getClass());
+            var nrlv = (IntegerVariable) nrl;
+            Assertions.assertEquals(orlv.getName(), nrlv.getName());
+
+            var nrr = nr.getRightOperand();
+            Assertions.assertEquals(or.getRightOperand().getClass(), nrr.getClass());
+            var nrrv = (IntegerVariable) nrr;
+            Assertions.assertEquals(orrv.getName(), nrrv.getName());
 
             Assertions.assertEquals(o.toString(), n.toString());
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -823,83 +856,99 @@ public class BaseExpressionVisitorTest {
     public void visitCombinationExists() {
         visitMatchClass(CombinationExists.class);
     }
+
     @Test
     public void visitFilterOperation() {
         visitListOperationExpression(FilterOperation.class);
     }
+
     @Test
     public void visitFirst() {
 
     }
+
     @Test
     public void visitGetItem() {
 
     }
+
     @Test
     public void visitHasItem() {
 
     }
+
     @Test
     public void visitInsideCombination() {
         visitMatchClass(InsideCombination.class);
     }
+
     @Test
     public void visitInsideExistsCombination() {
         visitMatchClass(InsideExistsCombination.class);
     }
+
     @Test
     public void visitIsEmpty() {
 
     }
+
     @Test
     public void visitItemPosition() {
 
     }
+
     @Test
     public void visitKeysOperation() {
 
     }
+
     @Test
     public void visitLast() {
 
     }
+
     @Test
     public void visitMapOperation() {
 
     }
+
     @Test
     public void visitMatch() {
         visitMatchClass(Match.class);
     }
+
     @Test
     public void visitMiddlesOperation() {
 
     }
+
     @Test
     public void visitNotEmpty() {
 
     }
+
     @Test
     public void visitPairOperation() {
 
     }
+
     @Test
     public void visitSizeOperation() {
 
     }
+
     @Test
     public void visitSortOperation() {
 
     }
+
     @Test
     public void visitTripleOperation() {
 
     }
+
     @Test
     public void visitValuesOperation() {
 
     }
-
-
-
 }
