@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -525,7 +526,7 @@ public class BaseExpressionVisitorTest {
         Assertions.assertEquals(o.toString(), n.toString());
     }
 
-    private <T extends AggregationOperationExpression> void visitAggregationOperationExpression(Class<T> clazz) {
+    private <T extends AggregationOperationExpression> void visitAggregationOperationExpression(Class<T> clazz, int rightOperandSize) {
         try {
             var o = clazz.getDeclaredConstructor().newInstance();
 
@@ -534,12 +535,22 @@ public class BaseExpressionVisitorTest {
             ole.setRightListOperand(ol);
             o.setLeftOperand(ole);
 
+            if (rightOperandSize > 0) {
+                var l = new ArrayList<Expression>();
+                for (var i = 0; i < rightOperandSize; i++) {
+                    var e = new IntegerLiteral(i);
+                    l.add(e);
+                }
+                o.setRightListOperand(l);
+            }
+
             var e = o.accept(v);
             Assertions.assertEquals(o.getClass(), e.getClass());
 
             var n = clazz.cast(e);
             Assertions.assertEquals(o.getLeftOperand().getClass(), n.getLeftOperand().getClass());
 
+            // new left operand
             var nlo = n.getLeftOperand();
             Assertions.assertEquals(ole.getClass(), nlo.getClass());
             var nle = (ListLiteralOperationExpression) nlo;
@@ -557,6 +568,25 @@ public class BaseExpressionVisitorTest {
                 Assertions.assertEquals(oi.getValue(), ni.getValue());
             }
 
+            // new right operand
+            var nro = n.getRightListOperand();
+            Assertions.assertEquals(rightOperandSize, o.getRightListOperand().size());
+            Assertions.assertEquals(o.getRightListOperand().size(), nro.size());
+
+            if (rightOperandSize > 0) {
+                var oro = o.getRightListOperand();
+
+                for (var i = 0; i < rightOperandSize; i++) {
+                    var ore = oro.get(i);
+                    var nre = nro.get(i);
+                    Assertions.assertEquals(ore.getClass(), nre.getClass());
+
+                    var orev = (IntegerLiteral) ore;
+                    var nrev = (IntegerLiteral) nre;
+                    Assertions.assertEquals(orev.getValue(), nrev.getValue());
+                }
+            }
+
             Assertions.assertEquals(o.toString(), n.toString());
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
@@ -565,32 +595,32 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitMaximum() {
-        visitAggregationOperationExpression(Maximum.class);
+        visitAggregationOperationExpression(Maximum.class, 0);
     }
 
     @Test
     public void visitMean() {
-        visitAggregationOperationExpression(Mean.class);
+        visitAggregationOperationExpression(Mean.class, 0);
     }
 
     @Test
     public void visitMedian() {
-        visitAggregationOperationExpression(Median.class);
+        visitAggregationOperationExpression(Median.class, 0);
     }
 
     @Test
     public void visitMinimum() {
-        visitAggregationOperationExpression(Minimum.class);
+        visitAggregationOperationExpression(Minimum.class, 0);
     }
 
     @Test
     public void visitMode() {
-        visitAggregationOperationExpression(Mode.class);
+        visitAggregationOperationExpression(Mode.class, 0);
     }
 
     @Test
     public void visitSum() {
-        visitAggregationOperationExpression(Sum.class);
+        visitAggregationOperationExpression(Sum.class, 0);
     }
 
     private <T extends ArithmeticOperationExpression> void visitArithmeticOperationExpression(Class<T> clazz) {
@@ -850,17 +880,17 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitFirst() {
-
+        visitAggregationOperationExpression(First.class, 0);
     }
 
     @Test
     public void visitGetItem() {
-
+        visitAggregationOperationExpression(GetItem.class, 1);
     }
 
     @Test
     public void visitHasItem() {
-
+        visitAggregationOperationExpression(HasItem.class, 1);
     }
 
     @Test
@@ -875,12 +905,12 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitIsEmpty() {
-
+        visitAggregationOperationExpression(IsEmpty.class, 0);
     }
 
     @Test
     public void visitItemPosition() {
-
+        visitAggregationOperationExpression(ItemPosition.class, 0);
     }
 
     @Test
@@ -890,7 +920,7 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitLast() {
-
+        visitAggregationOperationExpression(Last.class, 0);
     }
 
     @Test
@@ -910,17 +940,17 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitNotEmpty() {
-
+        visitAggregationOperationExpression(NotEmpty.class, 0);
     }
 
     @Test
     public void visitPairOperation() {
-
+        visitAggregationOperationExpression(PairOperation.class, 2);
     }
 
     @Test
     public void visitSizeOperation() {
-
+        visitAggregationOperationExpression(SizeOperation.class, 0);
     }
 
     @Test
@@ -930,7 +960,7 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitTripleOperation() {
-
+        visitAggregationOperationExpression(TripleOperation.class, 3);
     }
 
     @Test
