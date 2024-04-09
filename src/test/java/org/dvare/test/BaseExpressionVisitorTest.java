@@ -14,8 +14,7 @@ import org.dvare.expression.operation.logical.Not;
 import org.dvare.expression.operation.logical.OR;
 import org.dvare.expression.operation.predefined.*;
 import org.dvare.expression.operation.relational.*;
-import org.dvare.expression.operation.utility.Function;
-import org.dvare.expression.operation.utility.PrintOperation;
+import org.dvare.expression.operation.utility.*;
 import org.dvare.expression.veriable.*;
 import org.dvare.util.Pair;
 import org.dvare.util.Triple;
@@ -31,39 +30,6 @@ import java.util.List;
 
 public class BaseExpressionVisitorTest {
     private final BaseExpressionVisitor v = new BaseExpressionVisitor();
-
-    private String trimCollapseWhiteSpace(String s) {
-        return s.trim().replaceAll("\\s+", " ");
-    }
-
-    @Test
-    public void visitFunction() {
-        var f = new Function();
-        var fe = new FunctionExpression("Func1", null);
-        fe.addParameter(new NamedExpression("S1"));
-        fe.addParameter(new NamedExpression("I1"));
-        f.setLeftOperand(fe);
-
-        var e = f.accept(v);
-
-        Assertions.assertEquals(f.getClass(), e.getClass());
-        var fn = (Function) e;
-
-        Assertions.assertEquals(f.getOperationType(), fn.getOperationType());
-        Assertions.assertEquals(f.getDataTypeExpression(), fn.getDataTypeExpression());
-        Assertions.assertEquals(f.getLeftOperand().getClass(), fn.getLeftOperand().getClass());
-        Assertions.assertNull(f.getRightOperand());
-        Assertions.assertNull(fn.getRightOperand());
-
-        var fne = (FunctionExpression) fn.getLeftOperand();
-        Assertions.assertEquals(fe.name.toString(), fne.name.toString());
-        Assertions.assertEquals(fe.getParameters().size(), fne.getParameters().size());
-        for (var i = 0; i < fe.getParameters().size(); i++) {
-            Assertions.assertEquals(fe.getParameters().get(i).toString(), fne.getParameters().get(i).toString());
-        }
-
-        Assertions.assertEquals(f.toString(), trimCollapseWhiteSpace(fn.toString()));
-    }
 
     @Test
     public void visitFunctionExpression() {
@@ -465,6 +431,11 @@ public class BaseExpressionVisitorTest {
     }
 
     private <T extends IterationOperationExpression> T visitIterationOperationExpression(T o) {
+        o.setReferenceContext(new NamedExpression("ref"));
+        o.setDerivedContext(new NamedExpression("der"));
+        o.setLeftOperand(new PrintOperation());
+        o.setRightOperand(new PrintOperation());
+
         var e = o.accept(v);
 
         Assertions.assertEquals(o.getClass(), e.getClass());
@@ -485,11 +456,6 @@ public class BaseExpressionVisitorTest {
     @Test
     public void visitIterationOperationExpression() {
         var o = new IterationOperationExpression(OperationType.FORALL);
-        o.setReferenceContext(new NamedExpression("ref"));
-        o.setDerivedContext(new NamedExpression("der"));
-        o.setLeftOperand(new PrintOperation());
-        o.setRightOperand(new PrintOperation());
-
         visitIterationOperationExpression(o);
     }
 
@@ -1330,4 +1296,169 @@ public class BaseExpressionVisitorTest {
     public void visitNotIn() {
         visitListRelationalOperationExpression(NotIn.class);
     }
+
+    private <T extends OperationExpression> void visitOperationExpression(Class<T> clazz) {
+        try {
+            var o = clazz.getDeclaredConstructor().newInstance();
+
+            var ne = o.accept(v);
+            Assertions.assertEquals(o.getClass(), ne.getClass());
+            var n = clazz.cast(ne);
+
+            Assertions.assertEquals(o.toString(), n.toString());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void visitDateOperation() {
+        visitOperationExpression(DateOperation.class);
+    }
+
+    @Test
+    public void visitDateTimeOperation() {
+        visitOperationExpression(DateTimeOperation.class);
+    }
+
+    @Test
+    public void visitDefOperation() {
+        // TODO change to similar to visitLetOperation
+        visitOperationExpression(DefOperation.class);
+    }
+
+    @Test
+    public void visitEndForAll() {
+        visitIterationOperationExpression(new EndForAll());
+    }
+
+    @Test
+    public void visitEndForEach() {
+        visitIterationOperationExpression(new EndForEach());
+    }
+
+    @Test
+    public void visitExpressionSeparator() {
+        // TODO
+    }
+
+    @Test
+    public void visitForAll() {
+        visitIterationOperationExpression(new ForAll());
+    }
+
+    @Test
+    public void visitForEach() {
+        visitIterationOperationExpression(new ForEach());
+    }
+
+    private String trimCollapseWhiteSpace(String s) {
+        return s.trim().replaceAll("\\s+", " ");
+    }
+
+    private <T extends Function> void visitFunction(Class<T> clazz) {
+        try {
+            var f = clazz.getDeclaredConstructor().newInstance();
+
+            var fe = new FunctionExpression("Func1", null);
+            fe.addParameter(new NamedExpression("S1"));
+            fe.addParameter(new NamedExpression("I1"));
+            f.setLeftOperand(fe);
+
+            var e = f.accept(v);
+
+            Assertions.assertEquals(f.getClass(), e.getClass());
+            var fn = (Function) e;
+
+            Assertions.assertEquals(f.getOperationType(), fn.getOperationType());
+            Assertions.assertEquals(f.getDataTypeExpression(), fn.getDataTypeExpression());
+            Assertions.assertEquals(f.getLeftOperand().getClass(), fn.getLeftOperand().getClass());
+            Assertions.assertNull(f.getRightOperand());
+            Assertions.assertNull(fn.getRightOperand());
+
+            var fne = (FunctionExpression) fn.getLeftOperand();
+            Assertions.assertEquals(fe.name.toString(), fne.name.toString());
+            Assertions.assertEquals(fe.getParameters().size(), fne.getParameters().size());
+            for (var i = 0; i < fe.getParameters().size(); i++) {
+                Assertions.assertEquals(fe.getParameters().get(i).toString(), fne.getParameters().get(i).toString());
+            }
+
+            Assertions.assertEquals(f.toString(), trimCollapseWhiteSpace(fn.toString()));
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void visitFunction() {
+        visitFunction(Function.class);
+    }
+
+    @Test
+    public void visitInvoke() {
+        visitFunction(Invoke.class);
+    }
+
+    @Test
+    public void visitLeftPriority() {
+        visitOperationExpression(LeftPriority.class);
+    }
+
+    @Test
+    public void visitLetOperation() {
+        var o = new LetOperation();
+        var one = "self.V : IntegerType";
+        var ol = new NamedExpression(one);
+        o.setLeftOperand(ol);
+
+        var ove = o.getVariableExpression();
+
+        Assertions.assertEquals("V", ove.getName());
+        Assertions.assertEquals(IntegerType.class, ove.getType());
+        Assertions.assertEquals("tmp", ove.getOperandType());
+
+        var ne = o.accept(v);
+        Assertions.assertEquals(o.getClass(), ne.getClass());
+        var n = (LetOperation) ne;
+        Assertions.assertEquals(ol.getClass(), n.getLeftOperand().getClass());
+
+        var nl = (NamedExpression) n.getLeftOperand();
+        Assertions.assertEquals(one, nl.getName());
+
+        var nve = n.getVariableExpression();
+        Assertions.assertEquals(ove.getName(), nve.getName());
+        Assertions.assertEquals(ove.getType(), nve.getType());
+        Assertions.assertEquals(ove.getOperandType(), nve.getOperandType());
+
+        Assertions.assertEquals(o.toString(), n.toString());
+    }
+
+    @Test
+    public void visitPrintOperation() {
+        var o = new PrintOperation();
+        var ol = new IntegerVariable("I");
+        o.setLeftOperand(ol);
+
+        var ne = o.accept(v);
+        Assertions.assertEquals(o.getClass(), ne.getClass());
+
+        var n = (PrintOperation) ne;
+        var nle = n.getLeftOperand();
+        Assertions.assertEquals(ol.getClass(), nle.getClass());
+        var nl = (IntegerVariable) nle;
+        Assertions.assertEquals(ol.getName(), nl.getName());
+
+        Assertions.assertEquals(o.toString(), n.toString());
+    }
+
+    @Test
+    public void visitRightPriority() {
+        visitOperationExpression(RightPriority.class);
+    }
+
+    @Test
+    public void visitToday() {
+        visitOperationExpression(Today.class);
+    }
+
 }
