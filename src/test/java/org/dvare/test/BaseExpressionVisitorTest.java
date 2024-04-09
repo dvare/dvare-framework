@@ -10,6 +10,10 @@ import org.dvare.expression.operation.aggregation.*;
 import org.dvare.expression.operation.arithmetic.*;
 import org.dvare.expression.operation.flow.*;
 import org.dvare.expression.operation.list.*;
+import org.dvare.expression.operation.logical.And;
+import org.dvare.expression.operation.logical.Implies;
+import org.dvare.expression.operation.logical.Not;
+import org.dvare.expression.operation.logical.OR;
 import org.dvare.expression.operation.relational.Equals;
 import org.dvare.expression.operation.relational.In;
 import org.dvare.expression.operation.utility.Function;
@@ -967,4 +971,55 @@ public class BaseExpressionVisitorTest {
     public void visitValuesOperation() {
         visitListOperationExpression(ValuesOperation.class);
     }
+
+    private <T extends LogicalOperationExpression> void visitLogicalOperationExpression(Class<T> clazz) {
+        try {
+            var o = clazz.getDeclaredConstructor().newInstance();
+
+            var ol = new BooleanVariable("A");
+            o.setLeftOperand(ol);
+            var or = new BooleanVariable("B");
+            o.setRightOperand(or);
+
+            var ne = o.accept(v);
+            Assertions.assertEquals(o.getClass(), ne.getClass());
+
+            var n = clazz.cast(ne);
+
+            var nle = n.getLeftOperand();
+            Assertions.assertEquals(ol.getClass(), nle.getClass());
+            var nl = (BooleanVariable) nle;
+            Assertions.assertEquals(ol.getName(), nl.getName());
+
+            var nre = n.getRightOperand();
+            Assertions.assertEquals(or.getClass(), nre.getClass());
+            var nr = (BooleanVariable) nre;
+            Assertions.assertEquals(or.getName(), nr.getName());
+
+            Assertions.assertEquals(o.toString(), n.toString());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void visitAnd() {
+        visitLogicalOperationExpression(And.class);
+    }
+
+    @Test
+    public void visitImplies() {
+        visitLogicalOperationExpression(Implies.class);
+    }
+
+    @Test
+    public void visitNot() {
+        visitLogicalOperationExpression(Not.class);
+    }
+
+    @Test
+    public void visitOR() {
+        visitLogicalOperationExpression(OR.class);
+    }
+
 }
