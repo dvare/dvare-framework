@@ -13,7 +13,7 @@ import org.dvare.expression.operation.logical.Implies;
 import org.dvare.expression.operation.logical.Not;
 import org.dvare.expression.operation.logical.OR;
 import org.dvare.expression.operation.predefined.*;
-import org.dvare.expression.operation.relational.Equals;
+import org.dvare.expression.operation.relational.*;
 import org.dvare.expression.operation.utility.Function;
 import org.dvare.expression.operation.utility.PrintOperation;
 import org.dvare.expression.veriable.*;
@@ -1225,5 +1225,109 @@ public class BaseExpressionVisitorTest {
         visitChainOperationExpression(Trim.class, StringVariable.class, null,0);
     }
 
+    private <T extends RelationalOperationExpression> void visitPairRelationalOperationExpression(Class<T> clazz) {
+        try {
+            var o = clazz.getDeclaredConstructor().newInstance();
+            var ol = new IntegerVariable("L");
+            o.setLeftOperand(ol);
+            var or = new IntegerVariable("R");
+            o.setRightOperand(or);
 
+            var ne = o.accept(v);
+            Assertions.assertEquals(o.getClass(), ne.getClass());
+            var n = clazz.cast(ne);
+
+            var nle = n.getLeftOperand();
+            Assertions.assertEquals(ol.getClass(), nle.getClass());
+            var nl = (IntegerVariable) nle;
+            Assertions.assertEquals(ol.getName(), nl.getName());
+
+            var nre = n.getRightOperand();
+            Assertions.assertEquals(or.getClass(), nre.getClass());
+            var nr = (IntegerVariable) nre;
+            Assertions.assertEquals(or.getName(), nr.getName());
+
+            Assertions.assertEquals(o.toString(), n.toString());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private <T extends RelationalOperationExpression> void visitListRelationalOperationExpression(Class<T> clazz) {
+        try {
+            var o = clazz.getDeclaredConstructor().newInstance();
+            var ol = new IntegerVariable("V");
+            o.setLeftOperand(ol);
+
+            var orl = new ListLiteral(
+                    List.of(
+                            new IntegerLiteral(1),
+                            new IntegerLiteral(10)
+                    ),
+                    IntegerType.class
+            );
+            o.setRightOperand(orl);
+
+            var ne = o.accept(v);
+            Assertions.assertEquals(o.getClass(), ne.getClass());
+            var n = clazz.cast(ne);
+
+            var nle = n.getLeftOperand();
+            Assertions.assertEquals(ol.getClass(), nle.getClass());
+            var nl = (IntegerVariable) nle;
+            Assertions.assertEquals(ol.getName(), nl.getName());
+
+            var nre = n.getRightOperand();
+            compareListLiterals(orl, nre, IntegerLiteral.class);
+
+            Assertions.assertEquals(o.toString(), n.toString());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void visitBetween() {
+        visitListRelationalOperationExpression(Between.class);
+    }
+
+    @Test
+    public void visitEquals() {
+        visitPairRelationalOperationExpression(Equals.class);
+    }
+
+    @Test
+    public void visitGreaterEqual() {
+        visitPairRelationalOperationExpression(GreaterEqual.class);
+    }
+
+    @Test
+    public void visitGreaterThan() {
+        visitPairRelationalOperationExpression(GreaterThan.class);
+    }
+
+    @Test
+    public void visitIn() {
+        visitListRelationalOperationExpression(In.class);
+    }
+
+    @Test
+    public void visitLessEqual() {
+        visitPairRelationalOperationExpression(LessEqual.class);
+    }
+
+    @Test
+    public void visitLessThan() {
+        visitPairRelationalOperationExpression(LessThan.class);
+    }
+
+    @Test
+    public void visitNotEquals() {
+        visitPairRelationalOperationExpression(NotEquals.class);
+    }
+
+    @Test
+    public void visitNotIn() {
+        visitListRelationalOperationExpression(NotIn.class);
+    }
 }
