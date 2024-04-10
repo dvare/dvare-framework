@@ -16,6 +16,7 @@ import org.dvare.expression.operation.relational.*;
 import org.dvare.expression.operation.utility.*;
 import org.dvare.expression.veriable.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,232 +32,235 @@ public class BaseExpressionVisitor implements ExpressionVisitor<Expression> {
 
     @Override
     public Expression visit(NamedExpression n) {
-        return n;
+        return new NamedExpression(n.getName());
     }
 
     @Override
     public Expression visit(BooleanExpression b) {
-        return b;
+        return new BooleanExpression(b.getName(), b.isValue());
     }
 
     @Override
     public Expression visit(BooleanListType bl) {
-        return bl;
+        return new BooleanListType();
     }
 
     @Override
     public Expression visit(BooleanType b) {
-        return b;
+        return new BooleanType();
     }
 
     @Override
     public Expression visit(DateListType dl) {
-        return dl;
+        return new DateListType();
     }
 
     @Override
     public Expression visit(DateTimeListType dtl) {
-        return dtl;
+        return new DateTimeListType();
     }
 
     @Override
     public Expression visit(ListType l) {
-        return l;
+        return new ListType(l.getDataType());
     }
 
     @Override
     public Expression visit(DateTimeType dt) {
-        return dt;
+        return new DateTimeType();
     }
 
     @Override
     public Expression visit(DateType d) {
-        return d;
+        return new DateType();
     }
 
     @Override
     public Expression visit(FloatListType fl) {
-        return fl;
+        return new FloatListType();
     }
 
     @Override
     public Expression visit(FloatType f) {
-        return f;
+        return new FloatType();
     }
 
     @Override
     public Expression visit(IntegerListType il) {
-        return il;
+        return new IntegerListType();
     }
 
     @Override
     public Expression visit(IntegerType i) {
-        return i;
+        return new IntegerType();
     }
 
     @Override
     public Expression visit(NullType n) {
-        return n;
+        return new NullType();
     }
 
     @Override
     public Expression visit(PairListType pl) {
-        return pl;
+        return new PairListType();
     }
 
     @Override
     public Expression visit(PairType p) {
-        return p;
+        return new PairType();
     }
 
     @Override
     public Expression visit(RegexType r) {
-        return r;
+        return new RegexType();
     }
 
     @Override
     public Expression visit(SimpleDateListType sdl) {
-        return sdl;
+        return new SimpleDateListType();
     }
 
     @Override
     public Expression visit(SimpleDateType sd) {
-        return sd;
+        return new SimpleDateType();
     }
 
     @Override
     public Expression visit(StringListType sl) {
-        return sl;
+        return new StringListType();
     }
 
     @Override
     public Expression visit(StringType s) {
-        return s;
+        return new StringType();
     }
 
     @Override
     public Expression visit(TripleListType tl) {
-        return tl;
+        return new TripleListType();
     }
 
     @Override
     public Expression visit(TripleType t) {
-        return t;
+        return new TripleType();
     }
 
     @Override
     public Expression visit(BooleanLiteral b) {
-        return b;
+        return new BooleanLiteral(b.getValue());
     }
 
     @Override
     public Expression visit(DateLiteral d) {
-        return d;
+        return new DateLiteral(d.getValue());
     }
 
     @Override
     public Expression visit(DateTimeLiteral dt) {
-        return dt;
+        return new DateTimeLiteral(dt.getValue());
     }
 
     @Override
     public Expression visit(FloatLiteral f) {
-        return f;
+        return new FloatLiteral(f.getValue());
     }
 
     @Override
     public Expression visit(IntegerLiteral i) {
-        return i;
+        return new IntegerLiteral(i.getValue());
     }
 
     @Override
     public Expression visit(ListLiteral l) {
-        return l;
+        var nl = new ArrayList<>(l.getValue());
+        return new ListLiteral(nl, l.getType());
     }
 
     @Override
     public Expression visit(NullLiteral<?> n) {
-        return n;
+        return new NullLiteral<>();
     }
 
     @Override
     public Expression visit(PairLiteral p) {
-        return p;
+        return new PairLiteral(p.getValue());
     }
 
     @Override
     public Expression visit(RegexLiteral r) {
-        return r;
+        return new RegexLiteral(r.getValue());
     }
 
     @Override
     public Expression visit(SimpleDateLiteral sd) {
-        return sd;
+        return new SimpleDateLiteral(sd.getValue());
     }
 
     @Override
     public Expression visit(StringLiteral s) {
-        return s;
+        return new StringLiteral(s.getValue());
     }
 
     @Override
     public Expression visit(TripleLiteral t) {
-        return t;
+        return new TripleLiteral(t.getValue());
     }
 
     @Override
     public Expression visit(BooleanVariable b) {
-        return b;
+        return new BooleanVariable(b.getName(), b.getValue());
     }
 
     @Override
     public Expression visit(DateTimeVariable dt) {
-        return dt;
+        return new DateTimeVariable(dt.getName(), dt.getValue());
     }
 
     @Override
     public Expression visit(DateVariable d) {
-        return d;
+        return new DateVariable(d.getName(), d.getValue());
     }
 
     @Override
     public Expression visit(FloatVariable f) {
-        return f;
+        return new FloatVariable(f.getName(), f.getValue());
     }
 
     @Override
     public Expression visit(IntegerVariable i) {
-        return i;
+        return new IntegerVariable(i.getName(), i.getValue());
     }
 
     @Override
     public Expression visit(ListVariable l) {
+        var n = new ListVariable(l.getName(), l.getListType());
+        n.setValue(new ArrayList<>(l.getValue()));
         return l;
     }
 
     @Override
     public Expression visit(PairVariable p) {
-        return p;
+        return new PairVariable(p.getName(), p.getValue());
     }
 
     @Override
     public Expression visit(RegexVariable r) {
-        return r;
+        return new RegexVariable(r.getName(), r.getValue());
     }
 
     @Override
     public Expression visit(SimpleDateVariable sd) {
-        return sd;
+        return new SimpleDateVariable(sd.getName(), sd.getValue());
     }
 
     @Override
     public Expression visit(StringVariable s) {
-        return s;
+        return new StringVariable(s.getName(), s.getValue());
     }
 
     @Override
     public Expression visit(TripleVariable t) {
-        return t;
+        return new TripleVariable(t.getName(), t.getValue());
     }
 
     @Override
