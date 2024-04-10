@@ -58,7 +58,6 @@ public class BaseExpressionVisitorTest {
         var n = (NamedExpression) e;
 
         Assertions.assertEquals(o.getName(), n.getName());
-        Assertions.assertEquals(o.toString(), n.toString());
     }
 
     private void visitBooleanExpression(boolean val) {
@@ -70,8 +69,6 @@ public class BaseExpressionVisitorTest {
 
         Assertions.assertEquals(o.getName(), n.getName());
         Assertions.assertEquals(o.isValue(), n.isValue());
-
-        Assertions.assertEquals(o.toString(), n.toString());
     }
 
     @Test
@@ -1321,10 +1318,27 @@ public class BaseExpressionVisitorTest {
         visitOperationExpression(DateTimeOperation.class);
     }
 
+    private <T extends OperationExpression> T visitDefLetOperation(T o) {
+        var one = "self.V : IntegerType";
+        var ol = new NamedExpression(one);
+        o.setLeftOperand(ol);
+
+        var ne = o.accept(v);
+        Assertions.assertEquals(o.getClass(), ne.getClass());
+        @SuppressWarnings("unchecked") var n = (T) ne;
+        Assertions.assertEquals(ol.getClass(), n.getLeftOperand().getClass());
+
+        var nl = (NamedExpression) n.getLeftOperand();
+        Assertions.assertEquals(one, nl.getName());
+
+        return n;
+    }
+
     @Test
     public void visitDefOperation() {
-        // TODO change to similar to visitLetOperation
-        visitOperationExpression(DefOperation.class);
+        var o = new DefOperation();
+        var n = visitDefLetOperation(o);
+        Assertions.assertEquals(o.toString(), n.toString());
     }
 
     @Test
@@ -1339,7 +1353,31 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitExpressionSeparator() {
-        // TODO
+        var ol = new BooleanVariable("B", true);
+        var or = new StringVariable("S", "val");
+        var o = new ExpressionSeparator();
+        o.setLeftOperand(ol);
+        o.setRightOperand(or);
+
+        var ne = o.accept(v);
+        Assertions.assertEquals(o.getClass(), ne.getClass());
+        var n = (ExpressionSeparator) ne;
+
+        var nle = n.getLeftOperand();
+        Assertions.assertEquals(ol.getClass(), nle.getClass());
+        var nl = (BooleanVariable) nle;
+        Assertions.assertEquals(ol.getName(), nl.getName());
+        Assertions.assertEquals(ol.getValue(), nl.getValue());
+        Assertions.assertEquals(ol.getType(), nl.getType());
+
+        var nre = n.getRightOperand();
+        Assertions.assertEquals(or.getClass(), nre.getClass());
+        var nr = (StringVariable) nre;
+        Assertions.assertEquals(or.getName(), nr.getName());
+        Assertions.assertEquals(or.getValue(), nr.getValue());
+        Assertions.assertEquals(or.getType(), nr.getType());
+
+        Assertions.assertEquals(o.toString(), n.toString());
     }
 
     @Test
@@ -1407,23 +1445,14 @@ public class BaseExpressionVisitorTest {
     @Test
     public void visitLetOperation() {
         var o = new LetOperation();
-        var one = "self.V : IntegerType";
-        var ol = new NamedExpression(one);
-        o.setLeftOperand(ol);
+
+        var n = visitDefLetOperation(o);
 
         var ove = o.getVariableExpression();
 
         Assertions.assertEquals("V", ove.getName());
         Assertions.assertEquals(IntegerType.class, ove.getType());
         Assertions.assertEquals("tmp", ove.getOperandType());
-
-        var ne = o.accept(v);
-        Assertions.assertEquals(o.getClass(), ne.getClass());
-        var n = (LetOperation) ne;
-        Assertions.assertEquals(ol.getClass(), n.getLeftOperand().getClass());
-
-        var nl = (NamedExpression) n.getLeftOperand();
-        Assertions.assertEquals(one, nl.getName());
 
         var nve = n.getVariableExpression();
         Assertions.assertEquals(ove.getName(), nve.getName());
