@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class BaseExpressionVisitor implements ExpressionVisitor<Expression> {
     @Override
     public Expression visit(FunctionExpression f) {
-        System.out.println("--- name:" + f.name);
         var name = f.name.accept(this);
         var n = new FunctionExpression(name, f.getBinding());
         var nps = transformedList(f.getParameters());
