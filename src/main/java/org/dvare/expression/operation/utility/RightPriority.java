@@ -31,6 +31,11 @@ public class RightPriority extends OperationExpression {
     }
 
     @Override
+    public String toString() {
+        return operationType.getTokens().get(0);
+    }
+
+    @Override
     public <T> T accept(ExpressionVisitor<T> v) {
         return v.visit(this);
     }
