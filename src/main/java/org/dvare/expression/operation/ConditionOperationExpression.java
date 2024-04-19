@@ -44,7 +44,7 @@ public abstract class ConditionOperationExpression extends OperationExpression {
             }
 
         }
-        return null;
+        return pos;
     }
 
 

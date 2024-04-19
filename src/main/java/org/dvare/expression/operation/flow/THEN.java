@@ -44,7 +44,7 @@ public class THEN extends ConditionOperationExpression {
             }
 
         }
-        return null;
+        return pos;
     }
 
     @Override

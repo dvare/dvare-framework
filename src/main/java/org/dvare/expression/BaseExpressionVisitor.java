@@ -234,7 +234,9 @@ public class BaseExpressionVisitor implements ExpressionVisitor<Expression> {
     @Override
     public Expression visit(ListVariable l) {
         var n = new ListVariable(l.getName(), l.getListType());
-        n.setValue(new ArrayList<>(l.getValue()));
+        if (l.getValue() != null) {
+            n.setValue(new ArrayList<>(l.getValue()));
+        }
         return l;
     }
 
