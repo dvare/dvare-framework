@@ -433,6 +433,13 @@ public class BaseExpressionVisitor implements ExpressionVisitor<Expression> {
     }
 
     @Override
+    public Expression visit(DistinctOperation d) {
+        var n = new DistinctOperation();
+        setLeftOperandNotNull(d, n);
+        return n;
+    }
+
+    @Override
     public Expression visit(FilterOperation f) {
         var n = new FilterOperation();
         setAggregationOperation(f, n);

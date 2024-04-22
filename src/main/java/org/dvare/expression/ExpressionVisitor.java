@@ -105,6 +105,7 @@ public interface ExpressionVisitor<T> {
 
     // list
     T visit(CombinationExists ce);
+    T visit(DistinctOperation d);
     T visit(FilterOperation f);
     T visit(First f);
     T visit(GetItem gi);
