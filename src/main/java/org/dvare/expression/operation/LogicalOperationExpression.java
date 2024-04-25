@@ -47,16 +47,16 @@ public abstract class LogicalOperationExpression extends OperationExpression {
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (; pos < tokens.length; pos++) {
-            OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
+            var token = tokens[pos];
+
+            OperationExpression op = configurationRegistry.getOperation(token);
             if (op != null) {
 
                 if (op instanceof RightPriority || op instanceof EndForAll || op instanceof ENDIF/* || (op instanceof AggregationOperationExpression && !stack.isEmpty())*/) {
                     return pos - 1;
                 }
 
-
                 pos = op.parse(tokens, pos, stack, contexts);
-
 
                 if (pos + 1 < tokens.length) {
                     OperationExpression testOp = configurationRegistry.getOperation(tokens[pos + 1]);
@@ -64,8 +64,12 @@ public abstract class LogicalOperationExpression extends OperationExpression {
                         return pos;
                     }
                 }
-
-
+            } else {
+                var e = buildExpression(token, contexts, pos, tokens);
+                if (e != null) {
+                    stack.push(e);
+                    return pos - 1;
+                }
             }
         }
         return pos;
