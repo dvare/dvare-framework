@@ -87,6 +87,11 @@ public abstract class ConditionOperationExpression extends OperationExpression {
             toStringBuilder.append(" ");
         }
 
+        if (operationType == OperationType.IF) {
+            toStringBuilder.append(OperationType.ENDIF.getTokens().get(0));
+            toStringBuilder.append(" ");
+        }
+
 
         if (rightOperand != null) {
             toStringBuilder.append(rightOperand.toString());
