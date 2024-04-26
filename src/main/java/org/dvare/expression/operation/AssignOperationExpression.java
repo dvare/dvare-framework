@@ -142,7 +142,7 @@ public class AssignOperationExpression extends OperationExpression {
         Expression left = this.leftOperand;
 
         if (left instanceof DefOperation) {
-            left = ((DefOperation) left).rightOperand;
+            left = ((DefOperation) left).leftOperand;
         }
 
         if (left instanceof VariableExpression) {
