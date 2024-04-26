@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LogicalTest {
+public class LogicalOperationExpressionTest {
 
     public final String T = "true";
     public final String F = "false";
@@ -92,8 +92,7 @@ public class LogicalTest {
         dataSet.add(new DataRow(d));
         instancesBinding.addInstance(params.CONTEXT, dataSet);
 
-        Object result;
-        result = evaluator.evaluate(rule, instancesBinding);
+        Object result = evaluator.evaluate(rule, instancesBinding);
         Assertions.assertEquals(Boolean.class, result.getClass());
 
         var booleanResult = (Boolean) result;
