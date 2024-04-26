@@ -31,6 +31,9 @@ public class DefOperation extends OperationExpression {
     public Integer parse(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         pos = findNextExpression(tokens, pos + 1, stack, contexts);
 
+        this.rightOperand = stack.pop();
+        stack.push(this);
+
         return pos;
     }
 

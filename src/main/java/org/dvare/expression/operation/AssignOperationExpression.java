@@ -62,7 +62,7 @@ public class AssignOperationExpression extends OperationExpression {
             }
 
 
-            if (!(this.leftOperand instanceof VariableExpression)) {
+            if (!(this.leftOperand instanceof VariableExpression || this.leftOperand instanceof DefOperation)) {
 
                 TokenType tokenType = findDataObject(leftString, contexts);
                 if (tokenType.type != null && contexts.getContext(tokenType.type) != null &&
@@ -140,6 +140,10 @@ public class AssignOperationExpression extends OperationExpression {
 
         VariableExpression<?> variable;
         Expression left = this.leftOperand;
+
+        if (left instanceof DefOperation) {
+            left = ((DefOperation) left).rightOperand;
+        }
 
         if (left instanceof VariableExpression) {
             variable = (VariableExpression<?>) left;
