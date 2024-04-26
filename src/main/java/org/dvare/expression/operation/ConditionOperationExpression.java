@@ -5,6 +5,7 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.operation.flow.ENDIF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,19 +35,26 @@ public abstract class ConditionOperationExpression extends OperationExpression {
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+        var oldPos = pos;
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
-        for (int i = pos; i < tokens.length; i++) {
-            OperationExpression op = configurationRegistry.getOperation(tokens[i]);
-            if (op != null) {
+        for (; pos < tokens.length; pos++) {
+            var token = tokens[pos];
+            OperationExpression op = configurationRegistry.getOperation(token);
+            if (op instanceof ENDIF) {
+                checkSingleNonOperationExpression(tokens, oldPos, pos, stack, contexts);
 
-                i = op.parse(tokens, i, stack, contexts);
-                return i;
+                if (stack.isEmpty()) {
+                    throw new ExpressionParseException("ENDIF not found");
+                }
+
+                return --pos;
+            } else if (op != null) {
+                pos = op.parse(tokens, pos, stack, contexts);
+                return pos;
             }
-
         }
         return pos;
     }
-
 
     @Override
     public String toString() {

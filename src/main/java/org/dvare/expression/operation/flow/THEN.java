@@ -25,9 +25,11 @@ public class THEN extends ConditionOperationExpression {
 
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
+        var oldPos = pos;
         ConfigurationRegistry configurationRegistry = ConfigurationRegistry.INSTANCE;
         for (; pos < tokens.length; pos++) {
-            OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
+            var token = tokens[pos];
+            OperationExpression op = configurationRegistry.getOperation(token);
             /*if (op != null) {
 
                 pos = op.parse(tokens, pos, stack, contexts);
@@ -35,14 +37,16 @@ public class THEN extends ConditionOperationExpression {
             }*/
 
             if (op instanceof ELSE || op instanceof ENDIF) {
+                checkSingleNonOperationExpression(tokens, oldPos, pos, stack, contexts);
+
                 if (stack.isEmpty()) {
-                    throw new ExpressionParseException("ENDIF not found");
+                    throw new ExpressionParseException("ELSE or ENDIF not found");
                 }
+
                 return --pos;
             } else if (op != null) {
                 pos = op.parse(tokens, pos, stack, contexts);
             }
-
         }
         return pos;
     }

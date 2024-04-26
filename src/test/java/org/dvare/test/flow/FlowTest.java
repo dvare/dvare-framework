@@ -309,6 +309,98 @@ public class FlowTest {
         Assertions.assertEquals(ValueFinder.findValue("A0", resultModel), 10);
     }
 
+    @Test
+    public void ifElseBooleanLiteralTest() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        Map<String, String> validationTypes = new HashMap<>();
+        validationTypes.put("V1", "IntegerType");
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+
+        Expression ruleExp = factory.getParser().fromString("" +
+                "IF data.V1 > 5 " +
+                "THEN true " +
+                "ELSE false " +
+                "ENDIF", contexts);
+
+        RuleBinding rule = new RuleBinding(ruleExp);
+
+        List<Object> dataSet = new ArrayList<>();
+        Map<String, Object> d1 = new HashMap<>();
+        d1.put("V1", 10);
+        dataSet.add(new DataRow(d1));
+
+
+        Map<String, Object> d2 = new HashMap<>();
+        d2.put("V1", 20);
+        dataSet.add(new DataRow(d2));
+
+        Map<String, Object> d3 = new HashMap<>();
+        d3.put("V1", 40);
+        dataSet.add(new DataRow(d3));
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("data", dataSet);
+
+        Object result = evaluator.evaluate(rule, instancesBinding);
+        Assertions.assertEquals(Boolean.class, result.getClass());
+
+        var booleanResult = (Boolean) result;
+        Assertions.assertTrue(booleanResult);
+    }
+
+    @Test
+    public void ifElseBooleanVariableTest() throws ExpressionParseException, InterpretException {
+
+        RuleConfiguration factory = new RuleConfiguration();
+
+        Map<String, String> validationTypes = new HashMap<>();
+        validationTypes.put("V1", "IntegerType");
+        validationTypes.put("V2", "BooleanType");
+
+        ContextsBinding contexts = new ContextsBinding();
+        contexts.addContext("data", ExpressionParser.translate(validationTypes));
+
+        Expression ruleExp = factory.getParser().fromString("" +
+                "IF data.V1 > 5 " +
+                "THEN data.V2 " +
+                "ELSE false " +
+                "ENDIF", contexts);
+
+        RuleBinding rule = new RuleBinding(ruleExp);
+
+        List<Object> dataSet = new ArrayList<>();
+        Map<String, Object> d1 = new HashMap<>();
+        d1.put("V1", 10);
+        d1.put("V2", true);
+        dataSet.add(new DataRow(d1));
+
+
+        Map<String, Object> d2 = new HashMap<>();
+        d2.put("V1", 20);
+        d1.put("V2", true);
+        dataSet.add(new DataRow(d2));
+
+        Map<String, Object> d3 = new HashMap<>();
+        d3.put("V1", 40);
+        d1.put("V2", true);
+        dataSet.add(new DataRow(d3));
+
+        RuleEvaluator evaluator = factory.getEvaluator();
+        InstancesBinding instancesBinding = new InstancesBinding(new HashMap<>());
+        instancesBinding.addInstance("data", dataSet);
+
+        Object result = evaluator.evaluate(rule, instancesBinding);
+        Assertions.assertEquals(Boolean.class, result.getClass());
+
+        var booleanResult = (Boolean) result;
+        Assertions.assertTrue(booleanResult);
+    }
+
 
     //@Test
     public void testApp11() throws ExpressionParseException, InterpretException {

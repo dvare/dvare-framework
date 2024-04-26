@@ -122,6 +122,14 @@ public abstract class OperationExpression extends Expression {
         }
     }
 
+    protected void checkSingleNonOperationExpression(String[] tokens, int oldPos, int currentPos, Stack<Expression> stack, ContextsBinding contexts) throws IllegalPropertyException, IllegalValueException {
+        if (oldPos == currentPos - 1) {
+            var e = buildExpression(tokens[oldPos], contexts, oldPos, tokens);
+            if (e != null) {
+                stack.push(e);
+            }
+        }
+    }
 
     protected Object getValue(Object object, String name) throws IllegalPropertyValueException {
         return ValueFinder.findValue(name, object);

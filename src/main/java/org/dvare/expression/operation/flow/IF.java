@@ -48,8 +48,6 @@ public class IF extends ConditionOperationExpression {
                     if (operation instanceof THEN) {
                         pos = operation.parse(tokens, pos, stack, contexts);
                         this.thenOperand = stack.pop();
-
-
                     } else if (operation instanceof ELSE) {
                         pos = operation.parse(tokens, pos, stack, contexts);
                         this.elseOperand = stack.pop();
@@ -57,7 +55,6 @@ public class IF extends ConditionOperationExpression {
                         if (elseOperand instanceof ConditionOperationExpression) {
                             return pos;
                         }
-
                     } else if (operation instanceof ENDIF) {
                         return pos;
                     }
