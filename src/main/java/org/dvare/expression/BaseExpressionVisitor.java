@@ -208,61 +208,82 @@ public class BaseExpressionVisitor implements ExpressionVisitor<Expression> {
 
     @Override
     public Expression visit(BooleanVariable b) {
-        return new BooleanVariable(b.getName(), b.getValue());
+        var n = new BooleanVariable(b.getName(), b.getValue());
+        n.setOperandType(b.getOperandType());
+        return n;
     }
 
     @Override
     public Expression visit(DateTimeVariable dt) {
-        return new DateTimeVariable(dt.getName(), dt.getValue());
+        var n = new DateTimeVariable(dt.getName(), dt.getValue());
+        n.setOperandType(dt.getOperandType());
+        return n;
     }
 
     @Override
     public Expression visit(DateVariable d) {
-        return new DateVariable(d.getName(), d.getValue());
+        var n = new DateVariable(d.getName(), d.getValue());
+        n.setOperandType(d.getOperandType());
+        return n;
     }
 
     @Override
     public Expression visit(FloatVariable f) {
-        return new FloatVariable(f.getName(), f.getValue());
+        var n = new FloatVariable(f.getName(), f.getValue());
+        n.setOperandType(f.getOperandType());
+        return n;
     }
 
     @Override
     public Expression visit(IntegerVariable i) {
-        return new IntegerVariable(i.getName(), i.getValue());
+        var n = new IntegerVariable(i.getName(), i.getValue());
+        n.setOperandType(i.getOperandType());
+        return n;
     }
 
     @Override
     public Expression visit(ListVariable l) {
-        var n = new ListVariable(l.getName(), l.getListType());
+        var n = new ListVariable(l.getName(), l.getType());
         if (l.getValue() != null) {
             n.setValue(new ArrayList<>(l.getValue()));
         }
+        n.setOperandType(l.getOperandType());
         return l;
     }
 
     @Override
     public Expression visit(PairVariable p) {
-        return new PairVariable(p.getName(), p.getValue());
+        var n = new PairVariable(p.getName(), p.getValue());
+        n.setOperandType(p.getOperandType());
+        return n;
     }
 
     @Override
     public Expression visit(RegexVariable r) {
-        return new RegexVariable(r.getName(), r.getValue());
+        var n = new RegexVariable(r.getName(), r.getValue());
+        n.setOperandType(r.getOperandType());
+        return n;
     }
 
     @Override
     public Expression visit(SimpleDateVariable sd) {
-        return new SimpleDateVariable(sd.getName(), sd.getValue());
+        var n = new SimpleDateVariable(sd.getName(), sd.getValue());
+        n.setOperandType(sd.getOperandType());
+        return n;
     }
 
     @Override
     public Expression visit(StringVariable s) {
-        return new StringVariable(s.getName(), s.getValue());
+        var n = new StringVariable(s.getName(), s.getValue());
+        n.setOperandType(s.getOperandType());
+        return n;
     }
 
     @Override
     public Expression visit(TripleVariable t) {
-        return new TripleVariable(t.getName(), t.getValue());
+        var n = new TripleVariable(t.getName(), t.getValue());
+        n.setOperandType(t.getOperandType());
+        return n;
     }
 
     @Override
