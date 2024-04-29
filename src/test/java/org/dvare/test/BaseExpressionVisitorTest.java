@@ -38,6 +38,7 @@ public class BaseExpressionVisitorTest {
         o.addParameter(new NamedExpression("I1"));
 
         var e = o.accept(v);
+        Assertions.assertNotEquals(o, e);
 
         Assertions.assertEquals(o.getClass(), e.getClass());
         var n = (FunctionExpression) e;
@@ -53,6 +54,7 @@ public class BaseExpressionVisitorTest {
     public void visitNamedExpression() {
         var o = new NamedExpression("name");
         var e = o.accept(v);
+        Assertions.assertNotEquals(o, e);
 
         Assertions.assertEquals(o.getClass(), e.getClass());
         var n = (NamedExpression) e;
@@ -63,6 +65,7 @@ public class BaseExpressionVisitorTest {
     private void visitBooleanExpression(boolean val) {
         var o = new BooleanExpression("bn", val);
         var e = o.accept(v);
+        Assertions.assertNotEquals(o, e);
 
         Assertions.assertEquals(o.getClass(), e.getClass());
         var n = (BooleanExpression) e;
@@ -81,6 +84,7 @@ public class BaseExpressionVisitorTest {
         try {
             var o = clazz.getDeclaredConstructor().newInstance();
             var e = o.accept(v);
+            Assertions.assertNotEquals(o, e);
             Assertions.assertEquals(o.getClass(), e.getClass());
             var n = clazz.cast(e);
             Assertions.assertEquals(o.getDataType(), n.getDataType());
@@ -197,6 +201,7 @@ public class BaseExpressionVisitorTest {
 
     private <T extends LiteralExpression<?>> T visitLiteralExpression(T o) {
         var e = o.accept(v);
+        Assertions.assertNotEquals(o, e);
         Assertions.assertEquals(o.getClass(), e.getClass());
         @SuppressWarnings("unchecked") var n = (T) e;
 
@@ -282,6 +287,7 @@ public class BaseExpressionVisitorTest {
 
     private <T extends VariableExpression<?>> T visitVariableExpression(T o) {
         var e = o.accept(v);
+        Assertions.assertNotEquals(o, e);
         Assertions.assertEquals(o.getClass(), e.getClass());
         @SuppressWarnings("unchecked") var n = (T) e;
 
@@ -330,7 +336,7 @@ public class BaseExpressionVisitorTest {
         Assertions.assertEquals(o.getListType(), n.getListType());
         Assertions.assertEquals(o.getSize(), n.getSize());
         for (var i = 0; i < l.size(); i++) {
-            Assertions.assertEquals(o.getValue().get(0), n.getValue().get(0));
+            Assertions.assertEquals(o.getValue().get(i), n.getValue().get(i));
         }
     }
 
@@ -380,6 +386,7 @@ public class BaseExpressionVisitorTest {
         o.setRightOperand(or);
 
         var e = o.accept(v);
+        Assertions.assertNotEquals(o, e);
 
         Assertions.assertEquals(o.getClass(), e.getClass());
         var n = (AssignOperationExpression) e;
@@ -406,6 +413,7 @@ public class BaseExpressionVisitorTest {
         var o = new CompositeOperationExpression(ol);
 
         var e = o.accept(v);
+        Assertions.assertNotEquals(o, e);
 
         Assertions.assertEquals(o.getClass(), e.getClass());
         var n = (CompositeOperationExpression) e;
@@ -434,6 +442,7 @@ public class BaseExpressionVisitorTest {
         o.setRightOperand(new PrintOperation());
 
         var e = o.accept(v);
+        Assertions.assertNotEquals(o, e);
 
         Assertions.assertEquals(o.getClass(), e.getClass());
         @SuppressWarnings("unchecked") var n = (T) e;
@@ -460,6 +469,7 @@ public class BaseExpressionVisitorTest {
     public void visitListLiteralOperationENDExpression() {
         var o = new ListLiteralOperationENDExpression();
         var e = o.accept(v);
+        Assertions.assertNotEquals(o, e);
         Assertions.assertEquals(o.getClass(), e.getClass());
     }
 
@@ -470,6 +480,7 @@ public class BaseExpressionVisitorTest {
         o.setRightListOperand(ol);
 
         var e = o.accept(v);
+        Assertions.assertNotEquals(o, e);
 
         Assertions.assertEquals(o.getClass(), e.getClass());
         var n = (ListLiteralOperationExpression) e;
@@ -510,6 +521,7 @@ public class BaseExpressionVisitorTest {
             }
 
             var e = o.accept(v);
+            Assertions.assertNotEquals(o, e);
             Assertions.assertEquals(o.getClass(), e.getClass());
 
             var n = clazz.cast(e);
@@ -597,6 +609,7 @@ public class BaseExpressionVisitorTest {
             o.setRightOperand(or);
 
             var e = o.accept(v);
+            Assertions.assertNotEquals(o, e);
             Assertions.assertEquals(o.getClass(), e.getClass());
 
             var n = clazz.cast(e);
@@ -672,6 +685,7 @@ public class BaseExpressionVisitorTest {
             o.setElseOperand(oe);
 
             var e = o.accept(v);
+            Assertions.assertNotEquals(o, e);
             Assertions.assertEquals(o.getClass(), e.getClass());
 
             var n = clazz.cast(e);
@@ -760,6 +774,7 @@ public class BaseExpressionVisitorTest {
             o.setLeftListOperand(ol);
 
             var e = o.accept(v);
+            Assertions.assertNotEquals(o, e);
             Assertions.assertEquals(o.getClass(), e.getClass());
 
             var n = clazz.cast(e);
@@ -804,6 +819,7 @@ public class BaseExpressionVisitorTest {
             o.setRightOperand(or);
 
             var e = o.accept(v);
+            Assertions.assertNotEquals(o, e);
             Assertions.assertEquals(o.getClass(), e.getClass());
             var n = clazz.cast(e);
 
@@ -933,24 +949,29 @@ public class BaseExpressionVisitorTest {
         visitListOperationExpression(ValuesOperation.class);
     }
 
-    private <T extends LogicalOperationExpression> void visitLogicalOperationExpression(Class<T> clazz) {
+    private <T extends LogicalOperationExpression> void visitLogicalOperationExpression(Class<T> clazz, boolean rightOnly) {
         try {
             var o = clazz.getDeclaredConstructor().newInstance();
 
             var ol = new BooleanVariable("A");
-            o.setLeftOperand(ol);
+            if (!rightOnly) {
+                o.setLeftOperand(ol);
+            }
             var or = new BooleanVariable("B");
             o.setRightOperand(or);
 
             var ne = o.accept(v);
+            Assertions.assertNotEquals(o, ne);
             Assertions.assertEquals(o.getClass(), ne.getClass());
 
             var n = clazz.cast(ne);
 
-            var nle = n.getLeftOperand();
-            Assertions.assertEquals(ol.getClass(), nle.getClass());
-            var nl = (BooleanVariable) nle;
-            Assertions.assertEquals(ol.getName(), nl.getName());
+            if (!rightOnly) {
+                var nle = n.getLeftOperand();
+                Assertions.assertEquals(ol.getClass(), nle.getClass());
+                var nl = (BooleanVariable) nle;
+                Assertions.assertEquals(ol.getName(), nl.getName());
+            }
 
             var nre = n.getRightOperand();
             Assertions.assertEquals(or.getClass(), nre.getClass());
@@ -961,6 +982,10 @@ public class BaseExpressionVisitorTest {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private <T extends LogicalOperationExpression> void visitLogicalOperationExpression(Class<T> clazz) {
+        visitLogicalOperationExpression(clazz, false);
     }
 
     @Test
@@ -975,7 +1000,7 @@ public class BaseExpressionVisitorTest {
 
     @Test
     public void visitNot() {
-        visitLogicalOperationExpression(Not.class);
+        visitLogicalOperationExpression(Not.class, true);
     }
 
     @Test

@@ -248,7 +248,7 @@ public class BaseExpressionVisitor implements ExpressionVisitor<Expression> {
             n.setValue(new ArrayList<>(l.getValue()));
         }
         n.setOperandType(l.getOperandType());
-        return l;
+        return n;
     }
 
     @Override
@@ -611,7 +611,7 @@ public class BaseExpressionVisitor implements ExpressionVisitor<Expression> {
     public Expression visit(Not n) {
         var ne = new Not();
         setRightOperandNotNull(n, ne);
-        return n;
+        return ne;
     }
 
     @Override
