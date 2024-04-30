@@ -72,7 +72,8 @@ public class ExpressionSeparator extends OperationExpression {
             OperationExpression op = configurationRegistry.getOperation(tokens[pos]);
             if (op != null) {
                 pos = op.parse(tokens, pos, stack, contexts);
-                if (!(stack.peek() instanceof VariableExpression)) {
+                var peek = stack.peek();
+                if (!(peek instanceof VariableExpression || peek instanceof DefOperation)) {
                     return pos;
                 }
 
