@@ -30,7 +30,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-coveralls-plugin.version>4.3.0</maven-coveralls-plugin.version>
-        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
+        <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
         <maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
