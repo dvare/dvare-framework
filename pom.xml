@@ -28,15 +28,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-coveralls-plugin.version>4.3.0</maven-coveralls-plugin.version>
-        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
+        <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
         <maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
-        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
-        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
-        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
-        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
-        <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>3.7.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-surefire-plugin.version>3.3.0</maven-surefire-plugin.version>
+        <maven-release-plugin.version>3.1.0</maven-release-plugin.version>
     </properties>
 
     <repositories>
@@ -238,7 +238,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
+                        <version>1.7.0</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>nexus-release</serverId>
