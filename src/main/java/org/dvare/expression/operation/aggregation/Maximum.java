@@ -3,6 +3,7 @@ package org.dvare.expression.operation.aggregation;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.FloatLiteral;
 import org.dvare.expression.literal.IntegerLiteral;
@@ -49,6 +50,11 @@ public class Maximum extends AggregationOperationExpression {
         }
         return super.interpret(instancesBinding);
 
+    }
+
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
     }
 
 }

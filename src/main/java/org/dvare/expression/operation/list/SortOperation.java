@@ -4,6 +4,7 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.datatype.DataTypeExpression;
 import org.dvare.expression.literal.ListLiteral;
@@ -211,6 +212,11 @@ public class SortOperation extends ListOperationExpression {
         }
 
         return -1;
+    }
+
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
     }
 
     private static class ValueType {

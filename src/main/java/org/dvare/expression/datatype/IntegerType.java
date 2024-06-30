@@ -3,6 +3,7 @@ package org.dvare.expression.datatype;
 
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.aggregation.Maximum;
 import org.dvare.expression.operation.aggregation.Minimum;
@@ -233,5 +234,10 @@ public class IntegerType extends DataTypeExpression {
             }
         }
         return values;
+    }
+
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
     }
 }

@@ -35,6 +35,10 @@ public class BooleanExpression extends Expression {
         return new BooleanLiteral(value);
     }
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 
     public String getName() {
         return name;

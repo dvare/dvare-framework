@@ -3,6 +3,7 @@ package org.dvare.expression.operation.predefined;
 import org.dvare.annotations.Operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.LiteralType;
 import org.dvare.expression.literal.NullLiteral;
@@ -83,6 +84,11 @@ public class AddYears extends ChainOperationExpression {
         }
 
         return new NullLiteral<>();
+    }
+
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
     }
 
 }

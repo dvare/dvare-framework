@@ -30,7 +30,6 @@ public abstract class ChainOperationExpression extends OperationExpression {
         super(operationType);
     }
 
-
     private int parseOperands(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
 
         String token = tokens[pos - 1];
@@ -132,6 +131,14 @@ public abstract class ChainOperationExpression extends OperationExpression {
         }
 
         return toStringBuilder.toString();
+    }
+
+    public List<Expression> getRightListOperand() {
+        return rightOperand;
+    }
+
+    public void setRightListOperand(List<Expression> rightOperand) {
+        this.rightOperand = rightOperand;
     }
 
 }

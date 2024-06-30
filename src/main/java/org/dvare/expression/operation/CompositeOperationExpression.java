@@ -3,6 +3,7 @@ package org.dvare.expression.operation;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.LiteralExpression;
 
 import java.util.ArrayList;
@@ -28,6 +29,15 @@ public class CompositeOperationExpression extends Expression {
             result = expression.interpret(instancesBinding);
         }
         return result;
+    }
+
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
+
+    public List<Expression> getExpressions() {
+        return expressions;
     }
 
     @Override

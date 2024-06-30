@@ -24,7 +24,6 @@ public abstract class ListOperationExpression extends AggregationOperationExpres
         super(operationType);
     }
 
-
     protected List<?> includedFilter(Expression includeParam, InstancesBinding instancesBinding, List<?> values) throws InterpretException {
 
         if (includeParam instanceof LogicalOperationExpression) {

@@ -6,6 +6,7 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.BooleanLiteral;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.LogicalOperationExpression;
@@ -38,5 +39,9 @@ public class Not extends LogicalOperationExpression {
         return new BooleanLiteral(!toBoolean(this.rightOperand.interpret(instancesBinding)));
     }
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 
 }

@@ -5,6 +5,7 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalValueException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.DateLiteral;
@@ -81,5 +82,9 @@ public class DateOperation extends DateTimeOperation {
         return pos;
     }
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 
 }

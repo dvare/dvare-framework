@@ -122,6 +122,14 @@ public abstract class OperationExpression extends Expression {
         }
     }
 
+    protected void checkSingleNonOperationExpression(String[] tokens, int oldPos, int currentPos, Stack<Expression> stack, ContextsBinding contexts) throws IllegalPropertyException, IllegalValueException {
+        if (oldPos == currentPos - 1) {
+            var e = buildExpression(tokens[oldPos], contexts, oldPos, tokens);
+            if (e != null) {
+                stack.push(e);
+            }
+        }
+    }
 
     protected Object getValue(Object object, String name) throws IllegalPropertyValueException {
         return ValueFinder.findValue(name, object);
@@ -220,6 +228,22 @@ public abstract class OperationExpression extends Expression {
 
     public List<String> getSymbols() {
         return this.operationType.getTokens();
+    }
+
+    public OperationType getOperationType() {
+        return operationType;
+    }
+
+    public void setOperationType(OperationType operationType) {
+        this.operationType = operationType;
+    }
+
+    public Class<? extends DataTypeExpression> getDataTypeExpression() {
+        return dataTypeExpression;
+    }
+
+    public void setDataTypeExpression(Class<? extends DataTypeExpression> dataTypeExpression) {
+        this.dataTypeExpression = dataTypeExpression;
     }
 
     protected enum Side {

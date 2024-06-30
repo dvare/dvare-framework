@@ -87,4 +87,5 @@ public abstract class VariableExpression<T> extends Expression {
     public void setOperandType(String operandType) {
         this.operandType = operandType;
     }
+
 }

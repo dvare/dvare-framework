@@ -5,6 +5,7 @@ import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalOperationException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.ListLiteral;
 import org.dvare.expression.literal.LiteralExpression;
@@ -37,7 +38,6 @@ public class Between extends RelationalOperationExpression {
         }
         throw new ExpressionParseException("Cannot assign literal to variable");
     }
-
 
     private void testBetweenOperation(String[] tokens, int pos) throws ExpressionParseException {
 
@@ -85,4 +85,8 @@ public class Between extends RelationalOperationExpression {
 
     }
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 }

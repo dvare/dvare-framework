@@ -15,6 +15,7 @@ public abstract class Expression {
         return new BooleanLiteral(false);
     }
 
+    public abstract <T> T accept(ExpressionVisitor<T> v);
 }
 
 

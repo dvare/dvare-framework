@@ -1,6 +1,7 @@
 package org.dvare.expression.operation.relational;
 
 import org.dvare.annotations.Operation;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.operation.OperationType;
 import org.dvare.expression.operation.RelationalOperationExpression;
 
@@ -14,5 +15,8 @@ public class NotEquals extends RelationalOperationExpression {
         super(OperationType.NOT_EQUAL);
     }
 
-
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 }

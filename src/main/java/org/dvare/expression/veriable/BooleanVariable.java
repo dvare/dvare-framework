@@ -5,6 +5,7 @@ package org.dvare.expression.veriable;
  * @since 2016-06-30
  */
 
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.BooleanType;
 
 public class BooleanVariable extends VariableExpression<Boolean> {
@@ -20,4 +21,8 @@ public class BooleanVariable extends VariableExpression<Boolean> {
     }
 
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 }

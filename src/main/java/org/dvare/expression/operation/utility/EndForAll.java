@@ -1,6 +1,7 @@
 package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.operation.IterationOperationExpression;
 import org.dvare.expression.operation.OperationType;
 
@@ -15,5 +16,8 @@ public class EndForAll extends IterationOperationExpression {
         super(OperationType.END_FORALL);
     }
 
-
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 }

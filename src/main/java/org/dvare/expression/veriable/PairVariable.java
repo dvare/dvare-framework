@@ -1,6 +1,7 @@
 package org.dvare.expression.veriable;
 
 
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.PairType;
 import org.dvare.util.Pair;
 
@@ -20,4 +21,8 @@ public class PairVariable extends VariableExpression<Pair<?, ?>> {
     }
 
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 }

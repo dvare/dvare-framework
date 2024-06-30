@@ -5,6 +5,7 @@ import org.dvare.binding.model.TypeBinding;
 import org.dvare.config.ConfigurationRegistry;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.utility.EndForAll;
@@ -152,4 +153,24 @@ public class IterationOperationExpression extends OperationExpression {
         throw new ExpressionParseException("Function Closing Bracket Not Found");
     }
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
+
+    public Expression getReferenceContext() {
+        return referenceContext;
+    }
+
+    public void setReferenceContext(Expression referenceContext) {
+        this.referenceContext = referenceContext;
+    }
+
+    public NamedExpression getDerivedContext() {
+        return derivedContext;
+    }
+
+    public void setDerivedContext(NamedExpression derivedContext) {
+        this.derivedContext = derivedContext;
+    }
 }

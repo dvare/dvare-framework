@@ -12,6 +12,7 @@ import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.exceptions.parser.IllegalPropertyException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.literal.NullLiteral;
@@ -61,7 +62,7 @@ public class AssignOperationExpression extends OperationExpression {
             }
 
 
-            if (!(this.leftOperand instanceof VariableExpression)) {
+            if (!(this.leftOperand instanceof VariableExpression || this.leftOperand instanceof DefOperation)) {
 
                 TokenType tokenType = findDataObject(leftString, contexts);
                 if (tokenType.type != null && contexts.getContext(tokenType.type) != null &&
@@ -140,6 +141,10 @@ public class AssignOperationExpression extends OperationExpression {
         VariableExpression<?> variable;
         Expression left = this.leftOperand;
 
+        if (left instanceof DefOperation) {
+            left = ((DefOperation) left).leftOperand;
+        }
+
         if (left instanceof VariableExpression) {
             variable = (VariableExpression<?>) left;
 
@@ -177,6 +182,11 @@ public class AssignOperationExpression extends OperationExpression {
         }
 
         return new NullLiteral<>();
+    }
+
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
     }
 
     private Object updateValue(Object aggregation, DataType dataType, VariableExpression<?> variableExpression, LiteralExpression<?> literalExpression) throws InterpretException {

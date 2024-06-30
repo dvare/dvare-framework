@@ -1,6 +1,7 @@
 package org.dvare.expression.operation.arithmetic;
 
 import org.dvare.annotations.Operation;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.DataType;
 import org.dvare.expression.operation.ArithmeticOperationExpression;
 import org.dvare.expression.operation.OperationType;
@@ -16,4 +17,8 @@ public class Max extends ArithmeticOperationExpression {
     }
 
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 }

@@ -4,6 +4,7 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
 
 import java.util.Stack;
 
@@ -23,5 +24,10 @@ public class ListLiteralOperationENDExpression extends OperationExpression {
     @Override
     public Integer findNextExpression(String[] tokens, int pos, Stack<Expression> stack, ContextsBinding contexts) throws ExpressionParseException {
         return pos;
+    }
+
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
     }
 }

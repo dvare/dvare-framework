@@ -2,6 +2,7 @@ package org.dvare.expression.datatype;
 
 import org.dvare.annotations.OperationMapping;
 import org.dvare.annotations.Type;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.arithmetic.Subtract;
 import org.dvare.expression.operation.relational.*;
@@ -118,4 +119,8 @@ public class SimpleDateType extends DataTypeExpression {
     }
 
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 }

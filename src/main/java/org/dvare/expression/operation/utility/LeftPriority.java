@@ -1,10 +1,14 @@
 package org.dvare.expression.operation.utility;
 
 import org.dvare.annotations.Operation;
+import org.dvare.binding.data.InstancesBinding;
 import org.dvare.binding.model.ContextsBinding;
 import org.dvare.config.ConfigurationRegistry;
+import org.dvare.exceptions.interpreter.InterpretException;
 import org.dvare.exceptions.parser.ExpressionParseException;
 import org.dvare.expression.Expression;
+import org.dvare.expression.ExpressionVisitor;
+import org.dvare.expression.literal.LiteralExpression;
 import org.dvare.expression.operation.OperationExpression;
 import org.dvare.expression.operation.OperationType;
 
@@ -31,7 +35,11 @@ public class LeftPriority extends OperationExpression {
         }
 
         if (stack.peek().getClass().equals(RightPriority.class)) {
-            stack.pop();
+            // pop RightPriority
+            this.rightOperand = stack.pop();
+            // pop contents of parenthesis
+            this.leftOperand = stack.pop();
+            stack.push(this);
         }
 
         return pos;
@@ -60,5 +68,38 @@ public class LeftPriority extends OperationExpression {
             }
         }
         return pos;
+    }
+
+    @Override
+    public LiteralExpression<?> interpret(InstancesBinding instancesBinding) throws InterpretException {
+        return interpretOperand(leftOperand, instancesBinding);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+
+        // left parenthesis
+        toStringBuilder.append(operationType.getTokens().get(0));
+        toStringBuilder.append(" ");
+
+        // parenthesis content
+        if (leftOperand != null) {
+            toStringBuilder.append(leftOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        // right parenthesis
+        if (rightOperand != null) {
+            toStringBuilder.append(rightOperand.toString());
+            toStringBuilder.append(" ");
+        }
+
+        return toStringBuilder.toString();
+    }
+
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
     }
 }

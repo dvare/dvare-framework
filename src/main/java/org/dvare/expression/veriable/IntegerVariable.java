@@ -1,5 +1,6 @@
 package org.dvare.expression.veriable;
 
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.IntegerType;
 
 /**
@@ -14,5 +15,10 @@ public class IntegerVariable extends VariableExpression<Integer> {
 
     public IntegerVariable(String name, Integer value) {
         super(name, IntegerType.class, value);
+    }
+
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
     }
 }

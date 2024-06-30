@@ -1,6 +1,7 @@
 package org.dvare.expression.veriable;
 
 
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.StringType;
 
 /**
@@ -19,4 +20,8 @@ public class StringVariable extends VariableExpression<String> {
     }
 
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 }

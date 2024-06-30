@@ -4,6 +4,7 @@ import org.dvare.annotations.Operation;
 import org.dvare.binding.data.DataRow;
 import org.dvare.binding.data.InstancesBinding;
 import org.dvare.exceptions.interpreter.InterpretException;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.NamedExpression;
 import org.dvare.expression.datatype.NullType;
 import org.dvare.expression.literal.ListLiteral;
@@ -127,5 +128,8 @@ public class ForEach extends IterationOperationExpression {
         return new NullLiteral<>();
     }
 
-
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 }

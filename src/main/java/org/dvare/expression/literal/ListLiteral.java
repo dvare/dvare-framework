@@ -2,6 +2,7 @@ package org.dvare.expression.literal;
 
 
 import org.dvare.annotations.Type;
+import org.dvare.expression.ExpressionVisitor;
 import org.dvare.expression.datatype.*;
 
 import java.util.List;
@@ -52,4 +53,8 @@ public class ListLiteral extends LiteralExpression<List<?>> {
     }
 
 
+    @Override
+    public <T> T accept(ExpressionVisitor<T> v) {
+        return v.visit(this);
+    }
 }
